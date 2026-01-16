@@ -28,46 +28,56 @@ import {
 } from "@/components/ui/sidebar"
 
 // This is sample data.
-const data = {
-  navMain: [
-    {
-      title: "Home",
-      url: "/home",
-      icon: Home,
-    },
-    {
-      title: "Templates",
-      url: "/templates",
-      icon: LayoutTemplate,
-    },
-    {
-      title: "Trash",
-      url: "/trash",
-      icon: Trash2,
-    },
-    {
-      title: "Settings",
-      url: "/settings",
-      icon: Settings,
-    },
-  ],
-  recentlyOpened: [
-    {
-      name: "Project Alpha",
-      url: "#",
-    },
-    {
-      name: "Storyboard Beta",
-      url: "#",
-    },
-    {
-      name: "Design Layout",
-      url: "#",
-    },
-  ],
-}
+const navMain = [
+  {
+    title: "Home",
+    url: "/home",
+    icon: Home,
+  },
+  {
+    title: "Templates",
+    url: "/templates",
+    icon: LayoutTemplate,
+  },
+  {
+    title: "Trash",
+    url: "/trash",
+    icon: Trash2,
+  },
+  {
+    title: "Settings",
+    url: "/settings",
+    icon: Settings,
+  },
+]
+
+// Helper to construct project URL - check if we're in editor or project view
+const getProjectUrl = (id: string) => `/project/${id}`
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const [recentProjects, setRecentProjects] = React.useState<{ name: string, url: string }[]>([])
+
+  React.useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await fetch('/api/projects')
+        if (response.ok) {
+          const data = await response.json()
+          // Take first 5 projects
+          const recent = data.slice(0, 5).map((p: any) => ({
+            name: p.title,
+            url: getProjectUrl(p.id)
+          }))
+          setRecentProjects(recent)
+        }
+      } catch (error) {
+        console.error('Failed to fetch recent projects:', error)
+      }
+    }
+
+    fetchProjects()
+  }, [])
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -90,8 +100,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavProjects projects={data.recentlyOpened} />
+        <NavMain items={navMain} />
+        <NavProjects projects={recentProjects} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser />

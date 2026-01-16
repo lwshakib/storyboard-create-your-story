@@ -5,10 +5,33 @@ import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogDescription, 
+  DialogFooter, 
+  DialogHeader, 
+  DialogTitle 
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { useRouter } from "next/navigation"
 
 export default function NewProjectPage() {
-  const handleGenerateClick = () => {
-    window.dispatchEvent(new CustomEvent('open-generate-dialog'))
+  const [showGenerateDialog, setShowGenerateDialog] = React.useState(false)
+  const [generationType, setGenerationType] = React.useState<'standard' | 'advanced'>('standard')
+  const [prompt, setPrompt] = React.useState("")
+  const [isGenerating, setIsGenerating] = React.useState(false)
+  const router = useRouter()
+
+  const handleStartGeneration = () => {
+    if (!prompt.trim()) return
+    setIsGenerating(true)
+    
+    if (generationType === 'advanced') {
+        router.push(`/advanced-editor?prompt=${encodeURIComponent(prompt)}`)
+    } else {
+        router.push(`/editor?prompt=${encodeURIComponent(prompt)}`)
+    }
   }
 
   return (
@@ -41,15 +64,31 @@ export default function NewProjectPage() {
           href="/templates"
         />
 
-        {/* AI Card (The Featured One) */}
+        {/* Standard AI Card */}
         <SelectionCard 
           title="Generate with"
           highlightedText="Creative AI"
           description="Describe your vision and let our AI generate a complete storyboard for you."
           buttonText="Generate"
-          featured
           delay={0.4}
-          onClick={handleGenerateClick}
+          onClick={() => {
+            setGenerationType('standard')
+            setShowGenerateDialog(true)
+          }}
+        />
+
+        {/* Advanced AI Card (The Featured One) */}
+        <SelectionCard 
+          title="Advanced Storyboard with"
+          highlightedText="Creative AI"
+          description="Interactive, real-time AI-powered storyboard creation with advanced controls."
+          buttonText="Go Advanced"
+          featured
+          delay={0.5}
+          onClick={() => {
+            setGenerationType('advanced')
+            setShowGenerateDialog(true)
+          }}
         />
 
         {/* Scratch Card */}
@@ -58,10 +97,39 @@ export default function NewProjectPage() {
           highlightedText="Scratch"
           description="Start with a clean canvas and build your story piece by piece."
           buttonText="Continue"
-          delay={0.5}
+          delay={0.6}
           href="/editor"
         />
       </div>
+
+      <Dialog open={showGenerateDialog} onOpenChange={setShowGenerateDialog}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Generate with Creative AI</DialogTitle>
+            <DialogDescription>
+              What is your story about? describe it in detail for better results.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+             <Input
+              id="prompt"
+              placeholder="e.g. A space adventure about a lonely robot..."
+              className="col-span-3"
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleStartGeneration()
+              }}
+              autoFocus
+            />
+          </div>
+          <DialogFooter>
+            <Button onClick={handleStartGeneration} disabled={!prompt.trim() || isGenerating}>
+              {isGenerating ? "Generating..." : "Generate"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
