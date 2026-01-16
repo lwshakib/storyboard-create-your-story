@@ -1,16 +1,48 @@
-export default function Page() {
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import prisma from "@/lib/prisma";
+import { ProjectsGrid } from "@/components/home/projects-grid";
+import Link from "next/link";
+
+export default async function HomePage() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  const projects = await prisma.project.findMany({
+    where: {
+      userId: session?.user?.id || "",
+      isDeleted: false,
+    },
+    orderBy: {
+      updatedAt: "desc",
+    },
+  });
+
   return (
-    <div className="flex flex-1 flex-col gap-4">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold tracking-tight">Welcome back</h1>
-        <p className="text-muted-foreground">This is home page. Start creating your next big story.</p>
-      </div>
-      <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-        <div className="bg-muted/50 aspect-video rounded-xl" />
-        <div className="bg-muted/50 aspect-video rounded-xl" />
-        <div className="bg-muted/50 aspect-video rounded-xl" />
-      </div>
-      <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min" />
+    <div className="flex-1 space-y-12 p-10 pt-12 pb-20 bg-background">
+      {/* Welcome Section */}
+      <section className="max-w-3xl">
+        <div className="flex flex-col gap-3">
+          <h1 className="text-5xl font-extrabold tracking-tight text-foreground/90 leading-tight">
+            Welcome, {session?.user?.name?.split(' ')[0] || "Storyteller"}
+          </h1>
+          <p className="text-muted-foreground text-xl font-medium leading-relaxed opacity-70">
+            Your creative dashboard. Pick up where you left off or start a fresh storyboard.
+          </p>
+        </div>
+      </section>
+
+      {/* Projects Section */}
+      <section className="space-y-8">
+        <div className="flex items-center justify-between border-b border-border/50 pb-6">
+            <h2 className="text-sm font-bold tracking-tight text-foreground/60 uppercase tracking-[0.1em]">
+                Recent Projects
+            </h2>
+        </div>
+
+        <ProjectsGrid initialProjects={projects} />
+      </section>
     </div>
-  )
+  );
 }
