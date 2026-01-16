@@ -1,5 +1,8 @@
 import pptxgen from "pptxgenjs";
 import { Slide, SlideElement } from "@/types/editor";
+import { HtmlSlide } from "./storyboard-parser";
+import { toPng } from "html-to-image";
+import { jsPDF } from "jspdf";
 
 export const exportToJson = (title: string, slides: Slide[]) => {
   const data = {
@@ -96,4 +99,84 @@ export const exportToPpptx = async (title: string, slides: Slide[]) => {
   });
 
   await pres.writeFile({ fileName: `${title.replace(/\s+/g, "_")}.pptx` });
+};
+
+// --- HTML Storyboard Exports ---
+
+export const exportHtmlToJson = (title: string, slides: HtmlSlide[]) => {
+    const data = {
+        title,
+        slides,
+        exportedAt: new Date().toISOString(),
+        format: "html-storyboard",
+        version: "1.0"
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${title.replace(/\s+/g, "_")}_advanced.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+};
+
+// Helper to capture HTML as image
+const captureSlideAsImage = async (html: string): Promise<string> => {
+    const container = document.createElement("div");
+    container.style.width = "1024px";
+    container.style.height = "576px";
+    container.style.position = "absolute";
+    container.style.top = "-10000px";
+    container.style.left = "-10000px";
+    container.innerHTML = html;
+    document.body.appendChild(container);
+
+    try {
+        const dataUrl = await toPng(container, {
+            width: 1024,
+            height: 576,
+            pixelRatio: 2, // High resolution
+        });
+        return dataUrl;
+    } finally {
+        document.body.removeChild(container);
+    }
+};
+
+export const exportHtmlToPdf = async (title: string, slides: HtmlSlide[]) => {
+    const doc = new jsPDF({
+        orientation: "landscape",
+        unit: "pt",
+        format: [1024, 576]
+    });
+
+    for (let i = 0; i < slides.length; i++) {
+        if (i > 0) doc.addPage([1024, 576], "landscape");
+        const imgData = await captureSlideAsImage(slides[i].html);
+        doc.addImage(imgData, "PNG", 0, 0, 1024, 576);
+    }
+
+    doc.save(`${title.replace(/\s+/g, "_")}.pdf`);
+};
+
+export const exportHtmlToPpptx = async (title: string, slides: HtmlSlide[]) => {
+    const pres = new pptxgen();
+    pres.title = title;
+    pres.layout = "LAYOUT_16x9";
+
+    for (const slideData of slides) {
+        const slide = pres.addSlide();
+        const imgData = await captureSlideAsImage(slideData.html);
+        slide.addImage({
+            data: imgData,
+            x: 0,
+            y: 0,
+            w: "100%",
+            h: "100%"
+        });
+    }
+
+    await pres.writeFile({ fileName: `${title.replace(/\s+/g, "_")}.pptx` });
 };
