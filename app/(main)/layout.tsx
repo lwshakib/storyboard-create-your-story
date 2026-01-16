@@ -8,12 +8,13 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { Separator } from "@/components/ui/separator"
-import { Search, Plus, X } from "lucide-react"
+import { Search, Plus, X, Upload, Sparkles } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { ModeToggle } from "@/components/mode-toggle"
 import { motion, AnimatePresence } from "framer-motion"
 import Link from "next/link"
+import { GenerateDialog } from "@/components/home/generate-dialog"
 
 export default function MainLayout({
   children,
@@ -21,12 +22,19 @@ export default function MainLayout({
   children: React.ReactNode
 }) {
   const [isSearchActive, setIsSearchActive] = React.useState(false)
+  const [isGenerateOpen, setIsGenerateOpen] = React.useState(false)
+
+  React.useEffect(() => {
+    const handleOpenDialog = () => setIsGenerateOpen(true)
+    window.addEventListener('open-generate-dialog', handleOpenDialog)
+    return () => window.removeEventListener('open-generate-dialog', handleOpenDialog)
+  }, [])
 
   return (
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center justify-between gap-2 px-4 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 border-b relative overflow-hidden">
+        <header className="flex h-16 shrink-0 items-center justify-between gap-2 px-4 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 border-b sticky top-0 z-50 bg-background/80 backdrop-blur-md overflow-hidden">
           <AnimatePresence mode="wait">
             {!isSearchActive ? (
               <motion.div 
@@ -65,6 +73,39 @@ export default function MainLayout({
                 </div>
 
                 <div className="flex items-center gap-2 md:gap-4">
+                  <input
+                    type="file"
+                    id="main-import-json"
+                    className="hidden"
+                    accept=".json"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0]
+                      if (!file) return
+                      const reader = new FileReader()
+                      reader.onload = (event) => {
+                        try {
+                          const data = JSON.parse(event.target?.result as string)
+                          if (data.slides) {
+                            localStorage.setItem('importedStoryboard', JSON.stringify(data))
+                            window.location.href = '/editor'
+                          } else {
+                            alert("Invalid storyboard format")
+                          }
+                        } catch (err) {
+                          alert("Failed to parse JSON")
+                        }
+                      }
+                      reader.readAsText(file)
+                    }}
+                  />
+                  <Button 
+                    variant="outline"
+                    className="rounded-full px-4 md:px-6 font-medium shadow-sm flex items-center gap-2 border-border/50 hover:bg-muted/50"
+                    onClick={() => document.getElementById('main-import-json')?.click()}
+                  >
+                    <Upload className="size-4 opacity-70" />
+                    <span className="hidden sm:inline">Import</span>
+                  </Button>
                   <Button asChild className="rounded-full px-4 md:px-6 bg-primary hover:bg-primary/90 text-primary-foreground font-medium shadow-sm flex items-center gap-2">
                       <Link href="/new">
                         <Plus className="size-4" />
@@ -107,6 +148,10 @@ export default function MainLayout({
         <main className="flex flex-1 flex-col gap-4 p-4">
           {children}
         </main>
+        <GenerateDialog 
+          open={isGenerateOpen} 
+          onOpenChange={setIsGenerateOpen} 
+        />
       </SidebarInset>
     </SidebarProvider>
   )
