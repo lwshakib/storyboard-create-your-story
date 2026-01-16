@@ -2,17 +2,17 @@
 
 ![Project Banner](public/screenshots/banner.png)
 
-> **Create professional, AI-powered storyboards in minutes.**
+> **Create professional, AI-powered presentations and storyboards in minutes.**
 
-**Storyboard** is a modern, full-stack web application that empowers creators to visualize their stories. Whether you're a filmmaker, marketer, or educator, our tool helps you generate, edit, and export storyboards with ease. Leveraging the power of AI, you can generate complete visual narratives from simple text prompts.
+**Storyboard** is a modern, full-stack presentation builder that empowers creators to visualize their stories. Whether you're a filmmaker, marketer, or educator, our tool helps you generate, edit, and export stunning presentations with ease. Leveraging the power of AI, you can turn simple text prompts into complete visual narratives and slide decks.
 
 ## 🚀 Features
 
-- **✨ AI-Powered Generation**: Describe your story, and let our AI agents generate detailed scenes, scripts, and visuals automatically.
-- **🎨 Interactive Editor**: A powerful, drag-and-drop canvas to customize every aspect of your storyboard. Add text, images, shapes, and notes.
-- **📦 Pre-made Templates**: Jumpstart your project with a library of professionally designed templates for various industries.
-- **🔄 Project Management**: Organize your work with a dashboard that supports creating, updating, archiving, and restoring projects.
-- **📤 Export Options**: Export your masterpieces directly to PowerPoint (.pptx) for presentations.
+- **✨ AI-Powered Presentations**: Describe your topic, and let our AI agents generate detailed slides, scripts, and visuals automatically.
+- **🎨 Interactive Slide Editor**: A powerful, drag-and-drop canvas to customize every aspect of your presentation. Add text, images, shapes, and notes.
+- **📦 Professional Templates**: Jumpstart your project with a library of professionally designed templates for various use cases and industries.
+- **🔄 Project Management**: Organize your work with a dashboard that supports creating, updating, archiving, and restoring presentation projects.
+- **📤 Export to PowerPoint**: Export your decks directly to PowerPoint (.pptx) for offline use and sharing.
 - **🔐 Secure Authentication**: Robust user authentication system powered by Better Auth.
 - **🌓 Dark/Light Mode**: Fully responsive interface with theme support.
 
