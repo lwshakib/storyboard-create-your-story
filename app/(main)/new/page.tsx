@@ -7,6 +7,10 @@ import { cn } from "@/lib/utils"
 import Link from "next/link"
 
 export default function NewProjectPage() {
+  const handleGenerateClick = () => {
+    window.dispatchEvent(new CustomEvent('open-generate-dialog'))
+  }
+
   return (
     <div className="flex flex-1 flex-col items-center justify-center min-h-[80vh] px-4 py-12">
       <div className="text-center space-y-4 mb-12">
@@ -31,7 +35,7 @@ export default function NewProjectPage() {
         {/* Template Card */}
         <SelectionCard 
           title="Use a Template"
-          description="Write a prompt and leave everything else for us to handle"
+          description="Browse our curated collection of professional storyboard templates."
           buttonText="Continue"
           delay={0.3}
           href="/templates"
@@ -41,18 +45,18 @@ export default function NewProjectPage() {
         <SelectionCard 
           title="Generate with"
           highlightedText="Creative AI"
-          description="Write a prompt and leave everything else for us to handle"
+          description="Describe your vision and let our AI generate a complete storyboard for you."
           buttonText="Generate"
           featured
           delay={0.4}
-          href="#"
+          onClick={handleGenerateClick}
         />
 
         {/* Scratch Card */}
         <SelectionCard 
-          title="Start from"
+          title="Start from" 
           highlightedText="Scratch"
-          description="Write a prompt and leave everything else for us to handle"
+          description="Start with a clean canvas and build your story piece by piece."
           buttonText="Continue"
           delay={0.5}
           href="/editor"
@@ -69,10 +73,13 @@ interface SelectionCardProps {
   buttonText: string
   featured?: boolean
   delay?: number
-  href: string
+  href?: string
+  onClick?: () => void
 }
 
-function SelectionCard({ title, highlightedText, description, buttonText, featured, delay = 0, href }: SelectionCardProps) {
+function SelectionCard({ title, highlightedText, description, buttonText, featured, delay = 0, href, onClick }: SelectionCardProps) {
+  const CardWrapper = href ? Link : "div"
+  
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
@@ -81,7 +88,11 @@ function SelectionCard({ title, highlightedText, description, buttonText, featur
       whileHover={{ y: -5 }}
       className="h-full"
     >
-      <Link href={href} className="block h-full cursor-default">
+      <CardWrapper 
+        href={href as string} 
+        className="block h-full cursor-pointer"
+        onClick={onClick}
+      >
         <div
           className={cn(
             "relative rounded-2xl border transition-all duration-300 overflow-hidden h-full flex flex-col",
@@ -95,7 +106,7 @@ function SelectionCard({ title, highlightedText, description, buttonText, featur
             <div className="absolute inset-0 p-[2px] -z-10 rounded-2xl bg-gradient-to-br from-purple-500 via-orange-500 to-pink-500 opacity-60" />
           )}
 
-          <div className={cn("p-8 flex flex-col h-full h-full", featured ? "bg-neutral-900" : "bg-transparent")}>
+          <div className={cn("p-8 flex flex-col h-full", featured ? "bg-neutral-900" : "bg-transparent")}>
             <div className="space-y-4 flex-1">
               <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
                 {featured ? "Featured" : "Method"}
@@ -132,7 +143,7 @@ function SelectionCard({ title, highlightedText, description, buttonText, featur
             </div>
           </div>
         </div>
-      </Link>
+      </CardWrapper>
     </motion.div>
   )
 }
