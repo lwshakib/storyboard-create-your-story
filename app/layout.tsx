@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
+import NextTopLoader from 'nextjs-toploader';
 
 export const metadata: Metadata = {
   title: "Storyboard",
@@ -41,7 +42,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
     <body>
         <ThemeProvider
           attribute="class"
@@ -49,6 +50,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <NextTopLoader 
+            showSpinner={false}
+            height={3}
+            crawl={true}
+            speed={200}
+            initialPosition={0.08}
+          />
             {children}
           <Toaster />
         </ThemeProvider>
