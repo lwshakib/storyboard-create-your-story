@@ -19,6 +19,11 @@ export default async function HomePage() {
     },
   });
 
+  const allProjects = projects.map(p => ({
+    ...p,
+    projectType: p.type === "ADVANCED" ? "advanced" : "standard"
+  }));
+
   return (
     <div className="flex-1 space-y-12 p-10 pt-12 pb-20 bg-background">
       {/* Welcome Section */}
@@ -41,7 +46,7 @@ export default async function HomePage() {
             </h2>
         </div>
 
-        <ProjectsGrid initialProjects={projects} />
+        <ProjectsGrid initialProjects={allProjects} />
       </section>
     </div>
   );
