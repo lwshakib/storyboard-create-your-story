@@ -12,7 +12,7 @@ cloudinary.config({
 
 export const generateImageTool: Tool = {
   description:
-    "Generate high-quality images using AI. Use this when the user explicitly asks to create, generate, or make an image, picture, photo, illustration, or artwork. The model used is Flux Schnell, which creates fast, high-quality images based on text prompts.",
+    "Generate high-quality, professional images using AI. Use this to create cinematic visuals, illustrations, and background photos for presentation slides. The tool produces fast, high-end content tailored to your specific design prompts.",
   inputSchema: z.object({
     prompt: z
       .string()
@@ -44,6 +44,7 @@ export const generateImageTool: Tool = {
     height = 1024,
     negative_prompt = "",
   }) => {
+    console.log(`[GENERATOR] Running Image Tool for prompt: "${prompt}"`);
     if (!NEBIUS_API_KEY) {
       throw new Error("Missing NEBIUS_API_KEY");
     }
