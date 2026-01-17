@@ -13,6 +13,7 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { SlidePreview } from "@/components/editor/slide-preview"
+import { AdvancedSlidePreview } from "@/components/editor/advanced-slide-preview"
 import { formatDistanceToNow } from "date-fns"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
@@ -38,9 +39,16 @@ export default function TrashPage() {
   const fetchTrash = async () => {
     try {
       const res = await fetch("/api/projects?deleted=true")
+
       if (res.ok) {
         const data = await res.json()
-        setProjects(data)
+
+        const combined = data.map((p: any) => ({ 
+            ...p, 
+            projectType: p.type === "ADVANCED" ? 'advanced' : 'standard' 
+        })).sort((a: any, b: any) => new Date(b.deletedAt || b.updatedAt).getTime() - new Date(a.deletedAt || a.updatedAt).getTime())
+
+        setProjects(combined)
       }
     } catch (error) {
       console.error("Failed to fetch trash", error)
@@ -116,7 +124,9 @@ export default function TrashPage() {
       if (ids.length === 0) return
 
       toast.promise(
-          Promise.all(ids.map(id => fetch(`/api/projects/${id}`, { method: "DELETE" }))),
+          Promise.all(ids.map(id => {
+              return fetch(`/api/projects/${id}`, { method: "DELETE" })
+          })),
           {
               loading: 'Deleting selected items...',
               success: () => {
@@ -257,13 +267,28 @@ export default function TrashPage() {
 
                 <div className="relative aspect-video bg-muted/20 rounded-xl overflow-hidden border border-border/40 transition-all group-hover:border-primary/20">
                     <div className="absolute inset-0 z-10 bg-background/40 backdrop-grayscale-[0.5] opacity-60" />
-                    {project.slides && (project.slides as any[]).length > 0 ? (
+                    {project.projectType === 'advanced' ? (
+                        <AdvancedSlidePreview 
+                          html={(project.slides as any[])[0]?.html || ""} 
+                          autoScale 
+                        />
+                    ) : project.slides && (project.slides as any[]).length > 0 ? (
                       <SlidePreview slide={(project.slides as any[])[0]} scale={1} />
                     ) : (
                         <div className="w-full h-full flex items-center justify-center">
                             <Layout className="size-8 opacity-5" />
                         </div>
                     )}
+
+                    {/* Badge Overlay */}
+                    <div className="absolute top-2 right-2 z-20 pointer-events-none">
+                       <div className={cn(
+                         "px-1.5 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest border",
+                         project.projectType === 'advanced' ? "bg-amber-500/10 text-amber-500 border-amber-500/20" : "bg-primary/10 text-primary border-primary/20"
+                       )}>
+                         {project.projectType === 'advanced' ? "Advanced" : "Project"}
+                       </div>
+                    </div>
                 </div>
 
                 <div className="flex items-start justify-between gap-3 px-1">
