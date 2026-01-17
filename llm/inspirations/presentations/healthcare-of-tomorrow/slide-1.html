@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: "var(--background)",
+                        foreground: "var(--foreground)",
+                        primary: "var(--primary)",
+                        card: "var(--card)",
+                        border: "var(--border)",
+                        accent: "var(--accent)",
+                        muted: {
+                            DEFAULT: "var(--muted)",
+                            foreground: "var(--muted-foreground)"
+                        }
+                    },
+                    borderRadius: {
+                        lg: "var(--radius)",
+                        md: "calc(var(--radius) - 2px)",
+                        sm: "calc(var(--radius) - 4px)"
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --background: #0b1020;
+            --foreground: #f4f6ff;
+            --primary: #7c5cff;
+            --card: #121a33;
+            --border: #202c56;
+            --accent: #2fe6c7;
+            --muted: #141d3a;
+            --muted-foreground: #a9b2d6;
+            --radius: 0.9rem;
+        }
+        body { 
+          margin: 0; 
+          padding: 0; 
+          overflow: hidden; 
+          width: 1024px; 
+          height: 576px; 
+          background: var(--background); 
+          color: var(--foreground); 
+          font-family: sans-serif;
+        }
+        #preview-root {
+          width: 1024px;
+          height: 576px;
+        }
+    </style>
+</head>
+<body>
+    <div id="preview-root">
+        <div class="w-[1024px] h-[576px] bg-[#f8fafc] text-[#0f172a] p-16 flex items-center justify-between relative overflow-hidden font-sans">
+  <div class="absolute -top-40 -left-40 w-96 h-96 bg-blue-500/10 rounded-full blur-[120px]"></div>
+  <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-emerald-500/10 rounded-full blur-[120px]"></div>
+  <div class="relative z-10 flex-1 space-y-8">
+     <div class="flex items-center gap-2 text-emerald-600 font-black tracking-widest text-xs uppercase">Vision 2030: Healthcare</div>
+     <h1 class="text-8xl font-black tracking-tighter leading-none text-slate-900 uppercase">HUMAN<br/><span class="text-blue-600">CENTRIC</span></h1>
+     <p class="text-2xl text-slate-500 max-w-lg font-medium leading-relaxed">Pioneering a era of personalized, data-driven, and empathetic medical solutions for all.</p>
+  </div>
+  <div class="relative z-10 flex-1 flex justify-end">
+     <div class="w-[400px] h-[400px] bg-white rounded-full shadow-[0_40px_100px_rgba(0,0,0,0.08)] border border-slate-100 p-8 flex items-center justify-center relative">
+        <div class="absolute inset-0 border-[20px] border-emerald-500/5 rounded-full"></div>
+        <img src="https://image.pollinations.ai/prompt/Modern%20clean%20medical%20stethascope%20on%20white%20surface%2C%20bright%20lighting" class="w-full h-full object-contain rounded-full">
+     </div>
+  </div>
+</div>
+    </div>
+    <script>
+        if (window.lucide) lucide.createIcons();
+    </script>
+</body>
+</html>

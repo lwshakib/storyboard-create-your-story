@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: "var(--background)",
+                        foreground: "var(--foreground)",
+                        primary: "var(--primary)",
+                        card: "var(--card)",
+                        border: "var(--border)",
+                        accent: "var(--accent)",
+                        muted: {
+                            DEFAULT: "var(--muted)",
+                            foreground: "var(--muted-foreground)"
+                        }
+                    },
+                    borderRadius: {
+                        lg: "var(--radius)",
+                        md: "calc(var(--radius) - 2px)",
+                        sm: "calc(var(--radius) - 4px)"
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --background: #0b1020;
+            --foreground: #f4f6ff;
+            --primary: #7c5cff;
+            --card: #121a33;
+            --border: #202c56;
+            --accent: #2fe6c7;
+            --muted: #141d3a;
+            --muted-foreground: #a9b2d6;
+            --radius: 0.9rem;
+        }
+        body { 
+          margin: 0; 
+          padding: 0; 
+          overflow: hidden; 
+          width: 1024px; 
+          height: 576px; 
+          background: var(--background); 
+          color: var(--foreground); 
+          font-family: sans-serif;
+        }
+        #preview-root {
+          width: 1024px;
+          height: 576px;
+        }
+    </style>
+</head>
+<body>
+    <div id="preview-root">
+        <div class="w-[1024px] h-[576px] bg-[#f8fafc] text-[#0f172a] p-16 flex items-center justify-between relative overflow-hidden font-sans">
+  <div class="absolute inset-0 grayscale opacity-[0.03]" style="background-image: radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0); background-size: 40px 40px"></div>
+  <div class="relative z-10 w-1/2 pr-12">
+     <h2 class="text-6xl font-black mb-8 leading-tight">Innovation at the <span class="text-blue-600">Cellular</span> Level</h2>
+     <div class="space-y-4">
+        <div class="p-6 bg-white border border-slate-100 rounded-2xl shadow-sm flex items-center gap-6">
+           <div class="size-12 bg-emerald-500 text-white rounded-full flex items-center justify-center font-black italic">!</div>
+           <p class="text-slate-600 font-medium italic">"We aren't just treating disease; we're architecting health."</p>
+        </div>
+     </div>
+  </div>
+  <div class="relative z-10 w-1/2 h-full py-8">
+     <div class="w-full h-full bg-slate-900 rounded-[3rem] shadow-2xl relative overflow-hidden">
+        <img src="https://image.pollinations.ai/prompt/Microscopic%20view%20of%20glowing%20dna%20helix%2C%20clinical%20blue%20background%2C%20hyper%20detailed" class="w-full h-full object-cover">
+        <div class="absolute inset-0 bg-blue-600/10 mix-blend-overlay"></div>
+     </div>
+  </div>
+</div>
+    </div>
+    <script>
+        if (window.lucide) lucide.createIcons();
+    </script>
+</body>
+</html>
