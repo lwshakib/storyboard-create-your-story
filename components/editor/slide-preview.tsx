@@ -24,8 +24,19 @@ import {
   Cell,
   ResponsiveContainer,
   PolarGrid,
-  PolarAngleAxis
+  PolarAngleAxis,
+  LabelList
 } from 'recharts'
+
+const isDark = (color?: string) => {
+  if (!color) return false
+  const hex = color.replace('#', '')
+  const r = parseInt(hex.substr(0, 2), 16)
+  const g = parseInt(hex.substr(2, 2), 16)
+  const b = parseInt(hex.substr(4, 2), 16)
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000
+  return brightness < 128
+}
 
 export function SlidePreview({ slide, scale = 1 }: { slide: Slide, scale?: number }) {
   return (
@@ -71,11 +82,11 @@ export function SlidePreview({ slide, scale = 1 }: { slide: Slide, scale?: numbe
                   left: `${left}%`,
                   top: `${top}%`,
                   width: el.type === 'table' ? 'fit-content' : `${width}%`,
-                  height: el.type === 'image' || el.type === 'shape' || el.type.includes('chart') ? `${height}%` : 'auto',
+                  height: el.type === 'image' || el.type === 'shape' || (el.type && el.type.includes('chart')) ? `${height}%` : 'auto',
                   justifyContent: el.textAlign === 'center' ? 'center' : el.textAlign === 'right' ? 'flex-end' : 'flex-start',
                   textAlign: el.textAlign || 'left',
                   fontSize: el.type === 'text' ? responsiveFontSize : undefined,
-                  color: el.color || 'inherit',
+                  color: el.color || (isDark(slide.bgColor) ? '#ffffff' : '#000000'),
                   fontFamily: el.fontFamily,
                   fontWeight: el.fontWeight || 'normal',
                   lineHeight: 1.2
@@ -88,7 +99,7 @@ export function SlidePreview({ slide, scale = 1 }: { slide: Slide, scale?: numbe
                 )}
                 {el.type === 'table' && (
                   <div 
-                    className="w-full h-fit overflow-hidden rounded-[1cqw] border transition-all"
+                    className="w-full h-fit overflow-hidden rounded-none border transition-all"
                     style={{ 
                         backgroundColor: el.tableBgColor || 'rgba(255,255,255,0.8)',
                         borderColor: el.borderColor || 'rgba(0,0,0,0.1)',
@@ -160,10 +171,20 @@ export function SlidePreview({ slide, scale = 1 }: { slide: Slide, scale?: numbe
                       }}
                   />
                 )}
-                {el.type.includes('chart') && (
-                  <div className="w-full h-full flex flex-col bg-background/30 rounded-[1.5cqw] border border-border/10 backdrop-blur-sm overflow-hidden p-[1cqw]">
+                {el.type && el.type.includes('chart') && (
+                  <div 
+                    className={cn(
+                        "w-full h-full flex flex-col rounded-[1.5cqw] overflow-hidden p-[1cqw]",
+                        (el as any).showCard !== false && "bg-background/30 border border-border/10 backdrop-blur-sm"
+                    )}
+                  >
                       {el.chartTitle && (
-                          <div className="text-[1cqw] font-black uppercase tracking-[0.2em] mb-[1cqw] text-center opacity-50">
+                          <div 
+                            className="text-[1cqw] font-black uppercase tracking-[0.2em] mb-[1cqw] text-center"
+                            style={{ 
+                                color: el.color || (isDark(slide.bgColor) ? '#ffffff' : '#000000'),
+                            }}
+                          >
                               {el.chartTitle}
                           </div>
                       )}
@@ -172,12 +193,21 @@ export function SlidePreview({ slide, scale = 1 }: { slide: Slide, scale?: numbe
                               {el.type === 'bar-chart' ? (
                                   <BarChart data={el.chartData || []}>
                                       <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
-                                      <XAxis dataKey="label" fontSize="0.8cqw" tick={{ fill: 'currentColor', opacity: 0.5 }} axisLine={false} tickLine={false} />
-                                      <YAxis fontSize="0.8cqw" tick={{ fill: 'currentColor', opacity: 0.5 }}  axisLine={false} tickLine={false} />
+                                      <XAxis dataKey="label" fontSize="0.8cqw" tick={{ fill: el.color || (isDark(slide.bgColor) ? '#ffffff' : '#000000'), opacity: 0.7 }} axisLine={false} tickLine={false} />
+                                      <YAxis fontSize="0.8cqw" tick={{ fill: el.color || (isDark(slide.bgColor) ? '#ffffff' : '#000000'), opacity: 0.7 }}  axisLine={false} tickLine={false} />
                                       <Bar dataKey="value" radius={[4, 4, 0, 0]}>
                                           {(el.chartData || []).map((entry, index) => (
                                               <Cell key={`cell-${index}`} fill={entry.color || el.color || '#8884d8'} />
                                           ))}
+                                          <LabelList 
+                                            dataKey="value" 
+                                            position="top" 
+                                            style={{ 
+                                                fontSize: '0.8cqw', 
+                                                fontWeight: 'bold', 
+                                                fill: el.color || (isDark(slide.bgColor) ? '#ffffff' : '#000000'),
+                                            }} 
+                                          />
                                       </Bar>
                                   </BarChart>
                               ) : el.type === 'pie-chart' ? (
@@ -190,6 +220,19 @@ export function SlidePreview({ slide, scale = 1 }: { slide: Slide, scale?: numbe
                                           outerRadius="80%"
                                           paddingAngle={5}
                                           dataKey="value"
+                                          label={({ label, value, x, y, textAnchor }) => (
+                                        <text 
+                                            x={x} 
+                                            y={y} 
+                                            fill={el.color || (isDark(slide.bgColor) ? '#ffffff' : '#000000')} 
+                                            textAnchor={textAnchor} 
+                                            dominantBaseline="central" 
+                                            fontSize="0.8cqw" 
+                                            fontWeight="bold"
+                                        >
+                                            {`${label}: ${value}`}
+                                        </text>
+                                    )}
                                       >
                                           {(el.chartData || []).map((entry, index) => (
                                               <Cell key={`cell-${index}`} fill={entry.color || '#8884d8'} />
@@ -199,27 +242,59 @@ export function SlidePreview({ slide, scale = 1 }: { slide: Slide, scale?: numbe
                               ) : el.type === 'line-chart' ? (
                                   <LineChart data={el.chartData || []}>
                                       <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
-                                      <XAxis dataKey="label" fontSize="0.8cqw" tick={{ fill: 'currentColor', opacity: 0.5 }} axisLine={false} tickLine={false} />
-                                      <YAxis fontSize="0.8cqw" tick={{ fill: 'currentColor', opacity: 0.5 }} axisLine={false} tickLine={false} />
-                                      <Line type="monotone" dataKey="value" stroke={el.color || '#8884d8'} strokeWidth={2} dot={{ r: 2, fill: el.color || '#8884d8' }} />
+                                      <XAxis dataKey="label" fontSize="0.8cqw" tick={{ fill: el.color || (isDark(slide.bgColor) ? '#ffffff' : '#000000'), opacity: 0.7 }} axisLine={false} tickLine={false} />
+                                      <YAxis fontSize="0.8cqw" tick={{ fill: el.color || (isDark(slide.bgColor) ? '#ffffff' : '#000000'), opacity: 0.7 }} axisLine={false} tickLine={false} />
+                                      <Line type="monotone" dataKey="value" stroke={el.color || '#8884d8'} strokeWidth={2} dot={{ r: 2, fill: el.color || '#8884d8' }}>
+                                          <LabelList 
+                                            dataKey="value" 
+                                            position="top" 
+                                            offset={5} 
+                                            style={{ 
+                                                fontSize: '0.8cqw', 
+                                                fontWeight: 'bold', 
+                                                fill: el.color || (isDark(slide.bgColor) ? '#ffffff' : '#000000'),
+                                            }} 
+                                          />
+                                      </Line>
                                   </LineChart>
                               ) : el.type === 'area-chart' ? (
                                   <AreaChart data={el.chartData || []}>
                                       <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
-                                      <XAxis dataKey="label" fontSize="0.8cqw" tick={{ fill: 'currentColor', opacity: 0.5 }} axisLine={false} tickLine={false} />
-                                      <YAxis fontSize="0.8cqw" tick={{ fill: 'currentColor', opacity: 0.5 }} axisLine={false} tickLine={false} />
-                                      <Area type="natural" dataKey="value" stroke={el.color || '#8884d8'} fill={el.color || '#8884d8'} fillOpacity={0.3} />
+                                      <XAxis dataKey="label" fontSize="0.8cqw" tick={{ fill: el.color || (isDark(slide.bgColor) ? '#ffffff' : '#000000'), opacity: 0.7 }} axisLine={false} tickLine={false} />
+                                      <YAxis fontSize="0.8cqw" tick={{ fill: el.color || (isDark(slide.bgColor) ? '#ffffff' : '#000000'), opacity: 0.7 }} axisLine={false} tickLine={false} />
+                                      <Area type="natural" dataKey="value" stroke={el.color || '#8884d8'} fill={el.color || '#8884d8'} fillOpacity={0.3}>
+                                          <LabelList 
+                                            dataKey="value" 
+                                            position="top" 
+                                            offset={5} 
+                                            style={{ 
+                                                fontSize: '0.8cqw', 
+                                                fontWeight: 'bold', 
+                                                fill: el.color || (isDark(slide.bgColor) ? '#ffffff' : '#000000'),
+                                            }} 
+                                          />
+                                      </Area>
                                   </AreaChart>
                               ) : el.type === 'radar-chart' ? (
                                   <RadarChart cx="50%" cy="50%" outerRadius="80%" data={el.chartData || []}>
                                       <PolarGrid stroke="rgba(0,0,0,0.1)" />
-                                      <PolarAngleAxis dataKey="label" fontSize="0.8cqw" />
-                                      <Radar name="Value" dataKey="value" stroke={el.color || '#8884d8'} fill={el.color || '#8884d8'} fillOpacity={0.6} />
+                                      <PolarAngleAxis dataKey="label" fontSize="0.8cqw" tick={{ fill: el.color || (isDark(slide.bgColor) ? '#ffffff' : '#000000'), opacity: 0.7 }} />
+                                      <Radar name="Value" dataKey="value" stroke={el.color || '#8884d8'} fill={el.color || '#8884d8'} fillOpacity={0.6}>
+                                          <LabelList 
+                                            dataKey="value" 
+                                            position="top" 
+                                            style={{ 
+                                                fontSize: '0.8cqw', 
+                                                fontWeight: 'bold', 
+                                                fill: el.color || (isDark(slide.bgColor) ? '#ffffff' : '#000000'),
+                                            }} 
+                                          />
+                                      </Radar>
                                   </RadarChart>
                               ) : el.type === 'radial-chart' ? (
                                   <RadialBarChart innerRadius="30%" outerRadius="100%" barSize={10} data={el.chartData || []}>
                                       <RadialBar
-                                          label={{ position: 'insideStart', fill: '#fff' }}
+                                          label={{ position: 'insideStart', fill: '#fff', fontSize: '0.8cqw', fontWeight: 'bold' }}
                                           background
                                           dataKey="value"
                                       />
