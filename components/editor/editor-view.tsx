@@ -58,9 +58,10 @@ interface EditorViewProps {
     title: string
     slides: Slide[]
   }
+  isLoading?: boolean
 }
 
-export function EditorView({ initialData }: EditorViewProps) {
+export function EditorView({ initialData, isLoading }: EditorViewProps) {
   const [slides, setSlides] = React.useState<Slide[]>(initialData?.slides || [
     { id: 1, elements: [], layout: 'free', splitRatio: 0.5, bgColor: '#ffffff', bgImage: '' }
   ])
@@ -73,42 +74,12 @@ export function EditorView({ initialData }: EditorViewProps) {
   const [isSaving, setIsSaving] = React.useState(false)
   const router = useRouter()
   const fileInputRef = React.useRef<HTMLInputElement>(null)
-
-  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-
-    const reader = new FileReader()
-    reader.onload = (event) => {
-        try {
-            const data = JSON.parse(event.target?.result as string)
-            if (data.slides && Array.isArray(data.slides)) {
-                setSlides(data.slides)
-                setStoryTitle(data.title || "Imported Storyboard")
-                setActiveSlideId(data.slides[0].id)
-                toast.success("Project imported successfully")
-                saveToHistory(data.slides)
-            } else {
-                toast.error("Invalid file format")
-            }
-        } catch (error) {
-            toast.error("Failed to parse JSON file")
-        }
-    }
-    reader.readAsText(file)
-    // Reset input
-    if (fileInputRef.current) fileInputRef.current.value = ""
-  }
-
-  React.useEffect(() => {
-    if (initialData) {
-      setSlides(initialData.slides)
-      setStoryTitle(initialData.title || "Untitled Storyboard")
-      if (initialData.slides.length > 0) {
-        setActiveSlideId(initialData.slides[0].id)
-      }
-    }
-  }, [initialData])
+  
+  // Track previous slides length to handle auto-progression for streaming
+  const fileNameRef = React.useRef(initialData?.title)
+  const prevSlidesLength = React.useRef(slides.length)
+  const canvasRef = React.useRef<HTMLDivElement>(null)
+  const containerRef = React.useRef<HTMLDivElement>(null)
 
   const handleSave = async () => {
     setIsSaving(true)
@@ -129,8 +100,7 @@ export function EditorView({ initialData }: EditorViewProps) {
         const data = await res.json()
         toast.success(initialData?.id ? "Project updated" : "Project saved successfully")
         if (!initialData?.id) {
-          // New project saved, redirect to details page
-          router.push(`/project/${data.id}`)
+          router.push(`/editor/${data.id}`)
         } else {
           router.refresh()
         }
@@ -144,107 +114,6 @@ export function EditorView({ initialData }: EditorViewProps) {
       setIsSaving(false)
     }
   }
-  
-  // Undo/Redo History
-  const [history, setHistory] = React.useState<Slide[][]>([slides])
-  const [historyIndex, setHistoryIndex] = React.useState(0)
-
-  const saveToHistory = (newSlides: Slide[]) => {
-    const newHistory = history.slice(0, historyIndex + 1)
-    newHistory.push(JSON.parse(JSON.stringify(newSlides)))
-    if (newHistory.length > 50) newHistory.shift()
-    else setHistoryIndex(newHistory.length - 1)
-    setHistory(newHistory)
-  }
-
-  const undo = () => {
-    if (historyIndex > 0) {
-      const prev = history[historyIndex - 1]
-      setSlides(JSON.parse(JSON.stringify(prev)))
-      setHistoryIndex(historyIndex - 1)
-    }
-  }
-
-  const redo = () => {
-    if (historyIndex < history.length - 1) {
-      const next = history[historyIndex + 1]
-      setSlides(JSON.parse(JSON.stringify(next)))
-      setHistoryIndex(historyIndex + 1)
-    }
-  }
-
-  const updateSlidesWithHistory = (updater: (prev: Slide[]) => Slide[]) => {
-    const newSlides = updater(slides)
-    setSlides(newSlides)
-    saveToHistory(newSlides)
-  }
-
-  const canvasRef = React.useRef<HTMLDivElement>(null)
-  const containerRef = React.useRef<HTMLDivElement>(null)
-
-  React.useLayoutEffect(() => {
-    const updateScale = () => {
-      if (!containerRef.current) return
-      const containerWidth = containerRef.current.offsetWidth - 128
-      const containerHeight = containerRef.current.offsetHeight - 128
-      const scale = Math.min(containerWidth / 1024, containerHeight / 576)
-      setCanvasScale(Math.min(scale, 1.2))
-    }
-
-    const observer = new ResizeObserver(updateScale)
-    if (containerRef.current) observer.observe(containerRef.current)
-    updateScale()
-    window.addEventListener('resize', updateScale)
-    
-    return () => {
-      observer.disconnect()
-      window.removeEventListener('resize', updateScale)
-    }
-  }, [])
-
-  const activeSlide = slides.find(s => s.id === activeSlideId) || slides[0]
-
-  React.useEffect(() => {
-    const handleNavigation = (e: KeyboardEvent) => {
-      if (!isPresenting) return
-      if (e.key === 'ArrowRight' || e.key === ' ') {
-        const nextIndex = slides.findIndex(s => s.id === activeSlideId) + 1
-        if (nextIndex < slides.length) setActiveSlideId(slides[nextIndex].id)
-      } else if (e.key === 'ArrowLeft') {
-        const prevIndex = slides.findIndex(s => s.id === activeSlideId) - 1
-        if (prevIndex >= 0) setActiveSlideId(slides[prevIndex].id)
-      } else if (e.key === 'Escape') {
-        setIsPresenting(false)
-        if (document.fullscreenElement) {
-          document.exitFullscreen()
-        }
-      }
-    }
-    window.addEventListener('keydown', handleNavigation)
-    return () => window.removeEventListener('keydown', handleNavigation)
-  }, [isPresenting, activeSlideId, slides])
-
-  React.useEffect(() => {
-    const handleFullscreenChange = () => {
-      if (!document.fullscreenElement && isPresenting) {
-        setIsPresenting(false)
-      }
-    }
-    document.addEventListener('fullscreenchange', handleFullscreenChange)
-    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange)
-  }, [isPresenting])
-
-  React.useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.key === 'Delete' || e.key === 'Backspace') && selectedElementId) {
-        if ((document.activeElement as HTMLElement)?.contentEditable === 'true') return
-        deleteElement(selectedElementId)
-        setSelectedElementId(null)
-      }
-    }
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [selectedElementId, activeSlideId])
 
   const addSlide = () => {
     const newId = Math.max(...slides.map(s => s.id), 0) + 1
@@ -322,12 +191,195 @@ export function EditorView({ initialData }: EditorViewProps) {
     addElementAtPos(type, window.innerWidth / 2, window.innerHeight / 2, config)
   }
 
-  const updateElement = (id: string, updates: Partial<SlideElement>) => {
+  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    const reader = new FileReader()
+    reader.onload = (event) => {
+        try {
+            const data = JSON.parse(event.target?.result as string)
+            if (data.slides && Array.isArray(data.slides)) {
+                setSlides(data.slides)
+                setStoryTitle(data.title || "Imported Storyboard")
+                setActiveSlideId(data.slides[0].id)
+                toast.success("Project imported successfully")
+                saveToHistory(data.slides)
+            } else {
+                toast.error("Invalid file format")
+            }
+        } catch (error) {
+            toast.error("Failed to parse JSON file")
+        }
+    }
+    reader.readAsText(file)
+    // Reset input
+    if (fileInputRef.current) fileInputRef.current.value = ""
+  }
+  
+  // Computed Properties
+  const activeSlide = slides.find(s => s.id === activeSlideId) || slides[0]
+
+  // Undo/Redo History
+  const [history, setHistory] = React.useState<Slide[][]>([slides])
+  const [historyIndex, setHistoryIndex] = React.useState(0)
+
+  const saveToHistory = (newSlides: Slide[]) => {
+    const newHistory = history.slice(0, historyIndex + 1)
+    newHistory.push(JSON.parse(JSON.stringify(newSlides)))
+    if (newHistory.length > 50) newHistory.shift()
+    else setHistoryIndex(newHistory.length - 1)
+    setHistory(newHistory)
+  }
+
+  const undo = () => {
+    if (historyIndex > 0) {
+      const prev = history[historyIndex - 1]
+      setSlides(JSON.parse(JSON.stringify(prev)))
+      setHistoryIndex(historyIndex - 1)
+    }
+  }
+
+  const redo = () => {
+    if (historyIndex < history.length - 1) {
+      const next = history[historyIndex + 1]
+      setSlides(JSON.parse(JSON.stringify(next)))
+      setHistoryIndex(historyIndex + 1)
+    }
+  }
+
+  const updateSlidesWithHistory = (updater: (prev: Slide[]) => Slide[]) => {
+    const newSlides = updater(slides)
+    setSlides(newSlides)
+    saveToHistory(newSlides)
+  }
+
+  // Use refs to track the last processed data to avoid infinite loops
+  const lastProcessedSlidesCount = React.useRef(0)
+  const lastProcessedElementsCount = React.useRef(0)
+  const lastProcessedTitle = React.useRef('')
+
+  const isDark = (color?: string) => {
+    if (!color) return false
+    const hex = color.replace('#', '')
+    const r = parseInt(hex.substr(0, 2), 16)
+    const g = parseInt(hex.substr(2, 2), 16)
+    const b = parseInt(hex.substr(4, 2), 16)
+    const brightness = (r * 299 + g * 587 + b * 114) / 1000
+    return brightness < 128
+  }
+
+  const defaultTextColor = isDark(activeSlide.bgColor) ? '#ffffff' : '#000000'
+
+  React.useEffect(() => {
+    if (initialData) {
+      const currentSlidesCount = initialData.slides?.length || 0
+      const currentTitle = initialData.title || ''
+      const totalElements = initialData.slides.reduce((acc: number, s: any) => acc + (s.elements?.length || 0), 0)
+      
+      const hasSlidesCountChanged = currentSlidesCount !== lastProcessedSlidesCount.current
+      const hasElementsCountChanged = totalElements !== lastProcessedElementsCount.current
+      const hasTitleChanged = currentTitle && currentTitle !== lastProcessedTitle.current
+
+      // Only update if the data has actually changed
+      if (currentSlidesCount > 0 && (hasSlidesCountChanged || hasElementsCountChanged)) {
+        // If streaming (isLoading is true), we want to merge/update
+        if (isLoading) {
+             setSlides(initialData.slides)
+             
+             // Auto-switch to new slide if detected
+             if (currentSlidesCount > prevSlidesLength.current) {
+                 const newSlide = initialData.slides[currentSlidesCount - 1]
+                 setActiveSlideId(newSlide.id)
+                 prevSlidesLength.current = currentSlidesCount
+             }
+        } else {
+            // Full replacement (non-streaming)
+            if (initialData.slides && initialData.slides.length > 0) {
+                setSlides(initialData.slides)
+                // Always jump to the first slide of the new storyboard
+                setActiveSlideId(initialData.slides[0].id)
+                fileNameRef.current = currentTitle
+            }
+        }
+        lastProcessedSlidesCount.current = currentSlidesCount
+        lastProcessedElementsCount.current = totalElements
+      }
+      
+      // Update title if it changed
+      if (hasTitleChanged) {
+        setStoryTitle(currentTitle)
+        lastProcessedTitle.current = currentTitle
+      }
+    }
+  }, [initialData, isLoading])
+
+  const updateElement = (id: string, updates: Partial<SlideElement> & { isGenerating?: boolean }) => {
     updateSlidesWithHistory(prev => prev.map(s => s.id === activeSlideId 
       ? { ...s, elements: s.elements.map(el => el.id === id ? { ...el, ...updates } : el) } 
       : s
     ))
   }
+
+  // Track which images are currently being generated to prevent duplicate requests
+  const generatingImagesRef = React.useRef<Set<string>>(new Set())
+
+  // Handle Image Generation for items with imagePrompt but no src
+  React.useEffect(() => {
+    const generateImages = async () => {
+        for (const slide of slides) {
+            for (const el of slide.elements) {
+                // Check if this is an image element with a prompt but no src, and not already generating
+                if (el.type === 'image' && el.imagePrompt && !el.src && !generatingImagesRef.current.has(el.id)) {
+                   // Mark as generating
+                   generatingImagesRef.current.add(el.id)
+                   
+                   // Update UI to show loading state
+                   updateElement(el.id, { src: 'loading' })
+                   
+                   try {
+                       const res = await fetch('/api/generate-image', {
+                           method: 'POST',
+                           headers: { 'Content-Type': 'application/json' },
+                           body: JSON.stringify({ 
+                               prompt: el.imagePrompt,
+                               width: el.width,
+                               height: el.height
+                           })
+                       })
+                       
+                       if (res.ok) {
+                           const data = await res.json()
+                           if (data.url) {
+                               updateElement(el.id, { src: data.url })
+                           } else {
+                               console.warn('Image generation succeeded but no URL returned')
+                               updateElement(el.id, { src: '' })
+                           }
+                       } else {
+                           const errorText = await res.text()
+                           console.error('Image generation failed:', res.status, errorText)
+                           updateElement(el.id, { src: '' })
+                       }
+                   } catch (e) {
+                       console.error("Failed to generate image for element", el.id, e)
+                       // Don't update to empty string on network error - keep loading state
+                       // This allows retry on next render if needed
+                   } finally {
+                       // Remove from generating set
+                       generatingImagesRef.current.delete(el.id)
+                   }
+                }
+            }
+        }
+    }
+    
+    // Run if we have slides
+    if (slides.length > 0) {
+        generateImages()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slides, isLoading])
 
   const deleteElement = (id: string) => {
     updateActiveSlide({
@@ -609,6 +661,7 @@ export function EditorView({ initialData }: EditorViewProps) {
                                     layout={activeSlide.layout || 'free'}
                                     splitRatio={activeSlide.splitRatio || 0.5}
                                     canvasScale={canvasScale}
+                                    defaultTextColor={defaultTextColor}
                                 />
                           ))}
                         </div>
