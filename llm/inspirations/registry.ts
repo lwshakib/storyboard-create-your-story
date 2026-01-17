@@ -59,11 +59,20 @@ export const formatInspirationsForPrompt = (): string => {
   const inspirations = getInspirations();
   let output = '### 🍱 Premium Design Inspirations (Agency-Level Examples):\n\n';
 
+  // Function to strip image sources from HTML
+  const stripImages = (html: string) => {
+    return html
+      .replace(/src="[^"]*"/g, 'src=""')
+      .replace(/url\(['"]?.*?['"]?\)/g, "none") // Enhanced CSS url stripping
+      .replace(/https?:\/\/image\.pollinations\.ai\/[^"'\s]*/g, "") // Explicitly target pollinations
+      .replace(/background-image:\s*url\('[^']*'\)/g, "background-image: none");
+  };
+
   inspirations.forEach((pres, presIdx) => {
     output += `#### Presentation: ${pres.name}\n`;
     pres.slides.forEach((slide, slideIdx) => {
       output += `<slide-${slideIdx + 1} title="${slide.title.toUpperCase()}">\n`;
-      output += slide.html + '\n';
+      output += stripImages(slide.html) + '\n';
       output += `<structured-data>{/* Slide properties */}</structured-data>\n`;
       output += `</slide-${slideIdx + 1}>\n\n`;
     });

@@ -40,9 +40,9 @@ export default function NewProjectPage() {
     setIsGenerating(true)
     
     if (generationType === 'advanced') {
-        router.push(`/advanced-editor?prompt=${encodeURIComponent(prompt)}`)
+        router.push(`/editor?type=advanced&prompt=${encodeURIComponent(prompt)}`)
     } else {
-        router.push(`/editor?prompt=${encodeURIComponent(prompt)}`)
+        router.push(`/editor?type=standard&prompt=${encodeURIComponent(prompt)}`)
     }
   }
 
@@ -110,7 +110,7 @@ export default function NewProjectPage() {
           description="Start with a clean canvas and build your story piece by piece."
           buttonText="Continue"
           delay={0.6}
-          href="/editor?type=normal"
+          href="/editor?type=standard"
         />
       </div>
 

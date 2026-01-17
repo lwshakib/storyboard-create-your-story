@@ -37,7 +37,7 @@ export function ProjectCard({ project, onDelete }: ProjectCardProps) {
   const [isDeleting, setIsDeleting] = React.useState(false)
   
   const isAdvanced = (project as any).type === "ADVANCED"
-  const href = isAdvanced ? `/advanced-editor/${project.id}` : `/editor/${project.id}`
+  const href = `/editor/${project.id}`
   const apiPath = `/api/projects/${project.id}`
 
   const handleDelete = async () => {

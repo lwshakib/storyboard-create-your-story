@@ -130,8 +130,11 @@ export async function POST(req: Request) {
             width: el.width,
             height: el.height,
           });
-          if (result.success) el.src = result.image;
-          else el.src = `https://image.pollinations.ai/prompt/${encodeURIComponent(el.imagePrompt)}`; // Fail-safe dynamic fallback
+          if (result.success) el.src = result.secure_url;
+          else {
+            console.error(`[STORYBOARD_API] Image generation failed for: "${el.imagePrompt}". No fallback used.`);
+            el.src = ""; // Clear src if generation failed
+          }
         } catch (e) {
           console.error("Image generation failed", e);
         }

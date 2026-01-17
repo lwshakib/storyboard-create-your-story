@@ -1,14 +1,12 @@
 "use client"
 
 import * as React from "react"
-import { useSearchParams, useRouter } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import { 
   ChevronLeft, 
   Sparkles, 
   Loader2,
-  Trash2,
-  Layout,
   Save,
   Download,
   Pencil,
@@ -17,11 +15,9 @@ import {
   Presentation
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
-import { Suspense } from "react"
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -31,19 +27,48 @@ import {
 import { FileDown, FileJson, Presentation as PresentationIcon } from "lucide-react"
 import { exportHtmlToJson, exportHtmlToPdf, exportHtmlToPpptx } from "@/lib/export-utils"
 
-import { parseStoryboard, HtmlSlide } from "@/lib/storyboard-parser"
+import { HtmlSlide } from "@/lib/storyboard-parser"
 import { AdvancedSlidePreview } from "@/components/editor/advanced-slide-preview"
-import { ElementSettings, type ElementData } from "./element-settings"
-import { ThemeSettings } from "./theme-settings"
+import { ElementSettings, type ElementData } from "@/components/editor/element-settings"
+import { ThemeSettings } from "@/components/editor/theme-settings"
 
-interface AdvancedEditorContentProps {
+interface AdvancedEditorViewProps {
   initialData?: {
-    id: string
+    id?: string
     title: string
     slides: HtmlSlide[]
   }
+  isGenerating?: boolean
 }
 
+const SkeletonSlide = ({ index }: { index: number }) => (
+  <div className="space-y-6">
+    <div className="flex items-center gap-3 px-2">
+      <span className="h-6 w-10 bg-muted text-muted-foreground rounded-full flex items-center justify-center text-xs font-black animate-pulse">{index + 1}</span>
+      <h2 className="text-sm font-black uppercase tracking-widest text-muted-foreground/30 animate-pulse">Generating Slide...</h2>
+    </div>
+    <div 
+      className="relative shadow-[0_50px_100px_rgba(0,0,0,0.05)] bg-card border-none rounded-2xl overflow-hidden mx-auto flex items-center justify-center"
+      style={{ width: 960, height: 540 }}
+    >
+      <div className="flex flex-col items-center gap-4">
+        <div className="relative">
+          <Loader2 className="h-10 w-10 text-primary animate-spin" />
+          <Sparkles className="h-5 w-5 text-accent absolute -top-1 -right-1 animate-pulse" />
+        </div>
+        <p className="text-sm font-bold text-muted-foreground tracking-tight animate-pulse">AI is crafting your visual narrative...</p>
+      </div>
+      <div className="absolute inset-x-0 bottom-0 h-1 bg-muted overflow-hidden">
+        <motion.div 
+          className="h-full bg-primary"
+          initial={{ width: "0%" }}
+          animate={{ width: "100%" }}
+          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+        />
+      </div>
+    </div>
+  </div>
+)
 const SlideThumbnail = ({ html, index, onClick, active, title }: { html: string, index: number, onClick: () => void, active?: boolean, title: string }) => {
   return (
     <div 
@@ -63,23 +88,30 @@ const SlideThumbnail = ({ html, index, onClick, active, title }: { html: string,
       <div className="absolute inset-0 origin-top-left flex items-center justify-center bg-white">
           <AdvancedSlidePreview html={html} autoScale={true} scale={0.21875} />
       </div>
-      {/* Overlay to catch clicks and prevent interaction in thumbnail */}
       <div className="absolute inset-0 z-30" />
     </div>
   )
 }
 
-function AdvancedEditorContent({ initialData }: AdvancedEditorContentProps) {
-  const searchParams = useSearchParams()
+const GeneratingThumbnail = ({ index }: { index: number }) => (
+  <div 
+    className="aspect-video rounded-xl border-2 border-dashed border-primary/20 bg-muted/30 flex flex-col items-center justify-center gap-2 animate-pulse overflow-hidden relative"
+  >
+    <div className="absolute top-2 left-2 z-20 bg-primary/20 rounded-lg px-2 py-0.5 text-[10px] font-bold text-primary">
+      {index + 1}
+    </div>
+    <Loader2 className="h-4 w-4 text-primary opacity-40 animate-spin" />
+    <span className="text-[8px] font-black uppercase tracking-widest text-primary/40 text-center px-2">AI is thinking...</span>
+  </div>
+)
+
+export function AdvancedEditorView({ initialData, isGenerating }: AdvancedEditorViewProps) {
   const router = useRouter()
-  const initialPrompt = searchParams.get("prompt")
   
   const [slides, setSlides] = React.useState<HtmlSlide[]>(initialData?.slides || [])
   const [storyTitle, setStoryTitle] = React.useState(initialData?.title || "Advanced AI Storyboard")
   const [isEditingTitle, setIsEditingTitle] = React.useState(false)
   const [isSaving, setIsSaving] = React.useState(false)
-  const [isLoading, setIsLoading] = React.useState(false)
-  const [completion, setCompletion] = React.useState("")
   const [activeSlideIndex, setActiveSlideIndex] = React.useState(0)
   const mainScrollRef = React.useRef<HTMLDivElement>(null)
   
@@ -89,87 +121,14 @@ function AdvancedEditorContent({ initialData }: AdvancedEditorContentProps) {
   const [activeThemeId, setActiveThemeId] = React.useState<string | null>(null)
   const [appliedTheme, setAppliedTheme] = React.useState<any>(null)
 
-  const handleStream = async (prompt: string) => {
-    setIsLoading(true)
-    setCompletion("")
-    try {
-      const response = await fetch("/api/generate-html-storyboard", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt, theme: activeThemeId }),
-      })
-
-      if (!response.ok) throw new Error("Failed to start stream")
-      if (!response.body) throw new Error("No response body")
-
-      const reader = response.body.getReader()
-      const decoder = new TextDecoder()
-      let accumulatedText = ""
-
-      while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
-
-        accumulatedText += decoder.decode(value, { stream: true })
-        setCompletion(accumulatedText)
-
-        const data = parseStoryboard(accumulatedText)
-        setSlides(prev => {
-          if (data.slides.length >= prev.length) {
-            return data.slides
-          }
-          return prev
-        })
-        
-        if (data.title && data.title !== storyTitle && !isEditingTitle) {
-          setStoryTitle(data.title)
-        }
-      }
-    } catch (error) {
-      console.error("Streaming error:", error)
-      toast.error("Failed to generate storyboard")
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
   React.useEffect(() => {
-    // Check for imported storyboard (from templates or JSON import)
-    const imported = localStorage.getItem('importedStoryboard')
-    if (imported) {
-      try {
-        const data = JSON.parse(imported)
-        // If it's the advanced editor, we expect advanced content.
-        // If the data has HTML slides, we use them.
-        // If it has standard element-based slides, we might need to handle them or warn.
-        // For now, let's assume if we got here, we want to try to use what we found.
-        
-        if (data.slides && data.slides.length > 0) {
-            // Ensure slides are in HtmlSlide format or map them if possible
-            const loadedSlides: HtmlSlide[] = data.slides.map((s: any) => ({
-                id: s.id,
-                html: s.html || "", 
-                title: s.title || `Slide ${s.id + 1}`
-            })).filter((s: HtmlSlide) => s.html);
-
-            if (loadedSlides.length > 0) {
-                // Redirect to the main editor route with type=advanced
-                // We re-save to localStorage to ensure it's available for the main editor
-                // But we modify the data to include type: 'ADVANCED' explicitly if not present
-                const exportData = { ...data, type: 'ADVANCED' };
-                localStorage.setItem('importedStoryboard', JSON.stringify(exportData));
-                router.replace('/editor?type=advanced');
-                return;
-            }
-        }
-      } catch (e) {
-        console.error("Failed to parse imported storyboard", e)
-      }
-    } else if (initialPrompt && slides.length === 0 && !isLoading && completion === "") {
-        // Only stream if NOT imported
-      handleStream(initialPrompt)
+    if (initialData?.slides) {
+      setSlides(initialData.slides)
     }
-  }, [initialPrompt])
+    if (initialData?.title) {
+        setStoryTitle(initialData.title)
+    }
+  }, [initialData])
 
   React.useEffect(() => {
     const handleMessage = (e: MessageEvent) => {
@@ -178,7 +137,6 @@ function AdvancedEditorContent({ initialData }: AdvancedEditorContentProps) {
       } else if (e.data.type === 'HTML_UPDATED') {
         setSlides(prev => {
           const updated = [...prev]
-          // The update usually comes from the active slide index
           if (updated[activeSlideIndex]) {
             updated[activeSlideIndex] = { ...updated[activeSlideIndex], html: e.data.html }
           }
@@ -192,9 +150,6 @@ function AdvancedEditorContent({ initialData }: AdvancedEditorContentProps) {
 
   const updateSelectedElement = (changes: any) => {
     if (!selectedElData) return
-    const iframes = document.querySelectorAll('iframe')
-    // We need to find the correct iframe. In the user's layout, there's one iframe per slide in the main area.
-    // Thumbnails also have iframes, so we must target only the main area iframes.
     const mainIframes = document.querySelectorAll('main iframe')
     const targetIframe = mainIframes[activeSlideIndex] as HTMLIFrameElement
     if (targetIframe?.contentWindow) {
@@ -246,7 +201,7 @@ function AdvancedEditorContent({ initialData }: AdvancedEditorContentProps) {
         const data = await res.json()
         toast.success(initialData?.id ? "Project updated" : "Project saved successfully")
         if (!initialData?.id) {
-          router.push(`/advanced-editor/${data.id}`)
+          router.push(`/editor?type=advanced&id=${data.id}`)
         } else {
           router.refresh()
         }
@@ -405,11 +360,14 @@ function AdvancedEditorContent({ initialData }: AdvancedEditorContentProps) {
       <div className="flex flex-1 overflow-hidden">
         
         {/* Left Thumbnails */}
-        <div className="w-64 border-r bg-background/30 backdrop-blur-sm flex flex-col">
-          <div className="p-4 flex items-center justify-between border-b bg-background/20">
-            <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Thumbnails</h3>
+        <div className="w-64 border-r bg-background/30 backdrop-blur-sm flex flex-col h-full min-h-0">
+          <div className="p-4 flex items-center justify-between border-b bg-background/20 shrink-0 h-10">
+            <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Slides</h3>
+            <div className="px-2 py-0.5 rounded-full bg-muted/50 text-[9px] font-black text-muted-foreground/70 ring-1 ring-border shadow-sm">
+              {slides.length}
+            </div>
           </div>
-          <ScrollArea className="flex-1">
+          <ScrollArea className="flex-1 min-h-0">
             <div className="p-4 space-y-4">
               {slides.map((slide, index) => (
                 <SlideThumbnail
@@ -421,11 +379,8 @@ function AdvancedEditorContent({ initialData }: AdvancedEditorContentProps) {
                   onClick={() => scrollToSlide(slide.id)}
                 />
               ))}
-              {isLoading && (
-                 <div className="aspect-video rounded-xl border-2 border-dashed flex flex-col items-center justify-center bg-muted/20 animate-pulse gap-2">
-                    <Loader2 className="h-4 w-4 animate-spin opacity-20" />
-                    <span className="text-[8px] font-bold uppercase tracking-tighter opacity-30">Generating...</span>
-                 </div>
+              {isGenerating && (
+                <GeneratingThumbnail index={slides.length} />
               )}
             </div>
           </ScrollArea>
@@ -442,66 +397,49 @@ function AdvancedEditorContent({ initialData }: AdvancedEditorContentProps) {
           
           <div className="max-w-5xl mx-auto py-20 px-12 space-y-24 pb-40 relative z-10">
             <AnimatePresence>
-              {slides.length > 0 ? (
-                slides.map((slide, index) => (
-                  <motion.div 
-                    key={`${slide.id}-${index}`} 
-                    id={`slide-full-${slide.id}`} 
-                    initial={{ opacity: 0, y: 40 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                    className="space-y-6"
-                    onClick={() => setActiveSlideIndex(index)}
-                  >
-                    <div className="flex items-center justify-between px-2">
-                      <div className="flex items-center gap-3">
-                         <span className="h-6 w-10 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-black">{index + 1}</span>
-                         <h2 className="text-sm font-black uppercase tracking-widest text-muted-foreground/80">{slide.title}</h2>
-                      </div>
-                    </div>
-                    <div className={cn(
-                        "relative shadow-[0_50px_100px_rgba(0,0,0,0.12)] bg-white rounded-2xl overflow-hidden border transition-all mx-auto",
-                        activeSlideIndex === index ? "ring-2 ring-primary ring-offset-4 shadow-2xl" : "ring-1 ring-black/5"
-                      )}
-                      style={{ width: 960, height: 540 }}
-                    >
-                      <AdvancedSlidePreview 
-                        html={slide.html} 
-                        autoScale={true}
-                        isEditable={isEditMode && activeSlideIndex === index}
-                      />
-                      {!isEditMode && (
-                        <div className="absolute inset-0 bg-transparent cursor-pointer" />
-                      )}
-                    </div>
-                  </motion.div>
-                ))
-              ) : (
-                  <div className="h-[60vh] flex flex-col items-center justify-center gap-6 text-muted-foreground">
-                    <div className="relative">
-                       <div className="absolute -inset-4 bg-primary/10 rounded-full blur-2xl animate-pulse" />
-                       <Sparkles className="h-16 w-16 text-primary relative" />
-                    </div>
-                    <div className="text-center space-y-2">
-                       <p className="text-xl font-bold tracking-tight text-foreground">Initiating Production</p>
-                       <p className="text-sm font-medium opacity-50">Our AI creative engine is parsing your request...</p>
+              {slides.map((slide, index) => (
+                <motion.div 
+                  key={`${slide.id}-${index}`} 
+                  id={`slide-full-${slide.id}`} 
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                  className="space-y-6"
+                  onClick={() => setActiveSlideIndex(index)}
+                >
+                  <div className="flex items-center justify-between px-2">
+                    <div className="flex items-center gap-3">
+                       <span className="h-6 w-10 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-black">{index + 1}</span>
+                       <h2 className="text-sm font-black uppercase tracking-widest text-muted-foreground/80">{slide.title}</h2>
                     </div>
                   </div>
+                  <div className={cn(
+                      "relative shadow-[0_50px_100px_rgba(0,0,0,0.12)] bg-white rounded-2xl overflow-hidden border transition-all mx-auto",
+                      activeSlideIndex === index ? "ring-2 ring-primary ring-offset-4 shadow-2xl" : "ring-1 ring-black/5"
+                    )}
+                    style={{ width: 960, height: 540 }}
+                  >
+                    <AdvancedSlidePreview 
+                      html={slide.html} 
+                      autoScale={true}
+                      isEditable={isEditMode && activeSlideIndex === index}
+                    />
+                    {!isEditMode && (
+                      <div className="absolute inset-0 bg-transparent cursor-pointer" />
+                    )}
+                  </div>
+                </motion.div>
+              ))}
+              {isGenerating && (
+                <motion.div
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="pb-20"
+                >
+                  <SkeletonSlide index={slides.length} />
+                </motion.div>
               )}
             </AnimatePresence>
-            
-            {isLoading && (
-               <div className="space-y-6 opacity-60">
-                   <div className="flex items-center gap-3 px-2">
-                       <Loader2 className="h-4 w-4 animate-spin text-primary" />
-                       <span className="text-[10px] font-black uppercase tracking-widest text-primary">Assembling Slide {slides.length + 1}...</span>
-                   </div>
-                   <div className="w-full h-[576px] bg-muted/5 rounded-2xl border-2 border-dashed flex flex-col items-center justify-center gap-4">
-                       <div className="h-12 w-12 rounded-2xl bg-muted/20 animate-pulse" />
-                       <div className="h-2 w-32 bg-muted/20 rounded-full animate-pulse" />
-                   </div>
-               </div>
-            )}
           </div>
         </main>
       </div>
@@ -547,36 +485,33 @@ function AdvancedEditorContent({ initialData }: AdvancedEditorContentProps) {
               </div>
               <ThemeSettings 
                 activeThemeId={activeThemeId}
-                onApplyTheme={(t: any) => {
-                  setActiveThemeId(t.id)
-                  setAppliedTheme(t)
+                onApplyTheme={(theme: any) => {
+                  setActiveThemeId(theme.id)
+                  setAppliedTheme(theme)
                   
-                  // Apply theme logic - surgical replacement of :root vars in all slides
                   const updatedSlides = slides.map(slide => {
                     let html = slide.html
-                    const themeVars = `
-  :root {
-    --background: ${t.background};
-    --foreground: ${t.foreground};
-    --primary: ${t.primary};
-    --primary-foreground: ${t.primaryForeground};
-    --card: ${t.card};
-    --card-foreground: ${t.cardForeground};
-    --secondary: ${t.secondary};
-    --secondary-foreground: ${t.secondaryForeground};
-    --muted: ${t.muted};
-    --muted-foreground: ${t.mutedForeground};
-    --accent: ${t.accent};
-    --accent-foreground: ${t.accentForeground};
-    --popover: ${t.popover || t.card};
-    --popover-foreground: ${t.popoverForeground || t.cardForeground};
-    --destructive: ${t.destructive};
-    --border: ${t.border};
-    --input: ${t.input};
-    --ring: ${t.ring};
-    --radius: ${t.radius};
-  }
-                    `.trim()
+                    const themeVars = `:root {
+  --background: ${theme.background};
+  --foreground: ${theme.foreground};
+  --primary: ${theme.primary};
+  --primary-foreground: ${theme.primaryForeground};
+  --card: ${theme.card};
+  --card-foreground: ${theme.cardForeground};
+  --secondary: ${theme.secondary};
+  --secondary-foreground: ${theme.secondaryForeground};
+  --muted: ${theme.muted};
+  --muted-foreground: ${theme.mutedForeground};
+  --accent: ${theme.accent};
+  --accent-foreground: ${theme.accentForeground};
+  --popover: ${theme.popover || theme.card};
+  --popover-foreground: ${theme.popoverForeground || theme.cardForeground};
+  --destructive: ${theme.destructive};
+  --border: ${theme.border};
+  --input: ${theme.input};
+  --ring: ${theme.ring};
+  --radius: ${theme.radius};
+}`
 
                     if (html.includes(':root')) {
                       html = html.replace(/:root\s*\{[\s\S]*?\}/, themeVars)
@@ -590,7 +525,7 @@ function AdvancedEditorContent({ initialData }: AdvancedEditorContentProps) {
                   })
                   
                   setSlides(updatedSlides)
-                  toast.success(`Theme "${t.name}" applied across all slides`)
+                  toast.success("Theme applied across all slides")
                 }}
                 appliedTheme={appliedTheme}
               />
@@ -599,17 +534,5 @@ function AdvancedEditorContent({ initialData }: AdvancedEditorContentProps) {
         )}
       </AnimatePresence>
     </div>
-  )
-}
-
-export default function AdvancedEditorPage({ initialData }: AdvancedEditorContentProps) {
-  return (
-    <Suspense fallback={
-       <div className="h-screen w-full flex items-center justify-center bg-[#F8F9FB] dark:bg-[#0A0A0B]">
-          <Loader2 className="h-8 w-8 text-primary animate-spin" />
-       </div>
-    }>
-      <AdvancedEditorContent initialData={initialData} />
-    </Suspense>
   )
 }

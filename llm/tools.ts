@@ -117,7 +117,7 @@ export const generateImageTool: Tool = {
 
       return {
         success: true,
-        image: uploadResult.secure_url,
+        secure_url: uploadResult.secure_url,
         publicId: uploadResult.public_id,
         prompt,
         width,

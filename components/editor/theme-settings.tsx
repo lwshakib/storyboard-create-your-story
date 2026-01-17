@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { THEMES, ThemeKey } from "@/lib/themes"
+import { THEMES, type Theme } from "@/lib/themes"
 import { Palette, Check, Info } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
@@ -36,11 +36,12 @@ export function ThemeSettings({ activeThemeId, appliedTheme, onApplyTheme }: The
         <div className="grid grid-cols-1 gap-3">
           {Object.entries(THEMES).map(([key, theme]) => {
             const isActive = activeThemeId === key
+            const t = theme as Theme
             
             return (
               <button
                 key={key}
-                onClick={() => onApplyTheme({ ...theme, id: key, cssVars: { ...theme } })}
+                onClick={() => onApplyTheme({ ...t, id: key, cssVars: { ...t } })}
                 className={cn(
                   "p-4 rounded-2xl border text-left transition-all group relative overflow-hidden",
                   isActive 
@@ -57,19 +58,19 @@ export function ThemeSettings({ activeThemeId, appliedTheme, onApplyTheme }: The
                 <div className="flex items-center gap-3 mb-3">
                    <div 
                      className="h-8 w-8 rounded-lg border border-black/10 flex items-center justify-center font-bold"
-                     style={{ backgroundColor: theme.primary, color: theme.primaryForeground }}
+                     style={{ backgroundColor: t.primary, color: t.primaryForeground }}
                    >
-                     {theme.name[0]}
+                     {t.name[0]}
                    </div>
-                   <span className="font-bold text-sm tracking-tight">{theme.name}</span>
+                   <span className="font-bold text-sm tracking-tight">{t.name}</span>
                 </div>
 
                 <div className="flex items-center gap-1.5">
-                   <div className="h-5 w-5 rounded-md border" style={{ backgroundColor: theme.background }} />
-                   <div className="h-5 w-5 rounded-md border" style={{ backgroundColor: theme.foreground }} />
-                   <div className="h-5 w-5 rounded-md border" style={{ backgroundColor: theme.primary }} />
-                   <div className="h-5 w-5 rounded-md border" style={{ backgroundColor: theme.secondary || theme.muted }} />
-                   <div className="h-5 w-5 rounded-md border" style={{ backgroundColor: theme.accent }} />
+                   <div className="h-5 w-5 rounded-md border" style={{ backgroundColor: t.background }} />
+                   <div className="h-5 w-5 rounded-md border" style={{ backgroundColor: t.foreground }} />
+                   <div className="h-5 w-5 rounded-md border" style={{ backgroundColor: t.primary }} />
+                   <div className="h-5 w-5 rounded-md border" style={{ backgroundColor: t.secondary || (t as any).muted }} />
+                   <div className="h-5 w-5 rounded-md border" style={{ backgroundColor: t.accent }} />
                 </div>
               </button>
             )

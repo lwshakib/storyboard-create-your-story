@@ -52,7 +52,7 @@ const navMain = [
 ]
 
 // Helper to construct project URL - check if we're in editor or project view
-const getProjectUrl = (id: string) => `/project/${id}`
+const getProjectUrl = (id: string) => `/editor/${id}`
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [recentProjects, setRecentProjects] = React.useState<{ name: string, url: string }[]>([])

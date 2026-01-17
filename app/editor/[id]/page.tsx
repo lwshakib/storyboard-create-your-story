@@ -3,7 +3,7 @@
 import * as React from "react"
 import { useParams, useRouter } from "next/navigation"
 import { EditorView } from "@/components/editor/editor-view"
-import AdvancedEditorPage from "@/app/advanced-editor/page"
+import { AdvancedEditorView } from "@/components/editor/advanced-editor-view"
 import { Loader2, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
@@ -97,7 +97,7 @@ export default function UnifiedEditorPage() {
   }
 
   if (project.type === "ADVANCED") {
-    return <AdvancedEditorPage initialData={project} />
+    return <AdvancedEditorView initialData={project} />
   }
 
   return (
