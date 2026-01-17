@@ -25,7 +25,7 @@ export function ProjectsGrid({ initialProjects }: ProjectsGridProps) {
     return (
       <div className="flex flex-col items-center justify-center py-32 border border-dashed border-border/40 gap-6 text-center rounded-3xl bg-muted/5">
         <p className="font-semibold text-sm tracking-tight text-foreground/40">No storyboards yet</p>
-        <Link href="/editor" className="text-sm font-semibold tracking-tight text-primary hover:text-primary/70 transition-colors">
+        <Link href="/new" className="text-sm font-semibold tracking-tight text-primary hover:text-primary/70 transition-colors">
             Create your first project →
         </Link>
       </div>
