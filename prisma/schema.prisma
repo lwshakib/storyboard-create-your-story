@@ -24,7 +24,6 @@ model User {
   sessions      Session[]
   accounts      Account[]
   projects      Project[]
-  advancedProjects AdvancedProject[]
 
   @@unique([email])
   @@map("user")
@@ -78,32 +77,24 @@ model Verification {
   @@map("verification")
 }
 
+enum ProjectType {
+  NORMAL
+  ADVANCED
+}
+
 model Project {
-  id        String    @id @default(cuid())
-  title     String    @default("Untitled Storyboard")
+  id        String      @id @default(cuid())
+  title     String      @default("Untitled Storyboard")
   slides    Json
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  isDeleted Boolean   @default(false)
+  type      ProjectType @default(NORMAL)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  isDeleted Boolean     @default(false)
   deletedAt DateTime?
   userId    String?
-  user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User?       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@map("project")
 }
 
-model AdvancedProject {
-  id        String    @id @default(cuid())
-  title     String    @default("Advanced Storyboard")
-  slides    Json      // Will store array of { id, title, html }
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  isDeleted Boolean   @default(false)
-  deletedAt DateTime?
-  userId    String?
-  user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@map("advanced_project")
-}
