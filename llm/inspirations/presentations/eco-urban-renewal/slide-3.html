@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --background: #fdfdfb;
+            --foreground: #0f172a;
+            --primary: #10b981;
+            --radius: 1.25rem;
+        }
+        body { margin: 0; background: var(--background); color: var(--foreground); font-family: sans-serif; }
+        #preview-root { width: 1024px; height: 576px; }
+    </style>
+</head>
+<body>
+    <div id="preview-root" class="p-16 flex items-center gap-16">
+        <div class="flex-1 space-y-8">
+            <h2 class="text-6xl font-black tracking-tight leading-tight">IMPACT<br/>METRICS</h2>
+            <div class="p-8 bg-emerald-50 rounded-[var(--radius)] border border-emerald-100 flex items-center gap-6">
+                <div class="size-12 bg-emerald-500 text-white rounded-full flex items-center justify-center font-black italic shadow-lg shadow-emerald-500/20">!</div>
+                <p class="text-emerald-900 font-bold leading-relaxed italic">"Our modular approach reduces construction waste by 72% compared to traditional urban development."</p>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="p-4 bg-white border border-slate-100 rounded-xl">
+                    <span class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Carbon Saved</span>
+                    <span class="text-2xl font-black text-emerald-600">1.2M Tons</span>
+                </div>
+                <div class="p-4 bg-white border border-slate-100 rounded-xl">
+                    <span class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Cost Reduction</span>
+                    <span class="text-2xl font-black text-emerald-600">28.4%</span>
+                </div>
+            </div>
+        </div>
+        <div class="flex-1 h-full bg-white rounded-3xl border border-slate-100 shadow-2xl p-8 flex items-center justify-center">
+            <div id="impactChart" class="w-full h-full"></div>
+        </div>
+    </div>
+    <script>
+        lucide.createIcons();
+        const options = {
+            chart: { type: 'bar', height: '100%', toolbar: { show: false } },
+            plotOptions: { bar: { borderRadius: 8, horizontal: false, columnWidth: '55%' } },
+            dataLabels: { enabled: false },
+            series: [{ name: 'Traditional', data: [44, 55, 41, 67, 22] }, { name: 'Eco-Renewal', data: [76, 85, 101, 98, 87] }],
+            xaxis: { categories: ['Energy', 'Water', 'Waste', 'Food', 'Transit'] },
+            colors: ['#94a3b8', '#10b981'],
+            grid: { borderColor: '#f1f5f9', strokeDashArray: 4 },
+            legend: { position: 'top', fontBold: true }
+        };
+        new ApexCharts(document.querySelector("#impactChart"), options).render();
+    </script>
+</body>
+</html>
