@@ -5,6 +5,9 @@ import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { Textarea } from "@/components/ui/textarea"
+import { Sparkles, RefreshCw } from "lucide-react"
 import { 
   Dialog, 
   DialogContent, 
@@ -13,15 +16,24 @@ import {
   DialogHeader, 
   DialogTitle 
 } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { useRouter } from "next/navigation"
+import { RECOMMENDED_PROMPTS } from "@/lib/prompts-data"
 
 export default function NewProjectPage() {
   const [showGenerateDialog, setShowGenerateDialog] = React.useState(false)
   const [generationType, setGenerationType] = React.useState<'standard' | 'advanced'>('standard')
   const [prompt, setPrompt] = React.useState("")
   const [isGenerating, setIsGenerating] = React.useState(false)
+  const [randomPrompts, setRandomPrompts] = React.useState<string[]>([])
   const router = useRouter()
+
+  const refreshPrompts = React.useCallback(() => {
+    const shuffled = [...RECOMMENDED_PROMPTS].sort(() => 0.5 - Math.random());
+    setRandomPrompts(shuffled.slice(0, 4));
+  }, []);
+
+  React.useEffect(() => {
+    refreshPrompts();
+  }, [refreshPrompts]);
 
   const handleStartGeneration = () => {
     if (!prompt.trim()) return
@@ -98,36 +110,81 @@ export default function NewProjectPage() {
           description="Start with a clean canvas and build your story piece by piece."
           buttonText="Continue"
           delay={0.6}
-          href="/editor"
+          href="/editor?type=normal"
         />
       </div>
 
       <Dialog open={showGenerateDialog} onOpenChange={setShowGenerateDialog}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Generate with Creative AI</DialogTitle>
-            <DialogDescription>
-              What is your story about? describe it in detail for better results.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-             <Input
-              id="prompt"
-              placeholder="e.g. A space adventure about a lonely robot..."
-              className="col-span-3"
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') handleStartGeneration()
-              }}
-              autoFocus
-            />
+        <DialogContent className="sm:max-w-[500px] border-none shadow-2xl bg-neutral-900 text-white rounded-[32px] p-0 overflow-hidden">
+          <div className="p-8 space-y-6">
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-black bg-gradient-to-r from-purple-400 to-orange-400 bg-clip-text text-transparent italic flex items-center gap-2">
+                <Sparkles className="size-6 text-orange-400" />
+                STORYBOARD ARCHITECT
+              </DialogTitle>
+              <DialogDescription className="text-neutral-400 font-medium">
+                Describe your masterpiece. Our AI will handle the high-end visuals and data density.
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-4">
+               <Textarea
+                id="prompt"
+                placeholder="Describe your vision (e.g., A futuristic Tokyo with neon-lit vertical farms...)"
+                className="min-h-[120px] bg-neutral-800/50 border-neutral-700 text-white placeholder:text-neutral-500 rounded-2xl resize-none focus-visible:ring-orange-500/50 focus-visible:border-orange-500/50 transition-all font-medium p-4"
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                autoFocus
+              />
+
+              <div className="space-y-3">
+                <div className="flex items-center justify-between px-1">
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-500">PROMPTS FOR INSPIRATION</span>
+                  <button onClick={refreshPrompts} className="text-neutral-500 hover:text-white transition-colors">
+                    <RefreshCw className="size-3" />
+                  </button>
+                </div>
+                <div className="grid grid-cols-1 gap-2">
+                  {randomPrompts.map((p, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setPrompt(p)}
+                      className="text-left text-xs bg-neutral-800/30 hover:bg-neutral-800 border border-neutral-700/50 hover:border-orange-500/30 p-3 rounded-xl transition-all text-neutral-400 hover:text-white group"
+                    >
+                      {p}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <DialogFooter className="flex flex-col sm:flex-row gap-3 pt-2">
+              <Button 
+                variant="ghost" 
+                onClick={() => setShowGenerateDialog(false)}
+                className="text-neutral-500 hover:text-white hover:bg-neutral-800 rounded-xl"
+              >
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleStartGeneration} 
+                disabled={!prompt.trim() || isGenerating}
+                className="bg-white text-black hover:bg-neutral-200 rounded-xl px-10 font-bold shadow-[0_0_20px_rgba(255,255,255,0.15)] h-11"
+              >
+                {isGenerating ? (
+                  <>
+                    <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                    Initializing...
+                  </>
+                ) : (
+                  "Create Storyboard"
+                )}
+              </Button>
+            </DialogFooter>
           </div>
-          <DialogFooter>
-            <Button onClick={handleStartGeneration} disabled={!prompt.trim() || isGenerating}>
-              {isGenerating ? "Generating..." : "Generate"}
-            </Button>
-          </DialogFooter>
+          
+          {/* Subtle Accent Gradient at Bottom */}
+          <div className="h-1 w-full bg-gradient-to-r from-purple-500 via-orange-500 to-pink-500 opacity-50" />
         </DialogContent>
       </Dialog>
     </div>
