@@ -4,7 +4,7 @@ import { z } from "zod";
 import { generateImageTool } from "@/llm/tools";
 import { StoryTemplates } from "@/lib/templates-data";
 
-export const maxDuration = 60;
+export const maxDuration = 120;
 
 export async function POST(req: Request) {
   try {
@@ -14,113 +14,133 @@ export async function POST(req: Request) {
       return new Response("Prompt is required", { status: 400 });
     }
 
-    // Serialize templates to provide context/inspiration
-    // We remove the 'thumbnail' to save tokens as it's not needed for generation logic
     const templatesContext = StoryTemplates.map(t => ({
       title: t.title,
       description: t.description,
       slides: t.slides
     }));
 
+    // Use a strict schema to prevent lazy AI behavior (no more placeholders!)
     const { object } = await generateObject({
       model: GeminiModel(),
       schema: z.object({
         title: z.string(),
         slides: z.array(
           z.object({
-            id: z.number(),
-            bgColor: z.string().optional(),
-            bgImage: z.string().optional(),
-            elements: z.array(
+            id: z.number().describe("Slide ID, starting from 1"),
+            bgColor: z.string().default("#ffffff"),
+            elements: z.array(z.discriminatedUnion("type", [
               z.object({
-                id: z.string(),
-                type: z.enum([
-                  "text", "image", "shape", "table", 
-                  "bar-chart", "pie-chart", "line-chart", "area-chart", "radar-chart", "radial-chart"
-                ]),
-                content: z.any().optional(),
+                type: z.literal("text"),
+                id: z.string().optional(),
+                content: z.string(),
                 x: z.number(),
                 y: z.number(),
                 width: z.number(),
                 height: z.number(),
-                fontSize: z.number().optional(),
-                fontWeight: z.string().optional(),
-                color: z.string().optional(),
-                fontFamily: z.string().optional(),
-                textAlign: z.string().optional(),
-                src: z.string().optional(),
-                imagePrompt: z.string().optional(),
-                shapeType: z.enum(["rectangle", "circle"]).optional(),
-                opacity: z.number().optional(),
-                // New fields for charts and tables
-                tableData: z.array(z.array(z.object({ 
-                  text: z.string(), 
-                  isHeader: z.boolean().optional() 
-                }))).optional(),
-                tableBgColor: z.string().optional(),
-                borderColor: z.string().optional(),
-                chartData: z.array(z.object({ 
-                  label: z.string(), 
-                  value: z.number(), 
-                  color: z.string().optional() 
-                })).optional(),
-                chartTitle: z.string().optional(),
+                fontSize: z.number().default(24),
+                fontWeight: z.string().default("normal"),
+                color: z.string().default("#000000"),
+                textAlign: z.enum(["left", "center", "right"]).default("left")
+              }),
+              z.object({
+                type: z.literal("image"),
+                id: z.string().optional(),
+                imagePrompt: z.string().describe("Mandatory high-quality prompt for AI image generation. NO placeholders."),
+                src: z.string().default("").describe("Must be left empty, the engine will fill this."),
+                x: z.number(),
+                y: z.number(),
+                width: z.number(),
+                height: z.number()
+              }),
+              z.object({
+                type: z.literal("shape"),
+                id: z.string().optional(),
+                shapeType: z.enum(["rectangle", "circle"]),
+                color: z.string().default("#3b82f6"),
+                opacity: z.number().default(1),
+                x: z.number(),
+                y: z.number(),
+                width: z.number(),
+                height: z.number()
+              }),
+              z.object({
+                type: z.literal("table"),
+                id: z.string().optional(),
+                tableData: z.array(z.array(z.object({ text: z.string(), isHeader: z.boolean().optional() }))),
+                x: z.number(),
+                y: z.number(),
+                width: z.number(),
+                height: z.number()
+              }),
+              z.object({
+                type: z.enum(["bar-chart", "pie-chart", "line-chart", "area-chart", "radar-chart", "radial-chart"]),
+                id: z.string().optional(),
+                chartTitle: z.string(),
+                chartData: z.array(z.object({ label: z.string(), value: z.number(), color: z.string().optional() })),
+                x: z.number(),
+                y: z.number(),
+                width: z.number(),
+                height: z.number()
               })
-            ),
+            ]))
           })
         ),
       }),
       prompt: `
-      You are an expert storyboard creator. 
-      Generate a new storyboard based on this user prompt: "${prompt}".
+      You are an elite Storyboard Designer. Create a 5-slide professional storyboard about: "${prompt}".
 
-      Here are some existing professional templates for inspiration on structure, layout, and content quality:
+      RULES FOR PROFESSIONALLY GENERATED IMAGES:
+      1. Every 'image' element MUST have a highly descriptive 'imagePrompt'.
+      2. NEVER use placeholder text in 'src'. Leave 'src' as an empty string. 
+      3. Example prompt: "A cinematic, 3D render of a futuristic AI neural network in a glass laboratory, high-tech aesthetics, soft blue lighting, professional photography."
+
+      VISUAL STANDARDS:
+      - Use Modern Corporate Glassmorphism or Minimalist professional styles.
+      - Ensure high contrast.
+      - NO elements should overlap.
+      - Slides must be numbered 1, 2, 3, 4, 5.
+
+      CONTEXT:
       ${JSON.stringify(templatesContext, null, 2)}
-
-      GUIDELINES:
-      - Create 3-5 high-quality slides.
-      - Canvas size is 1024x576. Ensure all elements fit within this bound.
-      - Use a mix of 'text', 'image', 'shape', 'table', and chart types ('bar-chart', 'pie-chart', etc.) where appropriate.
-      - VISUAL STYLE: Use the provided templates as a quality benchmark. Aim for professional, clean, and visually appealing layouts.
-      - **COLOR CONTRAST**: This is CRITICAL. Ensure high contrast between the background color and foreground elements (text, shapes). 
-        - If the background is dark (e.g., black, dark blue), use light text/shapes (e.g., white, light gray).
-        - If the background is light (e.g., white, cream), use dark text/shapes (e.g., black, dark gray).
-        - NEVER use the same or similar colors for background and text.
-      
-      SPECIFIC ELEMENT RULES:
-      - **Images**: MUST include a detailed 'imagePrompt' starting with "A professional photo/illustration of...".
-      - **Tables**: Use 'tableData' structure (rows of cells). Use 'tableBgColor' and 'borderColor' to style them nicely (e.g., semi-transparent backgrounds, subtle borders).
-      - **Charts**: Use 'chartData' (labels and values) and 'chartTitle'.
-      - **Text**: Define fontSize, fontWeight, color, etc.
-      
-      Make the story compelling and the visuals stunning.
       `,
     });
 
-    // Enriched generation: Generate images for image prompts
-    for (const slide of object.slides) {
-      for (const element of slide.elements) {
-        if (element.type === 'image' && element.imagePrompt) {
-          try {
-            console.log(`Generating image for prompt: ${element.imagePrompt}`);
-            const result = await (generateImageTool.execute as any)({
-              prompt: element.imagePrompt,
-              width: element.width || 1024,
-              height: element.height || 1024,
-            });
-            if (result.success) {
-              element.src = result.image;
-            }
-          } catch (error) {
-            console.error("Failed to generate image for element:", error);
-          }
+    // Post-processing: Auto-generate IDs for elements that don't have them
+    object.slides.forEach((slide, slideIndex) => {
+      slide.elements.forEach((el, elIndex) => {
+        if (!el.id) {
+          el.id = `slide-${slide.id}-el-${elIndex}-${Math.random().toString(36).substr(2, 9)}`;
         }
-      }
+      });
+    });
+
+    // Enriched generation: All images in parallel
+    const imageElements: any[] = [];
+    object.slides.forEach(s => s.elements.forEach(el => {
+        if (el.type === 'image' && el.imagePrompt) imageElements.push(el);
+    }));
+
+    if (imageElements.length > 0) {
+      await Promise.all(imageElements.map(async (el) => {
+        try {
+          console.log(`[STORYBOARD_API] Calling generateImageTool with prompt: "${el.imagePrompt}"`);
+          const result = await (generateImageTool.execute as any)({
+            prompt: el.imagePrompt,
+            width: el.width,
+            height: el.height,
+          });
+          if (result.success) el.src = result.image;
+          else el.src = `https://image.pollinations.ai/prompt/${encodeURIComponent(el.imagePrompt)}`; // Fail-safe dynamic fallback
+        } catch (e) {
+          console.error("Image generation failed", e);
+        }
+      }));
     }
 
     return Response.json(object);
   } catch (error) {
-    console.error("Generation error:", error);
-    return new Response("Failed to generate storyboard", { status: 500 });
+    console.error("Generation Error:", error);
+    return new Response("Generation Failed", { status: 500 });
   }
 }
