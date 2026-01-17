@@ -9,6 +9,8 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
+import Link from "next/link"
+
 export function NavProjects({
   projects,
 }: {
@@ -24,14 +26,14 @@ export function NavProjects({
       <SidebarGroupLabel>Recently Opened</SidebarGroupLabel>
       <SidebarMenu>
         {projects.map((item) => (
-          <SidebarMenuItem key={item.name}>
+          <SidebarMenuItem key={item.url}>
             <SidebarMenuButton 
               asChild
               isActive={pathname === item.url}
             >
-              <a href={item.url}>
+              <Link href={item.url}>
                 <span>{item.name}</span>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         ))}
