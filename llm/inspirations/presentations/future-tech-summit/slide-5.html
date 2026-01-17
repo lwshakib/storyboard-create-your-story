@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: "var(--background)",
+                        foreground: "var(--foreground)",
+                        primary: "var(--primary)",
+                        card: "var(--card)",
+                        border: "var(--border)",
+                        accent: "var(--accent)",
+                        muted: {
+                            DEFAULT: "var(--muted)",
+                            foreground: "var(--muted-foreground)"
+                        }
+                    },
+                    borderRadius: {
+                        lg: "var(--radius)",
+                        md: "calc(var(--radius) - 2px)",
+                        sm: "calc(var(--radius) - 4px)"
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --background: #0b1020;
+            --foreground: #f4f6ff;
+            --primary: #7c5cff;
+            --card: #121a33;
+            --border: #202c56;
+            --accent: #2fe6c7;
+            --muted: #141d3a;
+            --muted-foreground: #a9b2d6;
+            --radius: 0.9rem;
+        }
+        body { 
+          margin: 0; 
+          padding: 0; 
+          overflow: hidden; 
+          width: 1024px; 
+          height: 576px; 
+          background: var(--background); 
+          color: var(--foreground); 
+          font-family: sans-serif;
+        }
+        #preview-root {
+          width: 1024px;
+          height: 576px;
+        }
+    </style>
+</head>
+<body>
+    <div id="preview-root">
+        <div class="w-[1024px] h-[576px] bg-white text-black p-16 flex flex-col justify-center items-center relative overflow-hidden font-sans">
+  <div class="absolute top-0 right-0 p-8 grayscale opacity-20"><LogoIcon className="size-16" /></div>
+  <div class="text-center space-y-8">
+     <h1 class="text-7xl font-black tracking-tighter leading-none">JOIN THE<br/>REVOLUTION</h1>
+     <p class="text-xl text-slate-500 max-w-sm mx-auto font-medium">Be part of the select group defining the foundations of tomorrow.</p>
+     <div class="pt-8">
+        <button class="bg-black text-white px-12 py-5 rounded-2xl font-black flex items-center gap-4 hover:scale-105 transition-all shadow-2xl">
+           GET EARLY ACCESS <i data-lucide="arrow-right"></i>
+        </button>
+     </div>
+  </div>
+</div>
+    </div>
+    <script>
+        if (window.lucide) lucide.createIcons();
+    </script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: "var(--background)",
+                        foreground: "var(--foreground)",
+                        primary: "var(--primary)",
+                        card: "var(--card)",
+                        border: "var(--border)",
+                        accent: "var(--accent)",
+                        muted: {
+                            DEFAULT: "var(--muted)",
+                            foreground: "var(--muted-foreground)"
+                        }
+                    },
+                    borderRadius: {
+                        lg: "var(--radius)",
+                        md: "calc(var(--radius) - 2px)",
+                        sm: "calc(var(--radius) - 4px)"
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --background: #0b1020;
+            --foreground: #f4f6ff;
+            --primary: #7c5cff;
+            --card: #121a33;
+            --border: #202c56;
+            --accent: #2fe6c7;
+            --muted: #141d3a;
+            --muted-foreground: #a9b2d6;
+            --radius: 0.9rem;
+        }
+        body { 
+          margin: 0; 
+          padding: 0; 
+          overflow: hidden; 
+          width: 1024px; 
+          height: 576px; 
+          background: var(--background); 
+          color: var(--foreground); 
+          font-family: sans-serif;
+        }
+        #preview-root {
+          width: 1024px;
+          height: 576px;
+        }
+    </style>
+</head>
+<body>
+    <div id="preview-root">
+        <div class="w-[1024px] h-[576px] bg-[#020617] text-white p-16 flex flex-col justify-center relative overflow-hidden font-sans">
+  <h2 class="text-4xl font-black mb-16 text-center tracking-tight">Strategic Roadmap</h2>
+  <div class="relative w-full h-1 bg-white/10 rounded-full flex justify-between items-center px-8">
+     <div class="relative">
+        <div class="h-6 w-6 bg-cyan-500 rounded-full ring-8 ring-cyan-500/20"></div>
+        <div class="absolute top-10 left-1/2 -translate-x-1/2 text-center w-48">
+           <div class="text-xs font-black uppercase text-cyan-400 mb-1">Q1 2026</div>
+           <div class="text-sm font-bold">Alpha Launch</div>
+        </div>
+     </div>
+     <div class="relative">
+        <div class="h-6 w-6 bg-purple-500 rounded-full ring-8 ring-purple-500/20"></div>
+        <div class="absolute -top-20 left-1/2 -translate-x-1/2 text-center w-48">
+           <div class="text-xs font-black uppercase text-purple-400 mb-1">Q3 2026</div>
+           <div class="text-sm font-bold">Global Scaling</div>
+        </div>
+     </div>
+     <div class="relative">
+        <div class="h-6 w-6 bg-white rounded-full ring-8 ring-white/10"></div>
+        <div class="absolute top-10 left-1/2 -translate-x-1/2 text-center w-48">
+           <div class="text-xs font-black uppercase text-slate-400 mb-1">2027+</div>
+           <div class="text-sm font-bold">Autonomous Era</div>
+        </div>
+     </div>
+  </div>
+</div>
+    </div>
+    <script>
+        if (window.lucide) lucide.createIcons();
+    </script>
+</body>
+</html>

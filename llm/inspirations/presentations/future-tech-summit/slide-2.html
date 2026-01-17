@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: "var(--background)",
+                        foreground: "var(--foreground)",
+                        primary: "var(--primary)",
+                        card: "var(--card)",
+                        border: "var(--border)",
+                        accent: "var(--accent)",
+                        muted: {
+                            DEFAULT: "var(--muted)",
+                            foreground: "var(--muted-foreground)"
+                        }
+                    },
+                    borderRadius: {
+                        lg: "var(--radius)",
+                        md: "calc(var(--radius) - 2px)",
+                        sm: "calc(var(--radius) - 4px)"
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --background: #0b1020;
+            --foreground: #f4f6ff;
+            --primary: #7c5cff;
+            --card: #121a33;
+            --border: #202c56;
+            --accent: #2fe6c7;
+            --muted: #141d3a;
+            --muted-foreground: #a9b2d6;
+            --radius: 0.9rem;
+        }
+        body { 
+          margin: 0; 
+          padding: 0; 
+          overflow: hidden; 
+          width: 1024px; 
+          height: 576px; 
+          background: var(--background); 
+          color: var(--foreground); 
+          font-family: sans-serif;
+        }
+        #preview-root {
+          width: 1024px;
+          height: 576px;
+        }
+    </style>
+</head>
+<body>
+    <div id="preview-root">
+        <div class="w-[1024px] h-[576px] bg-[#020617] text-white p-12 flex flex-col relative overflow-hidden font-sans">
+  <div class="grid grid-cols-3 grid-rows-2 gap-4 h-full">
+     <div class="col-span-2 bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 p-8 flex flex-col justify-between overflow-hidden relative">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-500/10 blur-3xl"></div>
+        <h3 class="text-3xl font-bold">Generative AI 3.0</h3>
+        <p class="text-slate-400 text-lg">Predicting the future of multi-modal reasoning and emotional intelligence in systems architecture.</p>
+     </div>
+     <div class="bg-cyan-500 rounded-3xl p-8 flex flex-col justify-center items-center text-center text-black">
+        <div class="text-6xl font-black italic">92%</div>
+        <div class="text-xs font-black uppercase tracking-widest mt-2">Efficiency Gain</div>
+     </div>
+     <div class="bg-white/5 backdrop-blur-md rounded-3xl border border-white/10 p-8">
+        <h3 class="text-xl font-bold mb-4">Neural Networks</h3>
+        <div class="flex gap-2 text-cyan-400">
+           <i data-lucide="zap"></i><i data-lucide="zap"></i><i data-lucide="zap"></i>
+        </div>
+     </div>
+     <div class="col-span-2 bg-gradient-to-r from-purple-500/20 to-cyan-500/20 backdrop-blur-md rounded-3xl border border-white/10 p-8 flex items-center gap-8">
+        <div class="flex-1">
+           <h3 class="text-3xl font-bold">Planetary Core</h3>
+           <p class="text-slate-400 mt-2">Decentralized compute nodes across 6 continents.</p>
+        </div>
+        <i data-lucide="globe" class="size-16 text-white/50"></i>
+     </div>
+  </div>
+</div>
+    </div>
+    <script>
+        if (window.lucide) lucide.createIcons();
+    </script>
+</body>
+</html>
