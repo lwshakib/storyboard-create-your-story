@@ -27,6 +27,20 @@
 - **Asset Management**: [Cloudinary](https://cloudinary.com/)
 - **Authentication**: [Better Auth](https://www.better-auth.com/)
 
+## 📐 Architecture Breakdown
+
+```mermaid
+graph TD
+    A[User Input] -->|Prompt| B(AI Processing)
+    B -->|Generates| C{Content Engine}
+    C -->|Slides| D[Visual Layouts]
+    C -->|Text| E[Script & Notes]
+    D --> F[Storyboard Editor]
+    E --> F
+    F -->|Customization| F
+    F -->|Export| G[PowerPoint / PDF]
+```
+
 ## 🏁 Getting Started
 
 Follow these steps to set up the project locally.
