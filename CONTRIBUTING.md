@@ -49,7 +49,7 @@ This section guides you through submitting an enhancement suggestion, including 
 ## 🛠 Development Setup
 
 1.  Clone the repository.
-2.  Install dependencies: `npm install` or `bun install`.
+2.  Install dependencies: `bun install` (recommended) or `npm install`.
 3.  Set up your `.env` file (see [README.md](README.md)).
 4.  Run the development server: `npm run dev`.
 
