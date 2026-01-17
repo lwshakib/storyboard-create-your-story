@@ -40,7 +40,7 @@ export function EditorSidebar({ slides, activeSlideId, setActiveSlideId, onAddSl
                 <Plus className="h-4 w-4" />
             </Button>
           </div>
-          <div className="flex flex-col gap-4 px-4 pb-10 overflow-y-auto max-h-[calc(100vh-160px)] scrollbar-thin scrollbar-thumb-primary/10">
+          <div className="flex flex-col gap-4 px-4 pb-10 overflow-y-auto max-h-[calc(100vh-160px)] custom-scrollbar">
             {slides.map((slide, index) => (
               <div 
                 key={slide.id} 
