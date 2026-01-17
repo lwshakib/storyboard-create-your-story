@@ -56,7 +56,15 @@ Follow these steps to set up the project locally.
 
 3.  **Set up Environment Variables:**
 
-    Create a `.env` file in the root directory and add the following keys:
+    Create a `.env` file in the root directory by copying the example file:
+
+    ```bash
+    cp .env.example .env
+    ```
+
+    Then update the values in `.env` with your actual credentials.
+    
+    The `.env` file should look like this:
 
     ```env
     # Database
