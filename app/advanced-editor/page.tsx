@@ -11,6 +11,10 @@ import {
   Layout,
   Save,
   Download,
+  Pencil,
+  Palette,
+  X,
+  Presentation
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
@@ -24,10 +28,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { FileJson, FileText, Presentation, FileDown } from "lucide-react"
+import { FileDown, FileJson, Presentation as PresentationIcon } from "lucide-react"
 import { exportHtmlToJson, exportHtmlToPdf, exportHtmlToPpptx } from "@/lib/export-utils"
 
 import { parseStoryboard, HtmlSlide } from "@/lib/storyboard-parser"
+import { AdvancedSlidePreview } from "@/components/editor/advanced-slide-preview"
+import { ElementSettings, type ElementData } from "./element-settings"
+import { ThemeSettings } from "./theme-settings"
 
 interface AdvancedEditorContentProps {
   initialData?: {
@@ -35,40 +42,6 @@ interface AdvancedEditorContentProps {
     title: string
     slides: HtmlSlide[]
   }
-}
-
-const SlideIframe = ({ html, className }: { html: string; className?: string }) => {
-  const iframeRef = React.useRef<HTMLIFrameElement>(null)
-
-  React.useEffect(() => {
-    if (iframeRef.current) {
-      const doc = iframeRef.current.contentDocument
-      if (doc) {
-        doc.open()
-        doc.write(`
-          <!DOCTYPE html>
-          <html>
-            <head>
-              <style>
-                body { margin: 0; padding: 0; overflow: hidden; }
-                * { box-sizing: border-box; }
-              </style>
-            </head>
-            <body>${html}</body>
-          </html>
-        `)
-        doc.close()
-      }
-    }
-  }, [html])
-
-  return (
-    <iframe
-      ref={iframeRef}
-      className={cn("w-full h-full border-none pointer-events-none", className)}
-      title="Slide Preview"
-    />
-  )
 }
 
 const SlideThumbnail = ({ html, index, onClick, active, title }: { html: string, index: number, onClick: () => void, active?: boolean, title: string }) => {
@@ -87,10 +60,11 @@ const SlideThumbnail = ({ html, index, onClick, active, title }: { html: string,
         {index + 1}
       </div>
       
-      {/* Scaling container: 1024 / 224 (approx) = ~0.22 scale */}
-      <div className="absolute inset-0 origin-top-left" style={{ width: '1024px', height: '576px', transform: 'scale(0.21875)' }}>
-          <SlideIframe html={html} />
+      <div className="absolute inset-0 origin-top-left flex items-center justify-center bg-white">
+          <AdvancedSlidePreview html={html} autoScale={true} scale={0.21875} />
       </div>
+      {/* Overlay to catch clicks and prevent interaction in thumbnail */}
+      <div className="absolute inset-0 z-30" />
     </div>
   )
 }
@@ -108,6 +82,12 @@ function AdvancedEditorContent({ initialData }: AdvancedEditorContentProps) {
   const [completion, setCompletion] = React.useState("")
   const [activeSlideIndex, setActiveSlideIndex] = React.useState(0)
   const mainScrollRef = React.useRef<HTMLDivElement>(null)
+  
+  const [isEditMode, setIsEditMode] = React.useState(false)
+  const [isThemeMode, setIsThemeMode] = React.useState(false)
+  const [selectedElData, setSelectedElData] = React.useState<ElementData | null>(null)
+  const [activeThemeId, setActiveThemeId] = React.useState<string | null>(null)
+  const [appliedTheme, setAppliedTheme] = React.useState<any>(null)
 
   const handleStream = async (prompt: string) => {
     setIsLoading(true)
@@ -116,7 +96,7 @@ function AdvancedEditorContent({ initialData }: AdvancedEditorContentProps) {
       const response = await fetch("/api/generate-html-storyboard", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt }),
+        body: JSON.stringify({ prompt, theme: activeThemeId }),
       })
 
       if (!response.ok) throw new Error("Failed to start stream")
@@ -133,9 +113,7 @@ function AdvancedEditorContent({ initialData }: AdvancedEditorContentProps) {
         accumulatedText += decoder.decode(value, { stream: true })
         setCompletion(accumulatedText)
 
-        // Parse and update in real-time
         const data = parseStoryboard(accumulatedText)
-        
         setSlides(prev => {
           if (data.slides.length >= prev.length) {
             return data.slides
@@ -156,10 +134,77 @@ function AdvancedEditorContent({ initialData }: AdvancedEditorContentProps) {
   }
 
   React.useEffect(() => {
-    if (initialPrompt && slides.length === 0 && !isLoading && completion === "") {
+    // Check for imported storyboard (from templates or JSON import)
+    const imported = localStorage.getItem('importedStoryboard')
+    if (imported) {
+      try {
+        const data = JSON.parse(imported)
+        // If it's the advanced editor, we expect advanced content.
+        // If the data has HTML slides, we use them.
+        // If it has standard element-based slides, we might need to handle them or warn.
+        // For now, let's assume if we got here, we want to try to use what we found.
+        
+        if (data.slides && data.slides.length > 0) {
+            // Ensure slides are in HtmlSlide format or map them if possible
+            const loadedSlides: HtmlSlide[] = data.slides.map((s: any) => ({
+                id: s.id,
+                html: s.html || "", 
+                title: s.title || `Slide ${s.id + 1}`
+            })).filter((s: HtmlSlide) => s.html);
+
+            if (loadedSlides.length > 0) {
+                // Redirect to the main editor route with type=advanced
+                // We re-save to localStorage to ensure it's available for the main editor
+                // But we modify the data to include type: 'ADVANCED' explicitly if not present
+                const exportData = { ...data, type: 'ADVANCED' };
+                localStorage.setItem('importedStoryboard', JSON.stringify(exportData));
+                router.replace('/editor?type=advanced');
+                return;
+            }
+        }
+      } catch (e) {
+        console.error("Failed to parse imported storyboard", e)
+      }
+    } else if (initialPrompt && slides.length === 0 && !isLoading && completion === "") {
+        // Only stream if NOT imported
       handleStream(initialPrompt)
     }
   }, [initialPrompt])
+
+  React.useEffect(() => {
+    const handleMessage = (e: MessageEvent) => {
+      if (e.data.type === 'ELEMENT_CLICKED' && isEditMode) {
+        setSelectedElData(e.data)
+      } else if (e.data.type === 'HTML_UPDATED') {
+        setSlides(prev => {
+          const updated = [...prev]
+          // The update usually comes from the active slide index
+          if (updated[activeSlideIndex]) {
+            updated[activeSlideIndex] = { ...updated[activeSlideIndex], html: e.data.html }
+          }
+          return updated
+        })
+      }
+    }
+    window.addEventListener('message', handleMessage)
+    return () => window.removeEventListener('message', handleMessage)
+  }, [activeSlideIndex, isEditMode])
+
+  const updateSelectedElement = (changes: any) => {
+    if (!selectedElData) return
+    const iframes = document.querySelectorAll('iframe')
+    // We need to find the correct iframe. In the user's layout, there's one iframe per slide in the main area.
+    // Thumbnails also have iframes, so we must target only the main area iframes.
+    const mainIframes = document.querySelectorAll('main iframe')
+    const targetIframe = mainIframes[activeSlideIndex] as HTMLIFrameElement
+    if (targetIframe?.contentWindow) {
+      targetIframe.contentWindow.postMessage({
+        type: 'UPDATE_ELEMENT',
+        elementId: selectedElData.elementId,
+        changes
+      }, '*')
+    }
+  }
 
   const handleExport = async (format: 'json' | 'pdf' | 'pptx') => {
     try {
@@ -184,7 +229,7 @@ function AdvancedEditorContent({ initialData }: AdvancedEditorContentProps) {
   const handleSave = async () => {
     setIsSaving(true)
     try {
-      const url = initialData?.id ? `/api/advanced-projects/${initialData.id}` : "/api/advanced-projects"
+      const url = initialData?.id ? `/api/projects/${initialData.id}` : "/api/projects"
       const method = initialData?.id ? "PATCH" : "POST"
       
       const res = await fetch(url, {
@@ -193,6 +238,7 @@ function AdvancedEditorContent({ initialData }: AdvancedEditorContentProps) {
         body: JSON.stringify({
           title: storyTitle,
           slides: slides,
+          type: "ADVANCED",
         }),
       })
 
@@ -200,7 +246,7 @@ function AdvancedEditorContent({ initialData }: AdvancedEditorContentProps) {
         const data = await res.json()
         toast.success(initialData?.id ? "Project updated" : "Project saved successfully")
         if (!initialData?.id) {
-          router.push(`/advanced-project/${data.id}`)
+          router.push(`/advanced-editor/${data.id}`)
         } else {
           router.refresh()
         }
@@ -220,7 +266,6 @@ function AdvancedEditorContent({ initialData }: AdvancedEditorContentProps) {
     if (el) el.scrollIntoView({ behavior: 'smooth' })
   }
 
-  // Handle scroll to track active slide
   const handleScroll = () => {
     if (!mainScrollRef.current) return
     const scrollPos = mainScrollRef.current.scrollTop
@@ -239,8 +284,8 @@ function AdvancedEditorContent({ initialData }: AdvancedEditorContentProps) {
   }
 
   return (
-    <div className="flex h-screen w-full flex-col bg-[#F8F9FB] dark:bg-[#0A0A0B] overflow-hidden font-sans">
-      {/* Header - Replicated from main editor for consistency */}
+    <div className="flex h-screen w-full flex-col bg-[#F8F9FB] dark:bg-[#0A0A0B] overflow-hidden font-sans relative">
+      {/* Header */}
       <header className="flex h-14 shrink-0 items-center justify-between gap-4 px-6 border-b bg-background/50 backdrop-blur-xl z-[100]">
         <div className="flex items-center gap-6">
           <Button variant="ghost" size="icon" onClick={() => router.push("/home")} className="rounded-xl hover:bg-muted transition-all active:scale-95">
@@ -268,6 +313,33 @@ function AdvancedEditorContent({ initialData }: AdvancedEditorContentProps) {
         </div>
 
         <div className="flex items-center gap-3">
+          <Button 
+            variant={isEditMode ? "secondary" : "outline"} 
+            onClick={() => {
+              setIsEditMode(!isEditMode)
+              if (isThemeMode) setIsThemeMode(false)
+            }}
+            className="h-9 gap-2 font-semibold px-4 rounded-xl shadow-sm transition-all"
+            size="sm"
+          >
+            <Pencil className="h-4 w-4" />
+            <span>Edit Mode {isEditMode ? "ON" : "OFF"}</span>
+          </Button>
+          <Button 
+            variant={isThemeMode ? "secondary" : "outline"} 
+            onClick={() => {
+              setIsThemeMode(!isThemeMode)
+              if (isEditMode) setIsEditMode(false)
+            }}
+            className="h-9 gap-2 font-semibold px-4 rounded-xl shadow-sm transition-all"
+            size="sm"
+          >
+            <Palette className="h-4 w-4" />
+            <span>Themes</span>
+          </Button>
+
+          <div className="w-[1px] h-4 bg-border/40 mx-1" />
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button 
@@ -298,13 +370,11 @@ function AdvancedEditorContent({ initialData }: AdvancedEditorContentProps) {
                     className="gap-3 h-10 rounded-xl font-semibold px-3 cursor-pointer transition-colors"
                     onClick={() => handleExport('pptx')}
                 >
-                    <Presentation className="size-4 text-orange-500" />
+                    <PresentationIcon className="size-4 text-orange-500" />
                     <span>Export as PowerPoint</span>
                 </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-
-          <div className="w-[1px] h-4 bg-border/40 mx-1" />
 
           <Button 
             variant="outline" 
@@ -318,7 +388,6 @@ function AdvancedEditorContent({ initialData }: AdvancedEditorContentProps) {
           </Button>
           <Button 
             onClick={async () => {
-              // Presenting logic for advanced editor
               const element = document.documentElement;
               if (element.requestFullscreen) {
                 await element.requestFullscreen();
@@ -382,20 +451,28 @@ function AdvancedEditorContent({ initialData }: AdvancedEditorContentProps) {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
                     className="space-y-6"
+                    onClick={() => setActiveSlideIndex(index)}
                   >
                     <div className="flex items-center justify-between px-2">
                       <div className="flex items-center gap-3">
                          <span className="h-6 w-10 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-black">{index + 1}</span>
                          <h2 className="text-sm font-black uppercase tracking-widest text-muted-foreground/80">{slide.title}</h2>
                       </div>
-                      <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100">
-                         <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg"><Layout className="h-4 w-4" /></Button>
-                         <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg"><Trash2 className="h-4 w-4 text-destructive" /></Button>
-                      </div>
                     </div>
-                    <div className="relative shadow-[0_50px_100px_rgba(0,0,0,0.12)] bg-white rounded-2xl overflow-hidden border ring-1 ring-black/5"
-                         style={{ width: 1024, height: 576 }}>
-                      <SlideIframe html={slide.html} />
+                    <div className={cn(
+                        "relative shadow-[0_50px_100px_rgba(0,0,0,0.12)] bg-white rounded-2xl overflow-hidden border transition-all mx-auto",
+                        activeSlideIndex === index ? "ring-2 ring-primary ring-offset-4 shadow-2xl" : "ring-1 ring-black/5"
+                      )}
+                      style={{ width: 960, height: 540 }}
+                    >
+                      <AdvancedSlidePreview 
+                        html={slide.html} 
+                        autoScale={true}
+                        isEditable={isEditMode && activeSlideIndex === index}
+                      />
+                      {!isEditMode && (
+                        <div className="absolute inset-0 bg-transparent cursor-pointer" />
+                      )}
                     </div>
                   </motion.div>
                 ))
@@ -413,7 +490,6 @@ function AdvancedEditorContent({ initialData }: AdvancedEditorContentProps) {
               )}
             </AnimatePresence>
             
-            {/* Stream Status */}
             {isLoading && (
                <div className="space-y-6 opacity-60">
                    <div className="flex items-center gap-3 px-2">
@@ -429,6 +505,99 @@ function AdvancedEditorContent({ initialData }: AdvancedEditorContentProps) {
           </div>
         </main>
       </div>
+
+      {/* Slide-out Panels */}
+      <AnimatePresence>
+        {(isEditMode && selectedElData) && (
+          <motion.aside 
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            className="fixed top-14 right-0 bottom-0 w-[380px] bg-card border-l shadow-2xl z-[150]"
+          >
+            <div className="h-full flex flex-col">
+              <div className="p-4 border-b flex items-center justify-between">
+                <span className="font-bold text-sm tracking-tight capitalize">Element Properties</span>
+                <Button variant="ghost" size="icon" onClick={() => setSelectedElData(null)}><X className="h-4 w-4" /></Button>
+              </div>
+              <ElementSettings 
+                selectedElData={selectedElData}
+                onUpdate={updateSelectedElement}
+                clearSelection={() => setSelectedElData(null)}
+              />
+            </div>
+          </motion.aside>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {isThemeMode && (
+          <motion.aside 
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            className="fixed top-14 right-0 bottom-0 w-[380px] bg-card border-l shadow-2xl z-[150]"
+          >
+            <div className="h-full flex flex-col">
+              <div className="p-4 border-b flex items-center justify-between">
+                <span className="font-bold text-sm tracking-tight capitalize">Design System</span>
+                <Button variant="ghost" size="icon" onClick={() => setIsThemeMode(false)}><X className="h-4 w-4" /></Button>
+              </div>
+              <ThemeSettings 
+                activeThemeId={activeThemeId}
+                onApplyTheme={(t: any) => {
+                  setActiveThemeId(t.id)
+                  setAppliedTheme(t)
+                  
+                  // Apply theme logic - surgical replacement of :root vars in all slides
+                  const updatedSlides = slides.map(slide => {
+                    let html = slide.html
+                    const themeVars = `
+  :root {
+    --background: ${t.background};
+    --foreground: ${t.foreground};
+    --primary: ${t.primary};
+    --primary-foreground: ${t.primaryForeground};
+    --card: ${t.card};
+    --card-foreground: ${t.cardForeground};
+    --secondary: ${t.secondary};
+    --secondary-foreground: ${t.secondaryForeground};
+    --muted: ${t.muted};
+    --muted-foreground: ${t.mutedForeground};
+    --accent: ${t.accent};
+    --accent-foreground: ${t.accentForeground};
+    --popover: ${t.popover || t.card};
+    --popover-foreground: ${t.popoverForeground || t.cardForeground};
+    --destructive: ${t.destructive};
+    --border: ${t.border};
+    --input: ${t.input};
+    --ring: ${t.ring};
+    --radius: ${t.radius};
+  }
+                    `.trim()
+
+                    if (html.includes(':root')) {
+                      html = html.replace(/:root\s*\{[\s\S]*?\}/, themeVars)
+                    } else if (html.includes('<style>')) {
+                        html = html.replace('<style>', `<style>\n${themeVars}`)
+                    } else if (html.includes('</head>')) {
+                        html = html.replace('</head>', `<style>\n${themeVars}\n</style></head>`)
+                    }
+                    
+                    return { ...slide, html }
+                  })
+                  
+                  setSlides(updatedSlides)
+                  toast.success(`Theme "${t.name}" applied across all slides`)
+                }}
+                appliedTheme={appliedTheme}
+              />
+            </div>
+          </motion.aside>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
