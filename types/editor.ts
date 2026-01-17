@@ -38,6 +38,7 @@ export interface SlideElement {
   tableBgColor?: string;
   zone?: string | number;
   isFullSpace?: boolean;
+  showCard?: boolean;
 }
 
 export type LayoutType = 'blank' | 'title-only' | 'split-h' | 'split-v' | 'grid-4' | 'free' | 'title';
@@ -49,4 +50,6 @@ export interface Slide {
   bgImage?: string;
   layout?: LayoutType;
   splitRatio?: number;
+  html?: string;
+  title?: string;
 }
