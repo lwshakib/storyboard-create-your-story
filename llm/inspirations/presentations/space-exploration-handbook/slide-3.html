@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --background: #000000;
+            --foreground: #ffffff;
+            --primary: #ffffff;
+        }
+        body { margin: 0; background: var(--background); color: var(--foreground); font-family: sans-serif; }
+        #preview-root { width: 1024px; height: 576px; }
+    </style>
+ head>
+<body>
+    <div id="preview-root" class="p-24 flex flex-col justify-center">
+        <h2 class="text-4xl font-black uppercase tracking-tighter mb-20 text-center">MISSION TIMELINE: MARS HABITAT</h2>
+        
+        <div class="relative w-full">
+            <div class="absolute top-1/2 left-0 w-full h-px bg-white/20 -translate-y-1/2"></div>
+            
+            <div class="grid grid-cols-4 gap-12 relative z-10">
+                <div class="flex flex-col items-center">
+                    <div class="size-6 bg-white rounded-full ring-8 ring-white/10 mb-8"></div>
+                    <div class="text-center group">
+                        <span class="block text-xs font-black text-rose-500 uppercase tracking-widest mb-2 group-hover:scale-110 transition-transform">PHASE 01</span>
+                        <h4 class="text-xl font-bold uppercase tracking-tight mb-2">Launch & Escape</h4>
+                        <p class="text-slate-500 text-xs font-medium leading-relaxed uppercase">Earth Orbit Exit<br/>Q2 2028</p>
+                    </div>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="size-6 bg-blue-500 rounded-full ring-8 ring-blue-500/10 mb-8"></div>
+                    <div class="text-center group">
+                        <span class="block text-xs font-black text-blue-500 uppercase tracking-widest mb-2 group-hover:scale-110 transition-transform">PHASE 02</span>
+                        <h4 class="text-xl font-bold uppercase tracking-tight mb-2">Transit Cruise</h4>
+                        <p class="text-slate-500 text-xs font-medium leading-relaxed uppercase">Hohmann Transfer<br/>6 Month Duration</p>
+                    </div>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="size-6 bg-emerald-500 rounded-full ring-8 ring-emerald-500/10 mb-8"></div>
+                    <div class="text-center group">
+                        <span class="block text-xs font-black text-emerald-500 uppercase tracking-widest mb-2 group-hover:scale-110 transition-transform">PHASE 03</span>
+                        <h4 class="text-xl font-bold uppercase tracking-tight mb-2">EDL Sequence</h4>
+                        <p class="text-slate-500 text-xs font-medium leading-relaxed uppercase">Sky-Crane Landing<br/>Jezero Crater</p>
+                    </div>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="size-6 bg-amber-500 rounded-full ring-8 ring-amber-500/10 mb-8"></div>
+                    <div class="text-center group">
+                        <span class="block text-xs font-black text-amber-500 uppercase tracking-widest mb-2 group-hover:scale-110 transition-transform">PHASE 04</span>
+                        <h4 class="text-xl font-bold uppercase tracking-tight mb-2">Activation</h4>
+                        <p class="text-slate-500 text-xs font-medium leading-relaxed uppercase">Core Power Online<br/>Initial Deployment</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>lucide.createIcons();</script>
+</body>
+</html>
