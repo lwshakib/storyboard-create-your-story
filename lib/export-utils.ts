@@ -1,8 +1,9 @@
 import pptxgen from "pptxgenjs";
 import { Slide, SlideElement } from "@/types/editor";
-import { HtmlSlide } from "./storyboard-parser";
+import { HtmlSlide, htmlToStructuredSlide } from "./storyboard-parser";
 import { toPng } from "html-to-image";
 import { jsPDF } from "jspdf";
+import { colorToHex } from "./utils";
 
 export const exportToJson = (title: string, slides: Slide[]) => {
   const data = {
@@ -122,28 +123,8 @@ export const exportHtmlToJson = (title: string, slides: HtmlSlide[]) => {
     URL.revokeObjectURL(url);
 };
 
-// Helper to capture HTML as image
-const captureSlideAsImage = async (html: string): Promise<string> => {
-    const container = document.createElement("div");
-    container.style.width = "1024px";
-    container.style.height = "576px";
-    container.style.position = "absolute";
-    container.style.top = "-10000px";
-    container.style.left = "-10000px";
-    container.innerHTML = html;
-    document.body.appendChild(container);
+// Obsolete capture function removed in favor of structural parsing
 
-    try {
-        const dataUrl = await toPng(container, {
-            width: 1024,
-            height: 576,
-            pixelRatio: 2, // High resolution
-        });
-        return dataUrl;
-    } finally {
-        document.body.removeChild(container);
-    }
-};
 
 export const exportHtmlToPdf = async (title: string, slides: HtmlSlide[]) => {
     const doc = new jsPDF({
@@ -152,31 +133,52 @@ export const exportHtmlToPdf = async (title: string, slides: HtmlSlide[]) => {
         format: [1024, 576]
     });
 
-    for (let i = 0; i < slides.length; i++) {
+    const structuredSlides = await Promise.all(slides.map(s => htmlToStructuredSlide(s)));
+
+    for (let i = 0; i < structuredSlides.length; i++) {
         if (i > 0) doc.addPage([1024, 576], "landscape");
-        const imgData = await captureSlideAsImage(slides[i].html);
-        doc.addImage(imgData, "PNG", 0, 0, 1024, 576);
+        const slide = structuredSlides[i];
+        
+        // Background
+        if (slide.bgColor) {
+            const hex = colorToHex(slide.bgColor);
+            if (hex.startsWith('#')) {
+                doc.setFillColor(hex);
+                doc.rect(0, 0, 1024, 576, 'F');
+            }
+        }
+
+        for (const el of slide.elements) {
+            if (el.type === 'text') {
+                const hex = colorToHex(el.color || '#000000');
+                if (hex.startsWith('#')) doc.setTextColor(hex);
+                doc.setFontSize(el.fontSize || 24);
+                // Simple text placement. y + fontSize is a rough baseline.
+                doc.text(el.content, el.x, el.y + (el.fontSize || 24)); 
+            } else if (el.type === 'image' && el.src) {
+                try {
+                    doc.addImage(el.src, 'PNG', el.x, el.y, el.width, el.height);
+                } catch (e) {
+                    console.warn("Failed to add image to PDF", e);
+                }
+            } else if (el.type === 'shape' && el.color) {
+                const hex = colorToHex(el.color);
+                if (hex.startsWith('#')) {
+                    doc.setFillColor(hex);
+                    if (el.shapeType === 'circle') {
+                        doc.ellipse(el.x + el.width/2, el.y + el.height/2, el.width/2, el.height/2, 'F');
+                    } else {
+                        doc.rect(el.x, el.y, el.width, el.height, 'F');
+                    }
+                }
+            }
+        }
     }
 
     doc.save(`${title.replace(/\s+/g, "_")}.pdf`);
 };
 
 export const exportHtmlToPpptx = async (title: string, slides: HtmlSlide[]) => {
-    const pres = new pptxgen();
-    pres.title = title;
-    pres.layout = "LAYOUT_16x9";
-
-    for (const slideData of slides) {
-        const slide = pres.addSlide();
-        const imgData = await captureSlideAsImage(slideData.html);
-        slide.addImage({
-            data: imgData,
-            x: 0,
-            y: 0,
-            w: "100%",
-            h: "100%"
-        });
-    }
-
-    await pres.writeFile({ fileName: `${title.replace(/\s+/g, "_")}.pptx` });
+    const structuredSlides = await Promise.all(slides.map(s => htmlToStructuredSlide(s)));
+    await exportToPpptx(title, structuredSlides);
 };
