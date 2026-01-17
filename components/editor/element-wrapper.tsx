@@ -22,7 +22,8 @@ import {
   BarChart2,
   PieChart as PieChartIcon,
   TrendingUp,
-  Settings2
+  Settings2,
+  Loader2
 } from "lucide-react"
 import { 
   BarChart, 
@@ -93,6 +94,7 @@ interface ElementWrapperProps {
   layout: LayoutType
   splitRatio: number
   canvasScale: number
+  defaultTextColor: string
 }
 
 export function ElementWrapper({ 
@@ -108,7 +110,8 @@ export function ElementWrapper({
   canvasRef, 
   layout, 
   splitRatio, 
-  canvasScale 
+  canvasScale,
+  defaultTextColor
 }: ElementWrapperProps) {
   const [isResizing, setIsResizing] = React.useState(false)
   const [isDragging, setIsDragging] = React.useState(false)
@@ -167,7 +170,7 @@ export function ElementWrapper({
     e.stopPropagation()
     if (!isSelected) {
       onSelect()
-    } else if (el.type === 'text' || el.type === 'table' || el.type.includes('chart')) {
+    } else if (el.type === 'text' || el.type === 'table' || (el.type && el.type.includes('chart'))) {
       setIsEditing(true)
     }
   }
@@ -325,17 +328,17 @@ export function ElementWrapper({
             "group/element cursor-move",
             isSelected && "ring-2 ring-primary",
             el.type !== 'image' && "rounded-xl",
-            (el.type === 'text' || el.type === 'table' || el.type.includes('chart')) && "h-auto h-fit"
+            (el.type === 'text' || el.type === 'table' || (el.type && el.type.includes('chart'))) && "h-auto h-fit"
           )}
           onDoubleClick={(e) => {
             e.stopPropagation();
             if (!isSelected) onSelect();
-            if (el.type === 'text' || el.type === 'table' || el.type.includes('chart')) setIsEditing(true);
+            if (el.type === 'text' || el.type === 'table' || (el.type && el.type.includes('chart'))) setIsEditing(true);
           }}
         >
           {/* Chart/Table Settings Controls */}
           <AnimatePresence>
-            {isSelected && (el.type.includes('chart') || el.type === 'table') && (
+            {isSelected && ((el.type && el.type.includes('chart')) || el.type === 'table') && (
               <motion.div 
                 initial={{ opacity: 0, y: 10, scale: 0.9 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -360,7 +363,7 @@ export function ElementWrapper({
                         />
                       </div>
                       
-                      {el.type.includes('chart') && (
+                      {el.type && el.type.includes('chart') && (
                         <div>
                           <label className="text-[10px] font-black uppercase opacity-40 mb-2 block">Chart Data</label>
                           <div className="space-y-2 max-h-[200px] overflow-y-auto pr-2 custom-scrollbar">
@@ -645,15 +648,16 @@ export function ElementWrapper({
                     setIsEditing(false)
                   }}
                   className={cn(
-                    "w-full p-4 outline-none rounded-xl break-words whitespace-pre-wrap min-h-[1em] font-medium leading-relaxed transition-all",
+                    "w-full outline-none break-words whitespace-pre-wrap min-h-[1em] transition-all",
                     isEditing ? "focus:ring-1 ring-primary/30" : "pointer-events-none select-none"
                   )}
                   style={{ 
                     textAlign: el.textAlign || 'left',
                     fontSize: el.fontSize ? `${el.fontSize}px` : '24px',
-                    color: el.color || 'inherit',
+                    color: el.color || defaultTextColor,
                     fontFamily: el.fontFamily || 'inherit',
-                    fontWeight: el.fontWeight || 'normal'
+                    fontWeight: el.fontWeight || 'normal',
+                    lineHeight: 1.2
                   }}
               >
                   {el.content}
@@ -661,7 +665,7 @@ export function ElementWrapper({
           )}
           {el.type === 'table' && (
               <div className={cn(
-                  "w-full overflow-x-auto p-1 custom-scrollbar group/table relative rounded-xl border transition-all",
+                  "w-full overflow-x-auto p-1 custom-scrollbar group/table relative rounded-none border transition-all",
                   !isEditing && "pointer-events-none select-none"
               )}
                 style={{ 
@@ -678,12 +682,12 @@ export function ElementWrapper({
                                     <td 
                                         key={colIndex}
                                         className={cn(
-                                          "p-3 text-xs font-medium focus:bg-primary/5 outline-none transition-colors h-12 text-center align-middle border-b border-r last:border-r-0",
+                                          "p-2 text-[10px] font-medium focus:bg-primary/5 outline-none transition-colors h-10 text-center align-middle border-b border-r last:border-r-0",
                                           cell.isHeader && "font-black uppercase tracking-wider bg-black/5"
                                         )}
                                         style={{ 
                                             borderColor: el.borderColor || 'rgba(0,0,0,0.1)',
-                                            color: el.color || 'inherit'
+                                            color: el.color || defaultTextColor
                                         }}
                                         contentEditable={isEditing}
                                         suppressContentEditableWarning
@@ -790,18 +794,26 @@ export function ElementWrapper({
                           "w-full h-full bg-muted/20 flex flex-col items-center justify-center gap-3 transition-all",
                           el.src === 'loading' ? "animate-pulse" : "group-hover/img:bg-muted/30"
                       )}>
-                        <div className={cn(
-                            "size-10 rounded-full flex items-center justify-center",
-                            el.src === 'loading' ? "bg-primary/10" : "bg-muted/40 group-hover/img:bg-primary/10"
-                        )}>
-                            <ImageIcon className={cn(
-                                "size-5 text-primary",
-                                el.src === 'loading' && "animate-bounce"
-                            )} />
-                        </div>
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary/40">
-                            {el.src === 'loading' ? 'Uploading to Cloud...' : 'Click to Upload Image'}
-                        </span>
+                        {el.src === 'loading' ? (
+                            <div className="flex flex-col items-center gap-2">
+                                <div className="size-8 rounded-full bg-primary/10 flex items-center justify-center animate-spin">
+                                    <Loader2 className="size-4 text-primary" />
+                                </div>
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-primary/70">Generating...</span>
+                            </div>
+                        ) : (
+                            <>
+                                <div className={cn(
+                                    "size-10 rounded-full flex items-center justify-center",
+                                    "bg-muted/40 group-hover/img:bg-primary/10 transition-colors"
+                                )}>
+                                    <ImageIcon className="size-5 text-muted-foreground group-hover/img:text-primary transition-colors" />
+                                </div>
+                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40 group-hover/img:text-primary/70 transition-colors">
+                                    Click to Upload Image
+                                </span>
+                            </>
+                        )}
                       </div>
                   )}
               </div>
@@ -811,17 +823,25 @@ export function ElementWrapper({
               <div 
                   className="w-full h-full"
                   style={{ 
-                      backgroundColor: el.color || '#000000',
+                      backgroundColor: el.color || defaultTextColor,
                       opacity: el.opacity ?? 1,
                       borderRadius: el.shapeType === 'circle' ? '100%' : '0px'
                   }}
               />
           )}
 
-          {el.type.includes('chart') && (
-            <div className="w-full h-full p-4 flex flex-col bg-background/30 rounded-2xl border border-border/10 backdrop-blur-sm overflow-hidden group/chart relative">
+          {el.type && el.type.includes('chart') && (
+            <div className={cn(
+                "w-full h-full p-4 flex flex-col rounded-2xl overflow-hidden group/chart relative",
+                (el as any).showCard !== false && "bg-background/30 border border-border/10 backdrop-blur-sm"
+            )}>
                 {el.chartTitle && (
-                    <div className="text-[10px] font-black uppercase tracking-[0.2em] mb-4 text-center opacity-50">
+                    <div 
+                        className="text-[10px] font-black uppercase tracking-[0.2em] mb-4 text-center"
+                        style={{ 
+                            color: el.color || defaultTextColor,
+                        }}
+                    >
                         {el.chartTitle}
                     </div>
                 )}
@@ -830,22 +850,21 @@ export function ElementWrapper({
                         {el.type === 'bar-chart' ? (
                             <BarChart data={el.chartData || []}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
-                                <XAxis dataKey="label" fontSize={10} tick={{ fill: 'currentColor', opacity: 0.5 }} axisLine={false} tickLine={false} />
-                                <YAxis fontSize={10} tick={{ fill: 'currentColor', opacity: 0.5 }}  axisLine={false} tickLine={false} />
-                                <Tooltip 
-                                    contentStyle={{ 
-                                        backgroundColor: 'rgba(255,255,255,0.9)', 
-                                        borderRadius: '12px', 
-                                        border: 'none', 
-                                        boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
-                                        fontSize: '10px',
-                                        fontWeight: 'bold'
-                                    }} 
-                                />
-                                <Bar dataKey="value" radius={[4, 4, 0, 0]}>
+                                <XAxis dataKey="label" fontSize={8} tick={{ fill: el.color || defaultTextColor, opacity: 0.7 }} axisLine={false} tickLine={false} />
+                                <YAxis fontSize={8} tick={{ fill: el.color || defaultTextColor, opacity: 0.7 }}  axisLine={false} tickLine={false} />
+                                <Bar dataKey="value" radius={[4, 4, 0, 0]} isAnimationActive={false}>
                                     {(el.chartData || []).map((entry, index) => (
                                         <Cell key={`cell-${index}`} fill={entry.color || el.color || '#8884d8'} />
                                     ))}
+                                    <LabelList 
+                                        dataKey="value" 
+                                        position="top" 
+                                        style={{ 
+                                            fontSize: '10px', 
+                                            fontWeight: 'bold', 
+                                            fill: el.color || defaultTextColor,
+                                        }} 
+                                    />
                                 </Bar>
                             </BarChart>
                         ) : el.type === 'pie-chart' ? (
@@ -859,71 +878,86 @@ export function ElementWrapper({
                                     paddingAngle={5}
                                     dataKey="value"
                                     nameKey="label"
+                                    label={({ label, value, x, y, textAnchor }) => (
+                                        <text 
+                                            x={x} 
+                                            y={y} 
+                                            fill={el.color || defaultTextColor} 
+                                            textAnchor={textAnchor} 
+                                            dominantBaseline="central" 
+                                            fontSize={10} 
+                                            fontWeight="bold"
+                                        >
+                                            {`${label}: ${value}`}
+                                        </text>
+                                    )}
+                                    isAnimationActive={false}
                                 >
                                     {(el.chartData || []).map((entry, index) => (
                                         <Cell key={`cell-${index}`} fill={entry.color || '#8884d8'} />
                                     ))}
                                 </Pie>
-                                <Tooltip 
-                                    contentStyle={{ 
-                                        backgroundColor: 'rgba(255,255,255,0.9)', 
-                                        borderRadius: '12px', 
-                                        border: 'none', 
-                                        boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
-                                        fontSize: '10px',
-                                        fontWeight: 'bold'
-                                    }} 
-                                />
                             </PieChart>
                         ) : el.type === 'line-chart' ? (
                             <LineChart data={el.chartData || []}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
-                                <XAxis dataKey="label" fontSize={10} tick={{ fill: 'currentColor', opacity: 0.5 }} axisLine={false} tickLine={false} />
-                                <YAxis fontSize={10} tick={{ fill: 'currentColor', opacity: 0.5 }} axisLine={false} tickLine={false} />
-                                <Tooltip 
-                                    contentStyle={{ 
-                                        backgroundColor: 'rgba(255,255,255,0.9)', 
-                                        borderRadius: '12px', 
-                                        border: 'none', 
-                                        boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
-                                        fontSize: '10px',
-                                        fontWeight: 'bold'
-                                    }} 
-                                />
-                                <Line type="monotone" dataKey="value" stroke={el.color || '#8884d8'} strokeWidth={3} dot={{ r: 4, fill: el.color || '#8884d8', strokeWidth: 2, stroke: '#fff' }} />
+                                <XAxis dataKey="label" fontSize={8} tick={{ fill: el.color || defaultTextColor, opacity: 0.7 }} axisLine={false} tickLine={false} />
+                                <YAxis fontSize={8} tick={{ fill: el.color || defaultTextColor, opacity: 0.7 }} axisLine={false} tickLine={false} />
+                                <Line type="monotone" dataKey="value" stroke={el.color || '#8884d8'} strokeWidth={3} dot={{ r: 4, fill: el.color || '#8884d8', strokeWidth: 2, stroke: '#fff' }} isAnimationActive={false}>
+                                    <LabelList 
+                                        dataKey="value" 
+                                        position="top" 
+                                        offset={10} 
+                                        style={{ 
+                                            fontSize: '10px', 
+                                            fontWeight: 'bold', 
+                                            fill: el.color || defaultTextColor,
+                                        }} 
+                                    />
+                                </Line>
                             </LineChart>
                         ) : el.type === 'area-chart' ? (
                             <AreaChart data={el.chartData || []} margin={{ left: -20, right: 10 }}>
                                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(0,0,0,0.05)" />
-                                <XAxis dataKey="label" fontSize={10} tick={{ fill: 'currentColor', opacity: 0.5 }} axisLine={false} tickLine={false} />
-                                <YAxis fontSize={10} tick={{ fill: 'currentColor', opacity: 0.5 }} axisLine={false} tickLine={false} />
-                                <Tooltip 
-                                    contentStyle={{ 
-                                        backgroundColor: 'rgba(255,255,255,0.9)', 
-                                        borderRadius: '12px', 
-                                        border: 'none', 
-                                        boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
-                                        fontSize: '10px',
-                                        fontWeight: 'bold'
-                                    }} 
-                                />
-                                <Area type="natural" dataKey="value" stroke={el.color || '#8884d8'} fill={el.color || '#8884d8'} fillOpacity={0.3} />
+                                <XAxis dataKey="label" fontSize={8} tick={{ fill: el.color || defaultTextColor, opacity: 0.7 }} axisLine={false} tickLine={false} />
+                                <YAxis fontSize={8} tick={{ fill: el.color || defaultTextColor, opacity: 0.7 }} axisLine={false} tickLine={false} />
+                                <Area type="natural" dataKey="value" stroke={el.color || '#8884d8'} fill={el.color || '#8884d8'} fillOpacity={0.3} isAnimationActive={false}>
+                                    <LabelList 
+                                        dataKey="value" 
+                                        position="top" 
+                                        offset={10} 
+                                        style={{ 
+                                            fontSize: '10px', 
+                                            fontWeight: 'bold', 
+                                            fill: el.color || defaultTextColor,
+                                        }} 
+                                    />
+                                </Area>
                             </AreaChart>
                         ) : el.type === 'radar-chart' ? (
                             <RadarChart cx="50%" cy="50%" outerRadius="80%" data={el.chartData || []}>
                                 <PolarGrid stroke="rgba(0,0,0,0.1)" />
-                                <PolarAngleAxis dataKey="label" fontSize={10} tick={{ fill: 'currentColor', opacity: 0.5 }} />
-                                <Radar name="Value" dataKey="value" stroke={el.color || '#8884d8'} fill={el.color || '#8884d8'} fillOpacity={0.6} dot={{ r: 4 }} />
-                                <Tooltip />
+                                <PolarAngleAxis dataKey="label" fontSize={8} tick={{ fill: el.color || defaultTextColor, opacity: 0.7 }} />
+                                <Radar name="Value" dataKey="value" stroke={el.color || '#8884d8'} fill={el.color || '#8884d8'} fillOpacity={0.6} dot={{ r: 4 }} isAnimationActive={false}>
+                                    <LabelList 
+                                        dataKey="value" 
+                                        position="top" 
+                                        style={{ 
+                                            fontSize: '10px', 
+                                            fontWeight: 'bold', 
+                                            fill: el.color || defaultTextColor,
+                                        }} 
+                                    />
+                                </Radar>
                             </RadarChart>
                         ) : el.type === 'radial-chart' ? (
                             <RadialBarChart innerRadius="30%" outerRadius="100%" barSize={10} data={el.chartData || []}>
                                 <RadialBar
-                                    label={{ position: 'insideStart', fill: '#fff' }}
+                                    label={{ position: 'insideStart', fill: '#fff', fontSize: 10, fontWeight: 'bold' }}
                                     background
                                     dataKey="value"
+                                    isAnimationActive={false}
                                 />
-                                <Tooltip />
                             </RadialBarChart>
                         ) : <div />}
                     </ResponsiveContainer>
