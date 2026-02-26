@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
-import { Loader2 } from "lucide-react";
+import { Loader2, MailCheck } from "lucide-react";
 
 export function SignUpForm({
   className,
@@ -27,6 +27,7 @@ export function SignUpForm({
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState<string | null>(null);
+  const [isSent, setIsSent] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,6 +39,7 @@ export function SignUpForm({
         email,
         password,
         name,
+        callbackURL: "/home",
       });
 
       if (error) {
@@ -46,8 +48,8 @@ export function SignUpForm({
         return;
       }
 
-      router.push("/home");
-      router.refresh();
+      setIsSent(true);
+      setIsLoading(false);
     } catch {
       setError("An unexpected error occurred");
       setIsLoading(false);
@@ -66,6 +68,34 @@ export function SignUpForm({
       setSocialLoading(null);
     }
   };
+
+  if (isSent) {
+    return (
+      <div className="flex flex-col items-center gap-6 text-center animate-in fade-in zoom-in duration-300">
+        <div className="bg-primary/10 size-16 rounded-full flex items-center justify-center mb-2">
+          <MailCheck className="size-8 text-primary" />
+        </div>
+        <div className="space-y-2">
+          <h1 className="text-2xl font-bold">Check your email</h1>
+          <p className="text-muted-foreground text-sm text-balance">
+            We've sent a verification link to <span className="font-medium text-foreground">{email}</span>. 
+            Please verify your email to log in.
+          </p>
+        </div>
+        <div className="flex flex-col w-full gap-2">
+          <Button asChild className="w-full">
+            <a href="https://gmail.com" target="_blank" rel="noopener noreferrer">
+              Go to Gmail
+            </a>
+          </Button>
+          <Button variant="outline" asChild className="w-full">
+            <Link href="/sign-in">Back to Login</Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
 
   return (
     <form

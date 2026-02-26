@@ -1,7 +1,7 @@
 import { Tool } from "ai";
 import { z } from "zod";
 import { v2 as cloudinary } from "cloudinary";
-import { NEBIUS_API_KEY } from "@/lib/env";
+import { A4F_API_KEY } from "@/lib/env";
 
 // Configure Cloudinary
 cloudinary.config({
@@ -45,50 +45,51 @@ export const generateImageTool: Tool = {
     negative_prompt = "",
   }) => {
     console.log(`[GENERATOR] Running Image Tool for prompt: "${prompt}"`);
-    if (!NEBIUS_API_KEY) {
-      throw new Error("Missing NEBIUS_API_KEY");
+    if (!A4F_API_KEY) {
+      throw new Error("Missing A4F_API_KEY");
     }
 
     try {
       const response = await fetch(
-        "https://api.tokenfactory.nebius.com/v1/images/generations",
+        "https://api.a4f.co/v1/images/generations",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${NEBIUS_API_KEY}`,
+            Authorization: `Bearer ${A4F_API_KEY}`,
           },
           body: JSON.stringify({
-            model: "black-forest-labs/flux-schnell",
-            response_format: "b64_json",
-            response_extension: "png",
-            width,
-            height,
-            num_inference_steps: 4,
-            negative_prompt: negative_prompt || "",
-            seed: -1,
-            loras: null,
+            model: "provider-4/imagen-3.5",
             prompt,
+            n: 1,
+            size: `${width}x${height}`
           }),
         }
       );
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
+        const errorText = await response.text();
         throw new Error(
-          errorData.error?.message || `API error: ${response.statusText}`
+          `API error (${response.status}): ${errorText}`
         );
       }
 
       const data = await response.json();
       const base64Image = data.data?.[0]?.b64_json;
+      const imageUrl = data.data?.[0]?.url;
 
-      if (!base64Image) {
+      let imageBuffer: Buffer;
+
+      if (base64Image) {
+        imageBuffer = Buffer.from(base64Image, "base64");
+      } else if (imageUrl) {
+        const imgResponse = await fetch(imageUrl);
+        imageBuffer = Buffer.from(await imgResponse.arrayBuffer());
+      } else {
         throw new Error("No image generated in response");
       }
 
-      // Convert base64 to buffer and upload to Cloudinary
-      const imageBuffer = Buffer.from(base64Image, "base64");
+      // Upload buffer to Cloudinary
       const uploadResult = await new Promise<{
         secure_url: string;
         public_id: string;
@@ -122,7 +123,7 @@ export const generateImageTool: Tool = {
         prompt,
         width,
         height,
-        model: "black-forest-labs/flux-schnell",
+        model: "provider-4/imagen-3.5",
       };
     } catch (error) {
       console.error("Image generation error:", error);

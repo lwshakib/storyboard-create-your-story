@@ -1,4 +1,3 @@
 export const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
-export const TAVILY_API_KEY = process.env.TAVILY_API_KEY;
-export const NEBIUS_API_KEY = process.env.NEBIUS_API_KEY;
-export const DEEPGRAM_API_KEY = process.env.DEEPGRAM_API_KEY;
+export const RESEND_API_KEY = process.env.RESEND_API_KEY;
+export const A4F_API_KEY = process.env.A4F_API_KEY;
