@@ -2,7 +2,6 @@
 
 import * as React from "react"
 import { StoryTemplates, Template } from "@/lib/templates-data"
-import { AdvancedTemplates } from "@/lib/advanced-templates"
 import { Button } from "@/components/ui/button"
 import { LayoutTemplate, ArrowRight, Files, Plus, Sparkles } from "lucide-react"
 import { motion } from "framer-motion"
@@ -14,13 +13,11 @@ import { cn } from "@/lib/utils"
 
 export default function TemplatesPage() {
   const router = useRouter()
-  const [activeTab, setActiveTab] = React.useState<'all' | 'standard' | 'advanced'>('all')
+  const [activeTab, setActiveTab] = React.useState<'all' | 'standard'>('all')
 
-  const allTemplates = [...StoryTemplates, ...AdvancedTemplates]
-  const filteredTemplates = allTemplates.filter(t => {
+  const filteredTemplates = StoryTemplates.filter(t => {
     if (activeTab === 'all') return true
     if (activeTab === 'standard') return t.type !== 'ADVANCED'
-    if (activeTab === 'advanced') return t.type === 'ADVANCED'
     return true
   })
 
@@ -55,8 +52,7 @@ export default function TemplatesPage() {
         <div className="flex items-center bg-muted/50 p-1 rounded-2xl border border-border/50">
             {[
                 { id: 'all', label: 'All' },
-                { id: 'standard', label: 'Standard' },
-                { id: 'advanced', label: 'High-Fidelity', icon: Sparkles }
+                { id: 'standard', label: 'Standard' }
             ].map(tab => (
                 <button
                     key={tab.id}

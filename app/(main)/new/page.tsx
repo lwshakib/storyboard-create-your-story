@@ -82,23 +82,10 @@ export default function NewProjectPage() {
           highlightedText="Creative AI"
           description="Describe your vision and let our AI generate a complete storyboard for you."
           buttonText="Generate"
+          featured
           delay={0.4}
           onClick={() => {
             setGenerationType('standard')
-            setShowGenerateDialog(true)
-          }}
-        />
-
-        {/* Advanced AI Card (The Featured One) */}
-        <SelectionCard 
-          title="Advanced Storyboard with"
-          highlightedText="Creative AI"
-          description="Interactive, real-time AI-powered storyboard creation with advanced controls."
-          buttonText="Go Advanced"
-          featured
-          delay={0.5}
-          onClick={() => {
-            setGenerationType('advanced')
             setShowGenerateDialog(true)
           }}
         />
