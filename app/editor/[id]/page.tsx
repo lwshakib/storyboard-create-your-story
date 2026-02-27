@@ -1,49 +1,232 @@
 "use client"
 
-import * as React from "react"
-import { useParams, useRouter } from "next/navigation"
+import { useState, useEffect, useCallback, useRef } from "react"
+import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { EditorView } from "@/components/editor/editor-view"
-import { AdvancedEditorView } from "@/components/editor/advanced-editor-view"
-import { Loader2, Trash2 } from "lucide-react"
+import { Loader2, Trash2, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { toast } from "sonner"
+import { motion } from "framer-motion"
+import { parseStoryboard, HtmlSlide } from "@/lib/storyboard-parser"
 
 export default function UnifiedEditorPage() {
   const { id } = useParams()
   const router = useRouter()
-  const [project, setProject] = React.useState<any>(null)
-  const [loading, setLoading] = React.useState(true)
-  const [error, setError] = React.useState(false)
+  const searchParams = useSearchParams()
+  const prompt = searchParams.get('prompt')
+  
+  const [project, setProject] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
+  const [isGeneratingOutline, setIsGeneratingOutline] = useState(false)
+  
+  // Slide generation state
+  const [streamingSlides, setStreamingSlides] = useState<HtmlSlide[]>([])
+  const [isGeneratingSection, setIsGeneratingSection] = useState(false)
 
-  React.useEffect(() => {
-    const fetchProject = async () => {
-      try {
-        const res = await fetch(`/api/projects/${id}`)
-        if (res.ok) {
-          const data = await res.json()
-          setProject(data)
-        } else {
-          setError(true)
+  const hasStartedOutlineRef = useRef(false)
+
+  const fetchProject = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/projects/${id}`)
+      if (res.ok) {
+        const data = await res.json()
+        setProject(data)
+        if (data.slides) {
+            setStreamingSlides(data.slides)
         }
-      } catch (err) {
-        console.error("Failed to fetch project", err)
+      } else {
         setError(true)
-      } finally {
-        setLoading(false)
       }
+    } catch (err) {
+      console.error("Failed to fetch project", err)
+      setError(true)
+    } finally {
+      setLoading(false)
     }
-
-    if (id) fetchProject()
   }, [id])
 
-  if (loading) {
-    return (
-      <div className="h-screen w-full flex flex-col items-center justify-center gap-4 bg-[#F8F9FB] dark:bg-[#0A0A0B]">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="text-sm font-medium text-muted-foreground animate-pulse">Opening your storyboard...</p>
+  const generateOutline = useCallback(async (p: string) => {
+    setIsGeneratingOutline(true)
+    try {
+      // 1. Generate the outline
+      const resp = await fetch("/api/generate-outline", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: p }),
+      })
+      if (!resp.ok) throw new Error("Outline generation failed")
+      const outlineData = await resp.json()
+
+      // Format outline slides for our slides field
+      const formattedSlides = outlineData.slides.map((s: any, idx: number) => ({
+        id: idx + 1,
+        title: s.title,
+        description: s.description,
+        content: s.content,
+        html: "" // No HTML yet
+      }))
+
+      // 2. Update the project in DB
+      const patchResp = await fetch(`/api/projects/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: outlineData.title,
+          description: outlineData.description,
+          slides: formattedSlides,
+        }),
+      })
+
+      if (patchResp.ok) {
+        const updatedProject = await patchResp.json()
+        setProject(updatedProject)
+        setStreamingSlides(formattedSlides)
+        
+        // 3. Clear prompt from URL
+        router.replace(`/editor/${id}`, { scroll: false })
+        
+        toast.success("Outline generated and saved")
+      }
+    } catch (err) {
+      console.error(err)
+      toast.error("Failed to generate outline")
+    } finally {
+      setIsGeneratingOutline(false)
+    }
+  }, [id, router])
+
+  useEffect(() => {
+    if (id) fetchProject()
+  }, [id, fetchProject])
+
+  useEffect(() => {
+    if (prompt && !hasStartedOutlineRef.current && project && !project.description && (!project.slides || project.slides.length === 0)) {
+        hasStartedOutlineRef.current = true
+        generateOutline(prompt)
+    }
+  }, [prompt, project, generateOutline])
+
+  const handleGenerateSection = useCallback(async (index: number) => {
+    const section = streamingSlides[index]
+    if (!section) {
+        toast.error("Slide data not found")
+        return
+    }
+
+    const context = `Overall Title: ${project?.title}\nOverall Description: ${project?.description}\nFull Narrative Flow and Planned Content:\n${streamingSlides.map((s, i) => `Section ${i + 1}: ${s.title}\n- Visual Prompt: ${s.description}\n- Writing/Narration: ${s.content}`).join('\n\n')}`
+
+    setIsGeneratingSection(true)
+    try {
+      const response = await fetch("/api/generate-sections/refine", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prompt: `GENERATE_SINGLE_SLIDE: Slide Index: ${index + 1}. Title: ${section.title}. Description: ${section.description}. Content: ${section.content}. 
+          IMPORTANT RULES:
+          1. Provide the RAW HTML for the slide content. DO NOT wrap it in <slide> or similar tags.
+          2. Start directly with the <!DOCTYPE html> or <html> content. 
+          3. Use the 'generateImage' tool to create a high-fidelity cinematic visual for this slide. DO NOT use placeholders.
+          4. Focus on professional agency-level design.`,
+          context: context
+        })
+      })
+
+      if (!response.ok) throw new Error("Failed to refine section")
+      
+      const { html } = await response.json()
+      
+      if (html) {
+        // Try parsing as storyboard first (for backwards compatibility if AI still adds tags)
+        const data = parseStoryboard(html)
+        let slideHtml = html.trim();
+
+        if (data.slides.length > 0) {
+          slideHtml = data.slides[0].html;
+        }
+
+        // Calculate new slides state
+        const next = [...streamingSlides]
+        next[index] = { 
+          ...next[index], 
+          html: slideHtml 
+        }
+        
+        // Update UI
+        setStreamingSlides(next)
+        
+        // Persist to Database immediately
+        try {
+          await fetch(`/api/projects/${id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              slides: next
+            })
+          })
+          toast.success("Section refined and saved")
+        } catch (saveErr) {
+          console.error("Auto-save failed:", saveErr)
+          toast.error("Section refined (but failed to auto-save)")
+        }
+      }
+    } catch (err) {
+      console.error("Refine error:", err)
+      toast.error("Failed to refine section")
+    } finally {
+      setIsGeneratingSection(false)
+    }
+  }, [project, id, streamingSlides])
+
+  const renderLoader = () => (
+    <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-[#F8F9FB] dark:bg-[#0A0A0B]">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div 
+          animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.2, 0.1] }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] rounded-full bg-primary/10 blur-[120px]" 
+        />
+        <motion.div 
+          animate={{ scale: [1, 1.3, 1], opacity: [0.1, 0.15, 0.1] }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          className="absolute -bottom-[20%] -right-[10%] w-[60%] h-[60%] rounded-full bg-blue-500/5 blur-[120px]" 
+        />
       </div>
-    )
+
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative z-10 flex flex-col items-center max-w-md text-center px-6"
+      >
+        <div className="relative mb-8">
+          <motion.div 
+            animate={{ rotate: 360 }}
+            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+            className="w-24 h-24 rounded-full border-t-2 border-r-2 border-primary/30"
+          />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Sparkles className="w-10 h-10 text-primary animate-pulse" />
+          </div>
+        </div>
+
+        <h2 className="text-2xl font-bold mb-3 tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
+          {isGeneratingOutline ? "Architecting Your Narrative" : "Opening Your Storyboard"}
+        </h2>
+        <p className="text-muted-foreground mb-8 leading-relaxed">
+          {isGeneratingOutline ? "Analyzing vision and creating a structural flow..." : "Preparing your workspace with high-fidelity components."}
+        </p>
+        
+        <div className="flex items-center gap-3 px-5 py-2.5 bg-background/50 backdrop-blur-md border border-border/50 rounded-full text-sm font-medium text-primary shadow-lg ring-1 ring-primary/20">
+          <Loader2 className="w-4 h-4 animate-spin" />
+          <span>{isGeneratingOutline ? "Generating Outline..." : "Loading data..."}</span>
+        </div>
+      </motion.div>
+    </div>
+  )
+
+  if (loading || (prompt && isGeneratingOutline && !project?.outline)) {
+    return renderLoader()
   }
 
   if (error || !project) {
@@ -96,17 +279,16 @@ export default function UnifiedEditorPage() {
       )
   }
 
-  if (project.type === "ADVANCED") {
-    return <AdvancedEditorView initialData={project} />
-  }
 
   return (
     <EditorView 
-      initialData={{
-        id: project.id,
-        title: project.title,
-        slides: project.slides as any[]
-      }} 
+        initialData={{ 
+            ...project, 
+            slides: streamingSlides 
+        }} 
+        isGenerating={false}
+        isGeneratingSection={isGeneratingSection}
+        onGenerateSection={handleGenerateSection}
     />
   )
 }

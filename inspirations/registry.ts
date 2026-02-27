@@ -11,13 +11,13 @@ export interface InspirationPresentation {
   slides: InspirationSlide[];
 }
 
-const INSPIRATIONS_DIR = path.join(process.cwd(), 'llm/inspirations/presentations');
+const INSPIRATIONS_DIR = path.join(process.cwd(), 'inspirations');
 
 function getPresentationSlides(presentationName: string): InspirationSlide[] {
   const presentationPath = path.join(INSPIRATIONS_DIR, presentationName);
   const slides: InspirationSlide[] = [];
   
-  if (!fs.existsSync(presentationPath)) return [];
+  if (!fs.existsSync(presentationPath) || !fs.statSync(presentationPath).isDirectory()) return [];
 
   const files = fs.readdirSync(presentationPath).sort((a, b) => {
     // Sort by slide number in filename (slide-1.html, slide-2.html, etc)
@@ -48,7 +48,10 @@ function getPresentationSlides(presentationName: string): InspirationSlide[] {
 export const getInspirations = (): InspirationPresentation[] => {
   if (!fs.existsSync(INSPIRATIONS_DIR)) return [];
 
-  const presentations = fs.readdirSync(INSPIRATIONS_DIR);
+  const presentations = fs.readdirSync(INSPIRATIONS_DIR).filter(item => {
+    const p = path.join(INSPIRATIONS_DIR, item);
+    return fs.statSync(p).isDirectory();
+  });
   return presentations.map(presName => ({
     name: presName.replace(/-/g, ' '),
     slides: getPresentationSlides(presName)
@@ -68,15 +71,13 @@ export const formatInspirationsForPrompt = (): string => {
       .replace(/background-image:\s*url\('[^']*'\)/g, "background-image: none");
   };
 
-  inspirations.forEach((pres, presIdx) => {
+  inspirations.forEach((pres) => {
     output += `#### Presentation: ${pres.name}\n`;
-    pres.slides.forEach((slide, slideIdx) => {
-      output += `<slide-${slideIdx + 1} title="${slide.title.toUpperCase()}">\n`;
+    pres.slides.forEach((slide, idx) => {
+      output += `\n**Example Slide ${idx + 1}: ${slide.title.toUpperCase()}**\n`;
       output += stripImages(slide.html) + '\n';
-      output += `<structured-data>{/* Slide properties */}</structured-data>\n`;
-      output += `</slide-${slideIdx + 1}>\n\n`;
     });
-    output += '---\n\n';
+    output += '\n---\n\n';
   });
 
   return output;

@@ -20,7 +20,7 @@ import { RECOMMENDED_PROMPTS } from "@/lib/prompts-data"
 
 export default function NewProjectPage() {
   const [showGenerateDialog, setShowGenerateDialog] = React.useState(false)
-  const [generationType, setGenerationType] = React.useState<'standard' | 'advanced'>('standard')
+
   const [prompt, setPrompt] = React.useState("")
   const [isGenerating, setIsGenerating] = React.useState(false)
   const [randomPrompts, setRandomPrompts] = React.useState<string[]>([])
@@ -35,14 +35,63 @@ export default function NewProjectPage() {
     refreshPrompts();
   }, [refreshPrompts]);
 
-  const handleStartGeneration = () => {
+  const handleStartGeneration = async () => {
     if (!prompt.trim()) return
     setIsGenerating(true)
     
-    if (generationType === 'advanced') {
-        router.push(`/editor?type=advanced&prompt=${encodeURIComponent(prompt)}`)
-    } else {
-        router.push(`/editor?type=standard&prompt=${encodeURIComponent(prompt)}`)
+    try {
+      // 1. Create the project immediately
+      const res = await fetch("/api/projects", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: prompt.slice(0, 40) + (prompt.length > 40 ? "..." : ""),
+          slides: [],
+          description: null
+        }),
+      })
+
+      if (res.ok) {
+        const project = await res.json()
+        // 2. Redirect to the project's editor page with the prompt
+        router.push(`/editor/${project.id}?prompt=${encodeURIComponent(prompt)}`)
+      } else {
+        throw new Error("Failed to create project")
+      }
+    } catch (error) {
+      console.error("Failed to start generation", error)
+      setIsGenerating(false)
+    }
+  }
+
+  const handleStartScratch = async () => {
+    setIsGenerating(true)
+    try {
+      const res = await fetch("/api/projects", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: "New Storyboard",
+          description: "Start crafting your narrative from this single point.",
+          slides: [
+            {
+              id: 1,
+              title: "Opening Scene",
+              description: "Visual concept for your first slide...",
+              content: "Detailed narrative content for your first slide...",
+              html: ""
+            }
+          ]
+        }),
+      })
+
+      if (res.ok) {
+        const project = await res.json()
+        router.push(`/editor/${project.id}`)
+      }
+    } catch (error) {
+      console.error("Failed to start from scratch", error)
+      setIsGenerating(false)
     }
   }
 
@@ -76,38 +125,35 @@ export default function NewProjectPage() {
           href="/templates"
         />
 
-        {/* Standard AI Card */}
         <SelectionCard 
           title="Generate with"
           highlightedText="Creative AI"
-          description="Describe your vision and let our AI generate a complete storyboard for you."
+          description="Describe your vision and let our high-fidelity AI architect generate a complete presentation for you."
           buttonText="Generate"
           featured
           delay={0.4}
           onClick={() => {
-            setGenerationType('standard')
             setShowGenerateDialog(true)
           }}
         />
 
-        {/* Scratch Card */}
         <SelectionCard 
           title="Start from" 
           highlightedText="Scratch"
           description="Start with a clean canvas and build your story piece by piece."
           buttonText="Continue"
           delay={0.6}
-          href="/editor?type=standard"
+          onClick={handleStartScratch}
         />
       </div>
 
       <Dialog open={showGenerateDialog} onOpenChange={setShowGenerateDialog}>
-        <DialogContent className="sm:max-w-[500px] border-none shadow-2xl bg-neutral-900 text-white rounded-[32px] p-0 overflow-hidden">
+        <DialogContent className="sm:max-w-[500px] border-none shadow-2xl bg-neutral-900 text-white rounded-xl p-0 overflow-hidden">
           <div className="p-8 space-y-6">
             <DialogHeader>
-              <DialogTitle className="text-2xl font-black bg-gradient-to-r from-purple-400 to-orange-400 bg-clip-text text-transparent italic flex items-center gap-2">
+              <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-orange-400 bg-clip-text text-transparent flex items-center gap-2">
                 <Sparkles className="size-6 text-orange-400" />
-                STORYBOARD ARCHITECT
+                Storyboard Architect
               </DialogTitle>
               <DialogDescription className="text-neutral-400 font-medium">
                 Describe your masterpiece. Our AI will handle the high-end visuals and data density.
@@ -118,7 +164,7 @@ export default function NewProjectPage() {
                <Textarea
                 id="prompt"
                 placeholder="Describe your vision (e.g., A futuristic Tokyo with neon-lit vertical farms...)"
-                className="min-h-[120px] bg-neutral-800/50 border-neutral-700 text-white placeholder:text-neutral-500 rounded-2xl resize-none focus-visible:ring-orange-500/50 focus-visible:border-orange-500/50 transition-all font-medium p-4"
+                className="min-h-[120px] bg-neutral-800/50 border-neutral-700 text-white placeholder:text-neutral-500 rounded-lg resize-none focus-visible:ring-orange-500/50 focus-visible:border-orange-500/50 transition-all font-medium p-4"
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
                 autoFocus
@@ -126,7 +172,7 @@ export default function NewProjectPage() {
 
               <div className="space-y-3">
                 <div className="flex items-center justify-between px-1">
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-500">PROMPTS FOR INSPIRATION</span>
+                  <span className="text-[10px] font-bold tracking-tight text-neutral-500">Prompts for inspiration</span>
                   <button onClick={refreshPrompts} className="text-neutral-500 hover:text-white transition-colors">
                     <RefreshCw className="size-3" />
                   </button>
@@ -136,7 +182,7 @@ export default function NewProjectPage() {
                     <button
                       key={i}
                       onClick={() => setPrompt(p)}
-                      className="text-left text-xs bg-neutral-800/30 hover:bg-neutral-800 border border-neutral-700/50 hover:border-orange-500/30 p-3 rounded-xl transition-all text-neutral-400 hover:text-white group"
+                      className="text-left text-xs bg-neutral-800/30 hover:bg-neutral-800 border border-neutral-700/50 hover:border-orange-500/30 p-3 rounded-lg transition-all text-neutral-400 hover:text-white group"
                     >
                       {p}
                     </button>
@@ -149,14 +195,14 @@ export default function NewProjectPage() {
               <Button 
                 variant="ghost" 
                 onClick={() => setShowGenerateDialog(false)}
-                className="text-neutral-500 hover:text-white hover:bg-neutral-800 rounded-xl"
+                className="text-neutral-500 hover:text-white hover:bg-neutral-800 rounded-lg"
               >
                 Cancel
               </Button>
               <Button 
                 onClick={handleStartGeneration} 
                 disabled={!prompt.trim() || isGenerating}
-                className="bg-white text-black hover:bg-neutral-200 rounded-xl px-10 font-bold shadow-[0_0_20px_rgba(255,255,255,0.15)] h-11"
+                className="bg-white text-black hover:bg-neutral-200 rounded-lg px-10 font-bold shadow-xl h-11"
               >
                 {isGenerating ? (
                   <>
@@ -220,7 +266,7 @@ function SelectionCard({ title, highlightedText, description, buttonText, featur
 
           <div className={cn("p-8 flex flex-col h-full", featured ? "bg-neutral-900" : "bg-transparent")}>
             <div className="space-y-4 flex-1">
-              <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+              <h2 className="text-xs font-semibold text-muted-foreground tracking-tight">
                 {featured ? "Featured" : "Method"}
               </h2>
               <div className="space-y-1">

@@ -5,6 +5,8 @@ export interface HtmlSlide {
   id: number
   title: string
   html: string
+  description?: string
+  content?: string
   structuredSlide?: Slide // Optional structured version
 }
 
@@ -154,20 +156,8 @@ export function parseStoryboard(text: string): StoryboardData {
     const title = match[3]
     const content = match[4].trim()
     
-    // Extract structured data if available
-    let structuredSlide: Slide | undefined;
-    const structMatch = content.match(/<structured-data>([\s\S]*?)<\/structured-data>/);
-    let html = content;
-    
-    if (structMatch) {
-        try {
-            structuredSlide = JSON.parse(structMatch[1].trim());
-            // Remove the structured data from the visual HTML
-            html = content.replace(/<structured-data>[\s\S]*?<\/structured-data>/, '').trim();
-        } catch (e) {
-            console.error("Failed to parse AI structured data:", e);
-        }
-    }
+    const html = content;
+    const structuredSlide = undefined;
 
     const existingIndex = result.slides.findIndex(s => s.id === id);
     if (existingIndex !== -1) {

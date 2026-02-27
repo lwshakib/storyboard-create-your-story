@@ -10,13 +10,13 @@ export async function POST(req: Request) {
     })
     
     const body = await req.json()
-    const { title, slides, type } = body
-
+    const { title, slides, description } = body
+ 
     const project = await prisma.project.create({
       data: {
-        title: title || (type === "ADVANCED" ? "Advanced Storyboard" : "Untitled Storyboard"),
+        title: title || "Untitled Storyboard",
+        description: description || null,
         slides: slides || [],
-        type: type || "NORMAL",
         userId: session?.user?.id || null,
       },
     })

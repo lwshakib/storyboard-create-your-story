@@ -206,3 +206,31 @@ html {
 #nprogress .peg {
   box-shadow: 0 0 10px var(--primary), 0 0 5px var(--primary) !important;
 }
+
+/* Scrollbar Hiding Utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+}
+.no-scrollbar {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
+/* Target Radix ScrollArea Viewport when no-scrollbar is on Root */
+[data-slot="scroll-area"].no-scrollbar [data-slot="scroll-area-viewport"] {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+[data-slot="scroll-area"].no-scrollbar [data-slot="scroll-area-viewport"]::-webkit-scrollbar {
+  display: none !important;
+}
+
+/* Shimmer Animation */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.animate-shimmer {
+  animation: shimmer 2.5s infinite linear;
+}

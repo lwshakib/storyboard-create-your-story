@@ -22,7 +22,7 @@ interface GenerateDialogProps {
 
 export function GenerateDialog({ open, onOpenChange }: GenerateDialogProps) {
   const [prompt, setPrompt] = React.useState("")
-  const [isGenerating, setIsGenerating] = React.useState(false)
+
   const [randomPrompts, setRandomPrompts] = React.useState<string[]>([])
   const router = useRouter()
 
@@ -41,39 +41,18 @@ export function GenerateDialog({ open, onOpenChange }: GenerateDialogProps) {
       return
     }
 
-    setIsGenerating(true)
-    try {
-      const res = await fetch("/api/generate-storyboard", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt }),
-      })
-
-      if (res.ok) {
-        const data = await res.json()
-        localStorage.setItem('importedStoryboard', JSON.stringify(data))
-        toast.success("Storyboard generated!")
-        onOpenChange(false)
-        router.push("/editor")
-      } else {
-        toast.error("Failed to generate storyboard")
-      }
-    } catch (error) {
-      console.error("Generation error:", error)
-      toast.error("An error occurred during generation")
-    } finally {
-      setIsGenerating(false)
-    }
+    onOpenChange(false)
+    router.push(`/editor?prompt=${encodeURIComponent(prompt)}`)
   }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] border-none shadow-2xl bg-neutral-900 text-white rounded-[32px] p-0 overflow-hidden">
+      <DialogContent className="sm:max-w-[500px] border-none shadow-2xl bg-neutral-900 text-white rounded-xl p-0 overflow-hidden">
         <div className="p-8 space-y-6">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-black bg-gradient-to-r from-purple-400 to-orange-400 bg-clip-text text-transparent italic flex items-center gap-2">
+            <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-orange-400 bg-clip-text text-transparent flex items-center gap-2">
               <Sparkles className="size-6 text-orange-400" />
-              AI GENERATOR
+              AI Generator
             </DialogTitle>
             <DialogDescription className="text-neutral-400 font-medium">
               What is your story about? Describe it in detail for the most cinematic results.
@@ -84,7 +63,7 @@ export function GenerateDialog({ open, onOpenChange }: GenerateDialogProps) {
              <Textarea
               id="prompt"
               placeholder="A futuristic civilization on a terraformed Mars..."
-              className="min-h-[120px] bg-neutral-800/50 border-neutral-700 text-white placeholder:text-neutral-500 rounded-2xl resize-none focus-visible:ring-orange-500/50 focus-visible:border-orange-500/50 transition-all font-medium p-4"
+              className="min-h-[120px] bg-neutral-800/50 border-neutral-700 text-white placeholder:text-neutral-500 rounded-lg resize-none focus-visible:ring-orange-500/50 focus-visible:border-orange-500/50 transition-all font-medium p-4"
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
               autoFocus
@@ -92,7 +71,7 @@ export function GenerateDialog({ open, onOpenChange }: GenerateDialogProps) {
 
             <div className="space-y-3">
               <div className="flex items-center justify-between px-1">
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-neutral-500">INSPIRATION SAMPLES</span>
+                <span className="text-[10px] font-bold tracking-tight text-neutral-400">Inspiration samples</span>
                 <button onClick={refreshPrompts} className="text-neutral-500 hover:text-white transition-colors">
                   <RefreshCw className="size-3" />
                 </button>
@@ -102,7 +81,7 @@ export function GenerateDialog({ open, onOpenChange }: GenerateDialogProps) {
                   <button
                     key={i}
                     onClick={() => setPrompt(p)}
-                    className="text-left text-xs bg-neutral-800/30 hover:bg-neutral-800 border border-neutral-700/50 hover:border-orange-500/30 p-3 rounded-xl transition-all text-neutral-400 hover:text-white"
+                    className="text-left text-xs bg-neutral-800/30 hover:bg-neutral-800 border border-neutral-700/50 hover:border-orange-500/30 p-3 rounded-lg transition-all text-neutral-400 hover:text-white"
                   >
                     {p}
                   </button>
@@ -115,26 +94,17 @@ export function GenerateDialog({ open, onOpenChange }: GenerateDialogProps) {
             <Button 
               variant="ghost" 
               onClick={() => onOpenChange(false)}
-              className="text-neutral-500 hover:text-white hover:bg-neutral-800 rounded-xl"
+              className="text-neutral-500 hover:text-white hover:bg-neutral-800 rounded-lg"
             >
               Cancel
             </Button>
             <Button 
-              disabled={isGenerating || !prompt.trim()} 
+              disabled={!prompt.trim()} 
               onClick={handleGenerate}
-              className="bg-white text-black hover:bg-neutral-200 rounded-xl px-10 font-bold shadow-[0_0_20px_rgba(255,255,255,0.15)] h-11"
+              className="bg-white text-black hover:bg-neutral-200 rounded-lg px-10 font-bold shadow-xl h-11"
             >
-              {isGenerating ? (
-                <>
-                  <Loader2 className="size-4 animate-spin mr-2" />
-                  Generating...
-                </>
-              ) : (
-                <>
-                  <Sparkles className="size-4 mr-2" />
-                  Generate
-                </>
-              )}
+              <Sparkles className="size-4 mr-2" />
+              Generate
             </Button>
           </div>
         </div>

@@ -1,85 +1,247 @@
 "use client"
 
 import * as React from "react"
-import { 
-  SidebarProvider, 
-  SidebarInset,
-} from "@/components/ui/sidebar"
-import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuTrigger,
-} from "@/components/ui/context-menu"
-import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
-import { 
-  Type, 
-  ImageIcon,
-  MousePointer2,
-  ChevronLeft,
-  Undo2,
-  Redo2,
-  Columns,
-  Split,
-  Save,
-  Loader2
-} from "lucide-react"
-import { motion, AnimatePresence } from "framer-motion"
-import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { motion, AnimatePresence, Reorder } from "framer-motion"
+import { 
+  ChevronLeft, 
+  Sparkles, 
+  Loader2,
+  Save,
+  Download,
+  Pencil,
+  Palette,
+  X,
+  Presentation,
+  FileDown,
+  FileJson,
+  Presentation as PresentationIcon,
+  GripVertical,
+  Layers,
+  Plus,
+  Trash,
+  Image as ImageIcon
+} from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
-
-import { Slide, SlideElement, LayoutType, ElementType } from "@/types/editor"
-import { SlidePreview } from "./slide-preview"
-import { EditorSidebar } from "./editor-sidebar"
-import { MainToolbar } from "./main-toolbar"
-import { ElementWrapper } from "./element-wrapper"
-import { uploadFileToCloudinary } from "@/lib/editor-utils"
-import { exportToJson, exportToPpptx } from "@/lib/export-utils"
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { 
-    Download, 
-    Upload, 
-    FileJson, 
-    Presentation,
-    Share2
-} from "lucide-react"
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog"
+import { exportHtmlToJson, exportHtmlToPdf, exportHtmlToPpptx } from "@/lib/export-utils"
+
+import { HtmlSlide } from "@/lib/storyboard-parser"
+import { SlidePreview } from "@/components/editor/slide-preview"
+import { ElementSettings, type ElementData } from "@/components/editor/element-settings"
+import { ThemeSettings } from "@/components/editor/theme-settings"
 
 interface EditorViewProps {
   initialData?: {
     id?: string
     title: string
-    slides: Slide[]
+    description?: string
+    slides: HtmlSlide[]
   }
-  isLoading?: boolean
+  isGenerating?: boolean
+  onGenerate?: () => void
+  onGenerateSection?: (index: number) => void
+  isGeneratingSection?: boolean
 }
 
-export function EditorView({ initialData, isLoading }: EditorViewProps) {
-  const [slides, setSlides] = React.useState<Slide[]>(initialData?.slides || [
-    { id: 1, elements: [], layout: 'free', splitRatio: 0.5, bgColor: '#ffffff', bgImage: '' }
-  ])
-  const [activeSlideId, setActiveSlideId] = React.useState(slides[0].id)
-  const [selectedElementId, setSelectedElementId] = React.useState<string | null>(null)
-  const [canvasScale, setCanvasScale] = React.useState(1)
-  const [isPresenting, setIsPresenting] = React.useState(false)
-  const [storyTitle, setStoryTitle] = React.useState(initialData?.title || "Untitled Storyboard")
+const SkeletonSlide = ({ index }: { index: number }) => (
+  <div className="space-y-6">
+    <div className="flex items-center gap-3 px-2">
+      <span className="h-6 w-10 bg-muted text-muted-foreground rounded-full flex items-center justify-center text-xs font-black animate-pulse">{index + 1}</span>
+      <h2 className="text-sm font-black uppercase tracking-widest text-muted-foreground/30 animate-pulse">Generating Slide...</h2>
+    </div>
+    <div 
+      className="relative shadow-[0_40px_100px_rgba(0,0,0,0.1)] bg-card border-none rounded-xl overflow-hidden mx-auto flex items-center justify-center w-full max-w-[1000px] aspect-video"
+    >
+      <div className="flex flex-col items-center gap-4">
+        <div className="relative">
+          <Loader2 className="h-10 w-10 text-primary animate-spin" />
+          <Sparkles className="h-5 w-5 text-accent absolute -top-1 -right-1 animate-pulse" />
+        </div>
+        <p className="text-sm font-bold text-muted-foreground tracking-tight animate-pulse">AI is crafting your visual narrative...</p>
+      </div>
+      <div className="absolute inset-x-0 bottom-0 h-1 bg-muted overflow-hidden">
+        <motion.div 
+          className="h-full bg-primary"
+          initial={{ width: "0%" }}
+          animate={{ width: "100%" }}
+          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+        />
+      </div>
+    </div>
+  </div>
+)
+
+const SlideThumbnail = ({ html, index, onClick, active, title }: { html: string, index: number, onClick: () => void, active?: boolean, title: string }) => {
+  return (
+    <div 
+      onClick={onClick}
+      className={cn(
+        "group relative aspect-video rounded-lg border-2 transition-all cursor-pointer overflow-hidden bg-white shadow-sm hover:border-primary/50",
+        active ? "border-primary shadow-md ring-2 ring-primary/10" : "border-transparent"
+      )}
+    >
+      <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-2">
+          <span className="text-[10px] text-white font-bold truncate w-full">{title}</span>
+      </div>
+      <div className="absolute top-2 left-2 z-20 bg-background/90 backdrop-blur-md rounded-lg px-2 py-0.5 text-[10px] font-bold shadow-sm border border-black/5">
+        {index + 1}
+      </div>
+      
+      <div className="absolute inset-0 origin-top-left flex items-center justify-center bg-white">
+          <SlidePreview html={html} autoScale={true} />
+      </div>
+      <div className="absolute inset-0 z-30" />
+    </div>
+  )
+}
+
+const GeneratingThumbnail = ({ index }: { index: number }) => (
+  <div 
+    className="aspect-video rounded-lg border-2 border-dashed border-primary/20 bg-muted/30 flex flex-col items-center justify-center gap-2 animate-pulse overflow-hidden relative"
+  >
+    <div className="absolute top-2 left-2 z-20 bg-primary/20 rounded-lg px-2 py-0.5 text-[10px] font-bold text-primary">
+      {index + 1}
+    </div>
+    <Loader2 className="h-4 w-4 text-primary opacity-40 animate-spin" />
+    <span className="text-[8px] font-black uppercase tracking-widest text-primary/40 text-center px-2">AI is thinking...</span>
+  </div>
+)
+
+const AutoResizeTextarea = ({ value, onChange, className, placeholder, rows = 1 }: { value: string, onChange: (val: string) => void, className?: string, placeholder?: string, rows?: number }) => {
+  const textareaRef = React.useRef<HTMLTextAreaElement>(null)
+
+  const adjustHeight = () => {
+    const textarea = textareaRef.current
+    if (textarea) {
+      textarea.style.height = 'auto'
+      textarea.style.height = `${textarea.scrollHeight}px`
+    }
+  }
+
+  React.useEffect(() => {
+    adjustHeight()
+  }, [value])
+
+  return (
+    <textarea
+      ref={textareaRef}
+      value={value}
+      onChange={(e) => {
+        onChange(e.target.value)
+        adjustHeight()
+      }}
+      className={cn("w-full resize-none overflow-hidden bg-transparent border-none outline-none focus:ring-0", className)}
+      placeholder={placeholder}
+      rows={rows}
+    />
+  )
+}
+
+export function EditorView({ initialData, isGenerating, onGenerate, onGenerateSection, isGeneratingSection }: EditorViewProps) {
+  const router = useRouter()
+  
+  const [slides, setSlides] = React.useState<HtmlSlide[]>(initialData?.slides || [])
+  const [storyTitle, setStoryTitle] = React.useState(initialData?.title || "Advanced AI Storyboard")
+  const [overallDescription, setOverallDescription] = React.useState(initialData?.description || "")
   const [isEditingTitle, setIsEditingTitle] = React.useState(false)
   const [isSaving, setIsSaving] = React.useState(false)
-  const router = useRouter()
-  const fileInputRef = React.useRef<HTMLInputElement>(null)
+  const [activeSlideIndex, setActiveSlideIndex] = React.useState(0)
+  const mainScrollRef = React.useRef<HTMLDivElement>(null)
   
-  // Track previous slides length to handle auto-progression for streaming
-  const fileNameRef = React.useRef(initialData?.title)
-  const prevSlidesLength = React.useRef(slides.length)
-  const canvasRef = React.useRef<HTMLDivElement>(null)
-  const containerRef = React.useRef<HTMLDivElement>(null)
+  const [isEditMode, setIsEditMode] = React.useState(false)
+  const [isThemeMode, setIsThemeMode] = React.useState(false)
+  const [selectedElData, setSelectedElData] = React.useState<ElementData | null>(null)
+  const [activeThemeId, setActiveThemeId] = React.useState<string | null>(null)
+  const [appliedTheme, setAppliedTheme] = React.useState<any>(null)
+
+  const [selectedVisualsIndex, setSelectedVisualsIndex] = React.useState<number | null>(null)
+  const [generatingSections, setGeneratingSections] = React.useState<Set<number>>(new Set())
+
+  const handleGenerateSection = (index: number) => {
+    if (onGenerateSection) {
+      setGeneratingSections(prev => {
+        const next = new Set(prev)
+        next.add(index)
+        return next
+      })
+      onGenerateSection(index)
+    }
+  }
+
+  React.useEffect(() => {
+    if (!isGeneratingSection) {
+      setGeneratingSections(new Set())
+    }
+  }, [isGeneratingSection])
+
+  React.useEffect(() => {
+    if (initialData?.slides) {
+      setSlides(initialData.slides)
+    }
+    if (initialData?.title) {
+        setStoryTitle(initialData.title)
+    }
+    if (initialData?.description) {
+        setOverallDescription(initialData.description)
+    }
+    if (initialData?.slides && initialData.slides.length > 0) {
+        scrollToSlide(initialData.slides[0].id)
+    }
+  }, [initialData])
+
+  const scrollToSlide = (id: number) => {
+    const el = document.getElementById(`slide-full-${id}`)
+    if (el) el.scrollIntoView({ behavior: 'smooth' })
+  }
+
+  const updateSelectedElement = (changes: any) => {
+    if (!selectedElData) return
+    const mainIframes = document.querySelectorAll('main iframe')
+    const targetIframe = mainIframes[activeSlideIndex] as HTMLIFrameElement
+    if (targetIframe?.contentWindow) {
+      targetIframe.contentWindow.postMessage({
+        type: 'UPDATE_ELEMENT',
+        elementId: selectedElData.elementId,
+        changes
+      }, '*')
+    }
+  }
+
+  const handleExport = async (format: 'json' | 'pdf' | 'pptx') => {
+    try {
+        if (format === 'json') {
+            exportHtmlToJson(storyTitle, slides);
+            toast.success("JSON exported successfully");
+        } else if (format === 'pdf') {
+            toast.info("Preparing PDF conversion...");
+            await exportHtmlToPdf(storyTitle, slides);
+            toast.success("PDF exported successfully");
+        } else if (format === 'pptx') {
+            toast.info("Preparing PowerPoint conversion...");
+            await exportHtmlToPpptx(storyTitle, slides);
+            toast.success("PowerPoint exported successfully");
+        }
+    } catch (error) {
+        console.error(`Export to ${format} failed`, error);
+        toast.error(`Export to ${format} failed`);
+    }
+  }
 
   const handleSave = async () => {
     setIsSaving(true)
@@ -92,6 +254,7 @@ export function EditorView({ initialData, isLoading }: EditorViewProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title: storyTitle,
+          description: overallDescription,
           slides: slides,
         }),
       })
@@ -115,657 +278,440 @@ export function EditorView({ initialData, isLoading }: EditorViewProps) {
     }
   }
 
-  const addSlide = () => {
-    const newId = Math.max(...slides.map(s => s.id), 0) + 1
-    const currentSlide = slides.find(s => s.id === activeSlideId) || slides[slides.length - 1]
-    updateSlidesWithHistory(prev => [...prev, { 
-        id: newId, 
-        elements: [], 
-        layout: 'free', 
-        splitRatio: 0.5, 
-        bgColor: currentSlide?.bgColor || '#ffffff', 
-        bgImage: currentSlide?.bgImage || '' 
-    }])
-    setActiveSlideId(newId)
-  }
-
-  const deleteSlide = (id: number) => {
-    if (slides.length <= 1) return
-    const newSlides = slides.filter(s => s.id !== id)
-    updateSlidesWithHistory(() => newSlides)
-    if (activeSlideId === id) {
-      setActiveSlideId(newSlides[0].id)
+  const handleScroll = () => {
+    if (!mainScrollRef.current) return
+    const scrollPos = mainScrollRef.current.scrollTop
+    const slideElements = slides.map(s => document.getElementById(`slide-full-${s.id}`))
+    
+    let currentSlideIndex = 0
+    slideElements.forEach((el, idx) => {
+      if (el && el.offsetTop - 100 <= scrollPos) {
+        currentSlideIndex = idx
+      }
+    })
+    
+    if (currentSlideIndex !== activeSlideIndex) {
+      setActiveSlideIndex(currentSlideIndex)
     }
   }
 
-  const addElementAtPos = (type: ElementType, clientX: number, clientY: number, tableConfig?: { rows: number, cols: number, shapeType?: 'rectangle' | 'circle' }) => {
-    const width = type === 'text' ? 300 : (type === 'image' || type === 'shape') ? 400 : 300
-    const height = type === 'text' ? 100 : (type === 'image' || type === 'shape') ? 300 : 200
-
-    if (!canvasRef.current) return
-    const rect = canvasRef.current.getBoundingClientRect()
-    let localX = (clientX - rect.left) / canvasScale - width / 2
-    let localY = (clientY - rect.top) / canvasScale - height / 2
-
-    localX = Math.max(0, Math.min(1024 - width, localX))
-    localY = Math.max(0, Math.min(576 - height, localY))
-
-    let zone: 0 | 1 = 0
-    const splitRatio = activeSlide.splitRatio || 0.5
-    if (activeSlide.layout === 'split-h') {
-        zone = localX + width / 2 > 1024 * splitRatio ? 1 : 0
-        if (zone === 0) localX = Math.min(localX, 1024 * splitRatio - width)
-        else localX = Math.max(localX, 1024 * splitRatio)
-    } else if (activeSlide.layout === 'split-v') {
-        zone = localY + height / 2 > 576 * splitRatio ? 1 : 0
-        if (zone === 0) localY = Math.min(localY, 576 * splitRatio - height)
-        else localY = Math.max(localY, 576 * splitRatio)
-    }
-
-    const newElement: SlideElement = {
-      id: Math.random().toString(36).substr(2, 9),
-      type,
-      content: type === 'text' ? 'New Text' : type === 'table' 
-        ? Array.from({ length: tableConfig?.rows || 3 }, () => Array.from({ length: tableConfig?.cols || 3 }, () => ''))
-        : '',
-      x: localX,
-      y: localY,
-      width,
-      height,
-      textAlign: 'left',
-      zone,
-      src: type === 'image' ? 'loading' : undefined,
-      fontSize: type === 'text' ? 24 : undefined,
-      color: (type === 'text' || type === 'shape') ? '#000000' : undefined,
-      fontFamily: type === 'text' ? 'Inter' : undefined,
-      fontWeight: type === 'text' ? 'normal' : undefined,
-      shapeType: type === 'shape' ? (tableConfig?.shapeType || 'rectangle') : undefined,
-      opacity: type === 'shape' ? 1 : undefined
-    }
-
-    updateActiveSlide({ elements: [...activeSlide.elements, newElement] })
-    setSelectedElementId(newElement.id)
+  const updateOutlineSlide = (index: number, field: string, value: string) => {
+    setSlides((prev) => {
+      const newSlides = [...prev]
+      newSlides[index] = { ...newSlides[index], [field]: value }
+      return newSlides
+    })
   }
 
-  const addElement = (type: ElementType, config?: any) => {
-    addElementAtPos(type, window.innerWidth / 2, window.innerHeight / 2, config)
-  }
-
-  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-
-    const reader = new FileReader()
-    reader.onload = (event) => {
-        try {
-            const data = JSON.parse(event.target?.result as string)
-            if (data.slides && Array.isArray(data.slides)) {
-                setSlides(data.slides)
-                setStoryTitle(data.title || "Imported Storyboard")
-                setActiveSlideId(data.slides[0].id)
-                toast.success("Project imported successfully")
-                saveToHistory(data.slides)
-            } else {
-                toast.error("Invalid file format")
-            }
-        } catch (error) {
-            toast.error("Failed to parse JSON file")
-        }
-    }
-    reader.readAsText(file)
-    // Reset input
-    if (fileInputRef.current) fileInputRef.current.value = ""
-  }
-  
-  // Computed Properties
-  const activeSlide = slides.find(s => s.id === activeSlideId) || slides[0]
-
-  // Undo/Redo History
-  const [history, setHistory] = React.useState<Slide[][]>([slides])
-  const [historyIndex, setHistoryIndex] = React.useState(0)
-
-  const saveToHistory = (newSlides: Slide[]) => {
-    const newHistory = history.slice(0, historyIndex + 1)
-    newHistory.push(JSON.parse(JSON.stringify(newSlides)))
-    if (newHistory.length > 50) newHistory.shift()
-    else setHistoryIndex(newHistory.length - 1)
-    setHistory(newHistory)
-  }
-
-  const undo = () => {
-    if (historyIndex > 0) {
-      const prev = history[historyIndex - 1]
-      setSlides(JSON.parse(JSON.stringify(prev)))
-      setHistoryIndex(historyIndex - 1)
-    }
-  }
-
-  const redo = () => {
-    if (historyIndex < history.length - 1) {
-      const next = history[historyIndex + 1]
-      setSlides(JSON.parse(JSON.stringify(next)))
-      setHistoryIndex(historyIndex + 1)
-    }
-  }
-
-  const updateSlidesWithHistory = (updater: (prev: Slide[]) => Slide[]) => {
-    const newSlides = updater(slides)
+  const handleReorder = (newSlides: HtmlSlide[]) => {
     setSlides(newSlides)
-    saveToHistory(newSlides)
   }
 
-  // Use refs to track the last processed data to avoid infinite loops
-  const lastProcessedSlidesCount = React.useRef(0)
-  const lastProcessedElementsCount = React.useRef(0)
-  const lastProcessedTitle = React.useRef('')
-
-  const isDark = (color?: string) => {
-    if (!color) return false
-    const hex = color.replace('#', '')
-    const r = parseInt(hex.substr(0, 2), 16)
-    const g = parseInt(hex.substr(2, 2), 16)
-    const b = parseInt(hex.substr(4, 2), 16)
-    const brightness = (r * 299 + g * 587 + b * 114) / 1000
-    return brightness < 128
-  }
-
-  const defaultTextColor = isDark(activeSlide.bgColor) ? '#ffffff' : '#000000'
-
-  React.useEffect(() => {
-    if (initialData) {
-      const currentSlidesCount = initialData.slides?.length || 0
-      const currentTitle = initialData.title || ''
-      const totalElements = initialData.slides.reduce((acc: number, s: any) => acc + (s.elements?.length || 0), 0)
-      
-      const hasSlidesCountChanged = currentSlidesCount !== lastProcessedSlidesCount.current
-      const hasElementsCountChanged = totalElements !== lastProcessedElementsCount.current
-      const hasTitleChanged = currentTitle && currentTitle !== lastProcessedTitle.current
-
-      // Only update if the data has actually changed
-      if (currentSlidesCount > 0 && (hasSlidesCountChanged || hasElementsCountChanged)) {
-        // If streaming (isLoading is true), we want to merge/update
-        if (isLoading) {
-             setSlides(initialData.slides)
-             
-             // Auto-switch to new slide if detected
-             if (currentSlidesCount > prevSlidesLength.current) {
-                 const newSlide = initialData.slides[currentSlidesCount - 1]
-                 setActiveSlideId(newSlide.id)
-                 prevSlidesLength.current = currentSlidesCount
-             }
-        } else {
-            // Full replacement (non-streaming)
-            if (initialData.slides && initialData.slides.length > 0) {
-                setSlides(initialData.slides)
-                // Always jump to the first slide of the new storyboard
-                setActiveSlideId(initialData.slides[0].id)
-                fileNameRef.current = currentTitle
-            }
-        }
-        lastProcessedSlidesCount.current = currentSlidesCount
-        lastProcessedElementsCount.current = totalElements
-      }
-      
-      // Update title if it changed
-      if (hasTitleChanged) {
-        setStoryTitle(currentTitle)
-        lastProcessedTitle.current = currentTitle
-      }
-    }
-  }, [initialData, isLoading])
-
-  const updateElement = (id: string, updates: Partial<SlideElement> & { isGenerating?: boolean }) => {
-    updateSlidesWithHistory(prev => prev.map(s => s.id === activeSlideId 
-      ? { ...s, elements: s.elements.map(el => el.id === id ? { ...el, ...updates } : el) } 
-      : s
-    ))
-  }
-
-  // Track which images are currently being generated to prevent duplicate requests
-  const generatingImagesRef = React.useRef<Set<string>>(new Set())
-
-  // Handle Image Generation for items with imagePrompt but no src
-  React.useEffect(() => {
-    const generateImages = async () => {
-        for (const slide of slides) {
-            for (const el of slide.elements) {
-                // Check if this is an image element with a prompt but no src, and not already generating
-                if (el.type === 'image' && el.imagePrompt && !el.src && !generatingImagesRef.current.has(el.id)) {
-                   // Mark as generating
-                   generatingImagesRef.current.add(el.id)
-                   
-                   // Update UI to show loading state
-                   updateElement(el.id, { src: 'loading' })
-                   
-                   try {
-                       const res = await fetch('/api/generate-image', {
-                           method: 'POST',
-                           headers: { 'Content-Type': 'application/json' },
-                           body: JSON.stringify({ 
-                               prompt: el.imagePrompt,
-                               width: el.width,
-                               height: el.height
-                           })
-                       })
-                       
-                       if (res.ok) {
-                           const data = await res.json()
-                           if (data.url) {
-                               updateElement(el.id, { src: data.url })
-                           } else {
-                               console.warn('Image generation succeeded but no URL returned')
-                               updateElement(el.id, { src: '' })
-                           }
-                       } else {
-                           const errorText = await res.text()
-                           console.error('Image generation failed:', res.status, errorText)
-                           updateElement(el.id, { src: '' })
-                       }
-                   } catch (e) {
-                       console.error("Failed to generate image for element", el.id, e)
-                       // Don't update to empty string on network error - keep loading state
-                       // This allows retry on next render if needed
-                   } finally {
-                       // Remove from generating set
-                       generatingImagesRef.current.delete(el.id)
-                   }
-                }
-            }
-        }
-    }
-    
-    // Run if we have slides
-    if (slides.length > 0) {
-        generateImages()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slides, isLoading])
-
-  const deleteElement = (id: string) => {
-    updateActiveSlide({
-      elements: activeSlide.elements.filter(el => el.id !== id)
+  const addOutlineSection = (index: number) => {
+    setSlides((prev) => {
+      const newSlides = [...prev]
+      newSlides.splice(index + 1, 0, {
+        id: Date.now(), // Real IDs will be assigned on next generate/save
+        title: "New Section",
+        description: "",
+        content: "",
+        html: ""
+      })
+      // Re-index to ensure logical flow
+      return newSlides.map((s, idx) => ({ ...s, id: idx + 1 }))
     })
-    if (selectedElementId === id) setSelectedElementId(null)
+    toast.success("New section added")
   }
 
-  const bringToFront = (id: string) => {
-    const el = activeSlide.elements.find(e => e.id === id)
-    if (!el) return
-    updateActiveSlide({
-      elements: [...activeSlide.elements.filter(e => e.id !== id), el]
-    })
-  }
-
-  const sendToBack = (id: string) => {
-    const el = activeSlide.elements.find(e => e.id === id)
-    if (!el) return
-    updateActiveSlide({
-      elements: [el, ...activeSlide.elements.filter(e => e.id !== id)]
-    })
-  }
-
-  const bringForward = (id: string) => {
-    const index = activeSlide.elements.findIndex(el => el.id === id)
-    if (index === -1 || index === activeSlide.elements.length - 1) return
-    const newElements = [...activeSlide.elements]
-    const temp = newElements[index]
-    newElements[index] = newElements[index + 1]
-    newElements[index + 1] = temp
-    updateActiveSlide({ elements: newElements })
-  }
-
-  const sendBackward = (id: string) => {
-    const index = activeSlide.elements.findIndex(el => el.id === id)
-    if (index === -1 || index === 0) return
-    const newElements = [...activeSlide.elements]
-    const temp = newElements[index]
-    newElements[index] = newElements[index - 1]
-    newElements[index - 1] = temp
-    updateActiveSlide({ elements: newElements })
-  }
-
-  const updateActiveSlide = (updates: Partial<Slide>) => {
-    updateSlidesWithHistory(prev => prev.map(s => s.id === activeSlideId ? { ...s, ...updates } : s))
-  }
-
-  const applyLayout = (type: LayoutType | 'title') => {
-    if (type === 'split-h' || type === 'split-v') {
-      updateActiveSlide({ layout: type, splitRatio: 0.5 })
-      return
-    }
-    
-    if (type === 'title') {
-      const titleElement: SlideElement = {
-        id: 'title-' + Math.random(),
-        type: 'text',
-        content: 'Title of Your Story',
-        x: 40,
-        y: 40,
-        width: 400,
-        height: 60,
-        textAlign: 'left',
-        fontSize: 48,
-        fontWeight: 'bold',
-        fontFamily: 'Inter',
-        color: '#000000'
+  const removeOutlineSection = (index: number) => {
+    setSlides((prev) => {
+      if (prev.length <= 1) {
+        toast.error("Storyboard must have at least one section")
+        return prev
       }
-      updateActiveSlide({ layout: 'free', elements: [...activeSlide.elements, titleElement] })
-    }
-  }
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault()
-    if (!canvasRef.current) return
-    const rect = canvasRef.current.getBoundingClientRect()
-    
-    const x = (e.clientX - rect.left) / canvasScale - 150 
-    const y = (e.clientY - rect.top) / canvasScale - 50 
-
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-        const file = e.dataTransfer.files[0]
-        if (file.type.startsWith('image/')) {
-            const newId = Math.random().toString(36).substr(2, 9)
-            const newElement: SlideElement = {
-                id: newId,
-                type: 'image',
-                content: '',
-                x,
-                y,
-                width: 400,
-                height: 300,
-                src: 'loading', 
-                zone: 0 
-            }
-            updateActiveSlide({ elements: [...activeSlide.elements, newElement] })
-            setSelectedElementId(newId)
-
-            uploadFileToCloudinary(file).then(data => {
-                updateElement(newId, { src: data.secureUrl })
-            }).catch(err => {
-                console.error("Upload failed", err)
-                deleteElement(newId)
-            })
-            return
-        }
-    }
-
-    const type = e.dataTransfer.getData("elementType") as ElementType
-    if (!type) return
-
-    addElementAtPos(type, e.clientX, e.clientY)
+      const newSlides = [...prev]
+      newSlides.splice(index, 1)
+      return newSlides.map((s, idx) => ({ ...s, id: idx + 1 }))
+    })
+    toast.success("Section removed")
   }
 
   return (
-    <div className="flex h-screen w-full flex-col overflow-hidden bg-background font-sans selection:bg-primary/20">
-      <header className="flex h-14 shrink-0 items-center justify-between gap-4 px-6 border-b bg-background/50 backdrop-blur-xl z-[100]">
-          <div className="flex items-center gap-6">
-              <Button variant="ghost" size="icon" asChild className="h-9 w-9 rounded-xl hover:bg-muted">
-                  <Link href="/home">
-                      <ChevronLeft className="h-5 w-5" />
-                  </Link>
-              </Button>
-              <div className="flex flex-col min-w-[120px]">
-                  {isEditingTitle ? (
-                      <input
-                          autoFocus
-                          value={storyTitle}
-                          onChange={(e) => setStoryTitle(e.target.value)}
-                          onBlur={() => setIsEditingTitle(false)}
-                          onKeyDown={(e) => {
-                              if (e.key === 'Enter') setIsEditingTitle(false)
-                          }}
-                          className="font-bold tracking-tight text-sm bg-transparent border-none outline-none p-0 m-0 w-full focus:ring-0"
-                      />
-                  ) : (
-                      <span 
-                          onDoubleClick={() => setIsEditingTitle(true)}
-                          className="font-bold tracking-tight text-sm truncate max-w-[180px] cursor-text"
-                      >
-                          {storyTitle}
-                      </span>
-                  )}
-              </div>
+    <div className="flex h-screen w-full flex-col bg-[#FAFBFC] dark:bg-[#050505] overflow-hidden font-sans relative">
+      <header className="flex h-12 shrink-0 items-center justify-between gap-4 px-4 border-b bg-background/80 backdrop-blur-xl z-[100]">
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="icon" onClick={() => router.push("/home")} className="size-8 rounded-lg hover:bg-muted transition-all active:scale-95">
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <div className="flex items-center gap-2">
+            {isEditingTitle ? (
+                <input
+                    autoFocus
+                    className="font-bold tracking-tight text-xs bg-transparent border-none outline-none p-0 m-0 w-48 focus:ring-0"
+                    value={storyTitle}
+                    onChange={(e) => {
+                        setStoryTitle(e.target.value)
+                    }}
+                    onBlur={() => setIsEditingTitle(false)}
+                    onKeyDown={(e) => e.key === 'Enter' && setIsEditingTitle(false)}
+                />
+            ) : (
+                <span 
+                    onDoubleClick={() => setIsEditingTitle(true)}
+                    className="font-bold tracking-tight text-xs truncate max-w-[200px] cursor-text"
+                >
+                    {storyTitle}
+                </span>
+            )}
           </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          {/* Header Buttons Simplified as requested */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-8 gap-2 font-bold px-3 rounded-lg text-xs"
+              >
+                <Download className="h-3 w-3" />
+                <span>Export</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-48 rounded-xl border-border/50 shadow-xl p-1 bg-background/95 backdrop-blur-xl mt-1">
+                <DropdownMenuItem onClick={() => handleExport('json')} className="gap-2 h-9 rounded-lg text-xs font-medium px-2 cursor-pointer">
+                    <FileJson className="size-3.5 text-primary" />
+                    <span>JSON</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleExport('pdf')} className="gap-2 h-9 rounded-lg text-xs font-medium px-2 cursor-pointer">
+                    <FileDown className="size-3.5 text-red-500" />
+                    <span>PDF Document</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleExport('pptx')} className="gap-2 h-9 rounded-lg text-xs font-medium px-2 cursor-pointer">
+                    <PresentationIcon className="size-3.5 text-orange-500" />
+                    <span>PowerPoint</span>
+                </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="h-8 gap-2 font-bold px-3 rounded-lg text-xs border border-transparent hover:border-border/50"
+            onClick={handleSave}
+            disabled={isSaving}
+          >
+            {isSaving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
+            <span>Save</span>
+          </Button>
           
-          <div className="flex items-center gap-3">
-              <input 
-                type="file" 
-                ref={fileInputRef} 
-                onChange={handleImport} 
-                accept=".json" 
-                className="hidden" 
-              />
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="h-9 gap-2 font-semibold px-4 rounded-xl border-border/50 hover:bg-muted/50 transition-all shadow-sm"
-                onClick={() => fileInputRef.current?.click()}
-              >
-                  <Upload className="h-4 w-4 opacity-70" />
-                  <span>Import</span>
-              </Button>
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="h-9 gap-2 font-semibold px-4 rounded-xl border-border/50 hover:bg-muted/50 transition-all shadow-sm"
-                    >
-                        <Share2 className="h-4 w-4 opacity-70" />
-                        <span>Export</span>
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56 rounded-2xl border-none shadow-2xl p-2 bg-background/95 backdrop-blur-xl ring-1 ring-black/5 mt-2">
-                    <DropdownMenuItem 
-                        className="gap-3 h-10 rounded-xl font-semibold px-3 cursor-pointer transition-colors"
-                        onClick={() => exportToJson(storyTitle, slides)}
-                    >
-                        <FileJson className="size-4 text-primary" />
-                        <span>Export as JSON</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem 
-                        className="gap-3 h-10 rounded-xl font-semibold px-3 cursor-pointer transition-colors"
-                        onClick={() => exportToPpptx(storyTitle, slides)}
-                    >
-                        <Presentation className="size-4 text-orange-500" />
-                        <span>Export as PowerPoint</span>
-                    </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              <div className="w-[1px] h-4 bg-border/40 mx-1" />
-
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="h-9 gap-2 font-semibold px-4 rounded-xl border-dashed hover:border-solid hover:bg-muted/30 transition-all active:scale-95 shadow-sm"
-                onClick={handleSave}
-                disabled={isSaving}
-              >
-                  {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4 opacity-70" />}
-                  <span>{initialData?.id ? "Update" : "Save"}</span>
-              </Button>
-              <Button 
-                onClick={async () => {
-                  setIsPresenting(true)
-                  try {
-                    await document.documentElement.requestFullscreen()
-                  } catch (err) {
-                    console.error("Error attempting to enable full-screen mode:", err)
-                  }
-                }} 
-                size="sm" 
-                className="h-9 bg-primary text-primary-foreground font-bold px-5 rounded-xl shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all text-sm"
-              >
-                  Present
-              </Button>
-          </div>
+          <Button 
+            onClick={async () => {
+              const element = document.documentElement;
+              if (element.requestFullscreen) {
+                await element.requestFullscreen();
+              }
+            }}
+            size="sm" 
+            className="h-8 bg-primary text-primary-foreground font-black px-4 rounded-lg shadow-sm hover:scale-[1.02] active:scale-95 transition-all text-xs ml-1"
+          >
+            Present
+          </Button>
+        </div>
       </header>
 
       <div className="flex flex-1 overflow-hidden">
-        <SidebarProvider>
-          <EditorSidebar 
-            slides={slides} 
-            activeSlideId={activeSlideId} 
-            setActiveSlideId={setActiveSlideId} 
-            onAddSlide={addSlide}
-            onDeleteSlide={deleteSlide}
-          />
+        <main 
+          className="flex-1 relative bg-white dark:bg-[#050505] overflow-y-auto scroll-smooth no-scrollbar" 
+          ref={mainScrollRef}
+          onScroll={handleScroll}
+        >
+          <div className="absolute inset-0 z-0 opacity-[0.015] dark:opacity-[0.03] pointer-events-none fixed" 
+               style={{ backgroundImage: `radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)`, backgroundSize: '32px 32px' }} />
           
-          <SidebarInset className="relative flex flex-col flex-1 bg-muted/20 overflow-hidden">
-            <div ref={containerRef} className="flex-1 overflow-hidden pt-26 flex items-start justify-center relative bg-[#F8F9FB] dark:bg-[#0A0A0B]">
-                <div className="absolute inset-0 z-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none" 
-                     style={{ backgroundImage: `radial-gradient(circle at 1px 1px, currentColor 1px, transparent 0)`, backgroundSize: '32px 32px' }} />
-                <AnimatePresence mode="wait">
-                    <ContextMenu>
-                      <ContextMenuTrigger asChild>
-                        <div
-                            style={{ 
-                                width: 1024, 
-                                height: 576, 
-                                transform: `scale(${canvasScale})`,
-                                transformOrigin: 'center center',
-                                backgroundColor: activeSlide.bgColor || '#ffffff',
-                                backgroundImage: activeSlide.bgImage ? `url(${activeSlide.bgImage})` : 'none',
-                                backgroundSize: 'cover',
-                                backgroundPosition: 'center'
-                            }}
-                            className="shadow-[0_20px_50px_rgba(0,0,0,0.1)] border relative flex-shrink-0 bg-white"
-                            onDragOver={(e) => e.preventDefault()}
-                            onDrop={handleDrop}
-                            onClick={() => setSelectedElementId(null)}
-                        >
-                        <motion.div
-                            key={activeSlideId}
-                            ref={canvasRef}
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.95 }}
-                            className="w-full h-full relative overflow-hidden"
-                        >
-                        <div className="absolute inset-0 z-10">
-                          {activeSlide.elements.map((el) => (
-                                <ElementWrapper 
-                                    key={el.id}
-                                    el={el}
-                                    isSelected={selectedElementId === el.id}
-                                    onSelect={() => setSelectedElementId(el.id)}
-                                    onUpdate={(updates) => updateElement(el.id, updates)}
-                                    onDelete={() => deleteElement(el.id)}
-                                    onBringToFront={() => bringToFront(el.id)}
-                                    onSendToBack={() => sendToBack(el.id)}
-                                    onBringForward={() => bringForward(el.id)}
-                                    onSendBackward={() => sendBackward(el.id)}
-                                    canvasRef={canvasRef}
-                                    layout={activeSlide.layout || 'free'}
-                                    splitRatio={activeSlide.splitRatio || 0.5}
-                                    canvasScale={canvasScale}
-                                    defaultTextColor={defaultTextColor}
-                                />
-                          ))}
-                        </div>
-                        </motion.div>
-                        </div>
-                      </ContextMenuTrigger>
-                    </ContextMenu>
-                </AnimatePresence>
-
-                <MainToolbar 
-                    activeSlide={activeSlide} 
-                    selectedElementId={selectedElementId} 
-                    onAddElement={addElement} 
-                    onApplyLayout={applyLayout}
-                    onUpdateSlide={updateActiveSlide}
-                    onUpdateElement={updateElement}
-                />
-
-                <div className="absolute bottom-10 right-10 flex flex-col gap-3 z-50 mb-10">
-                    <div className="flex bg-background/95 backdrop-blur-2xl border shadow-2xl rounded-2xl p-1.5 ring-1 ring-black/5">
-                        <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="h-10 w-10 rounded-xl hover:bg-primary/5 hover:text-primary transition-all active:scale-90 disabled:opacity-30"
-                            disabled={historyIndex === 0}
-                            onClick={undo}
-                        >
-                            <Undo2 className="h-4.5 w-4.5" />
-                        </Button>
-                        <Separator orientation="vertical" className="h-5 mx-1 my-auto opacity-20" />
-                        <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="h-10 w-10 rounded-xl hover:bg-primary/5 hover:text-primary transition-all active:scale-90 disabled:opacity-30"
-                            disabled={historyIndex >= history.length - 1}
-                            onClick={redo}
-                        >
-                            <Redo2 className="h-4.5 w-4.5" />
-                        </Button>
-                    </div>
+          <div className="w-full max-w-[1200px] mx-auto py-16 px-6 md:px-16 space-y-24 pb-60 relative z-10">
+              <div className="space-y-16">
+                <div className="space-y-6 max-w-3xl">
+                  <div className="space-y-2">
+                    <input 
+                      className="text-4xl md:text-5xl font-black tracking-tighter text-foreground bg-transparent border-none outline-none w-full p-0 focus:ring-0 placeholder:text-muted/20"
+                      value={storyTitle}
+                      placeholder="Storyboard Title"
+                      onChange={(e) => setStoryTitle(e.target.value)}
+                    />
+                    <AutoResizeTextarea 
+                      className="text-lg text-muted-foreground leading-relaxed w-full p-0 placeholder:text-muted/20"
+                      placeholder="Overall story arc and narrative goals..."
+                      value={overallDescription}
+                      onChange={(val) => setOverallDescription(val)}
+                    />
+                  </div>
                 </div>
-            </div>
-          </SidebarInset>
-        </SidebarProvider>
+
+                <Reorder.Group axis="y" values={slides} onReorder={handleReorder} className="space-y-4">
+                  {slides.map((s, i) => (
+                    <Reorder.Item
+                      key={s.id}
+                      value={s}
+                      className="group relative"
+                    >
+                      <div className="flex flex-col md:flex-row gap-8 py-8 border-t border-border/40 group-hover:bg-muted/5 transition-colors px-4 -mx-4 rounded-2xl bg-white dark:bg-transparent">
+                        <div className="md:w-32 shrink-0 flex items-start gap-4 pt-1">
+                          <div className="cursor-grab active:cursor-grabbing text-muted-foreground/20 hover:text-primary/40 transition-colors pt-1">
+                              <GripVertical className="size-4" />
+                          </div>
+                          <div className="space-y-2">
+                             <span className="text-[10px] font-black text-muted-foreground/30 tabular-nums">Section {String(i + 1).padStart(2, '0')}</span>
+                             <div className="h-[1px] w-4 bg-primary/20 group-hover:w-8 transition-all" />
+                          </div>
+                        </div>
+
+                          <div className="flex-1 space-y-6">
+                            <div className="space-y-4">
+                              <input 
+                                className="font-black text-3xl tracking-tight bg-transparent border-none outline-none w-full p-0 focus:ring-0 group-hover:text-primary transition-colors text-foreground dark:text-white"
+                                value={s.title}
+                                onChange={(e) => updateOutlineSlide(i, 'title', e.target.value)}
+                                placeholder="Section Title"
+                              />
+
+                              <AutoResizeTextarea 
+                                className="text-base leading-relaxed text-foreground/70 font-medium dark:text-white/70 w-full max-w-3xl"
+                                value={s.content}
+                                onChange={(val) => updateOutlineSlide(i, 'content', val)}
+                                placeholder="Write the detailed narrative content here..."
+                              />
+                            </div>
+
+                            {/* Live Slide Preview or Generating State */}
+                            <div className="mt-8">
+                                {(() => {
+                                    const matchingSlide = slides[i];
+                                    const isGenerating = generatingSections.has(i);
+
+                                    if (isGenerating) {
+                                        return (
+                                            <motion.div 
+                                                initial={{ opacity: 0, scale: 0.98 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                className="aspect-video w-full bg-primary/[0.02] rounded-2xl border-2 border-dashed border-primary/10 flex items-center justify-center relative overflow-hidden"
+                                            >
+                                                {/* Animated Glow / Shimmer */}
+                                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/[0.08] to-transparent -translate-x-full animate-shimmer" />
+                                                
+                                                <div className="relative flex flex-col items-center gap-3">
+                                                    <div className="relative">
+                                                        <div className="absolute inset-0 blur-xl bg-primary/20 animate-pulse rounded-full" />
+                                                        <Sparkles className="size-8 text-primary animate-pulse relative z-10" />
+                                                    </div>
+                                                </div>
+
+                                                {/* Progress line at the bottom */}
+                                                <div className="absolute inset-x-0 bottom-0 h-1 bg-primary/5 overflow-hidden">
+                                                    <motion.div 
+                                                        className="h-full bg-primary/40 shadow-[0_0_10px_rgba(var(--primary),0.5)]"
+                                                        initial={{ width: "0%" }}
+                                                        animate={{ width: "100%" }}
+                                                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                                                    />
+                                                </div>
+                                            </motion.div>
+                                        );
+                                    }
+
+                                    if (matchingSlide) {
+                                        return (
+                                            <motion.div 
+                                                initial={{ opacity: 0, y: 10 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                className="relative group/preview"
+                                            >
+                                                <div className="aspect-video w-full rounded-2xl overflow-hidden border border-border/50 shadow-2xl bg-black/5 ring-1 ring-primary/5 group-hover:ring-primary/20 transition-all">
+                                                    <SlidePreview 
+                                                        html={matchingSlide.html} 
+                                                        autoScale={true}
+                                                    />
+                                                </div>
+                                            </motion.div>
+                                        );
+                                    }
+
+                                    return null;
+                                })()}
+                            </div>
+                          </div>
+                      </div>
+
+                      {/* Section Toolbar */}
+                      <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity z-20 flex items-center gap-1 bg-background border shadow-2xl rounded-full p-1 ring-4 ring-background">
+                         <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="size-8 rounded-full hover:bg-muted"
+                            onClick={() => setSelectedVisualsIndex(i)}
+                         >
+                            <ImageIcon className="size-3.5" />
+                         </Button>
+                         <div className="w-[1px] h-3 bg-border" />
+                         <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="size-8 rounded-full bg-primary/5 hover:bg-primary/10 group/btn"
+                            onClick={() => handleGenerateSection(i)}
+                         >
+                            <Sparkles className="size-3.5 text-primary group-hover/btn:scale-110 transition-transform" />
+                         </Button>
+                         <div className="w-[1px] h-3 bg-border" />
+                         <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="size-8 rounded-full hover:bg-muted"
+                            onClick={() => addOutlineSection(i)}
+                         >
+                            <Plus className="size-3.5 text-primary" />
+                         </Button>
+                         <div className="w-[1px] h-3 bg-border" />
+                         <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="size-8 rounded-full hover:bg-destructive/10 hover:text-destructive"
+                            onClick={() => removeOutlineSection(i)}
+                         >
+                            <Trash className="size-3.5" />
+                         </Button>
+                      </div>
+                    </Reorder.Item>
+                  ))}
+                </Reorder.Group>
+
+              </div>
+          </div>
+        </main>
       </div>
 
       <AnimatePresence>
-        {isPresenting && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[1000] bg-background flex items-center justify-center p-0"
-            onClick={(e) => {
-                const rect = e.currentTarget.getBoundingClientRect()
-                const x = e.clientX
-                if (x > rect.width / 2) {
-                    const nextIndex = slides.findIndex(s => s.id === activeSlideId) + 1
-                    if (nextIndex < slides.length) setActiveSlideId(slides[nextIndex].id)
-                } else {
-                    const prevIndex = slides.findIndex(s => s.id === activeSlideId) - 1
-                    if (prevIndex >= 0) setActiveSlideId(slides[prevIndex].id)
-                }
-            }}
+        {(isEditMode && selectedElData) && (
+          <motion.aside 
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", damping: 30, stiffness: 250 }}
+            className="fixed top-12 right-0 bottom-0 w-[360px] bg-card border-l shadow-2xl z-[150]"
           >
-            <div className="w-full h-full relative flex items-center justify-center overflow-hidden">
-                <div 
-                    className="relative shadow-[0_0_100px_rgba(0,0,0,0.5)]"
-                    style={{ 
-                        width: '100vw', 
-                        height: '56.25vw', 
-                        maxHeight: '100vh',
-                        maxWidth: '177.78vh',
-                        backgroundColor: activeSlide.bgColor || '#ffffff',
-                        backgroundImage: activeSlide.bgImage ? `url(${activeSlide.bgImage})` : 'none',
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center'
-                    }}
-                >
-                    <SlidePreview slide={activeSlide} scale={1} />
-                </div>
-
-                <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-4 bg-black/80 backdrop-blur-3xl rounded-3xl px-6 py-4 border border-white/10 shadow-2xl opacity-0 hover:opacity-100 transition-opacity">
-                    <span className="text-white/60 text-xs font-black uppercase tracking-widest">{slides.findIndex(s => s.id === activeSlideId) + 1} / {slides.length}</span>
-                    <Separator orientation="vertical" className="h-4 bg-white/20" />
-                    <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        className="text-white hover:bg-white/10 rounded-xl font-bold uppercase text-[10px] tracking-widest"
-                        onClick={async (e) => {
-                            e.stopPropagation()
-                            setIsPresenting(false)
-                            if (document.fullscreenElement) {
-                                await document.exitFullscreen()
-                            }
-                        }}
-                    >
-                        Exit Preview
-                    </Button>
-                </div>
+            <div className="h-full flex flex-col">
+              <div className="p-4 border-b flex items-center justify-between">
+                <span className="font-black text-[10px] uppercase tracking-widest text-muted-foreground/60">Element Inspector</span>
+                <Button variant="ghost" size="icon" onClick={() => setSelectedElData(null)} className="size-8"><X className="h-4 w-4" /></Button>
+              </div>
+              <ScrollArea className="flex-1">
+                <ElementSettings 
+                    selectedElData={selectedElData}
+                    onUpdate={updateSelectedElement}
+                    clearSelection={() => setSelectedElData(null)}
+                />
+              </ScrollArea>
             </div>
-          </motion.div>
+          </motion.aside>
         )}
       </AnimatePresence>
+
+      <AnimatePresence>
+        {isThemeMode && (
+          <motion.aside 
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%" }}
+            transition={{ type: "spring", damping: 30, stiffness: 250 }}
+            className="fixed top-12 right-0 bottom-0 w-[360px] bg-card border-l shadow-2xl z-[150]"
+          >
+            <div className="h-full flex flex-col">
+              <div className="p-4 border-b flex items-center justify-between">
+                <span className="font-black text-[10px] uppercase tracking-widest text-muted-foreground/60">Design Tokens</span>
+                <Button variant="ghost" size="icon" onClick={() => setIsThemeMode(false)} className="size-8"><X className="h-4 w-4" /></Button>
+              </div>
+              <ScrollArea className="flex-1">
+                <ThemeSettings 
+                    activeThemeId={activeThemeId}
+                    onApplyTheme={(theme: any) => {
+                    setActiveThemeId(theme.id)
+                    setAppliedTheme(theme)
+                    
+                    const updatedSlides = slides.map(slide => {
+                        let html = slide.html
+                        const themeVars = `:root {
+                    --background: ${theme.background};
+                    --foreground: ${theme.foreground};
+                    --primary: ${theme.primary};
+                    --primary-foreground: ${theme.primaryForeground};
+                    --card: ${theme.card};
+                    --card-foreground: ${theme.cardForeground};
+                    --secondary: ${theme.secondary};
+                    --secondary-foreground: ${theme.secondaryForeground};
+                    --muted: ${theme.muted};
+                    --muted-foreground: ${theme.mutedForeground};
+                    --accent: ${theme.accent};
+                    --accent-foreground: ${theme.accentForeground};
+                    --popover: ${theme.popover || theme.card};
+                    --popover-foreground: ${theme.popoverForeground || theme.cardForeground};
+                    --destructive: ${theme.destructive};
+                    --border: ${theme.border};
+                    --input: ${theme.input};
+                    --ring: ${theme.ring};
+                    --radius: ${theme.radius};
+                    }`
+
+                        if (html.includes(':root')) {
+                        html = html.replace(/:root\s*\{[\s\S]*?\}/, themeVars)
+                        } else if (html.includes('<style>')) {
+                            html = html.replace('<style>', `<style>\n${themeVars}`)
+                        } else if (html.includes('</head>')) {
+                            html = html.replace('</head>', `<style>\n${themeVars}\n</style></head>`)
+                        }
+                        
+                        return { ...slide, html }
+                    })
+                    
+                    setSlides(updatedSlides)
+                    toast.success("Design system synchronized across workspace")
+                    }}
+                    appliedTheme={appliedTheme}
+                />
+              </ScrollArea>
+            </div>
+          </motion.aside>
+        )}
+      </AnimatePresence>
+      <Dialog open={selectedVisualsIndex !== null} onOpenChange={(open) => !open && setSelectedVisualsIndex(null)}>
+        <DialogContent className="sm:max-w-[600px] border-none shadow-2xl bg-background rounded-2xl p-0 overflow-hidden">
+          <div className="p-8 space-y-6">
+            <DialogHeader>
+              <DialogTitle className="text-xl font-bold flex items-center gap-2">
+                <ImageIcon className="size-5 text-primary" />
+                Visual Direction
+              </DialogTitle>
+              <DialogDescription className="text-sm">
+                Fine-tune the visual concept and layout instructions for this section.
+              </DialogDescription>
+            </DialogHeader>
+
+            {selectedVisualsIndex !== null && (
+              <div className="space-y-4">
+                <AutoResizeTextarea 
+                  className="text-sm leading-relaxed text-foreground bg-muted/30 p-4 rounded-xl border focus:border-primary/30 transition-all w-full min-h-[120px]"
+                  value={slides[selectedVisualsIndex]?.description || ""}
+                  onChange={(val) => updateOutlineSlide(selectedVisualsIndex, 'description', val)}
+                  placeholder="Describe the background, icons, layout style, and overall visual mood..."
+                />
+              </div>
+            )}
+
+            <div className="flex justify-end pt-4">
+              <Button onClick={() => setSelectedVisualsIndex(null)} className="rounded-full px-8 font-bold">Save & Close</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

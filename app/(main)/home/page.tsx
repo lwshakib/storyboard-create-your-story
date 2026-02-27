@@ -21,7 +21,7 @@ export default async function HomePage() {
 
   const allProjects = projects.map(p => ({
     ...p,
-    projectType: p.type === "ADVANCED" ? "advanced" : "standard"
+    projectType: "advanced"
   }));
 
   return (
@@ -29,7 +29,7 @@ export default async function HomePage() {
       {/* Welcome Section */}
       <section className="max-w-3xl">
         <div className="flex flex-col gap-3">
-          <h1 className="text-5xl font-extrabold tracking-tight text-foreground/90 leading-tight">
+          <h1 className="text-4xl font-bold tracking-tight text-foreground/90 leading-tight">
             Welcome, {session?.user?.name?.split(' ')[0] || "Storyteller"}
           </h1>
           <p className="text-muted-foreground text-xl font-medium leading-relaxed opacity-70">
@@ -41,8 +41,8 @@ export default async function HomePage() {
       {/* Projects Section */}
       <section className="space-y-8">
         <div className="flex items-center justify-between border-b border-border/50 pb-6">
-            <h2 className="text-sm font-bold tracking-tight text-foreground/60 uppercase tracking-[0.1em]">
-                Recent Projects
+            <h2 className="text-sm font-bold tracking-tight text-foreground/60">
+                Recent projects
             </h2>
         </div>
 

@@ -36,7 +36,7 @@ export async function PATCH(
     })
     
     const body = await req.json()
-    const { title, slides, isDeleted } = body
+    const { title, description, slides, isDeleted } = body
     const {id} = await params;
 
     const project = await prisma.project.update({
@@ -46,9 +46,10 @@ export async function PATCH(
       },
       data: {
         title,
+        description,
         slides,
         isDeleted,
-        deletedAt: isDeleted === false ? null : undefined
+        deletedAt: isDeleted === false ? null : (isDeleted ? new Date() : undefined)
       },
     })
 

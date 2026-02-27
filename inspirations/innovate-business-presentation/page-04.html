@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide 4 - Highlight Left</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandorange: '#F97316',
+                        brandred: '#E11D48',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .clip-left-ribbon { clip-path: polygon(0 0, 100% 0, 75% 100%, 0 100%); }
+    </style>
+</head>
+<body class="font-sans overflow-hidden">
+    <div class="w-[960px] h-[540px] bg-white relative overflow-hidden flex items-center">
+        <div class="w-full h-full bg-white relative overflow-hidden flex items-center">
+            
+            <!-- Left large red-orange gradient shape -->
+            <div class="absolute top-0 left-0 bottom-0 w-[60%] bg-gradient-to-br from-brandred to-orange-500 clip-left-ribbon z-0"></div>
+
+            <!-- Content container -->
+            <div class="w-full h-full px-12 py-10 flex flex-col relative z-10 top-0">
+                
+                <!-- Top title in the colored ribbon -->
+                <div class="w-[45%] mb-auto pt-4 text-white">
+                    <h2 class="text-xl font-bold tracking-wide">
+                        Scalable Infrastructure<br>for Digital Growth
+                    </h2>
+                </div>
+                
+                <!-- Center Card -->
+                <div class="flex flex-row items-center w-full h-[320px] bg-white rounded shadow-md mt-6">
+                    <!-- Inner Left side - Image -->
+                    <div class="w-[50%] h-full p-2">
+                        <img src="https://placehold.co/600x400/eeeeee/333333?text=Cloud+Server+Array" alt="A high-tech cloud server array in a data center" class="w-full h-full object-cover rounded-l-sm" />
+                    </div>
+                    
+                    <!-- Inner Right side - Text -->
+                    <div class="w-[50%] h-full flex flex-col justify-center px-10">
+                        <p class="text-[10px] text-gray-400 mb-6 leading-relaxed">
+                            We design and deploy resilient cloud infrastructures that support millions of concurrent users while optimizing for cost and performance.
+                        </p>
+                        
+                        <div class="flex items-center mb-6">
+                            <div class="w-10 h-10 rounded-full border border-gray-200 shadow-sm flex items-center justify-center text-brandorange mr-4 flex-shrink-0">
+                                <i data-lucide="cloud" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800 text-xs mb-1">Cloud Native</h4>
+                                <p class="text-[9px] text-gray-400 leading-relaxed">
+                                    Our solutions are built using Kubernetes and microservices, ensuring maximum uptime and easy horizontal scaling.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-full border border-gray-200 shadow-sm flex items-center justify-center text-brandorange mr-4 flex-shrink-0">
+                                <i data-lucide="shield-check" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800 text-xs mb-1">Enterprise Security</h4>
+                                <p class="text-[9px] text-gray-400 leading-relaxed">
+                                    Zero-trust architecture and automated vulnerability scanning are integrated into every deployment.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

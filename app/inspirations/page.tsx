@@ -1,5 +1,5 @@
 import * as React from "react"
-import { getInspirations } from "@/llm/inspirations/registry"
+import { getInspirations } from "@/inspirations/registry"
 import { AdvancedSlidePreview } from "@/components/editor/advanced-slide-preview"
 import { Layout, Presentation, Sparkles, Layers } from "lucide-react"
 

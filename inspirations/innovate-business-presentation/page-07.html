@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide 7 - 4 Step Business Infographic</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        darkblue: '#0F1528',
+                        brandorange: '#F97316',
+                        brightorange: '#FF9800',
+                        navyblue: '#1E3A8A'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-sans overflow-hidden">
+    <div class="w-[960px] h-[540px] bg-white relative overflow-hidden p-12 flex flex-col items-center">
+        <div class="w-full h-full bg-white relative overflow-hidden p-12 flex flex-col items-center">
+            
+            <!-- Header -->
+            <div class="text-center mb-10 w-full mt-4">
+                <h2 class="text-lg font-bold text-gray-800">Our Strategic Product Roadmap</h2>
+            </div>
+            
+            <!-- Infographic SVG Semi-Circle -->
+            <div class="relative w-[360px] h-[180px] overflow-hidden mb-12">
+                <!-- 4 colorful wedges using a single SVG donut chart -->
+                <svg viewBox="0 0 200 100" class="w-full h-full transform scale-[1.05]">
+                    <g transform="translate(100, 100)">
+                        <path d="M -100 0 A 100 100 0 0 1 -70.7 -70.7 L -31.8 -31.8 A 45 45 0 0 0 -45 0 Z" fill="#0F1528" />
+                        <path d="M -70.7 -70.7 A 100 100 0 0 1 0 -100 L 0 -45 A 45 45 0 0 0 -31.8 -31.8 Z" fill="#1E3A8A" />
+                        <path d="M 0 -100 A 100 100 0 0 1 70.7 -70.7 L 31.8 -31.8 A 45 45 0 0 0 0 -45 Z" fill="#FF9800" />
+                        <path d="M 70.7 -70.7 A 100 100 0 0 1 100 0 L 45 0 A 45 45 0 0 0 31.8 -31.8 Z" fill="#F97316" />
+                    </g>
+                </svg>
+                
+                <div class="absolute bottom-0 left-[50%] transform -translate-x-1/2 w-[160px] h-[80px] bg-gray-50 rounded-t-full flex items-center justify-center"></div>
+
+                <div class="absolute inset-0">
+                    <div class="absolute bottom-[20%] left-[10%] text-white"><i data-lucide="microscope" class="w-6 h-6"></i></div>
+                    <div class="absolute top-[20%] left-[30%] text-white"><i data-lucide="layers" class="w-5 h-5"></i></div>
+                    <div class="absolute top-[20%] right-[30%] text-white"><i data-lucide="rocket" class="w-5 h-5"></i></div>
+                    <div class="absolute bottom-[20%] right-[10%] text-white"><i data-lucide="trending-up" class="w-6 h-6"></i></div>
+                </div>
+            </div>
+            
+            <!-- 4 Columns below -->
+            <div class="flex justify-between w-[85%] max-w-4xl mx-auto space-x-4">
+                <div class="text-left w-1/4 pr-4">
+                    <h4 class="font-bold text-gray-800 text-[10px] mb-2 uppercase tracking-wide">01. Research</h4>
+                    <p class="text-[8px] text-gray-400 leading-relaxed">Deep analysis of market needs and environmental impact assessments.</p>
+                </div>
+                <div class="text-left w-1/4 pr-4">
+                    <h4 class="font-bold text-gray-800 text-[10px] mb-2 uppercase tracking-wide">02. Prototype</h4>
+                    <p class="text-[8px] text-gray-400 leading-relaxed">Rapid development of MVP solutions using green-focused architecture.</p>
+                </div>
+                <div class="text-left w-1/4 pr-4">
+                    <h4 class="font-bold text-gray-800 text-[10px] mb-2 uppercase tracking-wide">03. Deployment</h4>
+                    <p class="text-[8px] text-gray-400 leading-relaxed">Global rollout of scalable, cloud-native enterprise platforms.</p>
+                </div>
+                <div class="text-left w-1/4">
+                    <h4 class="font-bold text-gray-800 text-[10px] mb-2 uppercase tracking-wide">04. Scale</h4>
+                    <p class="text-[8px] text-gray-400 leading-relaxed">Continuous optimization and expansion into emerging markets.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

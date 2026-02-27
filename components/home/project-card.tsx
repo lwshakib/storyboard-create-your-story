@@ -4,7 +4,6 @@ import * as React from "react"
 import Link from "next/link"
 import { Trash2, Clock, Layout } from "lucide-react"
 import { SlidePreview } from "@/components/editor/slide-preview"
-import { AdvancedSlidePreview } from "@/components/editor/advanced-slide-preview"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { formatDistanceToNow } from "date-fns"
@@ -36,7 +35,7 @@ export function ProjectCard({ project, onDelete }: ProjectCardProps) {
   const router = useRouter()
   const [isDeleting, setIsDeleting] = React.useState(false)
   
-  const isAdvanced = (project as any).type === "ADVANCED"
+
   const href = `/editor/${project.id}`
   const apiPath = `/api/projects/${project.id}`
 
@@ -63,30 +62,20 @@ export function ProjectCard({ project, onDelete }: ProjectCardProps) {
 
   return (
     <div className="group flex flex-col gap-3">
-      <div className="relative aspect-video bg-muted/30 rounded-xl overflow-hidden border border-border/50 transition-all hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5">
+      <div className="relative aspect-video bg-muted/30 rounded-lg overflow-hidden border border-border/50 transition-all hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5">
         <Link href={href} className="absolute inset-0 z-10" />
-        {isAdvanced ? (
-          <AdvancedSlidePreview 
+        {project.slides && (project.slides as any[]).length > 0 ? (
+          <SlidePreview 
             html={(project.slides as any[])[0]?.html || ""} 
             autoScale 
           />
-        ) : project.slides && (project.slides as any[]).length > 0 ? (
-          <SlidePreview slide={(project.slides as any[])[0]} scale={1} />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <Layout className="size-8 opacity-10" />
           </div>
         )}
         
-        {/* Badge Overlay */}
-        <div className="absolute top-2 right-2 z-20 pointer-events-none">
-           <div className={cn(
-             "px-1.5 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest border",
-             isAdvanced ? "bg-amber-500/10 text-amber-500 border-amber-500/20" : "bg-primary/10 text-primary border-primary/20"
-           )}>
-             {isAdvanced ? "Advanced" : "Project"}
-           </div>
-        </div>
+
       </div>
 
       <div className="flex items-start justify-between gap-3 px-1">

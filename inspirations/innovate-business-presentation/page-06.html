@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide 6 - Our Best Team Meet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandorange: '#F97316',
+                        brandred: '#E11D48',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .clip-hex { clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); }
+    </style>
+</head>
+<body class="font-sans overflow-hidden">
+    <div class="w-[960px] h-[540px] bg-white relative overflow-hidden p-12">
+        <div class="w-full h-full bg-white relative overflow-hidden p-12">
+            
+            <!-- Header -->
+            <div class="text-center mb-16 pt-8">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Our Executive Leadership</h2>
+                <p class="text-[11px] text-gray-400 max-w-2xl mx-auto leading-relaxed">
+                    Our leadership combines decades of experience in software engineering, environmental science, and business strategy to drive our mission forward.
+                </p>
+            </div>
+            
+            <!-- Team Grid -->
+            <div class="flex justify-between items-start px-10">
+                
+                <!-- Member 1 -->
+                <div class="flex flex-col items-center w-1/4 px-2">
+                    <div class="relative w-32 h-32 flex items-center justify-center mb-6">
+                        <div class="absolute inset-0 bg-gradient-to-br from-brandred to-brandorange clip-hex"></div>
+                        <div class="absolute inset-0 m-1 bg-white clip-hex overflow-hidden">
+                            <img src="https://placehold.co/400x400/eeeeee/333333?text=Sarah+J." alt="Sarah Jenkins, CEO" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                    <h4 class="font-bold text-gray-800 text-sm mb-2">Sarah Jenkins</h4>
+                    <p class="text-[9px] text-gray-400 text-center leading-relaxed">
+                        Chief Executive Officer with 15 years in sustainable business growth.
+                    </p>
+                </div>
+
+                <!-- Member 2 -->
+                <div class="flex flex-col items-center w-1/4 px-2">
+                    <div class="relative w-32 h-32 flex items-center justify-center mb-6">
+                        <div class="absolute inset-0 bg-gradient-to-br from-brandred to-brandorange clip-hex"></div>
+                        <div class="absolute inset-0 m-1 bg-white clip-hex overflow-hidden">
+                            <img src="https://placehold.co/400x400/eeeeee/333333?text=Marcus+C." alt="Marcus Chen, CTO" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                    <h4 class="font-bold text-gray-800 text-sm mb-2">Marcus Chen</h4>
+                    <p class="text-[9px] text-gray-400 text-center leading-relaxed">
+                        Chief Technology Officer specializing in scalable cloud architectures.
+                    </p>
+                </div>
+
+                <!-- Member 3 -->
+                <div class="flex flex-col items-center w-1/4 px-2">
+                    <div class="relative w-32 h-32 flex items-center justify-center mb-6">
+                        <div class="absolute inset-0 bg-gradient-to-br from-brandred to-brandorange clip-hex"></div>
+                        <div class="absolute inset-0 m-1 bg-white clip-hex overflow-hidden">
+                            <img src="https://placehold.co/400x400/eeeeee/333333?text=Elena+R." alt="Elena Rodriguez, COO" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                    <h4 class="font-bold text-gray-800 text-sm mb-2">Elena Rodriguez</h4>
+                    <p class="text-[9px] text-gray-400 text-center leading-relaxed">
+                        Chief Operating Officer focused on global supply chain efficiency.
+                    </p>
+                </div>
+
+                <!-- Member 4 -->
+                <div class="flex flex-col items-center w-1/4 px-2">
+                    <div class="relative w-32 h-32 flex items-center justify-center mb-6">
+                        <div class="absolute inset-0 bg-gradient-to-br from-brandred to-brandorange clip-hex"></div>
+                        <div class="absolute inset-0 m-1 bg-white clip-hex overflow-hidden">
+                            <img src="https://placehold.co/400x400/eeeeee/333333?text=David+L." alt="David Lee, CMO" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                    <h4 class="font-bold text-gray-800 text-sm mb-2">David Lee</h4>
+                    <p class="text-[9px] text-gray-400 text-center leading-relaxed">
+                        Chief Marketing Officer bridging the gap between tech and storytelling.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
