@@ -20,7 +20,8 @@ import {
   Layers,
   Plus,
   Trash,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Upload
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -39,7 +40,8 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog"
-import { exportHtmlToJson, exportHtmlToPdf, exportHtmlToPpptx } from "@/lib/export-utils"
+import { exportHtmlToJson, exportHtmlToPdf, exportHtmlToPpptx, exportImagesToPdf, exportImagesToPpptx } from "@/lib/export-utils"
+import { toPng } from "html-to-image"
 
 import { HtmlSlide } from "@/lib/storyboard-parser"
 import { SlidePreview } from "@/components/editor/slide-preview"
@@ -56,7 +58,8 @@ interface EditorViewProps {
   isGenerating?: boolean
   onGenerate?: () => void
   onGenerateSection?: (index: number) => void
-  isGeneratingSection?: boolean
+  generatingSections?: Set<number>
+  onSaveSuccess?: (data: any) => void
 }
 
 const SkeletonSlide = ({ index }: { index: number }) => (
@@ -153,7 +156,7 @@ const AutoResizeTextarea = ({ value, onChange, className, placeholder, rows = 1 
   )
 }
 
-export function EditorView({ initialData, isGenerating, onGenerate, onGenerateSection, isGeneratingSection }: EditorViewProps) {
+export function EditorView({ initialData, isGenerating, onGenerate, onGenerateSection, generatingSections, onSaveSuccess }: EditorViewProps) {
   const router = useRouter()
   
   const [slides, setSlides] = React.useState<HtmlSlide[]>(initialData?.slides || [])
@@ -170,25 +173,25 @@ export function EditorView({ initialData, isGenerating, onGenerate, onGenerateSe
   const [activeThemeId, setActiveThemeId] = React.useState<string | null>(null)
   const [appliedTheme, setAppliedTheme] = React.useState<any>(null)
 
-  const [selectedVisualsIndex, setSelectedVisualsIndex] = React.useState<number | null>(null)
-  const [generatingSections, setGeneratingSections] = React.useState<Set<number>>(new Set())
-
   const handleGenerateSection = (index: number) => {
     if (onGenerateSection) {
-      setGeneratingSections(prev => {
-        const next = new Set(prev)
-        next.add(index)
-        return next
-      })
       onGenerateSection(index)
     }
   }
 
-  React.useEffect(() => {
-    if (!isGeneratingSection) {
-      setGeneratingSections(new Set())
-    }
-  }, [isGeneratingSection])
+  const [selectedVisualsIndex, setSelectedVisualsIndex] = React.useState<number | null>(null)
+
+  const hasChanges = React.useMemo(() => {
+    const initialTitle = initialData?.title || "Advanced AI Storyboard"
+    const initialDesc = initialData?.description || ""
+    const initialSlides = initialData?.slides || []
+
+    return (
+      storyTitle !== initialTitle ||
+      overallDescription !== initialDesc ||
+      JSON.stringify(slides) !== JSON.stringify(initialSlides)
+    )
+  }, [storyTitle, overallDescription, slides, initialData])
 
   React.useEffect(() => {
     if (initialData?.slides) {
@@ -228,20 +231,89 @@ export function EditorView({ initialData, isGenerating, onGenerate, onGenerateSe
         if (format === 'json') {
             exportHtmlToJson(storyTitle, slides);
             toast.success("JSON exported successfully");
-        } else if (format === 'pdf') {
-            toast.info("Preparing PDF conversion...");
-            await exportHtmlToPdf(storyTitle, slides);
-            toast.success("PDF exported successfully");
-        } else if (format === 'pptx') {
-            toast.info("Preparing PowerPoint conversion...");
-            await exportHtmlToPpptx(storyTitle, slides);
-            toast.success("PowerPoint exported successfully");
+        } else {
+            toast.info(`Preparing ${format.toUpperCase()} generation... This may take a moment.`);
+            
+            const images: string[] = [];
+            // Target the rendered slide preview containers
+            const previews = document.querySelectorAll('.slide-preview-container');
+            
+            for (let i = 0; i < slides.length; i++) {
+                const previewEl = document.getElementById(`slide-preview-${slides[i].id}`);
+                if (previewEl) {
+                    // Find the iframe
+                    const iframe = previewEl.querySelector('iframe');
+                    if (iframe && iframe.contentDocument) {
+                        const root = iframe.contentDocument.getElementById('preview-root');
+                        if (root) {
+                            // Ensure it's rendered. We might need a small delay or check
+                            const dataUrl = await toPng(root, {
+                                width: 1024,
+                                height: 576,
+                                style: {
+                                    transform: 'scale(1)',
+                                    transformOrigin: 'top left'
+                                }
+                            });
+                            images.push(dataUrl);
+                        }
+                    }
+                }
+            }
+
+            if (images.length === 0) {
+                toast.error("Failed to capture slide snapshots. Please ensure all slides are loaded.");
+                return;
+            }
+
+            if (format === 'pdf') {
+                await exportImagesToPdf(storyTitle, images);
+                toast.success("PDF exported successfully");
+            } else if (format === 'pptx') {
+                await exportImagesToPpptx(storyTitle, images);
+                toast.success("PowerPoint exported successfully");
+            }
         }
     } catch (error) {
         console.error(`Export to ${format} failed`, error);
         toast.error(`Export to ${format} failed`);
     }
   }
+
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleImportJson = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+        try {
+            const data = JSON.parse(event.target?.result as string);
+            // Check compatibility
+            if (Array.isArray(data.slides)) {
+                setStoryTitle(data.title || "Imported Storyboard");
+                setOverallDescription(data.description || "");
+                
+                // Ensure IDs are unique
+                const importedSlides = data.slides.map((s: any, idx: number) => ({
+                    ...s,
+                    id: s.id || (idx + 1)
+                }));
+                
+                setSlides(importedSlides);
+                toast.success("Storyboard imported successfully");
+            } else {
+                toast.error("Incompatible storyboard format");
+            }
+        } catch (err) {
+            toast.error("Failed to parse JSON file");
+        }
+        // Reset input
+        if (fileInputRef.current) fileInputRef.current.value = "";
+    };
+    reader.readAsText(file);
+  };
 
   const handleSave = async () => {
     setIsSaving(true)
@@ -265,6 +337,7 @@ export function EditorView({ initialData, isGenerating, onGenerate, onGenerateSe
         if (!initialData?.id) {
           router.push(`/editor/${data.id}`)
         } else {
+          if (onSaveSuccess) onSaveSuccess(data)
           router.refresh()
         }
       } else {
@@ -367,7 +440,23 @@ export function EditorView({ initialData, isGenerating, onGenerate, onGenerateSe
         </div>
 
         <div className="flex items-center gap-2">
-          {/* Header Buttons Simplified as requested */}
+          <input 
+            type="file" 
+            ref={fileInputRef} 
+            className="hidden" 
+            accept=".json"
+            onChange={handleImportJson} 
+          />
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="h-8 gap-2 font-bold px-3 rounded-lg text-xs"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <Upload className="h-3 w-3" />
+            <span>Import</span>
+          </Button>
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button 
@@ -395,16 +484,27 @@ export function EditorView({ initialData, isGenerating, onGenerate, onGenerateSe
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="h-8 gap-2 font-bold px-3 rounded-lg text-xs border border-transparent hover:border-border/50"
-            onClick={handleSave}
-            disabled={isSaving}
-          >
-            {isSaving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
-            <span>Save</span>
-          </Button>
+          <AnimatePresence>
+            {hasChanges && (
+              <motion.div
+                initial={{ opacity: 0, x: 20, filter: "blur(10px)" }}
+                animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+                exit={{ opacity: 0, x: 20, filter: "blur(10px)" }}
+                transition={{ type: "spring", stiffness: 400, damping: 30 }}
+              >
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="h-8 gap-2 font-bold px-3 rounded-lg text-xs border border-transparent hover:border-border/50 bg-primary/5 text-primary hover:bg-primary/10 transition-colors"
+                  onClick={handleSave}
+                  disabled={isSaving}
+                >
+                  {isSaving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
+                  <span>Save</span>
+                </Button>
+              </motion.div>
+            )}
+          </AnimatePresence>
           
           <Button 
             onClick={async () => {
@@ -456,7 +556,7 @@ export function EditorView({ initialData, isGenerating, onGenerate, onGenerateSe
                       value={s}
                       className="group relative"
                     >
-                      <div className="flex flex-col md:flex-row gap-8 py-8 border-t border-border/40 group-hover:bg-muted/5 transition-colors px-4 -mx-4 rounded-2xl bg-white dark:bg-transparent">
+                      <div className="flex flex-col md:flex-row gap-8 py-8 border-t border-border/40 group-hover:bg-muted/5 transition-colors px-4 -mx-4 rounded-2xl bg-transparent">
                         <div className="md:w-32 shrink-0 flex items-start gap-4 pt-1">
                           <div className="cursor-grab active:cursor-grabbing text-muted-foreground/20 hover:text-primary/40 transition-colors pt-1">
                               <GripVertical className="size-4" />
@@ -478,7 +578,7 @@ export function EditorView({ initialData, isGenerating, onGenerate, onGenerateSe
 
                               <AutoResizeTextarea 
                                 className="text-base leading-relaxed text-foreground/70 font-medium dark:text-white/70 w-full max-w-3xl"
-                                value={s.content}
+                                value={s.content || ""}
                                 onChange={(val) => updateOutlineSlide(i, 'content', val)}
                                 placeholder="Write the detailed narrative content here..."
                               />
@@ -488,7 +588,7 @@ export function EditorView({ initialData, isGenerating, onGenerate, onGenerateSe
                             <div className="mt-8">
                                 {(() => {
                                     const matchingSlide = slides[i];
-                                    const isGenerating = generatingSections.has(i);
+                                    const isGenerating = generatingSections?.has(i);
 
                                     if (isGenerating) {
                                         return (
@@ -520,14 +620,14 @@ export function EditorView({ initialData, isGenerating, onGenerate, onGenerateSe
                                         );
                                     }
 
-                                    if (matchingSlide) {
+                                    if (matchingSlide && matchingSlide.html) {
                                         return (
                                             <motion.div 
                                                 initial={{ opacity: 0, y: 10 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 className="relative group/preview"
                                             >
-                                                <div className="aspect-video w-full rounded-2xl overflow-hidden border border-border/50 shadow-2xl bg-black/5 ring-1 ring-primary/5 group-hover:ring-primary/20 transition-all">
+                                                <div className="aspect-video w-full rounded-2xl overflow-hidden border border-border/50 shadow-2xl bg-black/5 ring-1 ring-primary/5 group-hover:ring-primary/20 transition-all slide-preview-container" id={`slide-preview-${matchingSlide.id}`}>
                                                     <SlidePreview 
                                                         html={matchingSlide.html} 
                                                         autoScale={true}

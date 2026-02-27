@@ -23,9 +23,16 @@ export default function UnifiedEditorPage() {
   
   // Slide generation state
   const [streamingSlides, setStreamingSlides] = useState<HtmlSlide[]>([])
-  const [isGeneratingSection, setIsGeneratingSection] = useState(false)
+  const [generatingSections, setGeneratingSections] = useState<Set<number>>(new Set())
 
   const hasStartedOutlineRef = useRef(false)
+
+  const handleSaveSuccess = useCallback((updatedProject: any) => {
+    setProject(updatedProject)
+    if (updatedProject.slides) {
+      setStreamingSlides(updatedProject.slides)
+    }
+  }, [])
 
   const fetchProject = useCallback(async () => {
     try {
@@ -50,45 +57,26 @@ export default function UnifiedEditorPage() {
   const generateOutline = useCallback(async (p: string) => {
     setIsGeneratingOutline(true)
     try {
-      // 1. Generate the outline
+      // 1. Generate the outline (API now handles DB save)
       const resp = await fetch("/api/generate-outline", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: p }),
-      })
-      if (!resp.ok) throw new Error("Outline generation failed")
-      const outlineData = await resp.json()
-
-      // Format outline slides for our slides field
-      const formattedSlides = outlineData.slides.map((s: any, idx: number) => ({
-        id: idx + 1,
-        title: s.title,
-        description: s.description,
-        content: s.content,
-        html: "" // No HTML yet
-      }))
-
-      // 2. Update the project in DB
-      const patchResp = await fetch(`/api/projects/${id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: outlineData.title,
-          description: outlineData.description,
-          slides: formattedSlides,
+        body: JSON.stringify({ 
+          prompt: p,
+          projectId: id 
         }),
       })
+      if (!resp.ok) throw new Error("Outline generation failed")
+      
+      const updatedProject = await resp.json()
 
-      if (patchResp.ok) {
-        const updatedProject = await patchResp.json()
-        setProject(updatedProject)
-        setStreamingSlides(formattedSlides)
-        
-        // 3. Clear prompt from URL
-        router.replace(`/editor/${id}`, { scroll: false })
-        
-        toast.success("Outline generated and saved")
-      }
+      setProject(updatedProject)
+      setStreamingSlides(updatedProject.slides)
+      
+      // 2. Clear prompt from URL
+      router.replace(`/editor/${id}`, { scroll: false })
+      
+      toast.success("Outline generated and saved")
     } catch (err) {
       console.error(err)
       toast.error("Failed to generate outline")
@@ -117,7 +105,7 @@ export default function UnifiedEditorPage() {
 
     const context = `Overall Title: ${project?.title}\nOverall Description: ${project?.description}\nFull Narrative Flow and Planned Content:\n${streamingSlides.map((s, i) => `Section ${i + 1}: ${s.title}\n- Visual Prompt: ${s.description}\n- Writing/Narration: ${s.content}`).join('\n\n')}`
 
-    setIsGeneratingSection(true)
+    setGeneratingSections(prev => new Set(prev).add(index))
     try {
       const response = await fetch("/api/generate-sections/refine", {
         method: "POST",
@@ -129,7 +117,9 @@ export default function UnifiedEditorPage() {
           2. Start directly with the <!DOCTYPE html> or <html> content. 
           3. Use the 'generateImage' tool to create a high-fidelity cinematic visual for this slide. DO NOT use placeholders.
           4. Focus on professional agency-level design.`,
-          context: context
+          context: context,
+          projectId: id,
+          index: index
         })
       })
 
@@ -155,27 +145,17 @@ export default function UnifiedEditorPage() {
         
         // Update UI
         setStreamingSlides(next)
-        
-        // Persist to Database immediately
-        try {
-          await fetch(`/api/projects/${id}`, {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              slides: next
-            })
-          })
-          toast.success("Section refined and saved")
-        } catch (saveErr) {
-          console.error("Auto-save failed:", saveErr)
-          toast.error("Section refined (but failed to auto-save)")
-        }
+        toast.success("Section refined and saved")
       }
     } catch (err) {
       console.error("Refine error:", err)
       toast.error("Failed to refine section")
     } finally {
-      setIsGeneratingSection(false)
+      setGeneratingSections(prev => {
+        const next = new Set(prev)
+        next.delete(index)
+        return next
+      })
     }
   }, [project, id, streamingSlides])
 
@@ -287,8 +267,9 @@ export default function UnifiedEditorPage() {
             slides: streamingSlides 
         }} 
         isGenerating={false}
-        isGeneratingSection={isGeneratingSection}
+        generatingSections={generatingSections}
         onGenerateSection={handleGenerateSection}
+        onSaveSuccess={handleSaveSuccess}
     />
   )
 }

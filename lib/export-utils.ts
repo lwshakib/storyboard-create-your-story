@@ -182,3 +182,33 @@ export const exportHtmlToPpptx = async (title: string, slides: HtmlSlide[]) => {
     const structuredSlides = await Promise.all(slides.map(s => htmlToStructuredSlide(s)));
     await exportToPpptx(title, structuredSlides);
 };
+
+export const exportImagesToPdf = async (title: string, images: string[]) => {
+    const doc = new jsPDF({
+        orientation: "landscape",
+        unit: "pt",
+        format: [1024, 576]
+    });
+
+    for (let i = 0; i < images.length; i++) {
+        if (i > 0) doc.addPage([1024, 576], "landscape");
+        doc.addImage(images[i], 'PNG', 0, 0, 1024, 576);
+    }
+
+    doc.save(`${title.replace(/\s+/g, "_")}.pdf`);
+};
+
+export const exportImagesToPpptx = async (title: string, images: string[]) => {
+    const pres = new pptxgen();
+    pres.title = title;
+
+    images.forEach((imgData, idx) => {
+        const slide = pres.addSlide();
+        slide.addImage({
+            data: imgData,
+            x: 0, y: 0, w: 10, h: 5.625 // 16:9 ratio in inches
+        });
+    });
+
+    await pres.writeFile({ fileName: `${title.replace(/\s+/g, "_")}.pptx` });
+};
