@@ -53,6 +53,7 @@ export default function NewProjectPage() {
 
       if (res.ok) {
         const project = await res.json()
+        window.dispatchEvent(new Event('projects-updated'))
         // 2. Redirect to the project's editor page with the prompt
         router.push(`/editor/${project.id}?prompt=${encodeURIComponent(prompt)}`)
       } else {
@@ -87,6 +88,7 @@ export default function NewProjectPage() {
 
       if (res.ok) {
         const project = await res.json()
+        window.dispatchEvent(new Event('projects-updated'))
         router.push(`/editor/${project.id}`)
       }
     } catch (error) {

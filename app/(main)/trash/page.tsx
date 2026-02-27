@@ -13,7 +13,6 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { SlidePreview } from "@/components/editor/slide-preview"
-import { AdvancedSlidePreview } from "@/components/editor/advanced-slide-preview"
 import { formatDistanceToNow } from "date-fns"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
@@ -71,6 +70,7 @@ export default function TrashPage() {
 
       if (res.ok) {
         toast.success("Project restored")
+        window.dispatchEvent(new Event('projects-updated'))
         setProjects(projects.filter(p => p.id !== id))
         setSelectedIds(prev => {
             const next = new Set(prev)
@@ -91,6 +91,7 @@ export default function TrashPage() {
 
       if (res.ok) {
         toast.success("Project permanently deleted")
+        window.dispatchEvent(new Event('projects-updated'))
         setProjects(projects.filter(p => p.id !== id))
         setSelectedIds(prev => {
             const next = new Set(prev)
@@ -111,6 +112,7 @@ export default function TrashPage() {
 
       if (res.ok) {
         toast.success("Trash emptied")
+        window.dispatchEvent(new Event('projects-updated'))
         setProjects([])
         setSelectedIds(new Set())
       }
@@ -130,6 +132,7 @@ export default function TrashPage() {
           {
               loading: 'Deleting selected items...',
               success: () => {
+                  window.dispatchEvent(new Event('projects-updated'))
                   setProjects(projects.filter(p => !selectedIds.has(p.id)))
                   setSelectedIds(new Set())
                   return 'Items permanently deleted'
@@ -268,12 +271,12 @@ export default function TrashPage() {
                 <div className="relative aspect-video bg-muted/20 rounded-xl overflow-hidden border border-border/40 transition-all group-hover:border-primary/20">
                     <div className="absolute inset-0 z-10 bg-background/40 backdrop-grayscale-[0.5] opacity-60" />
                     {project.projectType === 'advanced' ? (
-                        <AdvancedSlidePreview 
+                        <SlidePreview 
                           html={(project.slides as any[])[0]?.html || ""} 
                           autoScale 
                         />
                     ) : project.slides && (project.slides as any[]).length > 0 ? (
-                      <SlidePreview slide={(project.slides as any[])[0]} scale={1} />
+                      <SlidePreview html={(project.slides as any[])[0]?.html || ""} autoScale />
                     ) : (
                         <div className="w-full h-full flex items-center justify-center">
                             <Layout className="size-8 opacity-5" />

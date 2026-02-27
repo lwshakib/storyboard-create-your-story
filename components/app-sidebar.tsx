@@ -76,6 +76,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     }
 
     fetchProjects()
+
+    // Listen for project updates to refresh the list
+    const handleUpdate = (e: any) => {
+        // Optimistic delete: if an ID is provided, remove it from state instantly
+        if (e.detail?.deletedId) {
+            setRecentProjects(prev => prev.filter(p => !p.url.includes(e.detail.deletedId)))
+        } else {
+            fetchProjects()
+        }
+    }
+
+    window.addEventListener('projects-updated', handleUpdate as any)
+    return () => window.removeEventListener('projects-updated', handleUpdate as any)
   }, [])
 
   return (

@@ -40,9 +40,15 @@ export function ProjectCard({ project, onDelete }: ProjectCardProps) {
   const apiPath = `/api/projects/${project.id}`
 
   const handleDelete = async () => {
-    if (onDelete) onDelete()
-    setIsDeleting(true)
+    // 1. Optimistic Updates (Instant)
+    if (onDelete) onDelete() // Removes from local grid state
+    
+    window.dispatchEvent(new CustomEvent('projects-updated', { 
+        detail: { deletedId: project.id } 
+    }))
+
     try {
+      // 2. Background API call
       const res = await fetch(apiPath, {
         method: "DELETE",
       })
@@ -51,12 +57,13 @@ export function ProjectCard({ project, onDelete }: ProjectCardProps) {
         toast.success("Project moved to trash")
         router.refresh()
       } else {
+        // Rollback if needed (re-fetch)
+        window.dispatchEvent(new Event('projects-updated'))
         toast.error("Failed to delete project")
       }
     } catch (error) {
-      toast.error("An error occurred")
-    } finally {
-      setIsDeleting(false)
+       window.dispatchEvent(new Event('projects-updated'))
+       toast.error("An error occurred")
     }
   }
 
