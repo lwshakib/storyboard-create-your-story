@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Slide 5 - Column Delivery Paths</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              c1: "#2d5a27",
+              c2: "#c0392b",
+              c3: "#2c3e50",
+              c4: "#e67e22",
+              c5: "#f39c12",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .path-stem {
+        border-radius: 100px 100px 0 0;
+      }
+    </style>
+  </head>
+  <body class="font-sans overflow-hidden bg-gray-100/50">
+    <div class="w-[960px] h-[540px] bg-white relative overflow-hidden p-12 flex flex-col">
+      <!-- Header -->
+      <div class="flex justify-between items-center mb-12 border-b border-gray-100 pb-4 px-4">
+          <div class="text-[12px] font-black text-gray-400 tracking-widest uppercase">Process Page</div>
+          <div class="text-[12px] font-black text-gray-400 tracking-widest uppercase">LOGOTYPE</div>
+      </div>
+
+      <div class="flex flex-1">
+          <!-- Sidebar -->
+          <div class="w-1/3 flex flex-col justify-center pr-12">
+              <h2 class="text-[36px] font-black text-gray-800 leading-tight mb-4">Main Title</h2>
+              <p class="text-[12px] text-gray-400 leading-relaxed max-w-xs font-medium">
+                  Nam pretium turpis et arcu. Duis ac nisl sem. Ut ante id ex dignissim lobortis. Nam pretium turpis et arcu. Duis ac nisl sem.
+              </p>
+          </div>
+
+          <!-- Main Infographic (The center one in the user image) -->
+          <div class="w-2/3 flex items-end justify-center space-x-1 px-4 relative pb-8">
+               <!-- Vertical Stems with curved top and ABCD labels -->
+               
+               <!-- A -->
+               <div class="flex flex-col items-center">
+                    <div class="w-14 h-14 bg-white rounded-full shadow-lg border-4 border-gray-50 flex items-center justify-center mb-4"><i data-lucide="database" class="w-6 h-6 text-c1"></i></div>
+                    <div class="text-center w-24 mb-16 h-8 flex items-center justify-center"><p class="text-[10px] font-black text-gray-700 uppercase leading-none">Your Title</p></div>
+                    <div class="w-16 h-[180px] bg-c1 path-stem"></div>
+                    <div class="w-16 h-12 bg-c1 mt-[2px] flex items-center justify-center text-white font-black text-[20px]">A</div>
+               </div>
+
+               <!-- B -->
+               <div class="flex flex-col items-center">
+                    <div class="w-14 h-14 bg-white rounded-full shadow-lg border-4 border-gray-50 flex items-center justify-center mb-4"><i data-lucide="anchor" class="w-6 h-6 text-c2"></i></div>
+                    <div class="text-center w-24 mb-12 h-8 flex items-center justify-center"><p class="text-[10px] font-black text-gray-700 uppercase leading-none">Your Title</p></div>
+                    <div class="w-16 h-[220px] bg-c2 path-stem"></div>
+                    <div class="w-16 h-12 bg-c2 mt-[2px] flex items-center justify-center text-white font-black text-[20px]">B</div>
+               </div>
+
+               <!-- C -->
+               <div class="flex flex-col items-center">
+                    <div class="w-14 h-14 bg-white rounded-full shadow-lg border-4 border-gray-50 flex items-center justify-center mb-4"><i data-lucide="activity" class="w-6 h-6 text-c3"></i></div>
+                    <div class="text-center w-24 mb-20 h-8 flex items-center justify-center"><p class="text-[10px] font-black text-gray-700 uppercase leading-none">Your Title</p></div>
+                    <div class="w-16 h-[260px] bg-c3 path-stem"></div>
+                    <div class="w-16 h-12 bg-c3 mt-[2px] flex items-center justify-center text-white font-black text-[20px]">C</div>
+               </div>
+
+               <!-- D -->
+               <div class="flex flex-col items-center">
+                    <div class="w-14 h-14 bg-white rounded-full shadow-lg border-4 border-gray-50 flex items-center justify-center mb-4"><i data-lucide="dollar-sign" class="w-6 h-6 text-c4"></i></div>
+                    <div class="text-center w-24 mb-8 h-8 flex items-center justify-center"><p class="text-[10px] font-black text-gray-700 uppercase leading-none">Your Title</p></div>
+                    <div class="w-16 h-[140px] bg-c4 path-stem"></div>
+                    <div class="w-16 h-12 bg-c4 mt-[2px] flex items-center justify-center text-white font-black text-[20px]">D</div>
+               </div>
+
+               <!-- E -->
+               <div class="flex flex-col items-center">
+                    <div class="w-14 h-14 bg-white rounded-full shadow-lg border-4 border-gray-50 flex items-center justify-center mb-4"><i data-lucide="settings" class="w-6 h-6 text-c5"></i></div>
+                    <div class="text-center w-24 mb-24 h-8 flex items-center justify-center"><p class="text-[10px] font-black text-gray-700 uppercase leading-none">Your Title</p></div>
+                    <div class="w-16 h-[100px] bg-c5 path-stem"></div>
+                    <div class="w-16 h-12 bg-c5 mt-[2px] flex items-center justify-center text-white font-black text-[20px]">E</div>
+               </div>
+          </div>
+      </div>
+      
+      <!-- Page Number Corner -->
+      <div class="absolute bottom-8 right-12 flex items-center">
+          <div class="bg-gray-300 w-8 h-4 mr-2"></div>
+          <span class="text-[10px] text-gray-450 font-bold uppercase">50</span>
+      </div>
+    </div>
+    <script>lucide.createIcons();</script>
+  </body>
+</html>

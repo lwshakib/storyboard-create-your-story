@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Storyset Presentation - Slide 01</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              mainpurple: "#522583",
+              lightpurple: "#7d52a8",
+              brandyellow: "#ffcc33",
+              brandblue: "#3abef9",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .bg-dots {
+        background-image: radial-gradient(circle, #ffcc33 1px, transparent 1px);
+        background-size: 10px 10px;
+      }
+    </style>
+  </head>
+  <body class="font-sans overflow-hidden bg-mainpurple">
+    <div class="w-[960px] h-[540px] relative overflow-hidden flex flex-col items-center justify-center p-20 text-center">
+      <!-- Background Waves -->
+      <svg class="absolute top-0 left-0 w-full h-full opacity-30" viewBox="0 0 960 540" preserveAspectRatio="none">
+         <path d="M0,0 C300,100 600,-50 960,100 L960,0 L0,0 Z" fill="#421d6b" />
+         <path d="M0,540 C400,450 700,550 960,450 L960,540 L0,540 Z" fill="#421d6b" />
+         <path d="M0,200 C200,300 400,100 600,350 C800,500 960,400 960,400 L960,540 L0,540 Z" fill="#421d6b" opacity="0.5" />
+      </svg>
+
+      <!-- Decorative Leaves -->
+      <div class="absolute top-0 right-0 p-12 opacity-50">
+          <svg width="100" height="100" viewBox="0 0 100 100">
+              <path d="M50,0 C70,20 100,50 50,100 C0,50 30,20 50,0" fill="#ffcc33" transform="rotate(45 50 50)" />
+          </svg>
+      </div>
+      <div class="absolute bottom-10 left-10 opacity-50">
+          <div class="w-16 h-2 bg-brandyellow rounded-full rotate-45 mb-2"></div>
+          <div class="w-24 h-2 bg-brandyellow rounded-full rotate-45 ml-4"></div>
+      </div>
+
+      <!-- Dotted Pattern -->
+      <div class="absolute top-20 left-10 w-24 h-24 bg-dots opacity-30"></div>
+
+      <!-- Content -->
+      <div class="relative z-10 flex flex-col items-center">
+          <h2 class="text-brandyellow text-4xl font-black uppercase tracking-[0.2em] mb-4">BUSINESS</h2>
+          <h1 class="text-white text-7xl font-black uppercase tracking-tighter leading-none">PRESENTATION</h1>
+          <div class="w-32 h-1 bg-brandyellow mt-10 rounded-full"></div>
+      </div>
+      
+      <!-- Corner Accents -->
+      <div class="absolute -bottom-10 -right-10 w-64 h-64 bg-lightpurple rounded-full opacity-20"></div>
+    </div>
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
+</html>

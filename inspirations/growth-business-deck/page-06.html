@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Slide 6 - Team Members</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brandgreen: "#2ecc71",
+              branddark: "#1e272e",
+              brandblack: "#111827",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .clip-hex {
+        clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      }
+    </style>
+  </head>
+  <body class="font-sans overflow-hidden">
+    <div class="w-[960px] h-[540px] bg-white relative overflow-hidden p-16 flex flex-col items-center">
+      <!-- Title -->
+      <div class="w-full flex justify-between items-baseline mb-16 px-4">
+          <h2 class="text-[42px] font-black text-branddark uppercase tracking-tight">
+            TEAM <span class="text-brandgreen">MEMBERS</span>
+          </h2>
+          <div class="flex items-center space-x-2">
+              <div class="w-2 h-2 clip-hex bg-brandgreen"></div>
+              <div class="w-2 h-2 clip-hex bg-brandgreen"></div>
+              <div class="w-2 h-2 clip-hex bg-brandgreen opacity-30"></div>
+          </div>
+      </div>
+
+      <!-- Team Grid -->
+      <div class="grid grid-cols-4 gap-8 w-full px-4">
+          <!-- Member 1 -->
+          <div class="flex flex-col items-center">
+              <div class="w-[140px] h-[160px] clip-hex bg-brandgreen p-1 mb-4 shadow-lg transition-transform duration-300 hover:scale-105 cursor-pointer">
+                  <div class="w-full h-full clip-hex bg-gray-100 overflow-hidden">
+                      <img src="/presentation-images/growth-business-deck/avatar-7.jpg" alt="Alex Rivera - Creative Director avatar smiling" class="w-full h-full object-cover">
+                  </div>
+              </div>
+              <div class="bg-branddark w-full py-2 px-4 shadow-md rounded-sm text-center">
+                  <h4 class="text-[12px] font-black text-white uppercase leading-none">Alex Rivera</h4>
+                  <p class="text-[9px] text-brandgreen font-bold uppercase mt-1">Creative Director</p>
+              </div>
+          </div>
+
+          <!-- Member 2 -->
+          <div class="flex flex-col items-center">
+              <div class="w-[140px] h-[160px] clip-hex bg-brandgreen p-1 mb-4 shadow-lg transition-transform duration-300 hover:scale-105 cursor-pointer">
+                  <div class="w-full h-full clip-hex bg-gray-100 overflow-hidden">
+                      <img src="/presentation-images/growth-business-deck/avatar-8.jpg" alt="Maya Chen - Lead Strategist avatar face" class="w-full h-full object-cover">
+                  </div>
+              </div>
+              <div class="bg-branddark w-full py-2 px-4 shadow-md rounded-sm text-center">
+                  <h4 class="text-[12px] font-black text-white uppercase leading-none">Maya Chen</h4>
+                  <p class="text-[9px] text-brandgreen font-bold uppercase mt-1">Lead Strategist</p>
+              </div>
+          </div>
+
+          <!-- Member 3 -->
+          <div class="flex flex-col items-center">
+              <div class="w-[140px] h-[160px] clip-hex bg-brandgreen p-1 mb-4 shadow-lg transition-transform duration-300 hover:scale-105 cursor-pointer">
+                  <div class="w-full h-full clip-hex bg-gray-100 overflow-hidden">
+                      <img src="/presentation-images/growth-business-deck/avatar-9.jpg" alt="Liam Smith - Technical Architect avatar personality" class="w-full h-full object-cover">
+                  </div>
+              </div>
+              <div class="bg-branddark w-full py-2 px-4 shadow-md rounded-sm text-center">
+                  <h4 class="text-[12px] font-black text-white uppercase leading-none">Liam Smith</h4>
+                  <p class="text-[9px] text-brandgreen font-bold uppercase mt-1">Technical Architect</p>
+              </div>
+          </div>
+
+          <!-- Member 4 -->
+          <div class="flex flex-col items-center">
+              <div class="w-[140px] h-[160px] clip-hex bg-brandgreen p-1 mb-4 shadow-lg transition-transform duration-300 hover:scale-105 cursor-pointer">
+                  <div class="w-full h-full clip-hex bg-gray-100 overflow-hidden">
+                      <img src="/presentation-images/growth-business-deck/avatar-10.jpg" alt="Sarah Jenkins - Operations Manager avatar ceo" class="w-full h-full object-cover">
+                  </div>
+              </div>
+              <div class="bg-branddark w-full py-2 px-4 shadow-md rounded-sm text-center">
+                  <h4 class="text-[12px] font-black text-white uppercase leading-none">Sarah Jenkins</h4>
+                  <p class="text-[9px] text-brandgreen font-bold uppercase mt-1">Operations Manager</p>
+              </div>
+          </div>
+      </div>
+      
+      <!-- Decorative Element -->
+      <div class="absolute bottom-10 right-16 flex flex-col items-end">
+          <div class="w-16 h-1 bg-brandgreen mb-1"></div>
+          <div class="w-8 h-1 bg-brandgreen opacity-50"></div>
+      </div>
+    </div>
+
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
+</html>

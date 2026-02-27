@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Storyset Presentation - Slide 09</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              mainpurple: "#33135c",
+              accentpurple: "#522583",
+              brandyellow: "#ffcc33",
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="font-sans overflow-hidden bg-mainpurple">
+    <div class="w-[960px] h-[540px] relative overflow-hidden flex flex-col items-center justify-center p-20 text-center">
+      <!-- Background Waves -->
+      <svg class="absolute inset-0 w-full h-full opacity-30" viewBox="0 0 960 540" preserveAspectRatio="none">
+         <path d="M0,0 C300,100 600,-50 960,100 L960,540 L0,540 Z" fill="#522583" />
+         <path d="M0,350 C400,250 700,450 960,350 L960,540 L0,540 Z" fill="#522583" opacity="0.4" />
+      </svg>
+
+      <!-- Decorative Leaves (Yellow) -->
+      <div class="absolute -top-10 -right-10 rotate-12">
+          <svg width="250" height="250" viewBox="0 0 100 100">
+              <path d="M50,0 C70,20 100,50 50,100 C0,50 30,20 50,0" fill="#ffcc33" opacity="0.1" />
+          </svg>
+      </div>
+      <div class="absolute bottom-10 left-10 -rotate-45 opacity-40">
+           <svg width="120" height="120" viewBox="0 0 100 100">
+              <path d="M50,0 C70,20 100,50 50,100 C0,50 30,20 50,0" fill="#ffcc33" />
+          </svg>
+      </div>
+      <div class="absolute top-1/2 right-10 -translate-y-1/2 opacity-20">
+           <svg width="80" height="80" viewBox="0 0 100 100">
+              <path d="M50,0 C70,20 100,50 50,100 C0,50 30,20 50,0" fill="#ffcc33" />
+          </svg>
+      </div>
+
+      <!-- Content -->
+      <div class="relative z-10">
+          <h1 class="text-white text-8xl font-black uppercase tracking-tighter mb-4">THANK YOU!</h1>
+          <p class="text-brandyellow text-xl font-bold uppercase tracking-[0.3em] mb-12">We look forward to working with you</p>
+          <div class="w-24 h-1 bg-white mx-auto rounded-full opacity-50"></div>
+          
+          <div class="mt-16 flex flex-col items-center space-y-2">
+              <p class="text-gray-400 text-sm font-medium">Contact us at</p>
+              <p class="text-white text-lg font-black">hello@storyboard.com</p>
+          </div>
+      </div>
+      
+      <!-- Bottom Right Accent -->
+      <div class="absolute bottom-[-50px] right-[-50px] w-64 h-64 bg-accentpurple rounded-full opacity-30"></div>
+    </div>
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
+</html>

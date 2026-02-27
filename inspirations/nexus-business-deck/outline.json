@@ -1,0 +1,36 @@
+{
+  "title": "Nexus Business Deck",
+  "description": "A high-end, futuristic business presentation featuring a dark navy theme with vibrant gradients (blue, purple, and pink). Includes data-driven slides, strategic pillars, and historical milestones with organic, flowing design elements.",
+  "slides": [
+    {
+      "title": "NEXUS BUSINESS PRESENTATION",
+      "description": "Title slide with a deep navy background and flowing organic shapes in blue and pink gradients. Centered bold typography with a modern minimalist logo.",
+      "content": "Pioneering the Digital Frontier. Empowering global enterprises through strategic innovation and data-driven excellence."
+    },
+    {
+      "title": "PERFORMANCE METRICS",
+      "description": "Data overview slide featuring three large circular progress indicators with gradient borders, each showing a specific percentage (75%, 50%, 98%).",
+      "content": "RELIABILITY: 75% system uptime and consistency. GROWTH: 50% year-over-year market expansion. INNOVATION: 98% adoption rate of new technologies."
+    },
+    {
+      "title": "STRATEGIC PILLARS",
+      "description": "Strategy slide with three circular icon containers in bright pink gradients, representing Ideation, Efficiency, and Value Creation.",
+      "content": "IDEATION: Sparking creative solutions for complex problems. EFFICIENCY: Optimizing workflows for maximum throughput. VALUE: Delivering sustainable returns for stakeholders."
+    },
+    {
+      "title": "MARKET PERFORMANCE",
+      "description": "Analytics slide featuring a multi-layered bar chart with gradient bars showing performance across different quarters (Q1, Q2, Q3).",
+      "content": "Q1 Performance: $1.8M and growing. Q2 Momentum: Accelerated market penetration. Q3 Projection: Reaching peak operational efficiency."
+    },
+    {
+      "title": "HISTORICAL MILESTONES",
+      "description": "Timeline slide with a large circular donut chart divided into segments representing 2020, 2021, and 2022 milestones.",
+      "content": "2020: Foundation and core product launch. 2021: First major global expansion. 2022: Industry leadership recognition and secondary funding."
+    },
+    {
+      "title": "LEADERSHIP PERSPECTIVE",
+      "description": "Quote slide with a large centered quote block framed by vibrant organic wave shapes on the corners.",
+      "content": "\"Innovation is the heartbeat of future-proof enterprises. We don't just follow trends; we define them for the next generation of business leaders.\""
+    }
+  ]
+}

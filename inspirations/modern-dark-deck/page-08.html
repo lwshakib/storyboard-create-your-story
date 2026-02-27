@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Modern Dark Deck - Slide 08</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              branddark: "#141624",
+              brandyellow: "#fbc531",
+              brandorange: "#e67e22",
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="font-sans overflow-hidden bg-branddark">
+    <div class="w-[960px] h-[540px] relative overflow-hidden flex flex-col p-20">
+      <!-- Header -->
+      <div class="flex justify-between items-center mb-16 border-b border-white/5 pb-8 relative z-10">
+          <h1 class="text-white text-[48px] font-black uppercase tracking-tighter">
+            HEADLINE <span class="text-brandyellow">SLIDE</span>
+          </h1>
+          <div class="flex space-x-2">
+              <div class="w-10 h-[2px] bg-brandyellow"></div>
+              <div class="w-4 h-[2px] bg-white/20"></div>
+          </div>
+      </div>
+
+      <!-- Main Content: Vertical Bubbles -->
+      <div class="flex-1 flex items-center justify-center space-x-12 relative z-10">
+          <!-- Step 1 -->
+          <div class="flex flex-col items-center">
+              <div class="w-16 h-16 rounded-full bg-brandyellow flex items-center justify-center shadow-[0_0_30px_rgba(251,197,49,0.3)] mb-6">
+                  <i data-lucide="database" class="text-branddark w-8 h-8"></i>
+              </div>
+              <p class="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-2">Service 01</p>
+              <div class="w-1 h-12 bg-gradient-to-b from-brandyellow to-transparent opacity-20"></div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="flex flex-col items-center">
+              <div class="w-16 h-16 rounded-full bg-brandorange flex items-center justify-center shadow-[0_0_30px_rgba(230,126,34,0.3)] mb-6">
+                  <i data-lucide="shield" class="text-branddark w-8 h-8"></i>
+              </div>
+              <p class="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-2">Service 02</p>
+              <div class="w-1 h-12 bg-gradient-to-b from-brandorange to-transparent opacity-20"></div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="flex flex-col items-center">
+              <div class="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-[0_0_30px_rgba(255,255,255,0.1)] mb-6">
+                  <i data-lucide="activity" class="text-branddark w-8 h-8"></i>
+              </div>
+              <p class="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-2">Service 03</p>
+              <div class="w-1 h-12 bg-gradient-to-b from-white to-transparent opacity-10"></div>
+          </div>
+      </div>
+
+      <!-- Decorative Background Curves -->
+      <div class="absolute inset-0 z-0 pointer-events-none">
+          <div class="absolute top-[40%] left-[-10%] w-[300px] h-[300px] border border-white/5 rounded-full"></div>
+          <div class="absolute bottom-[10%] right-[-5%] w-[400px] h-[400px] border border-brandyellow/5 rounded-full"></div>
+          <div class="absolute top-[10%] left-1/2 -translate-x-1/2 w-[800px] h-[100px] border-b border-white/5 rounded-b-[400px]"></div>
+      </div>
+    </div>
+
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
+</html>

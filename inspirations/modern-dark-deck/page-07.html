@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Modern Dark Deck - Slide 07</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              branddark: "#141624",
+              brandyellow: "#fbc531",
+              brandorange: "#e67e22",
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="font-sans overflow-hidden bg-branddark">
+    <div class="w-[960px] h-[540px] relative overflow-hidden flex items-center p-20">
+      
+      <!-- Left: Content -->
+      <div class="w-2/3 pr-16">
+          <h2 class="text-brandorange text-[12px] font-black uppercase tracking-[0.4em] mb-4">Phase Two: Acceleration</h2>
+          <h1 class="text-white text-[56px] font-black leading-tight uppercase mb-8 tracking-tighter">
+            HEADLINE<br/><span class="text-gray-400">SLIDE</span>
+          </h1>
+          
+          <div class="w-full bg-white/5 p-8 rounded-3xl border border-white/10 relative overflow-hidden">
+              <div class="absolute top-0 right-0 w-32 h-32 bg-brandorange/10 rounded-full -mr-16 -mt-16"></div>
+              <p class="text-gray-400 text-[14px] leading-relaxed font-medium relative z-10">
+                Scaling operations across 12 new regions and implementing AI-driven customer support modules. We aim for a 300% increase in operational throughput by Q4 2024.
+              </p>
+              <div class="mt-8 flex space-x-12 relative z-10">
+                  <div>
+                      <p class="text-[24px] font-black text-white">12+</p>
+                      <p class="text-[10px] text-gray-500 uppercase font-black">Markets</p>
+                  </div>
+                  <div>
+                      <p class="text-[24px] font-black text-brandorange">300%</p>
+                      <p class="text-[10px] text-gray-500 uppercase font-black">Growth</p>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      <!-- Right: Large Number -->
+      <div class="w-1/3 flex items-center justify-center relative">
+          <div class="absolute inset-0 flex items-center justify-center">
+              <div class="w-[300px] h-[300px] border border-white/5 rounded-full"></div>
+              <div class="w-[400px] h-[400px] border border-white/5 rounded-full"></div>
+          </div>
+          <span class="text-[240px] font-black leading-none text-brandorange z-10" style="text-shadow: 0 0 50px rgba(230, 126, 34, 0.2);">2.</span>
+          
+          <!-- Decorative circle ring piece -->
+          <div class="absolute w-[320px] h-[320px] border-r-[15px] border-brandorange/30 rounded-full rotate-45"></div>
+      </div>
+
+      <!-- Footer Decorative Lines -->
+      <div class="absolute bottom-0 left-0 p-8">
+           <div class="w-48 h-12 border-b-2 border-l-2 border-white/5 rounded-bl-3xl"></div>
+      </div>
+    </div>
+
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
+</html>

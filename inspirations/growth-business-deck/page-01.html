@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Slide 1 - Grow Your Business</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brandgreen: "#2ecc71",
+              branddark: "#1e272e",
+              brandlight: "#f1f2f6",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .clip-hex {
+        clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      }
+      .bg-dots {
+        background-image: radial-gradient(#2ecc71 1px, transparent 1px);
+        background-size: 20px 20px;
+      }
+    </style>
+  </head>
+  <body class="font-sans overflow-hidden">
+    <div class="w-[960px] h-[540px] bg-white relative overflow-hidden flex items-center">
+      <!-- Background Elements -->
+      <div class="absolute top-0 right-0 w-1/2 h-full bg-brandgreen opacity-10 flex items-center justify-center">
+         <div class="w-full h-full bg-dots opacity-20"></div>
+      </div>
+      
+      <!-- Logo -->
+      <div class="absolute top-8 left-12 flex items-center">
+        <div class="w-10 h-10 clip-hex bg-brandgreen flex items-center justify-center mr-3 text-white">
+          <i data-lucide="trending-up" class="w-6 h-6"></i>
+        </div>
+        <div class="text-[12px] font-black text-branddark uppercase tracking-[0.2em]">
+          <span class="text-brandgreen">Growth</span> Solutions
+        </div>
+      </div>
+
+      <!-- Left Content -->
+      <div class="w-1/2 pl-12 pr-6 z-10">
+        <h1 class="text-[64px] font-black leading-tight text-brandgreen uppercase mb-0 drop-shadow-sm">
+          GROW YOUR
+        </h1>
+        <h1 class="text-[64px] font-black leading-tight text-branddark uppercase mb-6 drop-shadow-sm">
+          BUSINESS
+        </h1>
+        <div class="w-24 h-2 bg-brandgreen mb-8"></div>
+        <p class="text-[14px] text-gray-600 leading-relaxed max-w-sm font-medium">
+          Innovate. Scale. Succeed. Your partner in sustainable business growth and digital transformation. We help you reach new heights with data-driven strategies.
+        </p>
+      </div>
+
+      <!-- Right Side -->
+      <div class="w-1/2 h-full relative flex items-center justify-end pr-12">
+        <!-- Accent Hexagons -->
+        <div class="absolute top-[20%] right-[320px] w-24 h-24 clip-hex bg-brandgreen opacity-20"></div>
+        <div class="absolute bottom-[15%] right-[350px] w-16 h-16 clip-hex bg-branddark opacity-10"></div>
+        
+        <!-- Main Hex Image Container -->
+        <div class="relative w-[420px] h-[480px] flex items-center justify-center mt-8">
+            <!-- Border Layers -->
+            <div class="absolute w-[410px] h-[470px] clip-hex bg-brandgreen opacity-30 -mr-8 -mt-8"></div>
+            <div class="absolute w-[400px] h-[460px] clip-hex bg-white p-2 z-10">
+                <div class="w-full h-full clip-hex bg-gray-200 overflow-hidden">
+                    <img
+                        src="/presentation-images/growth-business-deck/avatar-6.jpg"
+                        alt="A diverse professional business team smiling in a modern office"
+                        class="w-full h-full object-cover"
+                    />
+                </div>
+            </div>
+        </div>
+      </div>
+      
+      <!-- Footer Decor -->
+      <div class="absolute bottom-6 left-12 flex items-center text-[10px] text-gray-400 font-bold tracking-widest uppercase">
+          <div class="w-4 h-4 clip-hex bg-brandgreen mr-2"></div>
+          Our company website here
+      </div>
+    </div>
+
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
+</html>

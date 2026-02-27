@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Storyset Presentation - Slide 03</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              mainpurple: "#522583",
+              brandblue: "#3abef9",
+              brandyellow: "#ffcc33",
+              brandpink: "#ff8da1",
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="font-sans overflow-hidden bg-white">
+    <div class="w-[960px] h-[540px] relative overflow-hidden flex flex-row-reverse items-center p-20">
+      <!-- Background Abstract Waves -->
+      <svg class="absolute top-0 right-0 w-[500px] h-[500px] opacity-10" viewBox="0 0 500 500">
+          <path d="M500,0 C300,100 100,50 0,300 C150,500 400,450 500,300 Z" fill="#3abef9" />
+          <path d="M500,100 C350,200 250,50 100,200 C50,350 200,500 500,400 Z" fill="#ffcc33" />
+      </svg>
+      <div class="absolute bottom-10 right-10 flex space-x-2">
+          <div class="w-12 h-12 bg-brandblue rounded-full opacity-20"></div>
+          <div class="w-12 h-12 bg-mainpurple rounded-full opacity-10"></div>
+      </div>
+
+      <!-- Right: Content -->
+      <div class="w-1/2 pl-12 relative z-10 text-right">
+          <h1 class="text-mainpurple text-6xl font-black uppercase tracking-tight mb-6">OUR BUDGET</h1>
+          <p class="text-gray-600 text-lg leading-relaxed font-medium">
+            Strategic allocation of resources ensure sustainable growth and high ROI for all stakeholders in the coming fiscal year. We prioritize efficiency and targeted investments.
+          </p>
+          <div class="flex justify-end mt-8">
+              <div class="w-16 h-1 bg-brandyellow rounded-full"></div>
+          </div>
+      </div>
+
+      <!-- Left: Storyset Image (Financial relevant) -->
+      <div class="w-1/2 flex items-center justify-center relative z-10">
+          <img src="/storyset/Business Plan-cuate.svg" alt="Business analysis and planning" class="w-full max-w-[420px]" />
+          <!-- Floating Coins mockup (SVG) -->
+          <div class="absolute -top-10 left-1/2 -translate-x-1/2 flex space-x-4 opacity-50 animate-bounce">
+              <div class="w-8 h-8 bg-brandyellow rounded-full shadow-lg"></div>
+              <div class="w-10 h-10 bg-brandyellow rounded-full shadow-lg -translate-y-4"></div>
+              <div class="w-8 h-8 bg-brandyellow rounded-full shadow-lg"></div>
+          </div>
+      </div>
+    </div>
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Modern Dark Deck - Slide 01</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              branddark: "#141624",
+              brandyellow: "#fbc531",
+              brandorange: "#e67e22",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .clip-curve {
+        clip-path: circle(70% at 0% 50%);
+      }
+      .bg-dots {
+        background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+        background-size: 20px 20px;
+      }
+    </style>
+  </head>
+  <body class="font-sans overflow-hidden bg-branddark">
+    <div class="w-[960px] h-[540px] relative overflow-hidden flex items-center">
+      <!-- Background Accents -->
+      <div class="absolute top-8 right-8 flex space-x-2 opacity-50">
+          <div class="w-12 h-12 border border-brandyellow rounded-full opacity-20"></div>
+          <div class="w-12 h-12 border border-brandyellow rounded-full opacity-10"></div>
+      </div>
+      
+      <!-- Left Image Area -->
+      <div class="absolute inset-y-0 left-0 w-[45%] clip-curve z-10">
+          <div class="absolute inset-0 bg-gradient-to-br from-brandyellow to-brandorange opacity-60 z-10"></div>
+          <img
+            src="/presentation-images/modern-dark-deck/slide-1-img-1.jpg"
+            alt="Futuristic city skyline with orange sunset overlay"
+            class="w-full h-full object-cover"
+          />
+          <div class="absolute bottom-24 left-12 z-20">
+              <div class="w-12 h-1 bg-white mb-4"></div>
+              <h2 class="text-white font-black text-2xl uppercase tracking-tighter">Lorem<br/>Ipsum</h2>
+              <p class="text-white/80 text-[10px] mt-2 max-w-[150px]">Lorem ipsum dolor sit amet, consectetuer adipiscing elit.</p>
+          </div>
+      </div>
+
+      <!-- Right Content Area -->
+      <div class="w-full pl-[50%] pr-20 flex flex-col justify-center">
+          <div class="mb-4">
+              <h1 class="text-[72px] font-black text-white leading-[0.9] tracking-tighter mb-2 uppercase">BUSINESS</h1>
+              <h1 class="text-[54px] font-black text-brandyellow leading-[0.9] tracking-tighter uppercase">PRESENTATION</h1>
+          </div>
+          
+          <div class="w-32 h-1 bg-brandyellow mt-6 mb-8"></div>
+          
+          <p class="text-[14px] text-gray-400 leading-relaxed font-medium mb-12">
+            Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam.
+          </p>
+
+          <div class="flex items-center space-x-4">
+              <div class="text-[10px] font-black text-brandyellow uppercase tracking-widest border-b border-brandyellow pb-1">Digital Strategy 2024</div>
+          </div>
+      </div>
+
+      <!-- Footer Decorative Lines -->
+      <div class="absolute bottom-0 right-0 p-8">
+          <div class="relative w-64 h-32">
+              <div class="absolute bottom-0 right-0 w-full h-full border-b-[20px] border-r-[20px] border-white/5 rounded-br-3xl"></div>
+              <div class="absolute bottom-4 right-4 w-[80%] h-[70%] border-b border-r border-white/10 rounded-br-2xl"></div>
+          </div>
+      </div>
+    </div>
+
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
+</html>

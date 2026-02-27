@@ -1,0 +1,51 @@
+{
+  "title": "Storyset Business Presentation",
+  "description": "A vibrant purple-themed presentation featuring wavy organic shapes and Storyset illustrations for a modern, approachable feel.",
+  "slides": [
+    {
+      "title": "BUSINESS PRESENTATION",
+      "description": "Cover slide with a deep purple wavy background, yellow accents, and small dotted patterns.",
+      "content": "Professional Solutions for Modern Teams. Elevate your strategy with our creative approach."
+    },
+    {
+      "title": "MISSION",
+      "description": "White background with purple wavy shapes at top and bottom. Features an illustration of a man working on a laptop.",
+      "content": "Our mission is to simplify complex workflows and empower individuals to achieve their full potential through innovation and design excellence."
+    },
+    {
+      "title": "OUR BUDGET",
+      "description": "Financial overview slide with colorful wavy accents and a budget-related illustration.",
+      "content": "Strategic allocation of resources ensure sustainable growth and high ROI for all stakeholders in the coming fiscal year."
+    },
+    {
+      "title": "ABOUT US",
+      "description": "Introduction slide with a woman holding a coffee, set against a clean white background with a purple wavy footer.",
+      "content": "We are a diverse team of creators, engineers, and strategists dedicated to delivering high-quality digital experiences that resonate with users worldwide."
+    },
+    {
+      "title": "VALUES",
+      "description": "Core values slide with a full-bleed purple wavy background and three distinct columns of text.",
+      "content": "INTEGRITY: We believe in transparency and honesty. INNOVATION: Always pushing boundaries. COLLABORATION: Together we achieve more."
+    },
+    {
+      "title": "RESEARCH",
+      "description": "Data-focused slide showing a man at a desk with a laptop, accompanied by statistical findings and research notes.",
+      "content": "Market research indicates a 40% increase in digital adoption across our target demographics, highlighting a key opportunity for expansion."
+    },
+    {
+      "title": "DETAILS & MORE",
+      "description": "Detail-oriented slide with abstract blue and yellow streaks and a purple wavy base.",
+      "content": "Comprehensive analysis of project requirements, technical specifications, and expected milestones for the upcoming development cycles."
+    },
+    {
+      "title": "DETAILS",
+      "description": "Collaborative slide featuring two people discussing at a table, highlighting teamwork and communication.",
+      "content": "Every project detail is carefully scrutinized to ensure alignment with brand guidelines and user expectations."
+    },
+    {
+      "title": "THANK YOU!",
+      "description": "Closing slide with a rich purple background, yellow leafy accents, and a warm parting message.",
+      "content": "We look forward to working with you. Contact us at hello@storyboard.com for any inquiries or collaborations."
+    }
+  ]
+}

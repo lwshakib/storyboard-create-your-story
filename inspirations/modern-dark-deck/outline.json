@@ -1,0 +1,51 @@
+{
+  "title": "Digital Transformation Strategy",
+  "description": "A cutting-edge business deck featuring a dark aesthetic with vibrant yellow and orange accents. Focuses on innovation, global scaling, and technical excellence.",
+  "slides": [
+    {
+      "title": "BUSINESS PRESENTATION",
+      "description": "Title slide with a large vertical circular image segment on the left, bold yellow typography, and dark navy background.",
+      "content": "Innovating the Future of Digital Connectivity. 2024 Strategic Roadmap."
+    },
+    {
+      "title": "STRATEGIC VISION",
+      "description": "Headline slide featuring a circular professional headshot on the left with a yellow border and clean descriptive text on the right.",
+      "content": "Our vision is to provide unparalleled digital solutions that empower global enterprises to scale efficiently and sustainably."
+    },
+    {
+      "title": "CORE OBJECTIVES",
+      "description": "Content slide with a large glowing circular ring containing the main headline and supporting points on the left.",
+      "content": "1. Enhance User Experience. 2. Optimize Cloud Infrastructure. 3. Secure Data Integrity."
+    },
+    {
+      "title": "OPERATIONAL EXCELLENCE",
+      "description": "Feature slide with three vertical circular icons/markers on the right and a detailed description on the left.",
+      "content": "Agile Development. Real-time Monitoring. Continuous Integration. We ensure 99.99% uptime for all global nodes."
+    },
+    {
+      "title": "MARKET POSITIONING",
+      "description": "Impact slide with a large orange-to-yellow gradient arc and bold headline text.",
+      "content": "Leading the industry in cross-border digital payments and decentralized finance solutions."
+    },
+    {
+      "title": "PHASE ONE: FOUNDATION",
+      "description": "Transition slide with a large '1.' graphic and a concise summary of the foundational phase.",
+      "content": "Integrating legacy systems with modern API-first architectures to create a robust digital backbone."
+    },
+    {
+      "title": "PHASE TWO: ACCELERATION",
+      "description": "Transition slide with a large '2.' graphic and a summary of the growth acceleration phase.",
+      "content": "Scaling operations across 12 new regions and implementing AI-driven customer support modules."
+    },
+    {
+      "title": "SERVICE PORTFOLIO",
+      "description": "Service overview slide with three distinct bubbles/cards for different business divisions.",
+      "content": "Enterprise Cloud. Cybersecurity Suite. Data Analytics. Custom Software Development."
+    },
+    {
+      "title": "OUR GLOBAL NETWORK",
+      "description": "Stat slide with three circular nodes labeled A, B, and C representing key global hubs.",
+      "content": "A: North America (Hub). B: Europe & MEA. C: Asia-Pacific region."
+    }
+  ]
+}

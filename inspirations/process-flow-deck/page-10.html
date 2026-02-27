@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Slide 10 - 4 Column Matrix</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              c1: "#2d5a27",
+              c2: "#c0392b",
+              c3: "#2c3e50",
+              c4: "#e67e22",
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="font-sans overflow-hidden bg-white">
+    <div class="w-[960px] h-[540px] relative overflow-hidden p-16 flex flex-col items-center">
+      <!-- Header -->
+      <div class="w-full flex justify-between items-center mb-12 border-b border-gray-100 pb-4">
+          <div class="text-[12px] font-black text-gray-400 tracking-widest uppercase">Process Page</div>
+          <div class="text-[12px] font-black text-gray-400 tracking-widest uppercase">LOGOTYPE</div>
+      </div>
+
+      <!-- Matrix Grid -->
+      <div class="w-full flex-1">
+          <div class="grid grid-cols-4 gap-6 h-full pb-8">
+              <!-- Col 1 -->
+              <div class="flex flex-col border-t-4 border-c1 pt-6">
+                  <div class="w-12 h-12 rounded-lg bg-c1/10 flex items-center justify-center text-c1 mb-6 shadow-sm"><i data-lucide="pie-chart" class="w-6 h-6"></i></div>
+                  <h4 class="text-[16px] font-black text-gray-800 uppercase mb-4 tracking-tight">Option A</h4>
+                  <p class="text-[11px] text-gray-400 leading-relaxed font-medium">
+                      Market research and segment analysis. Identifying core opportunities for digital transformation. Market research and segment analysis.
+                  </p>
+                  <div class="mt-auto pt-4 border-t border-gray-50">
+                      <p class="text-[9px] font-bold text-c1 uppercase tracking-widest">PHASE 01</p>
+                  </div>
+              </div>
+
+              <!-- Col 2 -->
+              <div class="flex flex-col border-t-4 border-c2 pt-6">
+                  <div class="w-12 h-12 rounded-lg bg-c2/10 flex items-center justify-center text-c2 mb-6 shadow-sm"><i data-lucide="shield-check" class="w-6 h-6"></i></div>
+                  <h4 class="text-[16px] font-black text-gray-800 uppercase mb-4 tracking-tight">Option B</h4>
+                  <p class="text-[11px] text-gray-400 leading-relaxed font-medium">
+                      Security audit and infrastructure hardening. Ensuring 99.9% reliability across all nodes. Security audit and infrastructure hardening.
+                  </p>
+                  <div class="mt-auto pt-4 border-t border-gray-50">
+                      <p class="text-[9px] font-bold text-c2 uppercase tracking-widest">PHASE 02</p>
+                  </div>
+              </div>
+
+              <!-- Col 3 -->
+              <div class="flex flex-col border-t-4 border-c3 pt-6">
+                  <div class="w-12 h-12 rounded-lg bg-c3/10 flex items-center justify-center text-c3 mb-6 shadow-sm"><i data-lucide="refresh-cw" class="w-6 h-6"></i></div>
+                  <h4 class="text-[16px] font-black text-gray-800 uppercase mb-4 tracking-tight">Option C</h4>
+                  <p class="text-[11px] text-gray-400 leading-relaxed font-medium">
+                      Iterative testing and feedback loops. Operational scaling and global rollout integration. Iterative testing and feedback loops.
+                  </p>
+                  <div class="mt-auto pt-4 border-t border-gray-50">
+                      <p class="text-[9px] font-bold text-c3 uppercase tracking-widest">PHASE 03</p>
+                  </div>
+              </div>
+
+              <!-- Col 4 -->
+              <div class="flex flex-col border-t-4 border-c4 pt-6">
+                  <div class="w-12 h-12 rounded-lg bg-c4/10 flex items-center justify-center text-c4 mb-6 shadow-sm"><i data-lucide="fast-forward" class="w-6 h-6"></i></div>
+                  <h4 class="text-[16px] font-black text-gray-800 uppercase mb-4 tracking-tight">Option D</h4>
+                  <p class="text-[11px] text-gray-400 leading-relaxed font-medium">
+                      Rapid deployment and scaling protocols. Long-term support for sustained performance excellence. Rapid deployment and scaling protocols.
+                  </p>
+                  <div class="mt-auto pt-4 border-t border-gray-50">
+                      <p class="text-[9px] font-bold text-c4 uppercase tracking-widest">PHASE 04</p>
+                  </div>
+              </div>
+          </div>
+      </div>
+      
+      <!-- Footer Decor -->
+      <div class="absolute bottom-8 right-12 flex items-center">
+          <div class="w-8 h-4 bg-gray-200 mr-2"></div>
+          <span class="text-[10px] text-gray-300 font-bold uppercase">50</span>
+      </div>
+    </div>
+    <script>lucide.createIcons();</script>
+  </body>
+</html>

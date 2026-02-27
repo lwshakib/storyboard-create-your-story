@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Slide 1 - Nexus Business Presentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              nexusnavy: "#020726",
+              nexuspone: "#3b82f6",
+              nexuspthree: "#ec4899",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .wave-top {
+        clip-path: polygon(0 0, 100% 0, 100% 15%, 80% 25%, 60% 15%, 40% 35%, 20% 15%, 0 25%);
+        background: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+      }
+      .wave-bottom {
+         clip-path: polygon(0 85%, 20% 75%, 40% 95%, 60% 75%, 80% 85%, 100% 75%, 100% 100%, 0 100%);
+         background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+      }
+      .custom-wave-top-left {
+          position: absolute;
+          top: -100px;
+          left: -100px;
+          width: 400px;
+          height: 400px;
+          background: linear-gradient(135deg, #6366f1 0%, #3b82f6 100%);
+          border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+          opacity: 0.6;
+          filter: blur(20px);
+      }
+      .custom-wave-bottom-right {
+          position: absolute;
+          bottom: -100px;
+          right: -100px;
+          width: 500px;
+          height: 400px;
+          background: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
+          border-radius: 60% 40% 30% 70% / 50% 40% 60% 50%;
+          opacity: 0.5;
+          filter: blur(30px);
+      }
+    </style>
+  </head>
+  <body class="font-sans overflow-hidden">
+    <div class="w-[960px] h-[540px] bg-nexusnavy relative overflow-hidden flex flex-col items-center justify-center">
+      <!-- Background Gradients -->
+      <div class="custom-wave-top-left"></div>
+      <div class="custom-wave-bottom-right"></div>
+      
+      <!-- Logo Container -->
+      <div class="flex flex-col items-center z-10 mb-8">
+          <div class="w-16 h-16 bg-white flex items-center justify-center p-3 rounded-xl mb-4 shadow-2xl">
+              <i data-lucide="network" class="w-full h-full text-nexusnavy"></i>
+          </div>
+          <div class="text-white text-[12px] font-black tracking-[0.5em] uppercase opacity-50">Nexus Global</div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="z-10 text-center max-w-2xl px-12">
+          <h1 class="text-[64px] font-black text-white leading-tight uppercase tracking-tight mb-4 drop-shadow-2xl">
+              BUSINESS <br/>
+              <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-pink-400">PRESENTATION</span>
+          </h1>
+          <div class="w-24 h-1 bg-white mx-auto mb-8 opacity-20"></div>
+          <p class="text-[14px] text-blue-100/60 font-medium tracking-widest uppercase">
+              www.nexus-global.com
+          </p>
+      </div>
+      
+      <!-- Corner Decorative Shapes (Simplified versions of the waves in the image) -->
+      <div class="absolute top-0 left-0 w-full h-[150px] wave-top opacity-30"></div>
+      <div class="absolute bottom-0 left-0 w-full h-[150px] wave-bottom opacity-30"></div>
+      
+      <!-- Additional Accents -->
+      <div class="absolute top-12 left-12 w-2 h-2 rounded-full bg-white opacity-20"></div>
+      <div class="absolute bottom-12 right-12 w-2 h-2 rounded-full bg-white opacity-20"></div>
+    </div>
+
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
+</html>

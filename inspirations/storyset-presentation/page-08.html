@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Storyset Presentation - Slide 08</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              mainpurple: "#522583",
+              brandblue: "#3abef9",
+              brandyellow: "#ffcc33",
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="font-sans overflow-hidden bg-white">
+    <div class="w-[960px] h-[540px] relative overflow-hidden flex items-center p-20">
+      <!-- Background Abstract Waves -->
+      <svg class="absolute inset-x-0 top-0 h-40 opacity-10" viewBox="0 0 960 160" preserveAspectRatio="none">
+          <path d="M0,80 C300,160 600,0 960,80 L960,0 L0,0 Z" fill="#ffcc33" />
+      </svg>
+      <svg class="absolute inset-x-0 bottom-0 h-40 opacity-20" viewBox="0 0 960 160" preserveAspectRatio="none">
+          <path d="M0,80 C300,0 600,160 960,80 L960,160 L0,160 Z" fill="#522583" />
+      </svg>
+
+      <!-- Left: Storyset Image (Team Work) -->
+      <div class="w-1/2 flex items-center justify-center relative z-10">
+          <img src="/storyset/Team work-cuate.svg" alt="Two people working together" class="w-full max-w-[450px]" />
+          <!-- Abstract Circle -->
+          <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div class="w-[480px] h-[480px] border border-mainpurple/5 rounded-full"></div>
+          </div>
+      </div>
+
+      <!-- Right: Content -->
+      <div class="w-1/2 pl-12 relative z-10">
+          <h1 class="text-brandyellow text-6xl font-black uppercase tracking-tight mb-6">DETAILS</h1>
+          <p class="text-gray-600 text-lg leading-relaxed font-medium">
+            Every project detail is carefully scrutinized to ensure alignment with brand guidelines and user expectations. Our collaborative approach ensures that all voices are heard and all perspectives are considered.
+          </p>
+          <div class="w-16 h-1 bg-mainpurple mt-8"></div>
+          
+          <div class="mt-10 flex space-x-6">
+              <div class="flex items-center space-x-2">
+                  <i data-lucide="check-circle" class="text-brandblue w-5 h-5"></i>
+                  <span class="text-sm font-bold text-gray-500 uppercase">Quality</span>
+              </div>
+              <div class="flex items-center space-x-2">
+                  <i data-lucide="users" class="text-brandyellow w-5 h-5"></i>
+                  <span class="text-sm font-bold text-gray-500 uppercase">Teamwork</span>
+              </div>
+          </div>
+      </div>
+    </div>
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,51 @@
+{
+  "title": "Growth Business Deck",
+  "description": "A vibrant and modern business presentation featuring a green and white color palette, hexagonal image clips, and a focus on strategic growth and team collaboration.",
+  "slides": [
+    {
+      "title": "GROW YOUR BUSINESS",
+      "description": "Title slide with a fresh green and white theme. Features a large green hexagonal frame containing a professional team photo on the right, and bold typography on the left.",
+      "content": "Innovate. Scale. Succeed. Your partner in sustainable business growth and digital transformation."
+    },
+    {
+      "title": "ABOUT COMPANY",
+      "description": "Company overview slide with two smaller hexagonal images of business professionals. Clean layout with green accents and bulleted list of core competencies.",
+      "content": "Founded in 2015, we provide cutting-edge solutions for modern enterprises. Our expertise spans across strategic planning, market analysis, and digital integration."
+    },
+    {
+      "title": "OUR MISSION",
+      "description": "Mission statement slide with a large vertical green arrow shape holding a professional image. Detailed list of mission-driven goals on the right.",
+      "content": "To empower every business with the tools and strategies they need to thrive in a rapidly evolving global market. We focus on innovation, integrity, and impact."
+    },
+    {
+      "title": "BUSINESS CONNECTION",
+      "description": "Networking and connectivity slide featuring a cluster of three hexagonal images in the center, symbolizing collaboration and global reach.",
+      "content": "Building bridges across industries. Our network extends to over 50 countries, connecting visionaries with the resources they need to win."
+    },
+    {
+      "title": "OUR FUTURE PROJECT PLAN",
+      "description": "Strategy and roadmap slide with three small hexagonal icons representing different phases of a project: Research, Development, and Deployment.",
+      "content": "Phase 1: Idea Generation and Market Research. Phase 2: Case Study and Implementation. Phase 3: Scaling and Long-term Planning."
+    },
+    {
+      "title": "TEAM MEMBERS",
+      "description": "Team showcase slide with four hexagonal portrait frames, each featuring a key team member with their role and a green accent bar.",
+      "content": "Meet the experts: Alex Rivera (Creative Director), Maya Chen (Lead Strategist), Liam Smith (Technical Architect), and Sarah Jenkins (Operations Manager)."
+    },
+    {
+      "title": "BUSINESS STRATEGY",
+      "description": "Strategic overview slide with images clipped into hexagonal frames cascading downwards, paired with detailed descriptions of business plans.",
+      "content": "Our strategy is built on three pillars: Adaptive Leadership, Data-Driven Insights, and Customer-Centric Innovation."
+    },
+    {
+      "title": "CHART ANALYSIS",
+      "description": "Data visualization slide featuring a clean bar chart with green and dark bars, illustrating growth trends and market performance metrics.",
+      "content": "Annual growth observed at 45% CAGR. Market penetration has doubled in the last fiscal year, led by our digital services division."
+    },
+    {
+      "title": "THANK YOU",
+      "description": "Closing slide with a large hexagonal image of a professional workspace on the right, and contact details with green social icons on the left.",
+      "content": "Let's build the future together. Contact us: hello@growthdeck.com | +1 (555) 0123. Visit our office: 123 Innovation Drive, Tech City."
+    }
+  ]
+}

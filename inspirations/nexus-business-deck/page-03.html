@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Slide 3 - Strategic Pillars</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              nexusnavy: "#020726",
+              accentpurple: "#8b5cf6",
+              accentpink: "#ec4899",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .wave-bg {
+         clip-path: polygon(0 80%, 20% 70%, 40% 90%, 65% 75%, 100% 85%, 100% 100%, 0 100%);
+         background: linear-gradient(90deg, #3b82f6 0%, #ec4899 100%);
+         opacity: 0.3;
+      }
+      .top-shape {
+         clip-path: polygon(0 0, 100% 0, 100% 30%, 80% 20%, 60% 40%, 30% 25%, 0 35%);
+         background: linear-gradient(270deg, #8b5cf6 0%, #3b82f6 100%);
+         opacity: 0.2;
+      }
+    </style>
+  </head>
+  <body class="font-sans overflow-hidden">
+    <div class="w-[960px] h-[540px] bg-nexusnavy relative overflow-hidden flex flex-col items-center p-16">
+      <!-- Background Decor -->
+      <div class="absolute bottom-0 left-0 w-full h-[120px] wave-bg"></div>
+      <div class="absolute top-0 left-0 w-full h-[150px] top-shape"></div>
+      
+      <div class="w-full flex justify-between items-baseline mb-24 z-10 px-8">
+          <div class="text-[12px] font-black text-blue-400/50 uppercase tracking-[0.3em]">Nexus Pillars</div>
+          <div class="text-[12px] font-black text-pink-400/50 uppercase tracking-[0.3em]">Global Outreach 2024</div>
+      </div>
+
+      <!-- Main Title -->
+      <div class="text-center mb-20 z-10">
+          <h2 class="text-[42px] font-black text-white uppercase tracking-tight">
+            STRATEGIC <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-pink-400">PILLARS</span>
+          </h2>
+          <div class="w-16 h-1 bg-white mx-auto mt-4 opacity-10"></div>
+      </div>
+
+      <!-- Icons Grid -->
+      <div class="flex justify-center space-x-24 z-10">
+          <!-- Pillar 1 -->
+          <div class="flex flex-col items-center">
+              <div class="w-24 h-24 rounded-full bg-gradient-to-tr from-accentpink to-orange-400 p-1 mb-6 shadow-[0_0_30px_rgba(236,72,153,0.3)] transition-transform hover:scale-110">
+                  <div class="w-full h-full rounded-full bg-nexusnavy flex items-center justify-center">
+                      <i data-lucide="lightbulb" class="w-10 h-10 text-white"></i>
+                  </div>
+              </div>
+              <h4 class="text-[14px] font-black text-white uppercase tracking-widest">Ideation</h4>
+          </div>
+
+          <!-- Pillar 2 -->
+          <div class="flex flex-col items-center">
+              <div class="w-24 h-24 rounded-full bg-gradient-to-tr from-accentpurple to-pink-500 p-1 mb-6 shadow-[0_0_30px_rgba(139,92,246,0.3)] transition-transform hover:scale-110">
+                  <div class="w-full h-full rounded-full bg-nexusnavy flex items-center justify-center">
+                      <i data-lucide="clock" class="w-10 h-10 text-white"></i>
+                  </div>
+              </div>
+              <h4 class="text-[14px] font-black text-white uppercase tracking-widest">Efficiency</h4>
+          </div>
+
+          <!-- Pillar 3 -->
+          <div class="flex flex-col items-center">
+              <div class="w-24 h-24 rounded-full bg-gradient-to-tr from-blue-400 to-accentpurple p-1 mb-6 shadow-[0_0_30px_rgba(59,130,246,0.3)] transition-transform hover:scale-110">
+                  <div class="w-full h-full rounded-full bg-nexusnavy flex items-center justify-center">
+                      <i data-lucide="banknote" class="w-10 h-10 text-white"></i>
+                  </div>
+              </div>
+              <h4 class="text-[14px] font-black text-white uppercase tracking-widest">Value</h4>
+          </div>
+      </div>
+      
+      <!-- Footer Line -->
+      <div class="absolute bottom-12 w-[80%] h-[1px] bg-gradient-to-r from-transparent via-blue-500/20 to-transparent"></div>
+    </div>
+
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
+</html>

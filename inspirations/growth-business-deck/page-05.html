@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Slide 5 - Our Future Project Plan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brandgreen: "#2ecc71",
+              branddark: "#1e272e",
+              brandblack: "#111827",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .clip-hex {
+        clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      }
+    </style>
+  </head>
+  <body class="font-sans overflow-hidden">
+    <div class="w-[960px] h-[540px] bg-[#f8fcf9] relative overflow-hidden flex flex-col items-center pt-16">
+      <!-- Title Section -->
+      <div class="flex items-center mb-12">
+          <div class="w-10 h-1 bg-branddark opacity-20 mr-4"></div>
+          <h2 class="text-[32px] font-black text-branddark uppercase tracking-widest">
+            OUR FUTURE <span class="text-brandgreen">PROJECT PLAN</span>
+          </h2>
+          <div class="w-10 h-1 bg-branddark opacity-20 ml-4"></div>
+      </div>
+      
+      <p class="text-[12px] text-gray-500 font-medium text-center max-w-lg mb-16 px-12">
+        A structured approach to innovation and growth. Our roadmap ensures transparency and efficiency at every stage of development.
+      </p>
+
+      <!-- Three Phase Grid -->
+      <div class="flex justify-center items-start space-x-12 w-full px-16 relative">
+          <!-- Phase 1 -->
+          <div class="flex flex-col items-center text-center w-1/3">
+              <div class="relative w-32 h-36 mb-6">
+                  <div class="absolute inset-0 clip-hex bg-brandgreen p-1">
+                      <div class="w-full h-full clip-hex bg-white flex items-center justify-center overflow-hidden">
+                          <img src="/presentation-images/growth-business-deck/slide-5-img-1.jpg" alt="Idea generation creative session" class="w-full h-full object-cover">
+                      </div>
+                  </div>
+                  <div class="absolute -top-4 -right-4 w-10 h-10 clip-hex bg-branddark flex items-center justify-center text-white text-[12px] font-bold z-10">01</div>
+              </div>
+              <h4 class="text-[14px] font-black text-branddark uppercase mb-2">Idea Generation</h4>
+              <p class="text-[11px] text-gray-400">Deep market research and collaborative brainstorming for innovative concepts.</p>
+          </div>
+
+          <!-- Phase 2 -->
+          <div class="flex flex-col items-center text-center w-1/3">
+              <div class="relative w-32 h-36 mb-6">
+                  <div class="absolute inset-0 clip-hex bg-brandgreen p-1">
+                      <div class="w-full h-full clip-hex bg-white flex items-center justify-center overflow-hidden">
+                          <img src="/presentation-images/growth-business-deck/slide-5-img-2.jpg" alt="Case study and data analysis" class="w-full h-full object-cover">
+                      </div>
+                  </div>
+                  <div class="absolute -top-4 -right-4 w-10 h-10 clip-hex bg-branddark flex items-center justify-center text-white text-[12px] font-bold z-10">02</div>
+              </div>
+              <h4 class="text-[14px] font-black text-branddark uppercase mb-2">Case Study</h4>
+              <p class="text-[11px] text-gray-400">Rigorous testing and prototyping to validate our most promising business models.</p>
+          </div>
+
+          <!-- Phase 3 -->
+          <div class="flex flex-col items-center text-center w-1/3">
+              <div class="relative w-32 h-36 mb-6">
+                  <div class="absolute inset-0 clip-hex bg-brandgreen p-1">
+                      <div class="w-full h-full clip-hex bg-white flex items-center justify-center overflow-hidden">
+                          <img src="/presentation-images/growth-business-deck/slide-5-img-3.jpg" alt="Strategic planning and execution" class="w-full h-full object-cover">
+                      </div>
+                  </div>
+                  <div class="absolute -top-4 -right-4 w-10 h-10 clip-hex bg-branddark flex items-center justify-center text-white text-[12px] font-bold z-10">03</div>
+              </div>
+              <h4 class="text-[14px] font-black text-branddark uppercase mb-2">Planning</h4>
+              <p class="text-[11px] text-gray-400">Defining clear KPIs and implementation schedules for global product rollout.</p>
+          </div>
+      </div>
+      
+      <!-- Bottom Decorative Rectangles -->
+      <div class="absolute bottom-0 left-0 w-1/4 h-2 bg-brandgreen opacity-30"></div>
+      <div class="absolute bottom-0 left-[25%] w-1/6 h-2 bg-brandgreen opacity-10"></div>
+      <div class="absolute bottom-0 right-0 w-1/3 h-2 bg-branddark opacity-10"></div>
+    </div>
+
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
+</html>

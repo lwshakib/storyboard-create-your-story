@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Storyset Presentation - Slide 05</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              mainpurple: "#33135c",
+              accentpurple: "#522583",
+              brandyellow: "#ffcc33",
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="font-sans overflow-hidden bg-mainpurple">
+    <div class="w-[960px] h-[540px] relative overflow-hidden p-20 flex flex-col items-center justify-center">
+      <!-- Background Waves -->
+      <svg class="absolute inset-0 w-full h-full opacity-50" viewBox="0 0 960 540" preserveAspectRatio="none">
+         <path d="M0,0 C300,100 600,-50 960,100 L960,540 L0,540 Z" fill="#522583" />
+         <path d="M0,150 C400,50 700,250 960,150 L960,540 L0,540 Z" fill="#522583" opacity="0.4" />
+      </svg>
+
+      <div class="relative z-10 w-full text-center mb-16">
+          <h1 class="text-white text-6xl font-black uppercase tracking-widest">VALUES</h1>
+          <div class="w-16 h-1 bg-brandyellow mx-auto mt-4 rounded-full"></div>
+      </div>
+
+      <!-- Feature Columns -->
+      <div class="relative z-10 w-full grid grid-cols-3 gap-12">
+          <!-- Item 1 -->
+          <div class="flex flex-col">
+              <h2 class="text-brandyellow text-2xl font-black uppercase mb-4">LOREM</h2>
+              <p class="text-gray-300 text-sm leading-relaxed">
+                Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore.
+              </p>
+          </div>
+          <!-- Item 2 -->
+          <div class="flex flex-col">
+              <h2 class="text-brandyellow text-2xl font-black uppercase mb-4">IPSUM</h2>
+              <p class="text-gray-300 text-sm leading-relaxed">
+                Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat.
+              </p>
+          </div>
+          <!-- Item 3 -->
+          <div class="flex flex-col">
+              <h2 class="text-brandyellow text-2xl font-black uppercase mb-4">DOLOR</h2>
+              <p class="text-gray-300 text-sm leading-relaxed">
+                Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo.
+              </p>
+          </div>
+      </div>
+
+      <!-- Corner Accent -->
+      <div class="absolute bottom-0 right-0 p-10">
+           <div class="flex space-x-2">
+               <div class="w-2 h-16 bg-brandyellow/20 rounded-full rotate-12"></div>
+               <div class="w-2 h-16 bg-brandyellow/10 rounded-full rotate-12 translate-y-4"></div>
+           </div>
+      </div>
+    </div>
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
+</html>

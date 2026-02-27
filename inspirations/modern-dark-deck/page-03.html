@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Modern Dark Deck - Slide 03</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              branddark: "#141624",
+              brandyellow: "#fbc531",
+              brandorange: "#e67e22",
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="font-sans overflow-hidden bg-branddark">
+    <div class="w-[960px] h-[540px] relative overflow-hidden flex items-center p-20">
+      <!-- Left Content -->
+      <div class="w-1/3 flex flex-col justify-center">
+          <p class="text-brandyellow text-[10px] font-black uppercase tracking-[0.2em] mb-4">Core Objectives</p>
+          <p class="text-gray-400 text-[12px] leading-relaxed font-medium">
+            Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore.
+          </p>
+          <div class="w-12 h-1 bg-yellow-900/40 mt-6"></div>
+      </div>
+
+      <!-- Right: Large Circular Headline -->
+      <div class="w-2/3 flex items-center justify-center relative">
+          <div class="w-[380px] h-[380px] rounded-full border-[20px] border-transparent p-1 bg-gradient-to-br from-brandyellow to-brandorange" style="clip-path: circle(50%);">
+              <div class="w-full h-full rounded-full bg-branddark flex items-center justify-center p-12 text-center">
+                  <h1 class="text-white text-[48px] font-black leading-tight uppercase tracking-tighter">
+                    HEADLINE<br/><span class="text-brandyellow">SLIDE</span>
+                  </h1>
+              </div>
+          </div>
+          
+          <!-- Outer decorative rings -->
+          <div class="absolute inset-0 flex items-center justify-center">
+               <div class="w-[440px] h-[440px] border border-white/5 rounded-full"></div>
+               <div class="w-[480px] h-[480px] border border-white/5 rounded-full"></div>
+          </div>
+      </div>
+
+      <!-- Corner Accent -->
+      <div class="absolute top-12 right-12">
+          <div class="w-16 h-16 border-t border-r border-brandyellow/20 rounded-tr-3xl"></div>
+      </div>
+    </div>
+
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
+</html>

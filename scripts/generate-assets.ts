@@ -3,7 +3,7 @@ import path from "path";
 import https from "https";
 
 const INSPIRATIONS_DIR = path.join(process.cwd(), "inspirations");
-const PUBLIC_DIR = path.join(process.cwd(), "public", "generated");
+const PUBLIC_DIR = path.join(process.cwd(), "public", "presentation-images");
 
 if (!fs.existsSync(PUBLIC_DIR)) {
   fs.mkdirSync(PUBLIC_DIR, { recursive: true });
@@ -47,6 +47,12 @@ async function generateAssets() {
 
   for (const folder of folders) {
     const folderPath = path.join(INSPIRATIONS_DIR, folder);
+    const outputFolderPath = path.join(PUBLIC_DIR, folder);
+
+    if (!fs.existsSync(outputFolderPath)) {
+      fs.mkdirSync(outputFolderPath, { recursive: true });
+    }
+
     const files = fs.readdirSync(folderPath).filter((f) => f.endsWith(".html"));
 
     console.log(`Processing template: ${folder}`);
@@ -142,10 +148,10 @@ async function generateAssets() {
               folder.split("-")[0];
           // Add a random seed to ensure unique images from LoremFlickr
           imageUrl = `https://loremflickr.com/1024/576/${keyword}?random=${index}-${imgIndex}`;
-          imageName = `${folder}-slide-${index + 1}-img-${imgIndex}.jpg`;
+          imageName = `slide-${index + 1}-img-${imgIndex}.jpg`;
         }
 
-        const imagePath = path.join(PUBLIC_DIR, imageName);
+        const imagePath = path.join(outputFolderPath, imageName);
 
         console.log(`  Downloading image: ${imageUrl}`);
         try {
@@ -153,7 +159,7 @@ async function generateAssets() {
           console.log(`  Saved to ${imagePath}`);
 
           // Prepare replacement for this specific tag
-          const newSrc = `/generated/${imageName}`;
+          const newSrc = `/presentation-images/${folder}/${imageName}`;
           replacements.push({ original: fullTag, newSrc: newSrc });
           modified = true;
         } catch (error) {

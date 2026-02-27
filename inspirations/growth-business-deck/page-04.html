@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Slide 4 - Business Connection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brandgreen: "#2ecc71",
+              branddark: "#1e272e",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .clip-hex {
+        clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      }
+    </style>
+  </head>
+  <body class="font-sans overflow-hidden">
+    <div class="w-[960px] h-[540px] bg-white relative overflow-hidden flex flex-col items-center p-12">
+      <!-- Top Section -->
+      <div class="w-full flex justify-between items-start mb-16">
+          <div class="flex items-center">
+              <div class="w-12 h-12 clip-hex bg-brandgreen/10 flex items-center justify-center mr-4">
+                  <i data-lucide="users" class="w-7 h-7 text-brandgreen"></i>
+              </div>
+              <h2 class="text-[42px] font-black text-branddark uppercase leading-none">
+                BUSINESS <span class="text-brandgreen">CONNECTION</span>
+              </h2>
+          </div>
+          <div class="text-right">
+              <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest leading-relaxed max-w-[250px]">
+                Building bridges across industries. Our network extends to over 50 countries.
+              </p>
+          </div>
+      </div>
+
+      <div class="w-full flex items-center">
+          <!-- Left Hex Image Cluster -->
+          <div class="w-1/2 relative h-[300px]">
+              <div class="absolute left-10 top-0 w-[140px] h-[160px] clip-hex bg-brandgreen p-1">
+                  <div class="w-full h-full clip-hex bg-white">
+                      <img src="/presentation-images/growth-business-deck/slide-4-img-1.jpg" alt="Networking event 1" class="w-full h-full object-cover">
+                  </div>
+              </div>
+              <div class="absolute left-32 top-24 w-[140px] h-[160px] clip-hex bg-branddark p-1 z-10">
+                  <div class="w-full h-full clip-hex bg-white">
+                      <img src="/presentation-images/growth-business-deck/slide-4-img-2.jpg" alt="Networking event 2" class="w-full h-full object-cover">
+                  </div>
+              </div>
+              <div class="absolute left-10 top-44 w-[140px] h-[160px] clip-hex bg-brandgreen p-1">
+                  <div class="w-full h-full clip-hex bg-white">
+                      <img src="/presentation-images/growth-business-deck/slide-4-img-3.jpg" alt="Networking event 3" class="w-full h-full object-cover">
+                  </div>
+              </div>
+              
+              <!-- Decorative lines -->
+              <div class="absolute top-10 left-0 w-12 h-[2px] bg-brandgreen opacity-20"></div>
+              <div class="absolute top-24 left-4 w-8 h-[2px] bg-brandgreen opacity-40"></div>
+              <div class="absolute bottom-10 left-0 w-16 h-[2px] bg-brandgreen opacity-30"></div>
+          </div>
+
+          <!-- Right Content List -->
+          <div class="w-1/2 flex flex-col space-y-8 pl-12 border-l-2 border-brandgreen/10">
+              <div class="flex items-center group">
+                  <div class="w-8 h-8 rounded-full bg-brandgreen/5 transition-colors duration-300 group-hover:bg-brandgreen/20 flex items-center justify-center mr-4">
+                      <i data-lucide="check" class="w-4 h-4 text-brandgreen"></i>
+                  </div>
+                  <p class="text-[14px] text-gray-500 font-medium">Global Network in over 50 countries</p>
+              </div>
+              <div class="flex items-center group">
+                  <div class="w-8 h-8 rounded-full bg-brandgreen/5 transition-colors duration-300 group-hover:bg-brandgreen/20 flex items-center justify-center mr-4">
+                      <i data-lucide="check" class="w-4 h-4 text-brandgreen"></i>
+                  </div>
+                  <p class="text-[14px] text-gray-500 font-medium">Strategic industry partnerships</p>
+              </div>
+              <div class="flex items-center group">
+                  <div class="w-8 h-8 rounded-full bg-brandgreen/5 transition-colors duration-300 group-hover:bg-brandgreen/20 flex items-center justify-center mr-4">
+                      <i data-lucide="check" class="w-4 h-4 text-brandgreen"></i>
+                  </div>
+                  <p class="text-[14px] text-gray-500 font-medium">Cross-functional collaboration</p>
+              </div>
+          </div>
+      </div>
+      
+      <!-- Footer accents -->
+      <div class="absolute bottom-10 left-12 w-6 h-6 clip-hex border-2 border-brandgreen"></div>
+      <div class="absolute bottom-12 right-12 w-32 h-2 bg-brandgreen rounded-full opacity-10"></div>
+    </div>
+
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
+</html>

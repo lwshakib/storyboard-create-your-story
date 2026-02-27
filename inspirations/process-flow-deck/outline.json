@@ -1,0 +1,56 @@
+{
+  "title": "Business Process Flow Deck",
+  "description": "A comprehensive collection of 10 modern infographics and flow diagrams. Features a clean, professional aesthetic with a consistent color palette of deep greens, reds, and oranges. Ideal for mapping complex business processes, project roadmaps, and organizational hierarchies.",
+  "slides": [
+    {
+      "title": "STRATEGIC CORE WHEEL",
+      "description": "A circular process diagram with 5 options surrounding a central mission hub. Uses bold arrow shapes and distinct colors for each phase.",
+      "content": "A: Innovation. B: Development. C: Operations. D: Marketing. E: Support."
+    },
+    {
+      "title": "VERTICAL DELIVERY PIPELINE",
+      "description": "A unique vertical infographic where 5 distinct process streams rise from a base foundation, each capped with a representative icon.",
+      "content": "Phase A: Research. Phase B: Design. Phase C: Prototyping. Phase D: Testing. Phase E: Global Deployment."
+    },
+    {
+      "title": "CYCLIC FEEDBACK LOOP",
+      "description": "A two-step circular system highlighting continuous improvement and bi-directional data flow with central team interaction.",
+      "content": "Step 01: Data Collection and Analysis. Step 02: Strategic Implementation and Review."
+    },
+    {
+      "title": "HIERARCHICAL SYSTEMS TREE",
+      "description": "A detailed tree-style flowchart showing hierarchical relationships and branching logic for multi-stage projects.",
+      "content": "Root: Executive Strategy. Branches: Technical Infrastructure, Creative Assets, Market Research, Financial Planning."
+    },
+    {
+      "title": "PHASED ACTION GRID",
+      "description": "A structured grid layout for presenting four distinct project phases or service categories with detailed bullet points and icons.",
+      "content": "Title One: Analysis and Insights. Title Two: Creative Execution. Title Three: Technical Build. Title Four: Quality Assurance."
+    },
+    {
+      "title": "CONCENTRIC LAYERED MODEL",
+      "description": "Concentric circle diagram illustrating core-to-periphery relationships or expanding service capabilities.",
+      "content": "Core: Vision and Values. Layer 1: Operational Excellence. Layer 2: Customer Satisfaction. Layer 3: Market Leadership."
+    },
+    {
+      "title": "ZIGZAG MILESTONE PATH",
+      "description": "A dynamic zigzag diagram with rounded diamond shapes, perfect for representing a 4-5 stage project roadmap or evolution.",
+      "content": "Phase 1: Opportunity Identification. Phase 2: Resource Allocation. Phase 3: Project Execution. Phase 4: Delivery and Optimization."
+    },
+    {
+      "title": "DISTRIBUTED HUB SYSTEMS",
+      "description": "A central hub connected to 4-5 secondary nodes, illustrating a centralized management structure or integrated service network.",
+      "content": "Hub: Management. Nodes: Finance, Technology, Human Resources, Creative Services, Sales Strategy."
+    },
+    {
+      "title": "SEQUENTIAL TAB FLOW",
+      "description": "Alternating rounded tab infographic that presents a linear step-by-step process with clear visual breaks and icon support.",
+      "content": "Step A: Planning. Step B: Communication. Step C: Recruitment. Step D: Onboarding."
+    },
+    {
+      "title": "COMPREHENSIVE AUDIT MATRIX",
+      "description": "A high-density grid for auditing complex processes, showing stages and sub-tasks in a structured, easy-to-read table format.",
+      "content": "Phase 1: Initial Discovery. Phase 2: Strategic Gap Analysis. Phase 3: Implementation Roadmap. Phase 4: Final Assessment."
+    }
+  ]
+}

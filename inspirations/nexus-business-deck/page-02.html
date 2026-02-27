@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Slide 2 - Performance Metrics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              nexusnavy: "#020726",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .bg-wave {
+         clip-path: polygon(100% 0, 100% 100%, 80% 100%, 75% 70%, 90% 30%, 75% 0);
+         background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
+      }
+      .circle-progress {
+          background: conic-gradient(#8b5cf6 var(--progress), #f3f4f6 0deg);
+          border-radius: 50%;
+      }
+      .inner-circle {
+          background: white;
+          border-radius: 50%;
+      }
+    </style>
+  </head>
+  <body class="font-sans overflow-hidden">
+    <div class="w-[960px] h-[540px] bg-white relative overflow-hidden flex items-center">
+      <!-- Right Side Wave -->
+      <div class="absolute top-0 right-0 w-[30%] h-full bg-wave opacity-90"></div>
+      
+      <!-- Left Content -->
+      <div class="w-[60%] pl-16 py-12 flex flex-col justify-center">
+          <div class="text-[10px] font-black text-gray-300 uppercase tracking-widest mb-16">Company Name</div>
+          
+          <div class="space-y-12">
+              <div class="flex items-start">
+                  <span class="text-[32px] font-black text-blue-600 mr-6 mt-[-8px]">01.</span>
+                  <div>
+                      <h4 class="text-[14px] font-black text-nexusnavy uppercase mb-2">Reliability</h4>
+                      <p class="text-[11px] text-gray-400 max-w-xs leading-relaxed">System uptime and core consistency across all global clusters.</p>
+                  </div>
+              </div>
+              
+              <div class="flex items-start">
+                  <span class="text-[32px] font-black text-pink-500 mr-6 mt-[-8px]">02.</span>
+                  <div>
+                      <h4 class="text-[14px] font-black text-nexusnavy uppercase mb-2">Growth</h4>
+                      <p class="text-[11px] text-gray-400 max-w-xs leading-relaxed">Year-over-year market expansion and user acquisition.</p>
+                  </div>
+              </div>
+              
+              <div class="flex items-start">
+                  <span class="text-[32px] font-black text-purple-500 mr-6 mt-[-8px]">03.</span>
+                  <div>
+                      <h4 class="text-[14px] font-black text-nexusnavy uppercase mb-2">Innovation</h4>
+                      <p class="text-[11px] text-gray-400 max-w-xs leading-relaxed">Adoption rate of next-gen AI and automation protocols.</p>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      <!-- Right Side Charts -->
+      <div class="w-[40%] flex flex-col items-center justify-center space-y-6 z-10">
+          <h2 class="text-white text-[24px] font-black uppercase tracking-widest mb-8 mr-12">Metrics</h2>
+          
+          <!-- Chart Group -->
+          <div class="relative w-[280px] h-[300px] flex items-center justify-center">
+              <!-- 75% Chart -->
+              <div class="absolute top-0 right-8 w-24 h-24 circle-progress flex items-center justify-center shadow-2xl" style="--progress: 270deg;">
+                  <div class="w-20 h-20 inner-circle flex flex-col items-center justify-center">
+                      <span class="text-[16px] font-black text-nexusnavy">75%</span>
+                  </div>
+              </div>
+              
+              <!-- 50% Chart -->
+              <div class="absolute bottom-8 left-8 w-24 h-24 circle-progress flex items-center justify-center shadow-2xl" style="--progress: 180deg; --progress-color: #ec4899;">
+                  <div class="w-20 h-20 inner-circle flex flex-col items-center justify-center">
+                      <span class="text-[16px] font-black text-pink-500">50%</span>
+                  </div>
+              </div>
+              
+              <!-- 98% Chart -->
+              <div class="absolute bottom-8 right-8 w-24 h-24 circle-progress flex items-center justify-center shadow-2xl" style="--progress: 350deg;">
+                  <div class="w-20 h-20 inner-circle flex flex-col items-center justify-center">
+                      <span class="text-[16px] font-black text-purple-600">98%</span>
+                  </div>
+              </div>
+          </div>
+      </div>
+      
+      <div class="absolute bottom-10 left-16 text-[8px] font-bold text-gray-300 uppercase tracking-widest">02. / www.nexus-global.com</div>
+    </div>
+
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
+</html>

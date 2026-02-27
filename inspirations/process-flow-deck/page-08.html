@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Slide 8 - Zigzag Hexagon Path</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+      .clip-hex {
+        clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+      }
+    </style>
+  </head>
+  <body class="font-sans overflow-hidden bg-white">
+    <div class="w-[960px] h-[540px] relative overflow-hidden p-12 flex flex-col">
+      <!-- Header -->
+      <div class="flex justify-between items-center mb-12 border-b border-gray-100 pb-4">
+          <div class="text-[12px] font-black text-gray-400 tracking-widest uppercase">Process Page</div>
+          <div class="text-[12px] font-black text-gray-400 tracking-widest uppercase">LOGOTYPE</div>
+      </div>
+
+      <div class="flex-1 w-full relative flex items-center justify-center">
+          <!-- Background accent lines -->
+          <svg viewBox="0 0 800 300" class="absolute inset-0 w-full h-full z-0">
+              <path d="M100,150 L250,150 L400,150 L550,150 L700,150" stroke="#f0f0f0" stroke-width="20" stroke-linecap="round" fill="none" />
+              <polyline points="100,150 250,225 400,150 550,75 700,150" stroke="#ddd" stroke-width="2" stroke-dasharray="10 10" fill="none" />
+              <polygon points="700,150 680,140 680,160" fill="#ddd" />
+          </svg>
+
+          <div class="flex space-x-20 z-10 relative">
+              <!-- Item 1 -->
+              <div class="flex flex-col items-center translate-y-0">
+                  <div class="w-28 h-28 bg-[#2d5a27] clip-hex flex items-center justify-center shadow-lg transition-transform hover:scale-110">
+                      <div class="text-center group">
+                          <i data-lucide="database" class="w-6 h-6 text-white mb-1"></i>
+                          <p class="text-[8px] text-white font-black uppercase">Option 01</p>
+                      </div>
+                  </div>
+              </div>
+              <!-- Item 2 -->
+              <div class="flex flex-col items-center translate-y-16">
+                  <div class="w-28 h-28 bg-[#c0392b] clip-hex flex items-center justify-center shadow-lg transition-transform hover:scale-110">
+                      <div class="text-center group">
+                          <i data-lucide="anchor" class="w-6 h-6 text-white mb-1"></i>
+                          <p class="text-[8px] text-white font-black uppercase">Option 02</p>
+                      </div>
+                  </div>
+              </div>
+              <!-- Item 3 -->
+              <div class="flex flex-col items-center translate-y-0">
+                  <div class="w-28 h-28 bg-[#2c3e50] clip-hex flex items-center justify-center shadow-lg transition-transform hover:scale-110">
+                      <div class="text-center group">
+                          <i data-lucide="search" class="w-6 h-6 text-white mb-1"></i>
+                          <p class="text-[8px] text-white font-black uppercase">Option 03</p>
+                      </div>
+                  </div>
+              </div>
+              <!-- Item 4 -->
+              <div class="flex flex-col items-center -translate-y-16">
+                  <div class="w-28 h-28 bg-[#e67e22] clip-hex flex items-center justify-center shadow-lg transition-transform hover:scale-110">
+                      <div class="text-center group">
+                          <i data-lucide="activity" class="w-6 h-6 text-white mb-1"></i>
+                          <p class="text-[8px] text-white font-black uppercase">Option 04</p>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      <!-- Labels at Bottom -->
+      <div class="mt-8 flex justify-between px-16 z-20">
+          <div class="w-32 text-center">
+              <h5 class="text-[12px] font-black text-gray-800 uppercase mb-1">Title One</h5>
+              <p class="text-[8px] text-gray-400">Step details go here.</p>
+          </div>
+          <div class="w-32 text-center translate-y-6">
+              <h5 class="text-[12px] font-black text-gray-800 uppercase mb-1">Title Two</h5>
+              <p class="text-[8px] text-gray-400">Step details go here.</p>
+          </div>
+          <div class="w-32 text-center">
+              <h5 class="text-[12px] font-black text-gray-800 uppercase mb-1">Title Three</h5>
+              <p class="text-[8px] text-gray-400">Step details go here.</p>
+          </div>
+          <div class="w-32 text-center -translate-y-6">
+              <h5 class="text-[12px] font-black text-gray-800 uppercase mb-1">Title Four</h5>
+              <p class="text-[8px] text-gray-400">Step details go here.</p>
+          </div>
+      </div>
+    </div>
+    <script>lucide.createIcons();</script>
+  </body>
+</html>

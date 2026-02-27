@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Slide 3 - Double Arrow Cycle</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+      .arrow-half {
+        fill: none;
+        stroke-width: 25;
+        stroke-linecap: round;
+      }
+    </style>
+  </head>
+  <body class="font-sans overflow-hidden bg-white">
+    <div class="w-[960px] h-[540px] relative overflow-hidden p-16 flex flex-col items-center">
+      <!-- Header -->
+      <div class="w-full flex justify-between items-center mb-16 border-b border-gray-100 pb-4">
+          <div class="text-[10px] font-black text-gray-300 tracking-widest uppercase">Process Page</div>
+          <div class="text-[10px] font-black text-gray-300 tracking-widest uppercase">LOGOTYPE</div>
+      </div>
+
+      <div class="flex items-center w-full justify-center">
+          <!-- Labels Left -->
+          <div class="w-1/4 space-y-12 text-right pr-8">
+              <div>
+                  <h4 class="text-[14px] font-black text-gray-800 uppercase mb-2">Title One</h4>
+                  <p class="text-[10px] text-gray-400">Lorem ipsum dolor sit amet, consectetuer adipiscing.</p>
+              </div>
+              <div>
+                   <i data-lucide="clock" class="w-6 h-6 text-gray-300 ml-auto mr-0"></i>
+              </div>
+          </div>
+
+          <!-- Center Diagram -->
+          <div class="relative w-[300px] h-[300px] flex items-center justify-center">
+              <svg viewBox="0 0 100 100" class="w-full h-full transform -rotate-90">
+                  <path d="M50,10 A40,40 0 0,1 50,90" stroke="#2d5a27" class="arrow-half" />
+                  <path d="M50,90 A40,40 0 0,1 50,10" stroke="#c0392b" class="arrow-half" />
+                  
+                  <!-- Arrow heads -->
+                  <polygon points="50,90 40,85 40,95" fill="#2d5a27" transform="rotate(0, 50, 50)" />
+                  <polygon points="50,10 60,5 60,15" fill="#c0392b" transform="rotate(0, 50, 50)" />
+              </svg>
+
+              <!-- Icons on the path -->
+              <div class="absolute top-[10%] bg-white p-1 rounded-full"><div class="bg-gray-800 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">Step 01</div></div>
+              <div class="absolute bottom-[10%] bg-white p-1 rounded-full"><div class="bg-gray-800 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">Step 02</div></div>
+
+              <!-- Central Hub -->
+              <div class="absolute w-24 h-24 bg-white rounded-full shadow-2xl flex flex-col items-center justify-center">
+                  <i data-lucide="users" class="w-8 h-8 text-gray-300 mb-1"></i>
+                  <p class="text-[8px] font-bold text-gray-400 uppercase">Team Hub</p>
+              </div>
+          </div>
+
+          <!-- Labels Right -->
+          <div class="w-1/4 space-y-12 text-left pl-8">
+              <div>
+                  <h4 class="text-[14px] font-black text-gray-800 uppercase mb-2">Title Two</h4>
+                  <p class="text-[10px] text-gray-400">Lorem ipsum dolor sit amet, consectetuer adipiscing.</p>
+              </div>
+              <div>
+                   <i data-lucide="anchor" class="w-6 h-6 text-gray-300 mr-auto ml-0"></i>
+              </div>
+          </div>
+      </div>
+      
+      <div class="absolute bottom-12 right-12 text-[10px] font-black text-gray-200">PAGE 03</div>
+    </div>
+    <script>lucide.createIcons();</script>
+  </body>
+</html>

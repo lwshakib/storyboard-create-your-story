@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Modern Dark Deck - Slide 09</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              branddark: "#141624",
+              brandyellow: "#fbc531",
+              brandorange: "#e67e22",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+       .arc-line {
+          fill: none;
+          stroke: rgba(255, 255, 255, 0.05);
+          stroke-width: 1;
+       }
+    </style>
+  </head>
+  <body class="font-sans overflow-hidden bg-branddark">
+    <div class="w-[960px] h-[540px] relative overflow-hidden flex flex-col p-20 items-center">
+      
+      <!-- Header Area -->
+      <div class="w-full flex flex-col items-center mb-16 relative z-10">
+          <h2 class="text-brandyellow text-[12px] font-black uppercase tracking-[0.5em] mb-4">Our Global Network</h2>
+          <h1 class="text-white text-[56px] font-black uppercase tracking-tighter shadow-sm mb-4">
+            HEADLINE <span class="text-gray-400">SLIDE</span>
+          </h1>
+          <div class="w-16 h-1 bg-brandyellow rounded-full"></div>
+      </div>
+
+      <!-- Main Hubs -->
+      <div class="w-full flex justify-between px-20 relative z-10">
+          <!-- Hub A -->
+          <div class="flex flex-col items-center group">
+              <div class="w-24 h-24 rounded-full border border-brandyellow/30 bg-white/5 flex items-center justify-center mb-6 relative transition-transform group-hover:scale-110">
+                  <div class="absolute inset-0 border-[6px] border-brandyellow/10 rounded-full"></div>
+                  <span class="text-[32px] font-black text-brandyellow">A</span>
+              </div>
+              <h4 class="text-white text-[14px] font-black uppercase mb-1">North America</h4>
+              <p class="text-gray-500 text-[10px] font-bold uppercase tracking-widest">Primary Hub</p>
+          </div>
+
+          <!-- Hub B -->
+          <div class="flex flex-col items-center group">
+              <div class="w-24 h-24 rounded-full border border-brandorange/30 bg-white/5 flex items-center justify-center mb-6 relative transition-transform group-hover:scale-110">
+                  <div class="absolute inset-0 border-[6px] border-brandorange/10 rounded-full"></div>
+                  <span class="text-[32px] font-black text-brandorange">B</span>
+              </div>
+              <h4 class="text-white text-[14px] font-black uppercase mb-1">Europe & MEA</h4>
+              <p class="text-gray-500 text-[10px] font-bold uppercase tracking-widest">Regional Hub</p>
+          </div>
+
+          <!-- Hub C -->
+          <div class="flex flex-col items-center group">
+              <div class="w-24 h-24 rounded-full border border-white/20 bg-white/5 flex items-center justify-center mb-6 relative transition-transform group-hover:scale-110">
+                  <div class="absolute inset-0 border-[6px] border-white/5 rounded-full"></div>
+                  <span class="text-[32px] font-black text-white/40">C</span>
+              </div>
+              <h4 class="text-white text-[14px] font-black uppercase mb-1">Asia-Pacific</h4>
+              <p class="text-gray-500 text-[10px] font-bold uppercase tracking-widest">Growth Node</p>
+          </div>
+      </div>
+
+      <!-- Background Arcs -->
+      <div class="absolute inset-0 z-0 pointer-events-none">
+          <svg viewBox="0 0 960 540" class="w-full h-full">
+              <path d="M100,270 Q480,-50 860,270" class="arc-line" />
+              <path d="M100,270 Q480,590 860,270" class="arc-line" />
+          </svg>
+      </div>
+
+      <!-- Corner Accent -->
+      <div class="absolute bottom-[-100px] right-[-100px] w-64 h-64 border-t-[30px] border-l-[30px] border-white/5 rounded-tl-[150px]"></div>
+    </div>
+
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
+</html>
