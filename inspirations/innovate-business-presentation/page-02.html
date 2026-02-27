@@ -1,67 +1,88 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Slide 2 - Image Left</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brandorange: '#F97316',
-                        brandred: '#E11D48',
-                    }
-                }
-            }
-        }
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brandorange: "#F97316",
+              brandred: "#E11D48",
+            },
+          },
+        },
+      };
     </script>
     <style>
-        .clip-img-container { clip-path: polygon(0 0, 100% 0, 85% 100%, 0 100%); }
-        .clip-bottom-accent { clip-path: polygon(0 0, 100% 100%, 0 100%); }
-        .clip-button-icon { clip-path: polygon(20% 0, 100% 0, 100% 100%, 0 100%); }
+      .clip-img-container {
+        clip-path: polygon(0 0, 100% 0, 85% 100%, 0 100%);
+      }
+      .clip-bottom-accent {
+        clip-path: polygon(0 0, 100% 100%, 0 100%);
+      }
+      .clip-button-icon {
+        clip-path: polygon(20% 0, 100% 0, 100% 100%, 0 100%);
+      }
     </style>
-</head>
-<body class="font-sans overflow-hidden">
+  </head>
+  <body class="font-sans overflow-hidden">
     <div class="w-[960px] h-[540px] bg-white relative overflow-hidden flex">
-        <div class="w-full h-full bg-white relative overflow-hidden flex">
-            
-            <!-- Bottom left accent shape -->
-            <div class="absolute bottom-0 left-0 w-[350px] h-[250px] bg-gradient-to-tr from-brandred to-brandorange clip-bottom-accent z-0 opacity-90"></div>
+      <div class="w-full h-full bg-white relative overflow-hidden flex">
+        <!-- Bottom left accent shape -->
+        <div
+          class="absolute bottom-0 left-0 w-[350px] h-[250px] bg-gradient-to-tr from-brandred to-brandorange clip-bottom-accent z-0 opacity-90"
+        ></div>
 
-            <!-- Left Image -->
-            <div class="w-[55%] h-full relative z-10 clip-img-container pr-1">
-                <img src="https://placehold.co/800x800/eeeeee/333333?text=Precision+Engineering" alt="High precision engineering component close-up" class="w-full h-full object-cover">
-            </div>
-
-            <!-- Right Content -->
-            <div class="w-[45%] h-full flex flex-col justify-center pr-12 pl-6 z-10">
-                <h2 class="text-3xl font-bold text-gray-800 mb-6 leading-tight">
-                    Engineering for a<br>
-                    Sustainable Future
-                </h2>
-                
-                <p class="text-xs text-gray-500 mb-4 leading-relaxed">
-                    Our team delivers high-performance solutions that balance technical efficiency with environmental responsibility. We leverage advanced R&D to optimize resource consumption.
-                </p>
-                <p class="text-xs text-gray-500 mb-8 leading-relaxed">
-                    By integrating smart automation and renewable energy protocols, we help businesses transition to a circular economy model while maximizing their operational output.
-                </p>
-
-                <button class="flex items-center w-max bg-gradient-to-r from-brandred to-brandorange text-white rounded-full overflow-hidden shadow-lg h-9 hover:-translate-y-0.5 transition-transform">
-                    <span class="text-xs font-semibold px-5 py-2">Our Workflow</span>
-                    <span class="bg-white/20 h-full flex items-center justify-center px-3 clip-button-icon">
-                        <i data-lucide="chevron-right" class="w-4 h-4 text-white"></i>
-                    </span>
-                </button>
-            </div>
+        <!-- Left Image -->
+        <div class="w-[55%] h-full relative z-10 clip-img-container pr-1">
+          <img
+            src="/presentation-images/innovate-business-presentation/innovate-business-presentation-slide-2-img-1.jpg"
+            alt="High precision engineering component close-up"
+            class="w-full h-full object-cover"
+          />
         </div>
+
+        <!-- Right Content -->
+        <div
+          class="w-[45%] h-full flex flex-col justify-center pr-12 pl-6 z-10"
+        >
+          <h2 class="text-3xl font-bold text-gray-800 mb-6 leading-tight">
+            Engineering for a<br />
+            Sustainable Future
+          </h2>
+
+          <p class="text-xs text-gray-500 mb-4 leading-relaxed">
+            Our team delivers high-performance solutions that balance technical
+            efficiency with environmental responsibility. We leverage advanced
+            R&D to optimize resource consumption.
+          </p>
+          <p class="text-xs text-gray-500 mb-8 leading-relaxed">
+            By integrating smart automation and renewable energy protocols, we
+            help businesses transition to a circular economy model while
+            maximizing their operational output.
+          </p>
+
+          <button
+            class="flex items-center w-max bg-gradient-to-r from-brandred to-brandorange text-white rounded-full overflow-hidden shadow-lg h-9 hover:-translate-y-0.5 transition-transform"
+          >
+            <span class="text-xs font-semibold px-5 py-2">Our Workflow</span>
+            <span
+              class="bg-white/20 h-full flex items-center justify-center px-3 clip-button-icon"
+            >
+              <i data-lucide="chevron-right" class="w-4 h-4 text-white"></i>
+            </span>
+          </button>
+        </div>
+      </div>
     </div>
 
     <script>
-        lucide.createIcons();
+      lucide.createIcons();
     </script>
-</body>
+  </body>
 </html>

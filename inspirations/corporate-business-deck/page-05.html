@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Slide 5 - Why Choose Us</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      tailwind.config = { theme: { extend: { colors: { brandred: "#EE1D23", branddark: "#1E1E1E" } } } };
+    </script>
+    <style>
+      .clip-curve {
+        clip-path: ellipse(70% 100% at 20% 50%);
+      }
+    </style>
+  </head>
+  <body class="font-sans overflow-hidden">
+    <div class="w-[960px] h-[540px] bg-white relative overflow-hidden flex">
+      <!-- Left Side Image -->
+      <div class="w-[45%] h-full relative z-10 overflow-hidden">
+        <div class="absolute inset-0 bg-branddark clip-curve">
+             <img src="/presentation-images/corporate-business-deck/corporate-business-deck-slide-5-img-1.jpg" alt="Office Building" class="w-full h-full object-cover opacity-60">
+        </div>
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+             <div class="text-white text-center">
+                 <h3 class="text-2xl font-black uppercase">Expertise</h3>
+                 <p class="text-xs opacity-80 uppercase tracking-widest">DRIVING RESULTS GLOBALLY</p>
+             </div>
+        </div>
+      </div>
+
+      <!-- Right Side Content -->
+      <div class="w-[55%] h-full p-16 flex flex-col justify-center">
+        <label class="text-[10px] uppercase tracking-widest text-gray-400 font-bold block mb-2">Why Partner With Us</label>
+        <h2 class="text-3xl font-black text-branddark leading-tight uppercase mb-6">
+          WHY<br/>
+          <span class="text-brandred">CHOOSE US</span>
+        </h2>
+        <p class="text-[11px] text-gray-500 leading-relaxed mb-8">
+          We combine cutting-edge technology with deep industry expertise to deliver measurable results that scale with your business needs.
+        </p>
+
+        <div class="space-y-6">
+          <div class="flex items-center">
+            <div class="w-10 h-10 rounded-full bg-branddark flex items-center justify-center text-white mr-4 flex-shrink-0">
+               <i data-lucide="award" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h5 class="font-bold text-sm text-branddark uppercase">AWARD-WINNING STRATEGY</h5>
+              <p class="text-[9px] text-gray-500 leading-tight">Our data-driven methodologies have been recognized by industry leaders for exceptional efficiency and ROI.</p>
+            </div>
+          </div>
+          <div class="flex items-center">
+            <div class="w-10 h-10 rounded-full bg-brandred flex items-center justify-center text-white mr-4 flex-shrink-0">
+               <i data-lucide="users" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h5 class="font-bold text-sm text-branddark uppercase">EXPERT LEADERSHIP</h5>
+              <p class="text-[9px] text-gray-500 leading-tight">Our team consists of seasoned professionals with over 20 years of collective experience in global digital scaling.</p>
+            </div>
+          </div>
+          <div class="flex items-center">
+            <div class="w-10 h-10 rounded-full bg-branddark flex items-center justify-center text-white mr-4 flex-shrink-0">
+               <i data-lucide="zap" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h5 class="font-bold text-sm text-branddark uppercase">RAPID IMPLEMENTATION</h5>
+              <p class="text-[9px] text-gray-500 leading-tight">We leverage proprietary AI frameworks to cut traditional deployment times by up to 40% without compromising quality.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>lucide.createIcons();</script>
+  </body>
+</html>

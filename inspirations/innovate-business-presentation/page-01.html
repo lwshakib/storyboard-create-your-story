@@ -1,83 +1,143 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Innovate Solutions - Company Profile</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        darkblue: '#0F1528',
-                        brandorange: '#F97316',
-                        brandred: '#E11D48',
-                    }
-                }
-            }
-        }
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              darkblue: "#0F1528",
+              brandorange: "#F97316",
+              brandred: "#E11D48",
+            },
+          },
+        },
+      };
     </script>
     <style>
-        .clip-bg { clip-path: polygon(20% 0, 100% 0, 100% 100%, 0 100%); }
-        .clip-img { clip-path: polygon(25% 0, 100% 0, 100% 100%, 25% 100%, 0 45%); }
-        .clip-accent { clip-path: polygon(40%, 0, 100% 0, 100% 100%, 0 100%); }
+      .clip-bg {
+        clip-path: polygon(20% 0, 100% 0, 100% 100%, 0 100%);
+      }
+      .clip-img {
+        clip-path: polygon(25% 0, 100% 0, 100% 100%, 25% 100%, 0 45%);
+      }
+      .clip-accent {
+        clip-path: polygon(40%, 0, 100% 0, 100% 100%, 0 100%);
+      }
     </style>
-</head>
-<body class="font-sans overflow-hidden">
+  </head>
+  <body class="font-sans overflow-hidden">
     <div class="w-[960px] h-[540px] bg-darkblue relative overflow-hidden flex">
-        <div class="w-full h-full bg-darkblue relative overflow-hidden flex">
-            
-            <!-- Left Side Text and Dots -->
-            <div class="w-1/2 p-12 flex flex-col justify-center relative z-10">
-                <!-- Logo area -->
-                <div class="absolute top-10 left-12 flex items-center font-bold text-white tracking-widest text-sm">
-                <i data-lucide="diamond" class="text-brandorange w-4 h-4 mr-2" fill="currentColor"></i> INNOVATE
-                </div>
-                
-                <!-- Grid of dots -->
-                <div class="absolute top-24 left-24 grid grid-cols-4 gap-2 opacity-30">
-                    <!-- 16 dots -->
-                    <div class="w-1 h-1 bg-white rounded-full"></div><div class="w-1 h-1 bg-white rounded-full"></div><div class="w-1 h-1 bg-white rounded-full"></div><div class="w-1 h-1 bg-white rounded-full"></div>
-                    <div class="w-1 h-1 bg-white rounded-full"></div><div class="w-1 h-1 bg-white rounded-full"></div><div class="w-1 h-1 bg-white rounded-full"></div><div class="w-1 h-1 bg-white rounded-full"></div>
-                    <div class="w-1 h-1 bg-white rounded-full"></div><div class="w-1 h-1 bg-white rounded-full"></div><div class="w-1 h-1 bg-white rounded-full"></div><div class="w-1 h-1 bg-white rounded-full"></div>
-                    <div class="w-1 h-1 bg-white rounded-full"></div><div class="w-1 h-1 bg-white rounded-full"></div><div class="w-1 h-1 bg-white rounded-full"></div><div class="w-1 h-1 bg-white rounded-full"></div>
-                </div>
+      <div class="w-full h-full bg-darkblue relative overflow-hidden flex">
+        <!-- Left Side Text and Dots -->
+        <div class="w-1/2 p-12 flex flex-col justify-center relative z-10">
+          <!-- Logo area -->
+          <div
+            class="absolute top-10 left-12 flex items-center font-bold text-white tracking-widest text-sm"
+          >
+            <i
+              data-lucide="diamond"
+              class="text-brandorange w-4 h-4 mr-2"
+              fill="currentColor"
+            ></i>
+            INNOVATE
+          </div>
 
-                <!-- Main Title -->
-                <div class="mt-10 pl-4">
-                <h1 class="text-5xl font-black text-brandorange leading-tight tracking-wide mb-1">INNOVATE</h1>
-                <h1 class="text-5xl font-black text-white leading-tight tracking-wide mb-3">SOLUTIONS</h1>
-                <p class="text-xs text-gray-400 font-medium tracking-[0.2em] uppercase mt-2">Sustainable Digital Transformation</p>
-                </div>
-                
-                <!-- Bottom Dots -->
-                <div class="absolute bottom-12 left-[40%] grid grid-cols-5 gap-2 opacity-50">
-                    <div class="w-1.5 h-1.5 bg-white rounded-full"></div><div class="w-1.5 h-1.5 bg-white rounded-full"></div><div class="w-1.5 h-1.5 bg-white rounded-full"></div><div class="w-1.5 h-1.5 bg-white rounded-full"></div><div class="w-1.5 h-1.5 bg-white rounded-full"></div>
-                    <div class="w-1.5 h-1.5 bg-white rounded-full"></div><div class="w-1.5 h-1.5 bg-white rounded-full"></div><div class="w-1.5 h-1.5 bg-white rounded-full"></div><div class="w-1.5 h-1.5 bg-white rounded-full"></div><div class="w-1.5 h-1.5 bg-white rounded-full"></div>
-                </div>
-            </div>
+          <!-- Grid of dots -->
+          <div
+            class="absolute top-24 left-24 grid grid-cols-4 gap-2 opacity-30"
+          >
+            <!-- 16 dots -->
+            <div class="w-1 h-1 bg-white rounded-full"></div>
+            <div class="w-1 h-1 bg-white rounded-full"></div>
+            <div class="w-1 h-1 bg-white rounded-full"></div>
+            <div class="w-1 h-1 bg-white rounded-full"></div>
+            <div class="w-1 h-1 bg-white rounded-full"></div>
+            <div class="w-1 h-1 bg-white rounded-full"></div>
+            <div class="w-1 h-1 bg-white rounded-full"></div>
+            <div class="w-1 h-1 bg-white rounded-full"></div>
+            <div class="w-1 h-1 bg-white rounded-full"></div>
+            <div class="w-1 h-1 bg-white rounded-full"></div>
+            <div class="w-1 h-1 bg-white rounded-full"></div>
+            <div class="w-1 h-1 bg-white rounded-full"></div>
+            <div class="w-1 h-1 bg-white rounded-full"></div>
+            <div class="w-1 h-1 bg-white rounded-full"></div>
+            <div class="w-1 h-1 bg-white rounded-full"></div>
+            <div class="w-1 h-1 bg-white rounded-full"></div>
+          </div>
 
-            <!-- Right Side Hex and Image -->
-            <div class="w-[60%] h-full absolute right-0 top-0">
-                <!-- Background gradient block -->
-                <div class="absolute inset-0 bg-gradient-to-r from-brandred via-red-500 to-orange-500 clip-bg"></div>
-                
-                <!-- Small red floating accent near text -->
-                <div class="absolute top-[20%] left-[8%] w-12 h-16 bg-brandred rounded-lg -rotate-12 z-0"></div>
-                <div class="absolute bottom-[20%] left-[18%] w-6 h-6 bg-brandorange rounded-full z-0 shadow-[0_0_15px_rgba(249,115,22,0.8)]"></div>
+          <!-- Main Title -->
+          <div class="mt-10 pl-4">
+            <h1
+              class="text-5xl font-black text-brandorange leading-tight tracking-wide mb-1"
+            >
+              INNOVATE
+            </h1>
+            <h1
+              class="text-5xl font-black text-white leading-tight tracking-wide mb-3"
+            >
+              SOLUTIONS
+            </h1>
+            <p
+              class="text-xs text-gray-400 font-medium tracking-[0.2em] uppercase mt-2"
+            >
+              Sustainable Digital Transformation
+            </p>
+          </div>
 
-                <!-- White outline/container behind image -->
-                <div class="absolute inset-y-0 right-0 w-[85%] overflow-hidden clip-img border-l-[12px] border-white z-10 flex">
-                    <img src="https://placehold.co/800x800/eeeeee/333333?text=Smiling+man+in+suit+with+laptop" alt="Smiling business man in suit presenting with a laptop" class="w-full h-full object-cover">
-                </div>
-            </div>
+          <!-- Bottom Dots -->
+          <div
+            class="absolute bottom-12 left-[40%] grid grid-cols-5 gap-2 opacity-50"
+          >
+            <div class="w-1.5 h-1.5 bg-white rounded-full"></div>
+            <div class="w-1.5 h-1.5 bg-white rounded-full"></div>
+            <div class="w-1.5 h-1.5 bg-white rounded-full"></div>
+            <div class="w-1.5 h-1.5 bg-white rounded-full"></div>
+            <div class="w-1.5 h-1.5 bg-white rounded-full"></div>
+            <div class="w-1.5 h-1.5 bg-white rounded-full"></div>
+            <div class="w-1.5 h-1.5 bg-white rounded-full"></div>
+            <div class="w-1.5 h-1.5 bg-white rounded-full"></div>
+            <div class="w-1.5 h-1.5 bg-white rounded-full"></div>
+            <div class="w-1.5 h-1.5 bg-white rounded-full"></div>
+          </div>
         </div>
+
+        <!-- Right Side Hex and Image -->
+        <div class="w-[60%] h-full absolute right-0 top-0">
+          <!-- Background gradient block -->
+          <div
+            class="absolute inset-0 bg-gradient-to-r from-brandred via-red-500 to-orange-500 clip-bg"
+          ></div>
+
+          <!-- Small red floating accent near text -->
+          <div
+            class="absolute top-[20%] left-[8%] w-12 h-16 bg-brandred rounded-lg -rotate-12 z-0"
+          ></div>
+          <div
+            class="absolute bottom-[20%] left-[18%] w-6 h-6 bg-brandorange rounded-full z-0 shadow-[0_0_15px_rgba(249,115,22,0.8)]"
+          ></div>
+
+          <!-- White outline/container behind image -->
+          <div
+            class="absolute inset-y-0 right-0 w-[85%] overflow-hidden clip-img border-l-[12px] border-white z-10 flex"
+          >
+            <img
+              src="/presentation-images/innovate-business-presentation/hero-innovation.png"
+              alt="Futuristic sustainable city with digital overlays representing innovation"
+              class="w-full h-full object-cover"
+            />
+          </div>
+        </div>
+      </div>
     </div>
 
     <script>
-        lucide.createIcons();
+      lucide.createIcons();
     </script>
-</body>
+  </body>
 </html>

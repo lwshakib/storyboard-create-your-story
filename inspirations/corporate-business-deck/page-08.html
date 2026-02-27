@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Slide 8 - Data Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      tailwind.config = { theme: { extend: { colors: { brandred: "#EE1D23", branddark: "#1E1E1E" } } } };
+    </script>
+  </head>
+  <body class="font-sans overflow-hidden">
+    <div class="w-[960px] h-[540px] bg-white relative overflow-hidden flex flex-col p-16">
+      <!-- Header Area -->
+      <div class="text-center mb-8">
+        <h2 class="text-3xl font-black text-branddark leading-tight uppercase">
+          DATA <span class="text-brandred">ANALYSIS</span> (OVERVIEW)
+        </h2>
+        <p class="text-[11px] text-gray-500 max-w-2xl mx-auto mt-2 leading-relaxed">
+          Our strategic initiatives in the previous fiscal year led to a significant 15% increase in global market penetration. The following charts illustrate our steady climb in both user acquisition and gross revenue across all key regions.
+        </p>
+      </div>
+
+      <!-- Chart Container -->
+      <div class="flex-grow w-full max-w-4xl mx-auto mb-12 relative flex items-center justify-center">
+        <div class="w-full h-[220px]">
+          <canvas id="performanceChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Impact Metrics -->
+      <div class="grid grid-cols-4 gap-8">
+        <div class="text-center group transition-transform hover:-translate-y-1">
+          <div class="flex items-center justify-center text-brandred mb-2">
+            <i data-lucide="trending-up" class="w-5 h-5"></i>
+          </div>
+          <span class="text-3xl font-black text-branddark">22.5%</span>
+          <p class="text-[10px] text-gray-400 uppercase font-black tracking-widest mt-1">Growth Index</p>
+        </div>
+        <div class="text-center group transition-transform hover:-translate-y-1">
+          <div class="flex items-center justify-center text-branddark mb-2">
+            <i data-lucide="globe" class="w-5 h-5"></i>
+          </div>
+          <span class="text-3xl font-black text-brandred">64+</span>
+          <p class="text-[10px] text-gray-400 uppercase font-black tracking-widest mt-1">Global Hubs</p>
+        </div>
+        <div class="text-center group transition-transform hover:-translate-y-1">
+          <div class="flex items-center justify-center text-brandred mb-2">
+            <i data-lucide="award" class="w-5 h-5"></i>
+          </div>
+          <span class="text-3xl font-black text-branddark">98%</span>
+          <p class="text-[10px] text-gray-400 uppercase font-black tracking-widest mt-1">Client Retention</p>
+        </div>
+        <div class="text-center group transition-transform hover:-translate-y-1">
+          <div class="flex items-center justify-center text-branddark mb-2">
+            <i data-lucide="dollar-sign" class="w-5 h-5"></i>
+          </div>
+          <span class="text-3xl font-black text-brandred">$1.4M</span>
+          <p class="text-[10px] text-gray-400 uppercase font-black tracking-widest mt-1">Q4 Revenue</p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      lucide.createIcons();
+
+      const ctx = document.getElementById('performanceChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Quarter 1', 'Quarter 2', 'Quarter 3', 'Quarter 4'],
+          datasets: [
+            {
+              label: 'Revenue Growth',
+              data: [300, 450, 400, 600],
+              backgroundColor: '#EE1D23',
+              borderRadius: 6,
+              barThickness: 40,
+              order: 2
+            },
+            {
+              label: 'Market Reach',
+              data: [250, 600, 350, 750],
+              type: 'line',
+              borderColor: '#1E1E1E',
+              borderWidth: 3,
+              pointBackgroundColor: '#1E1E1E',
+              pointRadius: 5,
+              tension: 0.4,
+              fill: false,
+              order: 1
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top',
+              labels: {
+                generateLabels: (chart) => {
+                  return chart.data.datasets.map((dataset, i) => ({
+                    text: dataset.label.toUpperCase(),
+                    fillStyle: dataset.backgroundColor || dataset.borderColor,
+                    strokeStyle: dataset.borderColor || dataset.backgroundColor,
+                    lineWidth: 1,
+                    hidden: !chart.isDatasetVisible(i),
+                    index: i,
+                    font: { size: 10, weight: 'bold' }
+                  }));
+                }
+              }
+            },
+            tooltip: {
+              enabled: true,
+              backgroundColor: 'rgba(30, 30, 30, 0.9)',
+              titleFont: { size: 12, weight: 'bold' },
+              bodyFont: { size: 10 }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: { color: 'rgba(0, 0, 0, 0.05)' },
+              ticks: { font: { size: 9 }, color: '#9CA3AF' }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { font: { size: 10, weight: 'bold' }, color: '#374151' }
+            }
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

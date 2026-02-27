@@ -1,0 +1,51 @@
+{
+  "title": "Corporate Executive Presentation",
+  "description": "A professional and high-impact corporate presentation featuring a bold red and white theme, team profiles, service overviews, and data analysis slides.",
+  "slides": [
+    {
+      "title": "BUSINESS PRESENTATION",
+      "description": "Title slide with a clean white background, bold typography, and a circular image clip on the right side with red accent shapes.",
+      "content": "Professional Solutions for Global Growth. Established 2024."
+    },
+    {
+      "title": "COMPANY WELCOME MESSAGE",
+      "description": "Welcome slide featuring a welcoming message and a professional circular headshot with a layered red accent background.",
+      "content": "We are dedicated to delivering excellence in every project. Our mission is to empower businesses through innovation and strategic growth."
+    },
+    {
+      "title": "INTRODUCE OUR COMPANY",
+      "description": "Overview slide listing company core values or departments labeled A, B, and C with brief descriptions.",
+      "content": "A: Strategic Innovation. B: Operational Excellence. C: Global Connectivity."
+    },
+    {
+      "title": "COMPANY HISTORY",
+      "description": "Timeline slide with a deep red background showcasing key milestones across different years.",
+      "content": "2020-2021: Founded with a vision. 2022-2023: Global expansion into 5 countries. 2024-2025: Leading the market in digital transformation."
+    },
+    {
+      "title": "WHY CHOOSE US",
+      "description": "Comparison slide with a large curved-clipped image on the left and a list of benefits with icons on the right.",
+      "content": "Proven Track Record. Expert Team. 24/7 Support. Scalable Solutions."
+    },
+    {
+      "title": "BUSINESS SERVICES",
+      "description": "Service menu slide with a grid of icons representing different business divisions and a small group photo of team members.",
+      "content": "Digital Strategy. Market Research. Growth Hacking. Technical Support."
+    },
+    {
+      "title": "MEET OUR BUSINESS TEAM",
+      "description": "Team showcase slide with four equal-sized circular headshots and professional titles for each member.",
+      "content": "John Doe (CEO), Jane Smith (CTO), Mike Ray (COO), Sarah Lee (CMO)."
+    },
+    {
+      "title": "DATA ANALYSIS (OVERVIEW)",
+      "description": "Analytics slide featuring dual charts (bar and line) representing growth performance and market trends.",
+      "content": "Q1 Performance: $300k. Q2 Growth: $150k. Projecting 30% increase in market share by year-end."
+    },
+    {
+      "title": "THANK YOU",
+      "description": "Ending slide with centered branding, a large 'THANK YOU' message, and contact information.",
+      "content": "Get in touch: contact@innovate.com | Visit us at www.innovate.com"
+    }
+  ]
+}

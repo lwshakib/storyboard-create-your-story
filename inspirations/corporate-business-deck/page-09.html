@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Slide 9 - Thank You</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      tailwind.config = { theme: { extend: { colors: { brandred: "#EE1D23", branddark: "#1E1E1E" } } } };
+    </script>
+  </head>
+  <body class="font-sans overflow-hidden">
+    <div class="w-[960px] h-[540px] bg-white relative overflow-hidden flex flex-col items-center justify-center p-16">
+      <!-- Top Logo area -->
+      <div class="flex items-center mb-12">
+        <div class="w-10 h-10 rounded-full bg-brandred flex items-center justify-center mr-2 text-white">
+          <i data-lucide="crown" class="w-6 h-6"></i>
+        </div>
+        <div class="text-[12px] font-bold text-gray-800 uppercase tracking-widest">
+          <div class="text-brandred">Global Vision</div>
+          <div class="text-branddark">Innovating Excellence</div>
+        </div>
+      </div>
+
+      <h1 class="text-[80px] font-black text-branddark leading-none uppercase mb-2">
+        THANK <span class="text-brandred">YOU</span>
+      </h1>
+      <div class="w-24 h-1 bg-brandred mb-8"></div>
+      
+      <p class="text-[11px] text-gray-500 text-center max-w-sm leading-relaxed mb-12">
+        We appreciate your time and interest in our corporate vision. We look forward to exploring how a partnership can drive your business to new heights of success.
+      </p>
+
+      <div class="flex space-x-12">
+         <div class="flex items-center text-[10px] text-gray-400 font-black uppercase tracking-widest">
+             <i data-lucide="phone" class="w-4 h-4 text-brandred mr-2"></i>
+             +1 (800) 555-0199
+         </div>
+         <div class="flex items-center text-[10px] text-gray-400 font-black uppercase tracking-widest">
+             <i data-lucide="mail" class="w-4 h-4 text-brandred mr-2"></i>
+             partners@globalvision.com
+         </div>
+         <div class="flex items-center text-[10px] text-gray-400 font-black uppercase tracking-widest">
+             <i data-lucide="globe" class="w-4 h-4 text-brandred mr-2"></i>
+             www.globalvision.com
+         </div>
+      </div>
+    </div>
+    <script>lucide.createIcons();</script>
+  </body>
+</html>

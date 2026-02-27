@@ -1,79 +1,120 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Slide 3 - Text Left</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brandorange: '#F97316',
-                        brandred: '#E11D48',
-                    }
-                }
-            }
-        }
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brandorange: "#F97316",
+              brandred: "#E11D48",
+            },
+          },
+        },
+      };
     </script>
     <style>
-        .clip-img-container { clip-path: polygon(15% 0, 100% 0, 100% 100%, 0 100%); }
-        .clip-top-accent { clip-path: polygon(100% 0, 100% 100%, 0 0); }
+      .clip-img-container {
+        clip-path: polygon(15% 0, 100% 0, 100% 100%, 0 100%);
+      }
+      .clip-top-accent {
+        clip-path: polygon(100% 0, 100% 100%, 0 0);
+      }
     </style>
-</head>
-<body class="font-sans overflow-hidden">
+  </head>
+  <body class="font-sans overflow-hidden">
     <div class="w-[960px] h-[540px] bg-white relative overflow-hidden flex">
-        <div class="w-full h-full bg-white relative overflow-hidden flex">
-            
-            <!-- Left Content -->
-            <div class="w-[50%] h-full flex flex-col justify-center pl-16 pr-8 z-10">
-                <h2 class="text-2xl font-bold text-gray-800 mb-4 leading-tight">
-                    Strategic Consulting for<br>
-                    Global Enterprises
-                </h2>
-                
-                <p class="text-[11px] text-gray-500 mb-10 leading-relaxed pr-8">
-                    We provide a comprehensive framework for digital transformation, ensuring that your organization remains competitive in a rapidly evolving market. Our methodology is data-driven and results-oriented.
-                </p>
+      <div class="w-full h-full bg-white relative overflow-hidden flex">
+        <!-- Left Content -->
+        <div
+          class="w-[50%] h-full flex flex-col justify-center pl-16 pr-8 z-10"
+        >
+          <h2 class="text-2xl font-bold text-gray-800 mb-4 leading-tight">
+            Strategic Consulting for<br />
+            Global Enterprises
+          </h2>
 
-                <div class="flex items-start mt-4">
-                    <div class="w-12 h-12 rounded-full border border-gray-200 shadow flex items-center justify-center text-brandorange mr-4 flex-shrink-0">
-                        <i data-lucide="settings-2" class="w-6 h-6"></i>
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-gray-800 text-sm mb-2">Systems Optimization</h4>
-                        <p class="text-[10px] text-gray-500 leading-relaxed">
-                            We analyze your existing workflows to identify bottlenecks and implement automated solutions that reduce overhead and increase throughput.
-                        </p>
-                    </div>
-                </div>
+          <p class="text-[11px] text-gray-500 mb-10 leading-relaxed pr-8">
+            We provide a comprehensive framework for digital transformation,
+            ensuring that your organization remains competitive in a rapidly
+            evolving market. Our methodology is data-driven and
+            results-oriented.
+          </p>
+
+          <div class="flex items-start mt-4">
+            <div
+              class="w-12 h-12 rounded-full border border-gray-200 shadow flex items-center justify-center text-brandorange mr-4 flex-shrink-0"
+            >
+              <i data-lucide="settings-2" class="w-6 h-6"></i>
             </div>
-
-            <!-- Top Middle Red Accent -->
-            <div class="absolute top-0 right-[40%] w-[180px] h-[120px] bg-brandred clip-top-accent z-0"></div>
-
-            <!-- Right image area with gradient background block -->
-            <div class="absolute inset-y-0 right-0 w-[55%] flex z-10 clip-img-container">
-                <div class="w-full h-full bg-gradient-to-br from-brandorange to-brandred relative">
-                    <img src="https://placehold.co/800x800/eeeeee/333333?text=Professional+Consultant" alt="Professional consultant working with a laptop" class="absolute inset-x-0 bottom-0 top-[0px] w-full h-[100%] object-cover opacity-90 pb-[0px]">
-                    <div class="absolute inset-0 z-0 bg-white clip-img-container left-[15px] pr-1" style="clip-path: polygon(15% 0, 100% 0, 100% 100%, 0 100%);">
-                        <img src="https://placehold.co/800x800/eeeeee/333333?text=Modern+Workspace" alt="Modern tech workspace" class="w-full h-full object-cover">
-                    </div>
-                    <div class="absolute inset-0 bg-gradient-to-r from-brandred to-orange-500 z-[-1]"></div>
-                </div>
+            <div>
+              <h4 class="font-bold text-gray-800 text-sm mb-2">
+                Systems Optimization
+              </h4>
+              <p class="text-[10px] text-gray-500 leading-relaxed">
+                We analyze your existing workflows to identify bottlenecks and
+                implement automated solutions that reduce overhead and increase
+                throughput.
+              </p>
             </div>
-
-            <div class="absolute right-0 top-0 bottom-0 w-[55%] z-10">
-                <div class="absolute inset-0 bg-gradient-to-tr from-brandred to-orange-500" style="clip-path: polygon(10% 0, 100% 0, 100% 100%, 0 100%);"></div>
-                <img src="https://placehold.co/800x800/eeeeee/333333?text=Executive+Consulting" alt="Executive consulting session" class="absolute inset-0 w-full h-full object-cover" style="clip-path: polygon(25% 0, 100% 0, 100% 100%, 15% 100%);">
-            </div>
+          </div>
         </div>
+
+        <!-- Top Middle Red Accent -->
+        <div
+          class="absolute top-0 right-[40%] w-[180px] h-[120px] bg-brandred clip-top-accent z-0"
+        ></div>
+
+        <!-- Right image area with gradient background block -->
+        <div
+          class="absolute inset-y-0 right-0 w-[55%] flex z-10 clip-img-container"
+        >
+          <div
+            class="w-full h-full bg-gradient-to-br from-brandorange to-brandred relative"
+          >
+            <img
+              src="/presentation-images/innovate-business-presentation/innovate-business-presentation-slide-3-img-1.jpg"
+              alt="Professional consultant working with a laptop"
+              class="absolute inset-x-0 bottom-0 top-[0px] w-full h-[100%] object-cover opacity-90 pb-[0px]"
+            />
+            <div
+              class="absolute inset-0 z-0 bg-white clip-img-container left-[15px] pr-1"
+              style="clip-path: polygon(15% 0, 100% 0, 100% 100%, 0 100%)"
+            >
+              <img
+                src="/presentation-images/innovate-business-presentation/innovate-business-presentation-slide-3-img-2.jpg"
+                alt="Modern tech workspace"
+                class="w-full h-full object-cover"
+              />
+            </div>
+            <div
+              class="absolute inset-0 bg-gradient-to-r from-brandred to-orange-500 z-[-1]"
+            ></div>
+          </div>
+        </div>
+
+        <div class="absolute right-0 top-0 bottom-0 w-[55%] z-10">
+          <div
+            class="absolute inset-0 bg-gradient-to-tr from-brandred to-orange-500"
+            style="clip-path: polygon(10% 0, 100% 0, 100% 100%, 0 100%)"
+          ></div>
+          <img
+            src="/presentation-images/innovate-business-presentation/innovate-business-presentation-slide-3-img-3.jpg"
+            alt="Executive consulting session"
+            class="absolute inset-0 w-full h-full object-cover"
+            style="clip-path: polygon(25% 0, 100% 0, 100% 100%, 15% 100%)"
+          />
+        </div>
+      </div>
     </div>
 
     <script>
-        lucide.createIcons();
+      lucide.createIcons();
     </script>
-</body>
+  </body>
 </html>

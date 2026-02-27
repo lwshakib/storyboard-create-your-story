@@ -8,16 +8,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    
-    <!-- React & Recharts via CDN -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/prop-types@15.8.1/prop-types.min.js"></script>
-    <script src="https://unpkg.com/recharts/umd/Recharts.js"></script>
-    
-    <!-- Babel for JSX -->
-    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-
     <script>
         tailwind.config = {
             theme: {
@@ -48,10 +38,10 @@
                 </p>
                 
                 <div class="mt-8 border-[6px] border-[#182343] rounded overflow-hidden shadow-2xl drop-shadow-2xl h-[120px] w-full bg-white relative">
-                    <img src="https://placehold.co/400x300/eeeeee/333333?text=Data+Center" alt="Looking down at server hardware" class="w-full h-full object-cover grayscale opacity-90 mix-blend-multiply">
+                    <img src="/presentation-images/innovate-business-presentation/innovate-business-presentation-slide-9-img-1.jpg" alt="Looking down at server hardware" class="w-full h-full object-cover grayscale opacity-90 mix-blend-multiply">
                 </div>
             </div>
-
+ 
             <!-- Right Chart Area -->
             <div class="flex-1 h-full bg-gradient-to-r from-brandred via-red-500 to-yellow-500 relative p-12">
                 
@@ -59,48 +49,69 @@
                 <div class="absolute top-8 right-12 text-white/50 text-xs font-semibold tracking-wide">
                     2025 QUARTERLY IMPACT REPORT
                 </div>
-
+ 
                 <!-- Chart Container -->
-                <div id="chart-root" class="w-full h-full pt-8"></div>
+                <div id="chart-root" class="w-full h-full pt-8 flex items-center justify-center">
+                    <canvas id="impactChart"></canvas>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- React App for Recharts -->
-    <script type="text/babel">
-        const { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid } = window.Recharts;
-        
-        const data = [
-            { name: 'Q1', val1: 4000, val2: 2400, val3: 2000 },
-            { name: 'Q2', val1: 4500, val2: 3000, val3: 2200 },
-            { name: 'Q3', val1: 5200, val2: 3800, val3: 2800 },
-            { name: 'Q4', val1: 6100, val2: 4300, val3: 3100 },
-        ];
-
-        const CustomChart = () => (
-            <ResponsiveContainer width="100%" height="85%">
-                <BarChart data={data} margin={{ top: 20, right: 0, left: -20, bottom: 0 }} barGap={2} barSize={12}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.2)" />
-                    <XAxis 
-                        dataKey="name" 
-                        axisLine={false} 
-                        tickLine={false} 
-                        tick={{fill: 'rgba(255,255,255,0.7)', fontSize: 10, dy: 10}} 
-                    />
-                    <YAxis 
-                        axisLine={false} 
-                        tickLine={false} 
-                        tick={{fill: 'rgba(255,255,255,0.5)', fontSize: 10}} 
-                    />
-                    <Bar dataKey="val1" fill="#ffffff" radius={[50, 50, 0, 0]} />
-                    <Bar dataKey="val2" fill="rgba(255,255,255,0.5)" radius={[50, 50, 0, 0]} />
-                    <Bar dataKey="val3" fill="#0F1528" radius={[50, 50, 0, 0]} />
-                </BarChart>
-            </ResponsiveContainer>
-        );
-
-        const root = ReactDOM.createRoot(document.getElementById('chart-root'));
-        root.render(<CustomChart />);
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const ctx = document.getElementById('impactChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+                    datasets: [
+                        {
+                            label: 'Energy Recovery',
+                            data: [4000, 4500, 5200, 6100],
+                            backgroundColor: '#ffffff',
+                            borderRadius: 20,
+                            barThickness: 12,
+                        },
+                        {
+                            label: 'Operation Speed',
+                            data: [2400, 3000, 3800, 4300],
+                            backgroundColor: 'rgba(255,255,255,0.5)',
+                            borderRadius: 20,
+                            barThickness: 12,
+                        },
+                        {
+                            label: 'Waste Reduction',
+                            data: [2000, 2200, 2800, 3100],
+                            backgroundColor: '#0F1528',
+                            borderRadius: 20,
+                            barThickness: 12,
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: 'rgba(255,255,255,0.7)', font: { size: 10 } },
+                            border: { display: false }
+                        },
+                        y: {
+                            grid: { color: 'rgba(255,255,255,0.1)' },
+                            ticks: { color: 'rgba(255,255,255,0.5)', font: { size: 10 } },
+                            border: { display: false }
+                        }
+                    }
+                }
+            });
+        });
     </script>
     <script>
         lucide.createIcons();

@@ -4,10 +4,14 @@ import path from 'path';
 export interface InspirationSlide {
   title: string;
   html: string;
+  description?: string;
+  content?: string;
 }
 
 export interface InspirationPresentation {
   name: string;
+  title: string;
+  description: string;
   slides: InspirationSlide[];
 }
 
@@ -19,27 +23,33 @@ function getPresentationSlides(presentationName: string): InspirationSlide[] {
   
   if (!fs.existsSync(presentationPath) || !fs.statSync(presentationPath).isDirectory()) return [];
 
-  const files = fs.readdirSync(presentationPath).sort((a, b) => {
+  const outlinePath = path.join(presentationPath, 'outline.json');
+  let outline: any = null;
+  if (fs.existsSync(outlinePath)) {
+    outline = JSON.parse(fs.readFileSync(outlinePath, 'utf8'));
+  }
+
+  const files = fs.readdirSync(presentationPath).filter(f => f.endsWith('.html')).sort((a, b) => {
     // Sort by slide number in filename (slide-1.html, slide-2.html, etc)
     const numA = parseInt(a.match(/\d+/)?. [0] || '0');
     const numB = parseInt(b.match(/\d+/)?. [0] || '0');
     return numA - numB;
   });
 
-  for (const file of files) {
-    if (file.endsWith('.html')) {
-      const filePath = path.join(presentationPath, file);
-      const html = fs.readFileSync(filePath, 'utf8');
-      
-      // Extract title from filename or just use a generic one
-      // In a better system, we might parse the HTML for a title
-      const title = file.replace('.html', '').replace(/-/g, ' ');
-      
-      slides.push({
-        title,
-        html
-      });
-    }
+  for (const [index, file] of files.entries()) {
+    const filePath = path.join(presentationPath, file);
+    const html = fs.readFileSync(filePath, 'utf8');
+    
+    // Use data from outline if available, otherwise fallback to filename based titles
+    const slideOutline = outline?.slides?.[index];
+    const title = slideOutline?.title || file.replace('.html', '').replace(/-/g, ' ');
+    
+    slides.push({
+      title,
+      html,
+      description: slideOutline?.description,
+      content: slideOutline?.content
+    });
   }
 
   return slides;
@@ -52,10 +62,30 @@ export const getInspirations = (): InspirationPresentation[] => {
     const p = path.join(INSPIRATIONS_DIR, item);
     return fs.statSync(p).isDirectory();
   });
-  return presentations.map(presName => ({
-    name: presName.replace(/-/g, ' '),
-    slides: getPresentationSlides(presName)
-  }));
+
+  return presentations.map(presName => {
+    const presPath = path.join(INSPIRATIONS_DIR, presName);
+    const outlinePath = path.join(presPath, 'outline.json');
+    let title = presName.replace(/-/g, ' ');
+    let description = `High-fidelity presentation template: ${title}`;
+
+    if (fs.existsSync(outlinePath)) {
+      try {
+        const outline = JSON.parse(fs.readFileSync(outlinePath, 'utf8'));
+        title = outline.title || title;
+        description = outline.description || description;
+      } catch (e) {
+        console.error(`Error parsing outline.json for ${presName}:`, e);
+      }
+    }
+
+    return {
+      name: presName,
+      title,
+      description,
+      slides: getPresentationSlides(presName)
+    };
+  });
 };
 
 export const formatInspirationsForPrompt = (): string => {
@@ -72,10 +102,13 @@ export const formatInspirationsForPrompt = (): string => {
   };
 
   inspirations.forEach((pres) => {
-    output += `#### Presentation: ${pres.name}\n`;
+    output += `#### Presentation: ${pres.title}\n`;
+    output += `Overall Description: ${pres.description}\n`;
     pres.slides.forEach((slide, idx) => {
       output += `\n**Example Slide ${idx + 1}: ${slide.title.toUpperCase()}**\n`;
-      output += stripImages(slide.html) + '\n';
+      if (slide.description) output += `*Design Concept:* ${slide.description}\n`;
+      if (slide.content) output += `*Core Content:* ${slide.content}\n`;
+      output += `*HTML Structure:*\n${stripImages(slide.html)}\n`;
     });
     output += '\n---\n\n';
   });

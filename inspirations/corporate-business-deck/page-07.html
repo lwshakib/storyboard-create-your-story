@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Slide 7 - Meet Our Business Team</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      tailwind.config = { theme: { extend: { colors: { brandred: "#EE1D23", branddark: "#1E1E1E" } } } };
+    </script>
+  </head>
+  <body class="font-sans overflow-hidden">
+    <div class="w-[960px] h-[540px] bg-white relative overflow-hidden flex flex-col items-center justify-center p-16">
+      <h2 class="text-xs uppercase tracking-[0.3em] text-gray-400 font-black mb-2">MEET OUR</h2>
+      <h2 class="text-3xl font-black text-brandred leading-tight uppercase mb-12">
+        BUSINESS <span class="text-branddark">TEAM</span>
+      </h2>
+
+      <div class="flex justify-center space-x-12">
+        <!-- Team Member 1 -->
+        <div class="flex flex-col items-center text-center">
+          <div class="w-32 h-32 rounded-full border-[6px] border-gray-100 shadow-lg overflow-hidden mb-4 transition-transform hover:scale-110">
+            <img src="/presentation-images/corporate-business-deck/avatar-2.jpg" alt="Jonathan Reed" class="w-full h-full object-cover">
+          </div>
+          <h5 class="font-bold text-sm text-branddark uppercase mb-1">JONATHAN REED</h5>
+          <label class="text-[9px] text-brandred font-black uppercase tracking-widest">CHIEF EXECUTIVE</label>
+          <p class="text-[8px] text-gray-500 max-w-[120px] mt-2">Visionary leader with 15+ years experience in global market strategy and sustainable scaling.</p>
+        </div>
+        <!-- Team Member 2 -->
+        <div class="flex flex-col items-center text-center">
+          <div class="w-32 h-32 rounded-full border-[6px] border-gray-100 shadow-lg overflow-hidden mb-4 transition-transform hover:scale-110">
+            <img src="/presentation-images/corporate-business-deck/avatar-3.jpg" alt="Sarah Henderson" class="w-full h-full object-cover">
+          </div>
+          <h5 class="font-bold text-sm text-branddark uppercase mb-1">SARAH HENDERSON</h5>
+          <label class="text-[9px] text-brandred font-black uppercase tracking-widest">MARKETING DIR.</label>
+          <p class="text-[8px] text-gray-500 max-w-[120px] mt-2">Expert in digital consumer behavior and architect of our award-winning global brand identities.</p>
+        </div>
+        <!-- Team Member 3 -->
+        <div class="flex flex-col items-center text-center">
+          <div class="w-32 h-32 rounded-full border-[6px] border-gray-100 shadow-lg overflow-hidden mb-4 transition-transform hover:scale-110">
+            <img src="/presentation-images/corporate-business-deck/avatar-4.jpg" alt="Michael Chen" class="w-full h-full object-cover">
+          </div>
+          <h5 class="font-bold text-sm text-branddark uppercase mb-1">MICHAEL CHEN</h5>
+          <label class="text-[9px] text-brandred font-black uppercase tracking-widest">TECHNOLOGY LEAD</label>
+          <p class="text-[8px] text-gray-500 max-w-[120px] mt-2">Innovator specializing in enterprise-grade AI integration and scalable cloud-based infrastructures.</p>
+        </div>
+        <!-- Team Member 4 -->
+        <div class="flex flex-col items-center text-center">
+          <div class="w-32 h-32 rounded-full border-[6px] border-gray-100 shadow-lg overflow-hidden mb-4 transition-transform hover:scale-110">
+            <img src="/presentation-images/corporate-business-deck/avatar-5.jpg" alt="Elena Gomez" class="w-full h-full object-cover">
+          </div>
+          <h5 class="font-bold text-sm text-branddark uppercase mb-1">ELENA GOMEZ</h5>
+          <label class="text-[9px] text-brandred font-black uppercase tracking-widest">OPERATIONS MGR.</label>
+          <p class="text-[8px] text-gray-500 max-w-[120px] mt-2">Efficiency master focused on streamlining cross-departmental workflows and global supply chains.</p>
+        </div>
+      </div>
+    </div>
+    <script>lucide.createIcons();</script>
+  </body>
+</html>

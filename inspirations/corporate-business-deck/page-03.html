@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Slide 3 - Introduce Our Company</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      tailwind.config = { theme: { extend: { colors: { brandred: "#EE1D23", branddark: "#1E1E1E" } } } };
+    </script>
+  </head>
+  <body class="font-sans overflow-hidden">
+    <div class="w-[960px] h-[540px] bg-white p-16 flex">
+      <!-- Left Side -->
+      <div class="w-1/2 pr-12">
+        <label class="text-[10px] uppercase tracking-widest text-gray-400 font-bold block mb-2">Empowering Digital Futures</label>
+        <h2 class="text-3xl font-black text-branddark leading-tight uppercase mb-6">
+          INTRODUCE<br/>
+          <span class="text-brandred font-black">OUR COMPANY</span>
+        </h2>
+        <p class="text-[11px] text-gray-500 leading-relaxed mb-8">
+          Founded in 2018, our company has quickly risen to become a premier partner for enterprises seeking meaningful digital transformation and scalable technology solutions.
+        </p>
+        
+        <h4 class="font-bold text-gray-800 text-sm mb-2 uppercase">OUR MISSION</h4>
+        <p class="text-[10px] text-gray-500 leading-relaxed italic">
+          "To provide world-class innovation that bridges the gap between complex technology and intuitive human experiences, driving growth for every partner we serve."
+        </p>
+      </div>
+
+      <!-- Right Side -->
+      <div class="w-1/2 flex flex-col space-y-4 justify-center">
+        <!-- Item A -->
+        <div class="flex items-center bg-gray-50 rounded-lg p-4 border-l-4 border-brandred relative transition-transform hover:translate-x-2">
+            <div class="w-12 h-12 rounded-full bg-brandred flex items-center justify-center text-white font-black text-xl mr-4 flex-shrink-0">
+               <i data-lucide="lightbulb" class="w-6 h-6"></i>
+            </div>
+            <div>
+                <h5 class="font-bold text-sm text-branddark uppercase">STRATEGIC INNOVATION</h5>
+                <label class="text-[9px] text-gray-400 uppercase font-bold">CORE PILLAR 01</label>
+                <p class="text-[9px] text-gray-500 leading-tight mt-1">We prioritize forward-thinking technologies that solve tomorrow's problems today.</p>
+            </div>
+        </div>
+        <!-- Item B -->
+        <div class="flex items-center bg-gray-50 rounded-lg p-4 border-l-4 border-brandred relative transition-transform hover:translate-x-2">
+            <div class="w-12 h-12 rounded-full bg-brandred flex items-center justify-center text-white font-black text-xl mr-4 flex-shrink-0">
+               <i data-lucide="shield-check" class="w-6 h-6"></i>
+            </div>
+            <div>
+                <h5 class="font-bold text-sm text-branddark uppercase">OPERATIONAL EXCELLENCE</h5>
+                <label class="text-[9px] text-gray-400 uppercase font-bold">CORE PILLAR 02</label>
+                <p class="text-[9px] text-gray-500 leading-tight mt-1">Maintaining the highest standards of quality and efficiency in every project phase.</p>
+            </div>
+        </div>
+        <!-- Item C -->
+        <div class="flex items-center bg-gray-50 rounded-lg p-4 border-l-4 border-brandred relative transition-transform hover:translate-x-2">
+            <div class="w-12 h-12 rounded-full bg-brandred flex items-center justify-center text-white font-black text-xl mr-4 flex-shrink-0">
+               <i data-lucide="heart" class="w-6 h-6"></i>
+            </div>
+            <div>
+                <h5 class="font-bold text-sm text-branddark uppercase">CUSTOMER CENTRICITY</h5>
+                <label class="text-[9px] text-gray-400 uppercase font-bold">CORE PILLAR 03</label>
+                <p class="text-[9px] text-gray-500 leading-tight mt-1">Our partners are at the heart of everything we do, ensuring aligned success.</p>
+            </div>
+        </div>
+      </div>
+    </div>
+    <script>lucide.createIcons();</script>
+  </body>
+</html>

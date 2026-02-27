@@ -52,4 +52,6 @@ export interface Slide {
   splitRatio?: number;
   html?: string;
   title?: string;
+  description?: string;
+  content?: string;
 }

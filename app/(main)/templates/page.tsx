@@ -93,80 +93,107 @@ export default function TemplatesPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-10 gap-y-16">
         {templates.map((template, index) => (
-          <motion.div
-            key={template.id}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.05 }}
-            className="group flex flex-col gap-4"
-          >
-            {/* Preview Card */}
-            <div className="relative aspect-video bg-muted/40 rounded-xl overflow-hidden border border-border/50 transition-all hover:border-primary/40 hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] group/preview">
-              <div className="absolute inset-0 z-0">
-                {template.slides.length > 0 && (
-                  <SlidePreview html={template.slides[0].html || ""} autoScale />
-                )}
-              </div>
-              
-              {/* Overlay with Button */}
-              <div className="absolute inset-0 z-10 bg-black/5 opacity-0 group-hover/preview:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-[2px]">
-                 <Button 
-                  onClick={() => handleUseTemplate(template)}
-                  disabled={creatingId !== null}
-                  className="rounded-xl px-8 h-12 bg-primary text-primary-foreground font-bold transition-all shadow-xl hover:scale-105 active:scale-95 flex items-center gap-2 border-b-2 border-primary-foreground/10"
-                 >
-                    {creatingId === template.id ? (
-                      <Loader2 className="size-5 animate-spin" />
-                    ) : (
-                      <Plus className="size-5" />
-                    )}
-                    {creatingId === template.id ? "Creating..." : "Use template"}
-                 </Button>
-              </div>
-              
-
-              {/* Slide Count Badge */}
-              <div className="absolute top-4 right-4 z-20 bg-background/80 backdrop-blur-md text-foreground px-2.5 py-1 rounded-lg text-[10px] font-bold border border-border/50 flex items-center gap-1.5 shadow-sm">
-                <Files className="size-3 opacity-60" />
-                {template.slides.length} Slides
-              </div>
-            </div>
-            
-            {/* Meta Info */}
-            <div className="flex flex-col gap-2 px-2 text-card-foreground">
-              <h3 className="text-base font-bold tracking-tight text-foreground group-hover:text-primary transition-colors truncate">
-                {template.title}
-              </h3>
-              <p className="text-muted-foreground text-xs font-semibold leading-relaxed line-clamp-2">
-                {template.description}
-              </p>
-              
-              <div className="mt-3 flex items-center justify-between">
-                <div className="flex -space-x-3">
-                  {template.slides.slice(0, 4).map((slide, i) => (
-                    <div key={i} className="size-8 rounded-lg border-4 border-background bg-muted overflow-hidden ring-1 ring-border/5 shadow-sm">
-                      <img src={slide.bgImage || template.thumbnail || "/placeholder.png"} className="w-full h-full object-cover" />
-                    </div>
-                  ))}
-                  {template.slides.length > 4 && (
-                    <div className="size-8 rounded-lg border-4 border-background bg-muted flex items-center justify-center text-[10px] font-black text-muted-foreground ring-1 ring-border/5 shadow-sm">
-                      +{template.slides.length - 4}
-                    </div>
-                  )}
-                </div>
-                
-                <button 
-                  onClick={() => handleUseTemplate(template)}
-                  disabled={creatingId !== null}
-                  className="text-[10px] font-bold tracking-tight text-primary hover:text-primary/70 disabled:opacity-50 transition-all flex items-center gap-1.5"
-                >
-                  {creatingId === template.id ? "Creating..." : "Quick import"} <ArrowRight className="size-3" />
-                </button>
-              </div>
-            </div>
-          </motion.div>
+          <TemplateCard 
+            key={template.id} 
+            template={template} 
+            index={index} 
+            onUse={() => handleUseTemplate(template)}
+            isCreating={creatingId === template.id}
+            isGlobalCreating={creatingId !== null}
+          />
         ))}
       </div>
     </div>
+  )
+}
+
+function TemplateCard({ 
+  template, 
+  index, 
+  onUse, 
+  isCreating, 
+  isGlobalCreating 
+}: { 
+  template: Template, 
+  index: number, 
+  onUse: () => void, 
+  isCreating: boolean,
+  isGlobalCreating: boolean
+}) {
+  const [activeSlideIndex, setActiveSlideIndex] = React.useState(0)
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: index * 0.05 }}
+      className="group flex flex-col gap-4"
+    >
+      {/* Preview Card */}
+      <div className="relative aspect-video bg-muted/40 rounded-xl overflow-hidden border border-border/50 transition-all hover:border-primary/40 hover:shadow-[0_20px_50px_rgba(0,0,0,0.05)] group/preview">
+        <div className="absolute inset-0 z-0 scale-[1.01]">
+          <SlidePreview 
+            html={template.slides[activeSlideIndex]?.html || ""} 
+            autoScale 
+          />
+        </div>
+        
+        {/* Overlay with Button */}
+        <div className="absolute inset-0 z-10 bg-black/5 opacity-0 group-hover/preview:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-[2px]">
+           <Button 
+            onClick={onUse}
+            disabled={isGlobalCreating}
+            className="rounded-xl px-8 h-12 bg-primary text-primary-foreground font-bold transition-all shadow-xl hover:scale-105 active:scale-95 flex items-center gap-2 border-b-2 border-primary-foreground/10"
+           >
+              {isCreating ? (
+                <Loader2 className="size-5 animate-spin" />
+              ) : (
+                <Plus className="size-5" />
+              )}
+              {isCreating ? "Creating..." : "Use template"}
+           </Button>
+        </div>
+
+        {/* Slide Count Badge */}
+        <div className="absolute top-4 right-4 z-20 bg-background/80 backdrop-blur-md text-foreground px-2.5 py-1 rounded-lg text-[10px] font-bold border border-border/50 flex items-center gap-1.5 shadow-sm">
+          <Files className="size-3 opacity-60" />
+          {template.slides.length} Slides
+        </div>
+
+        {/* Progress Dots / Slide Selectors */}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-1.5 px-2 py-1.5 bg-background/40 backdrop-blur-md rounded-full border border-white/10 opacity-0 group-hover/preview:opacity-100 transition-opacity">
+          {template.slides.map((_, i) => (
+            <button
+              key={i}
+              onMouseEnter={() => setActiveSlideIndex(i)}
+              className={cn(
+                "size-1.5 rounded-full transition-all",
+                activeSlideIndex === i ? "bg-primary w-4" : "bg-white/40 hover:bg-white/70"
+              )}
+            />
+          ))}
+        </div>
+      </div>
+      
+      {/* Meta Info */}
+      <div className="flex flex-col gap-2 px-2 text-card-foreground">
+        <h3 className="text-base font-bold tracking-tight text-foreground group-hover:text-primary transition-colors truncate">
+          {template.title}
+        </h3>
+        <p className="text-muted-foreground text-sm font-medium leading-relaxed line-clamp-1">
+          {template.description}
+        </p>
+        
+        <div className="mt-2 flex items-center justify-end">
+          <button 
+            onClick={onUse}
+            disabled={isGlobalCreating}
+            className="text-[10px] font-bold tracking-tight text-primary hover:text-primary/70 disabled:opacity-50 transition-all flex items-center gap-1.5"
+          >
+            {isCreating ? "Creating..." : "Quick import"} <ArrowRight className="size-3" />
+          </button>
+        </div>
+      </div>
+    </motion.div>
   )
 }
