@@ -20,6 +20,7 @@ export default async function HomePage() {
 
   const allProjects = projects.map((p) => ({
     ...p,
+    slides: Array.isArray(p.slides) ? p.slides as { html?: string }[] : [],
     projectType: "advanced",
   }))
 

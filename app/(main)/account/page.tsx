@@ -21,7 +21,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { toast } from "sonner"
-import { LogOut, Shield, User, Key } from "lucide-react"
+import { LogOut, Shield, User } from "lucide-react"
 
 export default function AccountPage() {
   const { data: session, isPending } = authClient.useSession()
@@ -48,7 +48,7 @@ export default function AccountPage() {
         name: name,
       })
       toast.success("Name updated successfully")
-    } catch (_error) {
+    } catch {
       toast.error("Failed to update name")
     } finally {
       setIsUpdatingName(false)
@@ -171,7 +171,7 @@ export default function AccountPage() {
                       document.getElementById("old-password").value = ""
                       // @ts-expect-error - DOM manipulation for password field reset
                       document.getElementById("new-password").value = ""
-                    } catch (_error) {
+                    } catch {
                       toast.error("Failed to change password")
                     }
                   }}
@@ -243,7 +243,7 @@ function SessionsList() {
       })
       toast.success("Session revoked")
       fetchSessions()
-    } catch (_error) {
+    } catch {
       toast.error("Failed to revoke session")
     }
   }

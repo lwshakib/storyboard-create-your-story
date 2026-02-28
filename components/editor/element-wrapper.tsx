@@ -19,9 +19,6 @@ import {
   ArrowUp,
   ArrowDown,
   Plus,
-  BarChart2,
-  PieChart as PieChartIcon,
-  TrendingUp,
   Settings2,
   Loader2,
 } from "lucide-react"
@@ -41,30 +38,12 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip,
   Cell,
   ResponsiveContainer,
   LabelList,
   PolarGrid,
   PolarAngleAxis,
-  PolarRadiusAxis,
-  Label,
 } from "recharts"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import {
-  ChartContainer,
-  ChartLegend,
-  ChartLegendContent,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart"
 import {
   ContextMenu,
   ContextMenuContent,
@@ -965,7 +944,7 @@ export function ElementWrapper({
                 lineHeight: 1.2,
               }}
             >
-              {el.content}
+              {el.content as string}
             </div>
           )}
           {el.type === "table" && (
@@ -982,7 +961,7 @@ export function ElementWrapper({
             >
               <table className="w-full table-fixed border-collapse">
                 <tbody>
-                  {(el.tableData || el.content || []).map(
+                  {(el.tableData || (el.content as any[]) || []).map(
                     (row: any[], rowIndex: number) => (
                       <tr key={rowIndex}>
                         {row.map((cell: any, colIndex: number) => (
@@ -1009,7 +988,7 @@ export function ElementWrapper({
                                 }
                                 onUpdate({ tableData: newData })
                               } else {
-                                const newContent = [...(el.content || [])]
+                                const newContent = [...((el.content as any[]) || [])]
                                 newContent[rowIndex] = [...newContent[rowIndex]]
                                 newContent[rowIndex][colIndex] =
                                   e.currentTarget.textContent || ""
@@ -1035,7 +1014,7 @@ export function ElementWrapper({
                 className="bg-primary border-background absolute right-0 -bottom-6 z-[120] flex items-center justify-center rounded-full border-2 p-1.5 text-white opacity-0 shadow-lg transition-all group-hover/table:opacity-100 hover:scale-110 active:scale-90"
                 onClick={(e) => {
                   e.stopPropagation()
-                  const data = el.tableData || el.content || []
+                  const data = el.tableData || (el.content as any[]) || []
                   if (data.length > 0) {
                     if (el.tableData) {
                       const newRow = new Array(data[0].length)
@@ -1044,7 +1023,7 @@ export function ElementWrapper({
                       onUpdate({ tableData: [...el.tableData, newRow] })
                     } else {
                       const newRow = new Array(data[0].length).fill("")
-                      onUpdate({ content: [...(el.content || []), newRow] })
+                      onUpdate({ content: [...((el.content as any[]) || []), newRow] })
                     }
                   }
                 }}
@@ -1055,7 +1034,7 @@ export function ElementWrapper({
                 className="bg-primary border-background absolute -right-6 bottom-0 z-[120] flex items-center justify-center rounded-full border-2 p-1.5 text-white opacity-0 shadow-lg transition-all group-hover/table:opacity-100 hover:scale-110 active:scale-90"
                 onClick={(e) => {
                   e.stopPropagation()
-                  const data = el.tableData || el.content || []
+                  const data = el.tableData || (el.content as any[]) || []
                   if (data.length > 0) {
                     if (el.tableData) {
                       const newData = el.tableData.map((row: any[]) => [
@@ -1064,7 +1043,7 @@ export function ElementWrapper({
                       ])
                       onUpdate({ tableData: newData })
                     } else {
-                      const newContent = (el.content || []).map(
+                      const newContent = ((el.content as any[]) || []).map(
                         (row: any[]) => [...row, ""]
                       )
                       onUpdate({ content: newContent })

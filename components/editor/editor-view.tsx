@@ -62,92 +62,9 @@ interface EditorViewProps {
   onGenerate?: () => void
   onGenerateSection?: (index: number) => void
   generatingSections?: Set<number>
-  onSaveSuccess?: (data: any) => void
+  onSaveSuccess?: (data: { id: string; title: string; description?: string; slides: HtmlSlide[]; outline?: string; isDeleted?: boolean }) => void
 }
 
-const _SkeletonSlide = ({ index }: { index: number }) => (
-  <div className="space-y-6">
-    <div className="flex items-center gap-3 px-2">
-      <span className="bg-muted text-muted-foreground flex h-6 w-10 animate-pulse items-center justify-center rounded-full text-xs font-black">
-        {index + 1}
-      </span>
-      <h2 className="text-muted-foreground/30 animate-pulse text-sm font-black tracking-widest uppercase">
-        Generating Slide...
-      </h2>
-    </div>
-    <div className="bg-card relative mx-auto flex aspect-video w-full max-w-[1000px] items-center justify-center overflow-hidden rounded-xl border-none shadow-[0_40px_100px_rgba(0,0,0,0.1)]">
-      <div className="flex flex-col items-center gap-4">
-        <div className="relative">
-          <Loader2 className="text-primary h-10 w-10 animate-spin" />
-          <Sparkles className="text-accent absolute -top-1 -right-1 h-5 w-5 animate-pulse" />
-        </div>
-        <p className="text-muted-foreground animate-pulse text-sm font-bold tracking-tight">
-          AI is crafting your visual narrative...
-        </p>
-      </div>
-      <div className="bg-muted absolute inset-x-0 bottom-0 h-1 overflow-hidden">
-        <motion.div
-          className="bg-primary h-full"
-          initial={{ width: "0%" }}
-          animate={{ width: "100%" }}
-          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-        />
-      </div>
-    </div>
-  </div>
-)
-
-const _SlideThumbnail = ({
-  html,
-  index,
-  onClick,
-  active,
-  title,
-}: {
-  html: string
-  index: number
-  onClick: () => void
-  active?: boolean
-  title: string
-}) => {
-  return (
-    <div
-      onClick={onClick}
-      className={cn(
-        "group hover:border-primary/50 relative aspect-video cursor-pointer overflow-hidden rounded-lg border-2 bg-white shadow-sm transition-all",
-        active
-          ? "border-primary ring-primary/10 shadow-md ring-2"
-          : "border-transparent"
-      )}
-    >
-      <div className="absolute inset-0 z-10 flex items-end bg-gradient-to-t from-black/40 via-transparent to-transparent p-2 opacity-0 transition-opacity group-hover:opacity-100">
-        <span className="w-full truncate text-[10px] font-bold text-white">
-          {title}
-        </span>
-      </div>
-      <div className="bg-background/90 absolute top-2 left-2 z-20 rounded-lg border border-black/5 px-2 py-0.5 text-[10px] font-bold shadow-sm backdrop-blur-md">
-        {index + 1}
-      </div>
-
-      <div className="absolute inset-0 flex origin-top-left items-center justify-center bg-white">
-        <SlidePreview html={html} autoScale={true} />
-      </div>
-      <div className="absolute inset-0 z-30" />
-    </div>
-  )
-}
-
-const _GeneratingThumbnail = ({ index }: { index: number }) => (
-  <div className="border-primary/20 bg-muted/30 relative flex aspect-video animate-pulse flex-col items-center justify-center gap-2 overflow-hidden rounded-lg border-2 border-dashed">
-    <div className="bg-primary/20 text-primary absolute top-2 left-2 z-20 rounded-lg px-2 py-0.5 text-[10px] font-bold">
-      {index + 1}
-    </div>
-    <Loader2 className="text-primary h-4 w-4 animate-spin opacity-40" />
-    <span className="text-primary/40 px-2 text-center text-[8px] font-black tracking-widest uppercase">
-      AI is thinking...
-    </span>
-  </div>
-)
 
 const AutoResizeTextarea = ({
   value,
@@ -196,8 +113,6 @@ const AutoResizeTextarea = ({
 
 export function EditorView({
   initialData,
-  isGenerating: _isGenerating,
-  onGenerate: _onGenerate,
   onGenerateSection,
   generatingSections,
   onSaveSuccess,
@@ -218,7 +133,6 @@ export function EditorView({
   const [activeSlideIndex, setActiveSlideIndex] = React.useState(0)
   const mainScrollRef = React.useRef<HTMLDivElement>(null)
 
-  const [_isEditMode, setIsEditMode] = React.useState(false)
   const [isThemeMode, setIsThemeMode] = React.useState(false)
   const [selectedElData, setSelectedElData] =
     React.useState<ElementData | null>(null)
@@ -295,7 +209,6 @@ export function EditorView({
 
         const images: string[] = []
         // Target the rendered slide preview containers
-        const _previews = document.querySelectorAll(".slide-preview-container")
 
         for (let i = 0; i < slides.length; i++) {
           const previewEl = document.getElementById(
@@ -821,7 +734,7 @@ export function EditorView({
       </div>
 
       <AnimatePresence>
-        {isEditMode && selectedElData && (
+        {selectedElData && (
           <motion.aside
             initial={{ x: "100%" }}
             animate={{ x: 0 }}

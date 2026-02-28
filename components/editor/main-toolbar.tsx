@@ -1,5 +1,7 @@
 "use client"
 
+import Image from "next/image"
+
 import * as React from "react"
 import { motion } from "framer-motion"
 import {
@@ -9,7 +11,6 @@ import {
   Square,
   Circle as CircleIcon,
   Palette,
-  SeparatorHorizontal,
   Plus,
   BarChart2,
   PieChart as PieChartIcon,
@@ -40,17 +41,15 @@ import { uploadFileToCloudinary } from "@/lib/editor-utils"
 interface MainToolbarProps {
   activeSlide: Slide
   selectedElementId: string | null
-  onAddElement: (type: ElementType, config?: any) => void
-  onApplyLayout: (type: any) => void
+  onAddElement: (type: ElementType, config?: unknown) => void
+  onApplyLayout?: (type: unknown) => void
   onUpdateSlide: (updates: Partial<Slide>) => void
   onUpdateElement: (id: string, updates: Partial<SlideElement>) => void
 }
 
 export function MainToolbar({
   activeSlide,
-  selectedElementId,
   onAddElement,
-  onApplyLayout,
   onUpdateSlide,
   onUpdateElement,
 }: MainToolbarProps) {
@@ -297,9 +296,11 @@ export function MainToolbar({
                         "ring-primary ring-2 ring-offset-2"
                     )}
                   >
-                    <img
+                    <Image
                       src={`/backgrounds/bg${i + 1}.${i < 5 ? "png" : "jpg"}`}
-                      className="h-full w-full object-cover"
+                      alt={`Background ${i + 1}`}
+                      fill
+                      className="object-cover"
                     />
                   </button>
                 ))}
@@ -369,13 +370,12 @@ export function MainToolbar({
 
 function ToolButton({
   icon,
-  tooltip,
   active,
   onClick,
   onDragStart,
 }: {
   icon: React.ReactNode
-  tooltip: string
+  tooltip?: string
   active?: boolean
   onClick?: () => void
   onDragStart?: (e: React.DragEvent) => void

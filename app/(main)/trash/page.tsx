@@ -13,7 +13,6 @@ import { Button } from "@/components/ui/button"
 import { SlidePreview } from "@/components/editor/slide-preview"
 import { formatDistanceToNow } from "date-fns"
 import { toast } from "sonner"
-import { useRouter } from "next/navigation"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -91,7 +90,7 @@ export default function TrashPage() {
           return next
         })
       }
-    } catch (_error) {
+    } catch {
       toast.error("Failed to restore project")
     }
   }
@@ -112,7 +111,7 @@ export default function TrashPage() {
           return next
         })
       }
-    } catch (_error) {
+    } catch {
       toast.error("Failed to delete project")
     }
   }
@@ -129,7 +128,7 @@ export default function TrashPage() {
         setProjects([])
         setSelectedIds(new Set())
       }
-    } catch (_error) {
+    } catch {
       toast.error("Failed to empty trash")
     }
   }

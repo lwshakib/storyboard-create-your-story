@@ -9,13 +9,12 @@ import { cn } from "@/lib/utils"
 
 interface ThemeSettingsProps {
   activeThemeId: string | null
-  appliedTheme: any
-  onApplyTheme: (theme: any) => void
+  appliedTheme: unknown
+  onApplyTheme: (theme: Theme & { id: string; cssVars: Theme }) => void
 }
 
 export function ThemeSettings({
   activeThemeId,
-  appliedTheme,
   onApplyTheme,
 }: ThemeSettingsProps) {
   return (
@@ -92,7 +91,7 @@ export function ThemeSettings({
                   />
                   <div
                     className="h-5 w-5 rounded-md border"
-                    style={{ backgroundColor: t.secondary || (t as any).muted }}
+                    style={{ backgroundColor: t.secondary || (t as { muted?: string }).muted }}
                   />
                   <div
                     className="h-5 w-5 rounded-md border"

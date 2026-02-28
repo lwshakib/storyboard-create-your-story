@@ -97,7 +97,7 @@ export async function POST(req: Request) {
           // Note: Credits are deducted upfront for the attempt
         }
       },
-      GENERATE_HTML: async (decision) => {
+      GENERATE_HTML: async () => {
         const result = await generateText({
           system: systemPrompt,
           prompt: `
