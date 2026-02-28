@@ -1,5 +1,6 @@
 "use client"
 
+import * as React from "react"
 import {
   BadgeCheck,
   Bell,
@@ -46,7 +47,7 @@ export function NavUser() {
     await authClient.signOut({
         fetchOptions: {
             onSuccess: () => {
-                router.push("/login")
+                router.push("/sign-in")
             }
         }
     })
@@ -92,7 +93,7 @@ export function NavUser() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem disabled>
+              <DropdownMenuItem onClick={() => router.push("/billing")}>
                 <Sparkles className="mr-2 h-4 w-4" />
                 Upgrade to Pro
               </DropdownMenuItem>

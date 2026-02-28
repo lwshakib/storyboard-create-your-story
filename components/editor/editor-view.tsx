@@ -229,7 +229,7 @@ export function EditorView({ initialData, isGenerating, onGenerate, onGenerateSe
   const handleExport = async (format: 'json' | 'pdf' | 'pptx') => {
     try {
         if (format === 'json') {
-            exportHtmlToJson(storyTitle, slides);
+            exportHtmlToJson(storyTitle, overallDescription, slides);
             toast.success("JSON exported successfully");
         } else {
             toast.info(`Preparing ${format.toUpperCase()} generation... This may take a moment.`);
@@ -248,8 +248,8 @@ export function EditorView({ initialData, isGenerating, onGenerate, onGenerateSe
                         if (root) {
                             // Ensure it's rendered. We might need a small delay or check
                             const dataUrl = await toPng(root, {
-                                width: 1024,
-                                height: 576,
+                                width: 960,
+                                height: 540,
                                 style: {
                                     transform: 'scale(1)',
                                     transformOrigin: 'top left'
@@ -289,28 +289,53 @@ export function EditorView({ initialData, isGenerating, onGenerate, onGenerateSe
     const reader = new FileReader();
     reader.onload = async (event) => {
         try {
-            const data = JSON.parse(event.target?.result as string);
-            // Check compatibility
-            if (Array.isArray(data.slides)) {
-                setStoryTitle(data.title || "Imported Storyboard");
-                setOverallDescription(data.description || "");
-                
-                // Ensure IDs are unique
-                const importedSlides = data.slides.map((s: any, idx: number) => ({
+            const content = event.target?.result as string;
+            if (!content) throw new Error("Empty file content");
+            
+            // 1. Initial feedback
+            toast.info("Checking compatibility...");
+            const data = JSON.parse(content);
+            
+            // 2. Compatibility Check
+            if (!data || typeof data !== 'object' || !Array.isArray(data.slides)) {
+                toast.error("Incompatible storyboard format.");
+                return;
+            }
+
+            setIsSaving(true);
+            toast.info("Creating project...");
+
+            // 3. Prepare payload
+            const payload = {
+                title: data.projectTitle || data.title || "Imported Storyboard",
+                description: data.projectDescription || data.description || "",
+                slides: data.slides.map((s: any, idx: number) => ({
                     ...s,
                     id: s.id || (idx + 1)
-                }));
-                
-                setSlides(importedSlides);
-                toast.success("Storyboard imported successfully");
+                }))
+            };
+
+            // 4. Create new project via API
+            const res = await fetch("/api/projects", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+            });
+
+            if (res.ok) {
+                const newProject = await res.json();
+                toast.success("Project created successfully");
+                router.push(`/editor/${newProject.id}`);
             } else {
-                toast.error("Incompatible storyboard format");
+                throw new Error("Failed to create project");
             }
         } catch (err) {
-            toast.error("Failed to parse JSON file");
+            console.error("Import error:", err);
+            toast.error("Failed to import JSON");
+        } finally {
+            setIsSaving(false);
+            if (fileInputRef.current) fileInputRef.current.value = "";
         }
-        // Reset input
-        if (fileInputRef.current) fileInputRef.current.value = "";
     };
     reader.readAsText(file);
   };

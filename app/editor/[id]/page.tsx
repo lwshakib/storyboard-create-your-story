@@ -66,7 +66,15 @@ export default function UnifiedEditorPage() {
           projectId: id 
         }),
       })
-      if (!resp.ok) throw new Error("Outline generation failed")
+      if (!resp.ok) {
+        if (resp.status === 403) {
+            const data = await resp.json()
+            if (data.error === "INSUFFICIENT_CREDITS") {
+                throw new Error("INSUFFICIENT_CREDITS")
+            }
+        }
+        throw new Error("Outline generation failed")
+      }
       
       const updatedProject = await resp.json()
 
@@ -77,9 +85,15 @@ export default function UnifiedEditorPage() {
       router.replace(`/editor/${id}`, { scroll: false })
       
       toast.success("Outline generated and saved")
-    } catch (err) {
+    } catch (err: any) {
       console.error(err)
-      toast.error("Failed to generate outline")
+      if (err.message === "INSUFFICIENT_CREDITS") {
+        toast.error("You have run out of daily credits.", {
+          description: "Credits reset every day at midnight (12 AM). Upgrade for higher limits."
+        })
+      } else {
+        toast.error("Failed to generate outline")
+      }
     } finally {
       setIsGeneratingOutline(false)
     }
@@ -123,7 +137,15 @@ export default function UnifiedEditorPage() {
         })
       })
 
-      if (!response.ok) throw new Error("Failed to refine section")
+      if (!response.ok) {
+        if (response.status === 403) {
+            const data = await response.json()
+            if (data.error === "INSUFFICIENT_CREDITS") {
+                throw new Error("INSUFFICIENT_CREDITS")
+            }
+        }
+        throw new Error("Failed to refine section")
+      }
       
       const { html } = await response.json()
       
@@ -147,9 +169,15 @@ export default function UnifiedEditorPage() {
         setStreamingSlides(next)
         toast.success("Section refined and saved")
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("Refine error:", err)
-      toast.error("Failed to refine section")
+      if (err.message === "INSUFFICIENT_CREDITS") {
+        toast.error("Daily credit limit reached.", {
+          description: "Wait for the midnight reset or contact us to upgrade your plan."
+        })
+      } else {
+        toast.error("Failed to refine section")
+      }
     } finally {
       setGeneratingSections(prev => {
         const next = new Set(prev)

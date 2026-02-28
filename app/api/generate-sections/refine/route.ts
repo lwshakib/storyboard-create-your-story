@@ -4,6 +4,9 @@ import { formatInspirationsForPrompt } from "@/inspirations/registry"
 import { generateImage } from "@/llm/generate-image"
 import { z } from "zod"
 import prisma from "@/lib/prisma"
+import { auth } from "@/lib/auth"
+import { headers } from "next/headers"
+import { deductCredits, COST_PER_IMAGE, calculateTextCost, getOrResetCredits } from "@/lib/credits"
 
 export const maxDuration = 120 
 
@@ -17,6 +20,23 @@ export async function POST(req: Request) {
 
     if (!projectId || typeof index !== "number") {
       return new Response("projectId and index are required", { status: 400 })
+    }
+
+    const session = await auth.api.getSession({
+        headers: await headers()
+    })
+
+    if (!session) {
+        return new Response("Unauthorized", { status: 401 })
+    }
+
+    // Preliminary Credit Check (10,000 credits reserve)
+    const userCredits = await getOrResetCredits(session.user.id);
+    if (userCredits < 10000) {
+        return new Response(JSON.stringify({ error: "INSUFFICIENT_CREDITS", message: "Minimum 10,000 credits required for slide refinement." }), { 
+            status: 403,
+            headers: { "Content-Type": "application/json" }
+        });
     }
 
     console.log("[SECTION_GEN] Initializing iterative generation loop...");
@@ -34,6 +54,9 @@ export async function POST(req: Request) {
     const handlers: Record<string, (decision: any) => Promise<void>> = {
       GENERATE_IMAGE: async (decision) => {
         try {
+          // Deduct credits for image generation
+          await deductCredits(session.user.id, COST_PER_IMAGE);
+          
           const res = await generateImage({
             prompt: decision.args?.imagePrompt || decision.thought,
             width: 1792,
@@ -44,13 +67,16 @@ export async function POST(req: Request) {
             status: "SUCCESS",
             result: res
           });
-        } catch (err) {
+          console.log(`[SECTION_GEN] Deducted ${COST_PER_IMAGE} credits for image generation.`);
+        } catch (err: any) {
           console.error("[SECTION_GEN] Image generation failed:", err);
           stepResults.push({
             action: "GENERATE_IMAGE",
             status: "FAILED",
             error: String(err)
           });
+          
+          // Note: Credits are deducted upfront for the attempt
         }
       },
       GENERATE_HTML: async (decision) => {
@@ -98,7 +124,7 @@ export async function POST(req: Request) {
           ${JSON.stringify(stepResults, null, 2)}
           
           CURRENT_HTML: ${currentHtml ? "Present" : "Not yet generated"}
-
+ 
           INSTRUCTIONS:
           1. Evaluate the progress. If you need a cinematic background or specific visuals, use GENERATE_IMAGE.
           2. If you have all assets, use GENERATE_HTML to write the code.
@@ -138,6 +164,17 @@ export async function POST(req: Request) {
     };
 
     let htmlOutput = extractHtml(currentHtml);
+
+    // Deduct final HTML text cost
+    if (htmlOutput) {
+        const textCost = calculateTextCost(htmlOutput);
+        try {
+            await deductCredits(session.user.id, textCost);
+            console.log(`[SECTION_GEN] Deducted ${textCost} credits for ${htmlOutput.length} characters of HTML.`);
+        } catch (err) {
+            console.error("[SECTION_GEN] Failed to deduct final text credits:", err);
+        }
+    }
 
     if (!htmlOutput || !htmlOutput.includes('<')) {
         console.warn("[SECTION_GEN] Warning: Generated HTML is empty or invalid. Using fallback.");

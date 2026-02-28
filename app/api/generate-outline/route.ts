@@ -3,6 +3,9 @@ import { generateObject } from "ai";
 import { z } from "zod";
 import { formatInspirationsForPrompt } from "@/inspirations/registry";
 import prisma from "@/lib/prisma";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { deductCredits, calculateTextCost, getOrResetCredits } from "@/lib/credits";
 
 export const maxDuration = 60;
 
@@ -12,6 +15,23 @@ export async function POST(req: Request) {
 
     if (!prompt) {
       return new Response("Prompt is required", { status: 400 });
+    }
+
+    const session = await auth.api.getSession({
+        headers: await headers()
+    });
+
+    if (!session) {
+        return new Response("Unauthorized", { status: 401 });
+    }
+
+    // Preliminary Credit Check (5,000 credits reserve)
+    const userCredits = await getOrResetCredits(session.user.id);
+    if (userCredits < 5000) {
+        return new Response(JSON.stringify({ error: "INSUFFICIENT_CREDITS", message: "Minimum 5,000 credits required for outline generation." }), { 
+            status: 403,
+            headers: { "Content-Type": "application/json" }
+        });
     }
 
     const designInspirations = formatInspirationsForPrompt();
@@ -51,6 +71,23 @@ export async function POST(req: Request) {
       - **CRITICAL**: The 'description' for each slide MUST be a professional design blueprint. It should specify the layout (Sidebar, Bento, etc.), if an image is required (including its detailed prompt), and ensure stylistic harmony (theme, fonts, colors) across all slides.
       `,
     });
+
+    // Calculate Dynamic Credit Cost
+    const totalText = object.title + object.description + object.slides.map(s => s.title + s.description + s.content).join("");
+    const finalTextCost = calculateTextCost(totalText);
+
+    // Final Deduction
+    try {
+        await deductCredits(session.user.id, finalTextCost);
+        console.log(`[OUTLINE_GEN] Deducted ${finalTextCost} credits for ${totalText.length} characters.`);
+    } catch (err: any) {
+        if (err.message === "INSUFFICIENT_CREDITS") {
+            return new Response(JSON.stringify({ error: "INSUFFICIENT_CREDITS" }), { 
+                status: 403,
+                headers: { "Content-Type": "application/json" }
+            });
+        }
+    }
 
     // Format slides for DB structure
     const formattedSlides = object.slides.map((s, idx) => ({

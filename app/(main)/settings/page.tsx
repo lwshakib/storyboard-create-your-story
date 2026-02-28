@@ -1,39 +1,119 @@
 "use client"
 
-import { Settings2 } from "lucide-react"
+import * as React from "react"
+import { Sparkles, Zap, CreditCard, Clock, Info } from "lucide-react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Separator } from "@/components/ui/separator"
+
+// Mock usage data for a minimalist chart
+const USAGE_DATA = [
+  { day: "M", value: 40 },
+  { day: "T", value: 75 },
+  { day: "W", value: 30 },
+  { day: "T", value: 90 },
+  { day: "F", value: 55 },
+  { day: "S", value: 20 },
+  { day: "S", value: 10 },
+]
 
 export default function SettingsPage() {
+  const [credits, setCredits] = React.useState<number | null>(null)
+  const [loading, setLoading] = React.useState(true)
+
+  React.useEffect(() => {
+    const fetchCredits = async () => {
+      try {
+        const res = await fetch("/api/user/credits")
+        if (res.ok) {
+          const data = await res.json()
+          setCredits(data.credits)
+        }
+      } catch (err) {
+        console.error("Failed to fetch credits", err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchCredits()
+  }, [])
+
   return (
-    <div className="flex-1 flex flex-col items-center justify-center p-8 bg-background relative overflow-hidden">
-      {/* Decorative Background Accents */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-[120px]" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/5 rounded-full blur-[120px]" />
-      
-      <div className="relative z-10 flex flex-col items-center text-center max-w-md animate-in fade-in zoom-in duration-700">
-        <div className="size-24 rounded-[32px] bg-gradient-to-br from-primary/20 via-primary/10 to-transparent border border-primary/20 flex items-center justify-center mb-8 shadow-2xl shadow-primary/10">
-          <Settings2 className="size-10 text-primary animate-[spin_10s_linear_infinite]" />
-        </div>
-        
-        <h1 className="text-4xl font-extrabold tracking-tight text-foreground mb-4">
-          No settings available now
-        </h1>
-        
-        <p className="text-muted-foreground text-lg font-medium leading-relaxed opacity-60">
-          We're fine-tuning your experience. New customization options and preferences will appear here soon.
-        </p>
-        
-        <div className="mt-12 w-48 h-[1px] bg-gradient-to-r from-transparent via-border to-transparent" />
+    <div className="flex-1 p-10 max-w-4xl mx-auto space-y-12 pb-24">
+      {/* Header */}
+      <div className="space-y-1">
+        <h2 className="text-2xl font-bold tracking-tight">Settings</h2>
+        <p className="text-muted-foreground text-sm font-medium">Manage your workspace and track AI usage.</p>
       </div>
 
-      {/* Subtle Bottom Grid */}
-      <div className="absolute bottom-0 inset-x-0 h-64 bg-gradient-to-t from-background to-transparent pointer-events-none" />
-      <div 
-        className="absolute bottom-0 inset-x-0 h-32 opacity-[0.03] pointer-events-none" 
-        style={{ 
-          backgroundImage: 'radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)',
-          backgroundSize: '24px 24px'
-        }} 
-      />
+      <Separator />
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Credit Overview */}
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <h3 className="text-sm font-bold tracking-wider text-muted-foreground/60">Credits & Power</h3>
+            <Card className="border-border/50 shadow-sm rounded-2xl">
+              <CardHeader className="pb-2">
+                <CardDescription className="text-[10px] font-bold tracking-widest opacity-60">Available balance</CardDescription>
+                <div className="flex items-baseline gap-2 pt-1">
+                  <span className="text-4xl font-bold tracking-tight">
+                    {loading ? "---" : (credits?.toLocaleString() || "0")}
+                  </span>
+                  <span className="text-xs font-bold text-muted-foreground/50">credits</span>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-4 space-y-4">
+                <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                  <Clock className="size-3.5 text-primary" />
+                  Resets to 50,000 at 12:00 AM UTC
+                </div>
+                <div className="w-full bg-muted h-1.5 rounded-full overflow-hidden">
+                  <div 
+                    className="bg-primary h-full transition-all duration-1000 ease-out"
+                    style={{ width: `${(credits || 0) / 500}%` }}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Usage Activity */}
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <h3 className="text-sm font-bold tracking-wider text-muted-foreground/60">Activity</h3>
+            <Card className="border-border/50 shadow-sm rounded-2xl h-[264px] flex flex-col">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-xs font-bold tracking-widest flex items-center justify-between opacity-60">
+                   Usage trends
+                   <Info className="size-3 text-muted-foreground/40" />
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="flex-1 flex items-end justify-between gap-2 pt-6">
+                {USAGE_DATA.map((item) => (
+                  <div key={item.day} className="flex-1 flex flex-col items-center gap-2">
+                    <div 
+                      className="w-full bg-primary/10 rounded-sm relative group"
+                      style={{ height: `${item.value}%` }}
+                    >
+                      <div className="absolute inset-0 bg-primary opacity-20 group-hover:opacity-40 transition-opacity" />
+                    </div>
+                    <span className="text-[9px] font-bold text-muted-foreground/40">{item.day}</span>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="bg-muted/30 border border-border/50 rounded-2xl p-4 flex gap-3">
+             <Info className="size-4 text-primary shrink-0 mt-0.5" />
+             <p className="text-[10px] font-medium leading-relaxed text-muted-foreground">
+                Your daily credit allotment is shared across all projects. High-density generations may take longer during peak usage.
+             </p>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

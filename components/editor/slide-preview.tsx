@@ -109,7 +109,7 @@ export function SlidePreview({
           position: relative; 
           width: 960px;
           height: 540px;
-          margin: 0 auto;
+          margin: 0;
         }
       </style>
     `

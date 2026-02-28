@@ -104,9 +104,12 @@ export const exportToPpptx = async (title: string, slides: Slide[]) => {
 
 // --- HTML Storyboard Exports ---
 
-export const exportHtmlToJson = (title: string, slides: HtmlSlide[]) => {
+export const exportHtmlToJson = (title: string, description: string, slides: HtmlSlide[]) => {
     const data = {
         title,
+        projectTitle: title,
+        description,
+        projectDescription: description,
         slides,
         exportedAt: new Date().toISOString(),
         format: "html-storyboard",
@@ -206,7 +209,7 @@ export const exportImagesToPpptx = async (title: string, images: string[]) => {
         const slide = pres.addSlide();
         slide.addImage({
             data: imgData,
-            x: 0, y: 0, w: 10, h: 5.625 // 16:9 ratio in inches
+            x: 0, y: 0, w: "100%", h: "100%"
         });
     });
 

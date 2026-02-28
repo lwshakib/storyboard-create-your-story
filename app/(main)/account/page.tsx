@@ -22,7 +22,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { toast } from "sonner"
-import { LogOut, Shield, User, Key, Trash2 } from "lucide-react"
+import { LogOut, Shield, User, Key } from "lucide-react"
 
 export default function AccountPage() {
   const { data: session, isPending } = authClient.useSession()
@@ -56,18 +56,7 @@ export default function AccountPage() {
     }
   }
 
-  const handleDeleteAccount = async () => {
-    if (confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
-        try {
-            // Note: better-auth deleteUser might require specific setup or just delete the current user
-            // @ts-ignore
-            await authClient.deleteUser()
-            router.push("/signup")
-        } catch (error) {
-            toast.error("Failed to delete account")
-        }
-    }
-  }
+
 
   return (
     <SidebarProvider>
@@ -176,22 +165,7 @@ export default function AccountPage() {
               </CardContent>
             </Card>
 
-            {/* Danger Zone */}
-            <Card className="border-destructive/50">
-              <CardHeader>
-              <div className="flex items-center gap-2 text-destructive">
-                    <Trash2 className="size-5" />
-                    <CardTitle>Danger Zone</CardTitle>
-                </div>
-                <CardDescription>Actions that cannot be undone.</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">Permanently delete your account and all of your data.</p>
-              </CardContent>
-              <CardFooter className="border-t border-destructive/20 bg-destructive/5 px-6 py-4">
-                <Button variant="destructive" onClick={handleDeleteAccount}>Delete Account</Button>
-              </CardFooter>
-            </Card>
+
           </div>
         </div>
       </SidebarInset>
