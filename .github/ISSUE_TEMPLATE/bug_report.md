@@ -1,6 +1,6 @@
 ---
 name: 🐛 Bug Report
-about: Create a report to help us improve
+about: Create a report to help us improve the Storyboard app
 title: "[BUG] "
 labels: ["bug"]
 assignees: []
@@ -9,6 +9,15 @@ assignees: []
 ## 🐛 Bug Description
 
 <!-- A clear and concise description of what the bug is. -->
+
+## 🛠️ Feature Area
+
+- [ ] AI Generation
+- [ ] Slide Editor
+- [ ] Navigation/Routing
+- [ ] Auth
+- [ ] Media/Cloudinary
+- [ ] Other: **\_\_**
 
 ## 🔁 Reproduction Steps
 
@@ -35,4 +44,4 @@ assignees: []
 
 ## 📋 Additional Context
 
-<!-- Add any other context about the problem here. -->
+<!-- Add any other context about the problem here (e.g. console logs, AI response IDs). -->

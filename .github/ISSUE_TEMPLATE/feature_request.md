@@ -1,6 +1,6 @@
 ---
 name: 🚀 Feature Request
-about: Suggest an idea for this project
+about: Suggest an idea for the Storyboard project
 title: "[FEAT] "
 labels: ["enhancement"]
 assignees: []
@@ -8,7 +8,11 @@ assignees: []
 
 ## 💡 Feature Description
 
-<!-- A clear and concise description of what the feature is and what problem it solves. -->
+<!-- A clear and concise description of what the feature is and what problem it solves. (e.g. "Add AI-powered slide transitions") -->
+
+## 🎨 Creative Vision
+
+<!-- How should this look and feel? What is the user experience? -->
 
 ## 🛠️ Proposed Solution
 
