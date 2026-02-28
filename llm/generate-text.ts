@@ -8,6 +8,7 @@ import { GeminiModel } from "./model"
  * A generic wrapper for text generation that ensures a fresh model instance
  * (with random API key and model selection) is used for every request.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function generateText(options: any) {
   console.log("[GENERATOR] Initializing text generation...")
 
@@ -30,6 +31,7 @@ export async function generateText(options: any) {
  * A generic wrapper for object generation that ensures a fresh model instance
  * and random key rotation for every structured task.
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function generateObject(options: any) {
   console.log("[GENERATOR] Initializing object generation...")
 

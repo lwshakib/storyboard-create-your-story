@@ -35,7 +35,7 @@ export function getTemplates(): Template[] {
       try {
         outline = JSON.parse(fs.readFileSync(outlinePath, "utf8"))
       } catch (_e) {
-        console.error(`Error parsing outline.json for ${folder}:`, e)
+        console.error(`Error parsing outline.json for ${folder}:`, _e)
       }
     }
 

@@ -26,7 +26,7 @@ export type TableRow = TableCell[]
 export interface SlideElement {
   id: string
   type: ElementType
-  content?: any
+  content?: unknown
   x: number
   y: number
   width: number

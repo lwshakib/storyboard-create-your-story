@@ -57,7 +57,7 @@ export const exportToPpptx = async (title: string, slides: Slide[]) => {
           w,
           h,
           fontSize: el.fontSize ? el.fontSize * 0.75 : 18, // Adjust font size for PPT
-          color: el.color?.replace("#", "") || "000000",
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           align: (el.textAlign as any) || "left",
           fontFace: el.fontFamily || "Arial",
           bold: el.fontWeight === "900" || el.fontWeight === "bold",
@@ -88,7 +88,8 @@ export const exportToPpptx = async (title: string, slides: Slide[]) => {
         })
       } else if (el.type === "table" && el.tableData) {
         const rows = el.tableData.map((row) => row.map((cell) => cell.text))
-        slide.addTable(rows as unknown as any[], {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        slide.addTable(rows as any[], {
           x,
           y,
           w,
@@ -203,12 +204,12 @@ export const exportHtmlToPdf = async (title: string, slides: HtmlSlide[]) => {
         if (hex.startsWith("#")) doc.setTextColor(hex)
         doc.setFontSize(el.fontSize || 24)
         // Simple text placement. y + fontSize is a rough baseline.
-        doc.text(el.content, el.x, el.y + (el.fontSize || 24))
+        doc.text(el.content as string, el.x, el.y + (el.fontSize || 24))
       } else if (el.type === "image" && el.src) {
         try {
           doc.addImage(el.src, "PNG", el.x, el.y, el.width, el.height)
-        } catch (e) {
-          console.warn("Failed to add image to PDF", e)
+        } catch (_e) {
+          console.warn("Failed to add image to PDF", _e)
         }
       } else if (el.type === "shape" && el.color) {
         const hex = colorToHex(el.color)
