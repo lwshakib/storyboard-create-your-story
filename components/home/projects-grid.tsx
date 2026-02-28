@@ -5,7 +5,12 @@ import { ProjectCard } from "./project-card"
 import Link from "next/link"
 
 interface ProjectsGridProps {
-  initialProjects: { id: string; title: string; slides: { html?: string }[]; updatedAt: Date }[]
+  initialProjects: {
+    id: string
+    title: string
+    slides: { html?: string }[]
+    updatedAt: Date
+  }[]
 }
 
 export function ProjectsGrid({ initialProjects }: ProjectsGridProps) {

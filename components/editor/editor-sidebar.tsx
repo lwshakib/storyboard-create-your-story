@@ -73,7 +73,10 @@ export function EditorSidebar({
                     {index + 1}
                   </div>
 
-                  <SlidePreview html={slide.html || slide.content || ""} autoScale />
+                  <SlidePreview
+                    html={slide.html || slide.content || ""}
+                    autoScale
+                  />
                 </div>
 
                 {slides.length > 1 && (

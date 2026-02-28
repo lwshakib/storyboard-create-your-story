@@ -30,7 +30,9 @@ export default function MainLayout({
   const [credits, setCredits] = React.useState<number | null>(null)
 
   const [searchQuery, setSearchQuery] = React.useState("")
-  const [searchResults, setSearchResults] = React.useState<{ id: string; title: string; updatedAt: string; description?: string }[]>([])
+  const [searchResults, setSearchResults] = React.useState<
+    { id: string; title: string; updatedAt: string; description?: string }[]
+  >([])
   const [isSearching, setIsSearching] = React.useState(false)
 
   const router = useRouter()
@@ -235,10 +237,15 @@ export default function MainLayout({
                               "Imported Storyboard",
                             description:
                               data.projectDescription || data.description || "",
-                            slides: data.slides.map((s: { id?: number; html?: string }, idx: number) => ({
-                              ...s,
-                              id: s.id || idx + 1,
-                            })),
+                            slides: data.slides.map(
+                              (
+                                s: { id?: number; html?: string },
+                                idx: number
+                              ) => ({
+                                ...s,
+                                id: s.id || idx + 1,
+                              })
+                            ),
                           }
 
                           const res = await fetch("/api/projects", {

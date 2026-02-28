@@ -4,8 +4,6 @@ import prisma from "./prisma"
 import { Resend } from "resend"
 import { AuthEmailTemplate } from "@/components/emails/auth-email-template"
 
-
-
 const resend = new Resend(process.env.RESEND_API_KEY)
 
 export const auth = betterAuth({

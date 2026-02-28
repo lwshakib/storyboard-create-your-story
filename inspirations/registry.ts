@@ -28,7 +28,9 @@ function getPresentationSlides(presentationName: string): InspirationSlide[] {
     return []
 
   const outlinePath = path.join(presentationPath, "outline.json")
-  let outline: { slides?: Array<{ title?: string; description?: string; content?: string }> } | null = null
+  let outline: {
+    slides?: Array<{ title?: string; description?: string; content?: string }>
+  } | null = null
   if (fs.existsSync(outlinePath)) {
     outline = JSON.parse(fs.readFileSync(outlinePath, "utf8"))
   }

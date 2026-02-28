@@ -11,7 +11,6 @@ import {
   CardHeader,
 } from "@/components/ui/card"
 
-
 const PLANS = [
   {
     name: "Free",

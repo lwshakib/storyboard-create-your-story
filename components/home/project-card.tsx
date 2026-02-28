@@ -20,7 +20,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 
-
 interface ProjectCardProps {
   project: {
     id: string
@@ -72,7 +71,8 @@ export function ProjectCard({ project, onDelete }: ProjectCardProps) {
     <div className="group flex flex-col gap-3">
       <div className="bg-muted/30 border-border/50 hover:border-primary/20 hover:shadow-primary/5 relative aspect-video overflow-hidden rounded-lg border transition-all hover:shadow-lg">
         <Link href={href} className="absolute inset-0 z-10" />
-        {project.slides && (project.slides as { html?: string }[]).length > 0 ? (
+        {project.slides &&
+        (project.slides as { html?: string }[]).length > 0 ? (
           <SlidePreview
             html={(project.slides as { html?: string }[])[0]?.html || ""}
             autoScale

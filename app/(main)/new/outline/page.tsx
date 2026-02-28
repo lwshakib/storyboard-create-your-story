@@ -13,7 +13,6 @@ import {
   RefreshCw,
 } from "lucide-react"
 
-
 interface OutlineSlide {
   title: string
   description: string
@@ -245,4 +244,3 @@ export default function OutlinePage() {
     </React.Suspense>
   )
 }
-

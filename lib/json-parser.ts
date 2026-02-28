@@ -48,7 +48,9 @@ export function parsePartialJson(jsonString: string): unknown {
       continue
     }
     if (!inString) {
-      if (char === "{") { /* intentionally empty for syntax parity with the previous unused var */ }
+      if (char === "{") {
+        /* intentionally empty for syntax parity with the previous unused var */
+      }
     }
   }
 

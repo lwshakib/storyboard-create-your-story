@@ -75,7 +75,7 @@ export default async function InspirationsDemoPage() {
                     </div>
 
                     <div className="group-hover:border-primary/40 group-hover:shadow-primary/5 relative aspect-[1024/576] w-full overflow-hidden rounded-2xl border border-white/5 bg-black shadow-xl transition-all duration-300 group-hover:-translate-y-1">
-                       <SlidePreview
+                      <SlidePreview
                         html={slide.html}
                         autoScale={true}
                         isEditable={false}

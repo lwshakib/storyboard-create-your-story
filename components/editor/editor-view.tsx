@@ -63,9 +63,15 @@ interface EditorViewProps {
   onGenerate?: () => void
   onGenerateSection?: (index: number) => void
   generatingSections?: Set<number>
-  onSaveSuccess?: (data: { id: string; title: string; description?: string; slides: HtmlSlide[]; outline?: string; isDeleted?: boolean }) => void
+  onSaveSuccess?: (data: {
+    id: string
+    title: string
+    description?: string
+    slides: HtmlSlide[]
+    outline?: string
+    isDeleted?: boolean
+  }) => void
 }
-
 
 const AutoResizeTextarea = ({
   value,
@@ -138,7 +144,10 @@ export function EditorView({
   const [selectedElData, setSelectedElData] =
     React.useState<ElementData | null>(null)
   const [activeThemeId, setActiveThemeId] = React.useState<string | null>(null)
-  const [appliedTheme, setAppliedTheme] = React.useState<Record<string, string> | null>(null)
+  const [appliedTheme, setAppliedTheme] = React.useState<Record<
+    string,
+    string
+  > | null>(null)
 
   const handleGenerateSection = (index: number) => {
     if (onGenerateSection) {
@@ -286,10 +295,12 @@ export function EditorView({
         const payload = {
           title: data.projectTitle || data.title || "Imported Storyboard",
           description: data.projectDescription || data.description || "",
-          slides: data.slides.map((s: { id?: number; html?: string }, idx: number) => ({
-            ...s,
-            id: s.id || idx + 1,
-          })),
+          slides: data.slides.map(
+            (s: { id?: number; html?: string }, idx: number) => ({
+              ...s,
+              id: s.id || idx + 1,
+            })
+          ),
         }
 
         // 4. Create new project via API
@@ -795,7 +806,9 @@ export function EditorView({
               <ScrollArea className="flex-1">
                 <ThemeSettings
                   activeThemeId={activeThemeId}
-                  onApplyTheme={(theme: Theme & { id: string; cssVars: Theme }) => {
+                  onApplyTheme={(
+                    theme: Theme & { id: string; cssVars: Theme }
+                  ) => {
                     const t = theme as unknown as Record<string, string>
                     setActiveThemeId(t.id)
                     setAppliedTheme(t)

@@ -58,10 +58,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         if (response.ok) {
           const data = await response.json()
           // Take first 5 projects
-          const recent = data.slice(0, 5).map((p: { title: string; id: string }) => ({
-            name: p.title,
-            url: getProjectUrl(p.id),
-          }))
+          const recent = data
+            .slice(0, 5)
+            .map((p: { title: string; id: string }) => ({
+              name: p.title,
+              url: getProjectUrl(p.id),
+            }))
           setRecentProjects(recent)
         }
       } catch (error) {
@@ -85,8 +87,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     }
 
     window.addEventListener("projects-updated", handleUpdate)
-    return () =>
-      window.removeEventListener("projects-updated", handleUpdate)
+    return () => window.removeEventListener("projects-updated", handleUpdate)
   }, [])
 
   return (

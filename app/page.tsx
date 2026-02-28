@@ -3,13 +3,7 @@
 import * as React from "react"
 import Link from "next/link"
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion"
-import {
-  ChevronRight,
-  Minus,
-  Twitter,
-  Linkedin,
-  Github,
-} from "lucide-react"
+import { ChevronRight, Minus, Twitter, Linkedin, Github } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Logo } from "@/components/logo"
 import { ModeToggle } from "@/components/mode-toggle"

@@ -12,7 +12,6 @@ import { Loader2, CheckCircle2 } from "lucide-react"
 import { Logo } from "@/components/logo"
 
 function ResetPasswordContent() {
-
   const searchParams = useSearchParams()
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")

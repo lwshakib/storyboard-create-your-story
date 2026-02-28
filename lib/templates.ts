@@ -30,7 +30,11 @@ export function getTemplates(): Template[] {
   return folders.map((folder) => {
     const folderPath = path.join(INSPIRATIONS_DIR, folder)
     const outlinePath = path.join(folderPath, "outline.json")
-    let outline: { slides?: Array<{ title?: string; description?: string; content?: string }>; title?: string; description?: string } | null = null
+    let outline: {
+      slides?: Array<{ title?: string; description?: string; content?: string }>
+      title?: string
+      description?: string
+    } | null = null
     if (fs.existsSync(outlinePath)) {
       try {
         outline = JSON.parse(fs.readFileSync(outlinePath, "utf8"))

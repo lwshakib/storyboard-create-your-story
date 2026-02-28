@@ -960,44 +960,61 @@ export function ElementWrapper({
             >
               <table className="w-full table-fixed border-collapse">
                 <tbody>
-                  {(el.tableData || (el.content as {text: string; isHeader?: boolean}[][]) || []).map(
-                    (row: {text: string; isHeader?: boolean}[], rowIndex: number) => (
+                  {(
+                    el.tableData ||
+                    (el.content as { text: string; isHeader?: boolean }[][]) ||
+                    []
+                  ).map(
+                    (
+                      row: { text: string; isHeader?: boolean }[],
+                      rowIndex: number
+                    ) => (
                       <tr key={rowIndex}>
-                        {row.map((cell: {text: string; isHeader?: boolean}, colIndex: number) => (
-                          <td
-                            key={colIndex}
-                            className={cn(
-                              "focus:bg-primary/5 h-10 border-r border-b p-2 text-center align-middle text-[10px] font-medium transition-colors outline-none last:border-r-0",
-                              cell.isHeader &&
-                                "bg-black/5 font-black tracking-wider uppercase"
-                            )}
-                            style={{
-                              borderColor: el.borderColor || "rgba(0,0,0,0.1)",
-                              color: el.color || defaultTextColor,
-                            }}
-                            contentEditable={isEditing}
-                            suppressContentEditableWarning
-                            onBlur={(e) => {
-                              if (el.tableData) {
-                                const newData = [...el.tableData]
-                                newData[rowIndex] = [...newData[rowIndex]]
-                                newData[rowIndex][colIndex] = {
-                                  ...newData[rowIndex][colIndex],
-                                  text: e.currentTarget.textContent || "",
+                        {row.map(
+                          (
+                            cell: { text: string; isHeader?: boolean },
+                            colIndex: number
+                          ) => (
+                            <td
+                              key={colIndex}
+                              className={cn(
+                                "focus:bg-primary/5 h-10 border-r border-b p-2 text-center align-middle text-[10px] font-medium transition-colors outline-none last:border-r-0",
+                                cell.isHeader &&
+                                  "bg-black/5 font-black tracking-wider uppercase"
+                              )}
+                              style={{
+                                borderColor:
+                                  el.borderColor || "rgba(0,0,0,0.1)",
+                                color: el.color || defaultTextColor,
+                              }}
+                              contentEditable={isEditing}
+                              suppressContentEditableWarning
+                              onBlur={(e) => {
+                                if (el.tableData) {
+                                  const newData = [...el.tableData]
+                                  newData[rowIndex] = [...newData[rowIndex]]
+                                  newData[rowIndex][colIndex] = {
+                                    ...newData[rowIndex][colIndex],
+                                    text: e.currentTarget.textContent || "",
+                                  }
+                                  onUpdate({ tableData: newData })
+                                } else {
+                                  const newContent = [
+                                    ...((el.content as string[][]) || []),
+                                  ]
+                                  newContent[rowIndex] = [
+                                    ...newContent[rowIndex],
+                                  ]
+                                  newContent[rowIndex][colIndex] =
+                                    e.currentTarget.textContent || ""
+                                  onUpdate({ content: newContent })
                                 }
-                                onUpdate({ tableData: newData })
-                              } else {
-                                const newContent = [...((el.content as string[][]) || [])]
-                                newContent[rowIndex] = [...newContent[rowIndex]]
-                                newContent[rowIndex][colIndex] =
-                                  e.currentTarget.textContent || ""
-                                onUpdate({ content: newContent })
-                              }
-                            }}
-                          >
-                            {cell.text ?? cell}
-                          </td>
-                        ))}
+                              }}
+                            >
+                              {cell.text ?? cell}
+                            </td>
+                          )
+                        )}
                       </tr>
                     )
                   )}
@@ -1022,7 +1039,12 @@ export function ElementWrapper({
                       onUpdate({ tableData: [...el.tableData, newRow] })
                     } else {
                       const newRow = new Array(data[0].length).fill("")
-                      onUpdate({ content: [...((el.content as string[][]) || []), newRow] })
+                      onUpdate({
+                        content: [
+                          ...((el.content as string[][]) || []),
+                          newRow,
+                        ],
+                      })
                     }
                   }
                 }}
@@ -1036,10 +1058,12 @@ export function ElementWrapper({
                   const data = el.tableData || (el.content as string[][]) || []
                   if (data.length > 0) {
                     if (el.tableData) {
-                      const newData = el.tableData.map((row: {text: string; isHeader?: boolean}[]) => [
-                        ...row,
-                        { text: "" },
-                      ])
+                      const newData = el.tableData.map(
+                        (row: { text: string; isHeader?: boolean }[]) => [
+                          ...row,
+                          { text: "" },
+                        ]
+                      )
                       onUpdate({ tableData: newData })
                     } else {
                       const newContent = ((el.content as string[][]) || []).map(
@@ -1143,7 +1167,7 @@ export function ElementWrapper({
             <div
               className={cn(
                 "group/chart relative flex h-full w-full flex-col overflow-hidden rounded-2xl p-4",
-                (el as {showCard?: boolean}).showCard !== false &&
+                (el as { showCard?: boolean }).showCard !== false &&
                   "bg-background/30 border-border/10 border backdrop-blur-sm"
               )}
             >

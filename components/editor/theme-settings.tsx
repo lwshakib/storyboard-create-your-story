@@ -90,7 +90,10 @@ export function ThemeSettings({
                   />
                   <div
                     className="h-5 w-5 rounded-md border"
-                    style={{ backgroundColor: t.secondary || (t as { muted?: string }).muted }}
+                    style={{
+                      backgroundColor:
+                        t.secondary || (t as { muted?: string }).muted,
+                    }}
                   />
                   <div
                     className="h-5 w-5 rounded-md border"

@@ -16,7 +16,14 @@ function EditorContent() {
   const searchParams = useSearchParams()
   const prompt = searchParams.get("prompt")
 
-  const [project, setProject] = useState<{ id: string; title: string; description?: string; slides: HtmlSlide[]; outline?: string; isDeleted?: boolean } | null>(null)
+  const [project, setProject] = useState<{
+    id: string
+    title: string
+    description?: string
+    slides: HtmlSlide[]
+    outline?: string
+    isDeleted?: boolean
+  } | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
   const [isGeneratingOutline, setIsGeneratingOutline] = useState(false)
@@ -29,12 +36,22 @@ function EditorContent() {
 
   const hasStartedOutlineRef = useRef(false)
 
-  const handleSaveSuccess = useCallback((updatedProject: { id: string; title: string; description?: string; slides: HtmlSlide[]; outline?: string; isDeleted?: boolean }) => {
-    setProject(updatedProject)
-    if (updatedProject.slides) {
-      setStreamingSlides(updatedProject.slides)
-    }
-  }, [])
+  const handleSaveSuccess = useCallback(
+    (updatedProject: {
+      id: string
+      title: string
+      description?: string
+      slides: HtmlSlide[]
+      outline?: string
+      isDeleted?: boolean
+    }) => {
+      setProject(updatedProject)
+      if (updatedProject.slides) {
+        setStreamingSlides(updatedProject.slides)
+      }
+    },
+    []
+  )
 
   const fetchProject = useCallback(async () => {
     try {
@@ -350,4 +367,3 @@ export default function UnifiedEditorPage() {
     </Suspense>
   )
 }
-

@@ -322,12 +322,17 @@ export default function TrashPage() {
                   <div className="bg-background/40 absolute inset-0 z-10 opacity-60 backdrop-grayscale-[0.5]" />
                   {project.projectType === "advanced" ? (
                     <SlidePreview
-                      html={(project.slides as { html?: string }[])[0]?.html || ""}
+                      html={
+                        (project.slides as { html?: string }[])[0]?.html || ""
+                      }
                       autoScale
                     />
-                  ) : project.slides && (project.slides as { html?: string }[]).length > 0 ? (
+                  ) : project.slides &&
+                    (project.slides as { html?: string }[]).length > 0 ? (
                     <SlidePreview
-                      html={(project.slides as { html?: string }[])[0]?.html || ""}
+                      html={
+                        (project.slides as { html?: string }[])[0]?.html || ""
+                      }
                       autoScale
                     />
                   ) : (

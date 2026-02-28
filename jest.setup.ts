@@ -59,7 +59,9 @@ jest.mock("framer-motion", () => {
       a: mockComponent("a"),
       img: mockComponent("img"),
     },
-    AnimatePresence: ({ children }: React.PropsWithChildren<Record<string, unknown>>) => children,
+    AnimatePresence: ({
+      children,
+    }: React.PropsWithChildren<Record<string, unknown>>) => children,
     useScroll: () => ({ scrollYProgress: { get: () => 0 } }),
     useTransform: () => 0,
     useSpring: () => 0,

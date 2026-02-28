@@ -67,7 +67,9 @@ export function ElementSettings({
     }
   }, [selectedElData])
 
-  const handleUpdate = (changes: Partial<ElementData> | Record<string, unknown>) => {
+  const handleUpdate = (
+    changes: Partial<ElementData> | Record<string, unknown>
+  ) => {
     onUpdate(changes)
   }
 
