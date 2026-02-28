@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
-import { Sparkles, Loader2, RefreshCw } from "lucide-react"
+import { Sparkles, RefreshCw } from "lucide-react"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { RECOMMENDED_PROMPTS } from "@/lib/prompts-data"

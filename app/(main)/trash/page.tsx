@@ -6,10 +6,8 @@ import {
   RefreshCcw,
   Clock,
   Layout,
-  MoreVertical,
   CheckCircle2,
   Circle,
-  AlertCircle,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { SlidePreview } from "@/components/editor/slide-preview"
@@ -29,11 +27,20 @@ import {
 } from "@/components/ui/alert-dialog"
 import { cn } from "@/lib/utils"
 
+interface TrashProject {
+  id: string
+  title: string
+  slides: { html?: string }[]
+  updatedAt: string
+  deletedAt?: string
+  type?: string
+  projectType: string
+}
+
 export default function TrashPage() {
-  const [projects, setProjects] = React.useState<any[]>([])
+  const [projects, setProjects] = React.useState<TrashProject[]>([])
   const [loading, setLoading] = React.useState(true)
   const [selectedIds, setSelectedIds] = React.useState<Set<string>>(new Set())
-  const router = useRouter()
 
   const fetchTrash = async () => {
     try {
@@ -43,12 +50,12 @@ export default function TrashPage() {
         const data = await res.json()
 
         const combined = data
-          .map((p: any) => ({
+          .map((p: TrashProject) => ({
             ...p,
             projectType: p.type === "ADVANCED" ? "advanced" : "standard",
           }))
           .sort(
-            (a: any, b: any) =>
+            (a: TrashProject, b: TrashProject) =>
               new Date(b.deletedAt || b.updatedAt).getTime() -
               new Date(a.deletedAt || a.updatedAt).getTime()
           )
@@ -84,7 +91,7 @@ export default function TrashPage() {
           return next
         })
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error("Failed to restore project")
     }
   }
@@ -105,7 +112,7 @@ export default function TrashPage() {
           return next
         })
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error("Failed to delete project")
     }
   }
@@ -122,7 +129,7 @@ export default function TrashPage() {
         setProjects([])
         setSelectedIds(new Set())
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error("Failed to empty trash")
     }
   }
@@ -316,12 +323,12 @@ export default function TrashPage() {
                   <div className="bg-background/40 absolute inset-0 z-10 opacity-60 backdrop-grayscale-[0.5]" />
                   {project.projectType === "advanced" ? (
                     <SlidePreview
-                      html={(project.slides as any[])[0]?.html || ""}
+                      html={(project.slides as { html?: string }[])[0]?.html || ""}
                       autoScale
                     />
-                  ) : project.slides && (project.slides as any[]).length > 0 ? (
+                  ) : project.slides && (project.slides as { html?: string }[]).length > 0 ? (
                     <SlidePreview
-                      html={(project.slides as any[])[0]?.html || ""}
+                      html={(project.slides as { html?: string }[])[0]?.html || ""}
                       autoScale
                     />
                   ) : (

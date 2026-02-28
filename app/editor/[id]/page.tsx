@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback, useRef } from "react"
+import { useState, useEffect, useCallback, useRef, Suspense } from "react"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { EditorView } from "@/components/editor/editor-view"
 import { Loader2, Trash2, Sparkles } from "lucide-react"
@@ -10,13 +10,13 @@ import { toast } from "sonner"
 import { motion } from "framer-motion"
 import { parseStoryboard, HtmlSlide } from "@/lib/storyboard-parser"
 
-export default function UnifiedEditorPage() {
+function EditorContent() {
   const { id } = useParams()
   const router = useRouter()
   const searchParams = useSearchParams()
   const prompt = searchParams.get("prompt")
 
-  const [project, setProject] = useState<any>(null)
+  const [project, setProject] = useState<{ id: string; title: string; description?: string; slides: HtmlSlide[]; outline?: string; isDeleted?: boolean } | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
   const [isGeneratingOutline, setIsGeneratingOutline] = useState(false)
@@ -29,7 +29,7 @@ export default function UnifiedEditorPage() {
 
   const hasStartedOutlineRef = useRef(false)
 
-  const handleSaveSuccess = useCallback((updatedProject: any) => {
+  const handleSaveSuccess = useCallback((updatedProject: { id: string; title: string; description?: string; slides: HtmlSlide[]; outline?: string; isDeleted?: boolean }) => {
     setProject(updatedProject)
     if (updatedProject.slides) {
       setStreamingSlides(updatedProject.slides)
@@ -88,9 +88,9 @@ export default function UnifiedEditorPage() {
         router.replace(`/editor/${id}`, { scroll: false })
 
         toast.success("Outline generated and saved")
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error(err)
-        if (err.message === "INSUFFICIENT_CREDITS") {
+        if (err instanceof Error && err.message === "INSUFFICIENT_CREDITS") {
           toast.error("You have run out of daily credits.", {
             description:
               "Credits reset every day at midnight (12 AM). Upgrade for higher limits.",
@@ -182,9 +182,9 @@ export default function UnifiedEditorPage() {
           setStreamingSlides(next)
           toast.success("Section refined and saved")
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Refine error:", err)
-        if (err.message === "INSUFFICIENT_CREDITS") {
+        if (err instanceof Error && err.message === "INSUFFICIENT_CREDITS") {
           toast.error("Daily credit limit reached.", {
             description:
               "Wait for the midnight reset or contact us to upgrade your plan.",
@@ -336,3 +336,18 @@ export default function UnifiedEditorPage() {
     />
   )
 }
+
+export default function UnifiedEditorPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="bg-background flex h-screen w-full items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-orange-500" />
+        </div>
+      }
+    >
+      <EditorContent />
+    </Suspense>
+  )
+}
+

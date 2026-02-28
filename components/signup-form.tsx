@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -20,7 +20,7 @@ export function SignUpForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
-  const router = useRouter()
+
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
@@ -78,7 +78,7 @@ export function SignUpForm({
         <div className="space-y-2">
           <h1 className="text-2xl font-bold">Check your email</h1>
           <p className="text-muted-foreground text-sm text-balance">
-            We've sent a verification link to{" "}
+            We&apos;ve sent a verification link to{" "}
             <span className="text-foreground font-medium">{email}</span>. Please
             verify your email to log in.
           </p>
@@ -179,6 +179,7 @@ export function SignUpForm({
             {socialLoading === "google" ? (
               <Loader2 className="mr-2 size-4 animate-spin" />
             ) : (
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src="https://www.svgrepo.com/show/475656/google-color.svg"
                 alt="Google"

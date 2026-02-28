@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Sparkles, Zap, CreditCard, Clock, Info } from "lucide-react"
+import { Clock, Info } from "lucide-react"
 import {
   Card,
   CardContent,
@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+
 import { Separator } from "@/components/ui/separator"
 
 // Mock usage data for a minimalist chart

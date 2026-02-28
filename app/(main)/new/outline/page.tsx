@@ -9,13 +9,10 @@ import {
   Sparkles,
   ArrowRight,
   Loader2,
-  Layout,
-  FileText,
   CheckCircle2,
-  ChevronRight,
   RefreshCw,
 } from "lucide-react"
-import { cn } from "@/lib/utils"
+
 
 interface OutlineSlide {
   title: string
@@ -29,7 +26,7 @@ interface OutlineData {
   slides: OutlineSlide[]
 }
 
-export default function OutlinePage() {
+function OutlineContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const prompt = searchParams.get("prompt")
@@ -234,3 +231,18 @@ export default function OutlinePage() {
     </div>
   )
 }
+
+export default function OutlinePage() {
+  return (
+    <React.Suspense
+      fallback={
+        <div className="flex min-h-[50vh] items-center justify-center">
+          <Loader2 className="size-8 animate-spin text-orange-500" />
+        </div>
+      }
+    >
+      <OutlineContent />
+    </React.Suspense>
+  )
+}
+

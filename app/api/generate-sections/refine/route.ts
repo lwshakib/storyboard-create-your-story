@@ -61,13 +61,13 @@ export async function POST(req: Request) {
     const systemPrompt = generateHtmlStoryboardPrompt(inspirations)
 
     let currentHtml = ""
-    let stepResults: any[] = []
+    const stepResults: { action: string; status: string; result?: unknown; error?: string }[] = []
     let isFinished = false
     let loopCount = 0
     const MAX_STEPS = 5
 
     // Action Registry - maps AI actions to execution logic
-    const handlers: Record<string, (decision: any) => Promise<void>> = {
+    const handlers: Record<string, (decision: { action: string; thought: string; args?: { imagePrompt?: string } }) => Promise<void>> = {
       GENERATE_IMAGE: async (decision) => {
         try {
           // Deduct credits for image generation
@@ -86,7 +86,7 @@ export async function POST(req: Request) {
           console.log(
             `[SECTION_GEN] Deducted ${COST_PER_IMAGE} credits for image generation.`
           )
-        } catch (err: any) {
+        } catch (err: unknown) {
           console.error("[SECTION_GEN] Image generation failed:", err)
           stepResults.push({
             action: "GENERATE_IMAGE",
@@ -115,7 +115,7 @@ export async function POST(req: Request) {
         stepResults.push({
           action: "GENERATE_HTML",
           status: "SUCCESS",
-          preview: "HTML code updated in memory",
+          result: "HTML code updated in memory",
         })
       },
       END: async () => {
@@ -153,7 +153,7 @@ export async function POST(req: Request) {
         `,
       })
 
-      const decision = step.object as any
+      const decision = step.object as { action: string; thought: string; args?: { imagePrompt?: string } }
       console.log(
         `[SECTION_GEN] Iteration ${loopCount} Decision: ${decision.action} | Thought: ${decision.thought}`
       )
@@ -227,7 +227,7 @@ export async function POST(req: Request) {
       })
 
       if (project) {
-        const slides = project.slides as any[]
+        const slides = project.slides as { html?: string }[]
         if (slides[index]) {
           slides[index].html = htmlOutput
           await prisma.project.update({

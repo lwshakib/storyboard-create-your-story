@@ -1,3 +1,4 @@
+import Image from "next/image"
 import { Logo } from "@/components/logo"
 import { SignUpForm } from "@/components/signup-form"
 
@@ -5,10 +6,11 @@ export default function SignUpPage() {
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="bg-muted relative hidden lg:block">
-        <img
+        <Image
           src="/signup-bg.png"
           alt="Sign Up Background"
           className="absolute inset-0 h-full w-full object-cover"
+          fill
         />
       </div>
       <div className="flex flex-col gap-4 p-6 md:p-10">

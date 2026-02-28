@@ -1,13 +1,13 @@
 "use client"
 
 import * as React from "react"
-import { Home, LayoutTemplate, Trash2, Settings2, Settings } from "lucide-react"
+import { Home, LayoutTemplate, Trash2, Settings } from "lucide-react"
 
 import { LogoIcon } from "@/components/logo"
 import { NavMain } from "@/components/nav-main"
 import { NavProjects } from "@/components/nav-projects"
 import { NavUser } from "@/components/nav-user"
-import { TeamSwitcher } from "@/components/team-switcher"
+
 import {
   Sidebar,
   SidebarContent,
@@ -58,7 +58,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         if (response.ok) {
           const data = await response.json()
           // Take first 5 projects
-          const recent = data.slice(0, 5).map((p: any) => ({
+          const recent = data.slice(0, 5).map((p: { title: string; id: string }) => ({
             name: p.title,
             url: getProjectUrl(p.id),
           }))
@@ -72,20 +72,21 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     fetchProjects()
 
     // Listen for project updates to refresh the list
-    const handleUpdate = (e: any) => {
+    const handleUpdate = (e: Event) => {
+      const customEvent = e as CustomEvent<{ deletedId?: string }>
       // Optimistic delete: if an ID is provided, remove it from state instantly
-      if (e.detail?.deletedId) {
+      if (customEvent.detail?.deletedId) {
         setRecentProjects((prev) =>
-          prev.filter((p) => !p.url.includes(e.detail.deletedId))
+          prev.filter((p) => !p.url.includes(customEvent.detail.deletedId!))
         )
       } else {
         fetchProjects()
       }
     }
 
-    window.addEventListener("projects-updated", handleUpdate as any)
+    window.addEventListener("projects-updated", handleUpdate)
     return () =>
-      window.removeEventListener("projects-updated", handleUpdate as any)
+      window.removeEventListener("projects-updated", handleUpdate)
   }, [])
 
   return (

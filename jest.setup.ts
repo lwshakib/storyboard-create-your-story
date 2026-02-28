@@ -1,11 +1,14 @@
 import "@testing-library/jest-dom"
 
+import * as React from "react"
+
 // Mock framer-motion as it often has issues in jsdom environment
 jest.mock("framer-motion", () => {
-  const React = require("react")
   const mockComponent = (tag: string) => {
-    return ({ children, ...props }: any) =>
-      React.createElement(tag, props, children)
+    const Component = ({ children, ...props }: React.PropsWithChildren<Record<string, unknown>>) =>
+      React.createElement(tag, props as React.Attributes, children)
+    Component.displayName = `MockMotion${tag}`
+    return Component
   }
   return {
     motion: {
@@ -20,7 +23,7 @@ jest.mock("framer-motion", () => {
       main: mockComponent("main"),
       button: mockComponent("button"),
     },
-    AnimatePresence: ({ children }: any) => children,
+    AnimatePresence: ({ children }: React.PropsWithChildren<Record<string, unknown>>) => children,
     useScroll: () => ({ scrollYProgress: { get: () => 0 } }),
     useTransform: () => 0,
     useSpring: () => 0,

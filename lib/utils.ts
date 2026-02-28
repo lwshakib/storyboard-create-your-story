@@ -18,7 +18,7 @@ export function colorToHex(color: string): string {
     if (!ctx) return color
     ctx.fillStyle = color
     return ctx.fillStyle // Returns hex for most colors
-  } catch (e) {
+  } catch (_e) {
     console.warn("Color conversion failed for:", color)
     return color
   }

@@ -103,8 +103,8 @@ export async function POST(req: Request) {
       console.log(
         `[OUTLINE_GEN] Deducted ${finalTextCost} credits for ${totalText.length} characters.`
       )
-    } catch (err: any) {
-      if (err.message === "INSUFFICIENT_CREDITS") {
+    } catch (err: unknown) {
+      if (err instanceof Error && err.message === "INSUFFICIENT_CREDITS") {
         return new Response(JSON.stringify({ error: "INSUFFICIENT_CREDITS" }), {
           status: 403,
           headers: { "Content-Type": "application/json" },

@@ -4,8 +4,6 @@ import * as React from "react"
 import {
   Sidebar,
   SidebarContent,
-  SidebarHeader,
-  SidebarProvider,
   SidebarRail,
   SidebarGroup,
   SidebarGroupLabel,
@@ -75,7 +73,7 @@ export function EditorSidebar({
                     {index + 1}
                   </div>
 
-                  <SlidePreview slide={slide} />
+                  <SlidePreview html={slide.html || slide.content || ""} autoScale />
                 </div>
 
                 {slides.length > 1 && (

@@ -1,7 +1,7 @@
 import * as React from "react"
 import { getInspirations } from "@/inspirations/registry"
-import { AdvancedSlidePreview } from "@/components/editor/advanced-slide-preview"
-import { Layout, Presentation, Sparkles, Layers } from "lucide-react"
+import { SlidePreview } from "@/components/editor/slide-preview"
+import { Layout, Presentation, Sparkles } from "lucide-react"
 
 export default async function InspirationsDemoPage() {
   const presentations = getInspirations()
@@ -75,7 +75,7 @@ export default async function InspirationsDemoPage() {
                     </div>
 
                     <div className="group-hover:border-primary/40 group-hover:shadow-primary/5 relative aspect-[1024/576] w-full overflow-hidden rounded-2xl border border-white/5 bg-black shadow-xl transition-all duration-300 group-hover:-translate-y-1">
-                      <AdvancedSlidePreview
+                       <SlidePreview
                         html={slide.html}
                         autoScale={true}
                         isEditable={false}

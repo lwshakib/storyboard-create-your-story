@@ -1,7 +1,6 @@
 import pptxgen from "pptxgenjs"
 import { Slide, SlideElement } from "@/types/editor"
 import { HtmlSlide, htmlToStructuredSlide } from "./storyboard-parser"
-import { toPng } from "html-to-image"
 import { jsPDF } from "jspdf"
 import { colorToHex } from "./utils"
 
@@ -46,10 +45,10 @@ export const exportToPpptx = async (title: string, slides: Slide[]) => {
     slideData.elements.forEach((el: SlideElement) => {
       // 1024x576 is our internal canvas size.
       // Powerpoint default is usually 10x5.625 inches (16:9).
-      const x: any = (el.x / 1024) * 100 + "%"
-      const y: any = (el.y / 576) * 100 + "%"
-      const w: any = (el.width / 1024) * 100 + "%"
-      const h: any = (el.height / 576) * 100 + "%"
+      const x = ((el.x / 1024) * 100 + "%") as unknown as number
+      const y = ((el.y / 576) * 100 + "%") as unknown as number
+      const w = ((el.width / 1024) * 100 + "%") as unknown as number
+      const h = ((el.height / 576) * 100 + "%") as unknown as number
 
       if (el.type === "text") {
         slide.addText(el.content as string, {
@@ -89,7 +88,7 @@ export const exportToPpptx = async (title: string, slides: Slide[]) => {
         })
       } else if (el.type === "table" && el.tableData) {
         const rows = el.tableData.map((row) => row.map((cell) => cell.text))
-        slide.addTable(rows as any, {
+        slide.addTable(rows as unknown as any[], {
           x,
           y,
           w,
@@ -115,7 +114,7 @@ export const exportToPpptx = async (title: string, slides: Slide[]) => {
           (d) => d.color?.replace("#", "") || "3b82f6"
         )
 
-        let chartType: any = pres.ChartType.bar
+        let chartType = pres.ChartType.bar
         if (el.type === "pie-chart" || el.type === "radial-chart")
           chartType = pres.ChartType.pie
         if (el.type === "line-chart") chartType = pres.ChartType.line
@@ -260,7 +259,7 @@ export const exportImagesToPpptx = async (title: string, images: string[]) => {
   const pres = new pptxgen()
   pres.title = title
 
-  images.forEach((imgData, idx) => {
+  images.forEach((imgData) => {
     const slide = pres.addSlide()
     slide.addImage({
       data: imgData,

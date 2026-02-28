@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
@@ -53,7 +54,7 @@ export default function ForgotPasswordPage() {
             </div>
             <h1 className="text-2xl font-bold">Check your email</h1>
             <p className="text-muted-foreground">
-              We've sent a password reset link to{" "}
+              We&apos;ve sent a password reset link to{" "}
               <span className="text-foreground font-medium">{email}</span>.
             </p>
             <div className="flex flex-col gap-2 pt-4">
@@ -73,10 +74,11 @@ export default function ForgotPasswordPage() {
           </div>
         </div>
         <div className="bg-muted relative hidden lg:block">
-          <img
+          <Image
             src="/forgot-password-bg.png"
             alt="Forgot Password Background"
             className="absolute inset-0 h-full w-full object-cover"
+            fill
           />
         </div>
       </div>
@@ -93,7 +95,7 @@ export default function ForgotPasswordPage() {
           <div className="flex flex-col items-center gap-1 text-center">
             <h1 className="text-2xl font-bold">Forgot password</h1>
             <p className="text-muted-foreground text-sm">
-              Enter your email address and we'll send you a link to reset your
+              Enter your email address and we&apos;ll send you a link to reset your
               password.
             </p>
           </div>
@@ -140,10 +142,11 @@ export default function ForgotPasswordPage() {
         </div>
       </div>
       <div className="bg-muted relative hidden lg:block">
-        <img
+        <Image
           src="/forgot-password-bg.png"
           alt="Forgot Password Background"
           className="absolute inset-0 h-full w-full object-cover"
+          fill
         />
       </div>
     </div>

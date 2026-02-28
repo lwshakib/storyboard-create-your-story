@@ -9,15 +9,11 @@ import {
   Loader2,
   Save,
   Download,
-  Pencil,
-  Palette,
   X,
-  Presentation,
   FileDown,
   FileJson,
   Presentation as PresentationIcon,
   GripVertical,
-  Layers,
   Plus,
   Trash,
   Image as ImageIcon,
@@ -42,8 +38,6 @@ import {
 } from "@/components/ui/dialog"
 import {
   exportHtmlToJson,
-  exportHtmlToPdf,
-  exportHtmlToPpptx,
   exportImagesToPdf,
   exportImagesToPpptx,
 } from "@/lib/export-utils"
@@ -71,7 +65,7 @@ interface EditorViewProps {
   onSaveSuccess?: (data: any) => void
 }
 
-const SkeletonSlide = ({ index }: { index: number }) => (
+const _SkeletonSlide = ({ index }: { index: number }) => (
   <div className="space-y-6">
     <div className="flex items-center gap-3 px-2">
       <span className="bg-muted text-muted-foreground flex h-6 w-10 animate-pulse items-center justify-center rounded-full text-xs font-black">
@@ -103,7 +97,7 @@ const SkeletonSlide = ({ index }: { index: number }) => (
   </div>
 )
 
-const SlideThumbnail = ({
+const _SlideThumbnail = ({
   html,
   index,
   onClick,
@@ -143,7 +137,7 @@ const SlideThumbnail = ({
   )
 }
 
-const GeneratingThumbnail = ({ index }: { index: number }) => (
+const _GeneratingThumbnail = ({ index }: { index: number }) => (
   <div className="border-primary/20 bg-muted/30 relative flex aspect-video animate-pulse flex-col items-center justify-center gap-2 overflow-hidden rounded-lg border-2 border-dashed">
     <div className="bg-primary/20 text-primary absolute top-2 left-2 z-20 rounded-lg px-2 py-0.5 text-[10px] font-bold">
       {index + 1}
@@ -202,8 +196,8 @@ const AutoResizeTextarea = ({
 
 export function EditorView({
   initialData,
-  isGenerating,
-  onGenerate,
+  isGenerating: _isGenerating,
+  onGenerate: _onGenerate,
   onGenerateSection,
   generatingSections,
   onSaveSuccess,
@@ -224,12 +218,12 @@ export function EditorView({
   const [activeSlideIndex, setActiveSlideIndex] = React.useState(0)
   const mainScrollRef = React.useRef<HTMLDivElement>(null)
 
-  const [isEditMode, setIsEditMode] = React.useState(false)
+  const [_isEditMode, setIsEditMode] = React.useState(false)
   const [isThemeMode, setIsThemeMode] = React.useState(false)
   const [selectedElData, setSelectedElData] =
     React.useState<ElementData | null>(null)
   const [activeThemeId, setActiveThemeId] = React.useState<string | null>(null)
-  const [appliedTheme, setAppliedTheme] = React.useState<any>(null)
+  const [appliedTheme, setAppliedTheme] = React.useState<Record<string, string> | null>(null)
 
   const handleGenerateSection = (index: number) => {
     if (onGenerateSection) {
@@ -273,7 +267,7 @@ export function EditorView({
     if (el) el.scrollIntoView({ behavior: "smooth" })
   }
 
-  const updateSelectedElement = (changes: any) => {
+  const updateSelectedElement = (changes: Partial<ElementData>) => {
     if (!selectedElData) return
     const mainIframes = document.querySelectorAll("main iframe")
     const targetIframe = mainIframes[activeSlideIndex] as HTMLIFrameElement
@@ -301,7 +295,7 @@ export function EditorView({
 
         const images: string[] = []
         // Target the rendered slide preview containers
-        const previews = document.querySelectorAll(".slide-preview-container")
+        const _previews = document.querySelectorAll(".slide-preview-container")
 
         for (let i = 0; i < slides.length; i++) {
           const previewEl = document.getElementById(
@@ -378,7 +372,7 @@ export function EditorView({
         const payload = {
           title: data.projectTitle || data.title || "Imported Storyboard",
           description: data.projectDescription || data.description || "",
-          slides: data.slides.map((s: any, idx: number) => ({
+          slides: data.slides.map((s: { id?: number; html?: string }, idx: number) => ({
             ...s,
             id: s.id || idx + 1,
           })),
@@ -887,7 +881,7 @@ export function EditorView({
               <ScrollArea className="flex-1">
                 <ThemeSettings
                   activeThemeId={activeThemeId}
-                  onApplyTheme={(theme: any) => {
+                  onApplyTheme={(theme: Record<string, string>) => {
                     setActiveThemeId(theme.id)
                     setAppliedTheme(theme)
 

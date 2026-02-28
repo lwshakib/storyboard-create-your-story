@@ -22,7 +22,7 @@ export function getTemplates(): Template[] {
   const folders = items.filter((f) => {
     try {
       return fs.statSync(path.join(INSPIRATIONS_DIR, f)).isDirectory()
-    } catch (e) {
+    } catch (_e) {
       return false
     }
   })
@@ -30,11 +30,11 @@ export function getTemplates(): Template[] {
   return folders.map((folder) => {
     const folderPath = path.join(INSPIRATIONS_DIR, folder)
     const outlinePath = path.join(folderPath, "outline.json")
-    let outline: any = null
+    let outline: { slides?: Array<{ title?: string; description?: string; content?: string }>; title?: string; description?: string } | null = null
     if (fs.existsSync(outlinePath)) {
       try {
         outline = JSON.parse(fs.readFileSync(outlinePath, "utf8"))
-      } catch (e) {
+      } catch (_e) {
         console.error(`Error parsing outline.json for ${folder}:`, e)
       }
     }

@@ -4,7 +4,7 @@ import prisma from "./prisma"
 import { Resend } from "resend"
 import { AuthEmailTemplate } from "@/components/emails/auth-email-template"
 
-import { multiSession } from "better-auth/plugins"
+
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -43,7 +43,7 @@ export const auth = betterAuth({
   },
   emailVerification: {
     sendOnSignUp: true,
-    sendVerificationEmail: async ({ user, url, token }) => {
+    sendVerificationEmail: async ({ user, url: _url, token }) => {
       try {
         const verificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/verify-email?token=${token}`
         await resend.emails.send({

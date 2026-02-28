@@ -2,7 +2,6 @@ import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
 import prisma from "@/lib/prisma"
 import { ProjectsGrid } from "@/components/home/projects-grid"
-import Link from "next/link"
 
 export default async function HomePage() {
   const session = await auth.api.getSession({

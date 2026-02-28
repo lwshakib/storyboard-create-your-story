@@ -1,7 +1,8 @@
 "use client"
 
 import { useState, Suspense } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import Image from "next/image"
+import { useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
@@ -11,7 +12,7 @@ import { Loader2, CheckCircle2 } from "lucide-react"
 import { Logo } from "@/components/logo"
 
 function ResetPasswordContent() {
-  const router = useRouter()
+
   const searchParams = useSearchParams()
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
@@ -84,10 +85,11 @@ function ResetPasswordContent() {
           </div>
         </div>
         <div className="bg-muted relative hidden lg:block">
-          <img
+          <Image
             src="/reset-password-bg.png"
             alt="Reset Password Background"
             className="absolute inset-0 h-full w-full object-cover"
+            fill
           />
         </div>
       </div>
@@ -155,10 +157,11 @@ function ResetPasswordContent() {
         </div>
       </div>
       <div className="bg-muted relative hidden lg:block">
-        <img
+        <Image
           src="/reset-password-bg.png"
           alt="Reset Password Background"
           className="absolute inset-0 h-full w-full object-cover"
+          fill
         />
       </div>
     </div>

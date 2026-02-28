@@ -4,7 +4,6 @@ import * as React from "react"
 import Link from "next/link"
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion"
 import {
-  ArrowRight,
   ChevronRight,
   Minus,
   Twitter,

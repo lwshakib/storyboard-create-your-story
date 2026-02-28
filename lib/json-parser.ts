@@ -2,7 +2,7 @@
  * Simple utility to parse partial or incomplete JSON strings.
  * This is useful for streaming JSON from an LLM.
  */
-export function parsePartialJson(jsonString: string): any {
+export function parsePartialJson(jsonString: string): unknown {
   if (!jsonString) return null
 
   // Find the first occurrence of '{' or '[' to start parsing
@@ -29,8 +29,7 @@ export function parsePartialJson(jsonString: string): any {
     .trim()
 
   // 2. Try to balance the braces
-  let openBraces = 0
-  let openBrackets = 0
+
   let inString = false
   let escaped = false
 
@@ -49,10 +48,7 @@ export function parsePartialJson(jsonString: string): any {
       continue
     }
     if (!inString) {
-      if (char === "{") openBraces++
-      if (char === "}") openBraces--
-      if (char === "[") openBrackets++
-      if (char === "]") openBrackets--
+      if (char === "{") { /* intentionally empty for syntax parity with the previous unused var */ }
     }
   }
 
@@ -60,7 +56,7 @@ export function parsePartialJson(jsonString: string): any {
   if (inString) cleaned += '"'
 
   // Close brackets and braces in reverse order
-  let suffix = ""
+
   // Note: This is an extremely naive balancing. In a real scenario,
   // we would track the stack of [ and { to close them in the correct order.
   // But for this use case (a single high-level object), it often suffices.
@@ -99,7 +95,7 @@ export function parsePartialJson(jsonString: string): any {
 
   try {
     return JSON.parse(cleaned)
-  } catch (e) {
+  } catch (_e) {
     // If it still fails, it's too incomplete or malformed
     return null
   }

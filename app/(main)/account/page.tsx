@@ -2,18 +2,10 @@
 
 import * as React from "react"
 import { AppSidebar } from "@/components/app-sidebar"
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
 import { Separator } from "@/components/ui/separator"
 import {
   SidebarInset,
   SidebarProvider,
-  SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { authClient } from "@/lib/auth-client"
 import { useRouter } from "next/navigation"
@@ -56,7 +48,7 @@ export default function AccountPage() {
         name: name,
       })
       toast.success("Name updated successfully")
-    } catch (error) {
+    } catch (_error) {
       toast.error("Failed to update name")
     } finally {
       setIsUpdatingName(false)
@@ -175,11 +167,11 @@ export default function AccountPage() {
                         revokeOtherSessions: true,
                       })
                       toast.success("Password changed successfully")
-                      // @ts-ignore
+                      // @ts-expect-error - DOM manipulation for password field reset
                       document.getElementById("old-password").value = ""
-                      // @ts-ignore
+                      // @ts-expect-error - DOM manipulation for password field reset
                       document.getElementById("new-password").value = ""
-                    } catch (error) {
+                    } catch (_error) {
                       toast.error("Failed to change password")
                     }
                   }}
@@ -211,8 +203,16 @@ export default function AccountPage() {
   )
 }
 
+interface SessionData {
+  id: string
+  token: string
+  userAgent?: string | null
+  ipAddress?: string | null
+  updatedAt: string | Date
+}
+
 function SessionsList() {
-  const [sessions, setSessions] = React.useState<any[]>([])
+  const [sessions, setSessions] = React.useState<SessionData[]>([])
   const [isLoading, setIsLoading] = React.useState(true)
   const { data: currentSession } = authClient.useSession()
 
@@ -243,14 +243,14 @@ function SessionsList() {
       })
       toast.success("Session revoked")
       fetchSessions()
-    } catch (error) {
+    } catch (_error) {
       toast.error("Failed to revoke session")
     }
   }
 
   return (
     <div className="space-y-4">
-      {sessions?.map((session: any) => (
+      {sessions?.map((session: SessionData) => (
         <div
           key={session.id}
           className="flex items-center justify-between rounded-lg border p-3"

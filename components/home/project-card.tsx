@@ -19,13 +19,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { cn } from "@/lib/utils"
+
 
 interface ProjectCardProps {
   project: {
     id: string
     title: string
-    slides: any
+    slides: { html?: string }[]
     updatedAt: Date
   }
   onDelete?: () => void
@@ -33,7 +33,7 @@ interface ProjectCardProps {
 
 export function ProjectCard({ project, onDelete }: ProjectCardProps) {
   const router = useRouter()
-  const [isDeleting, setIsDeleting] = React.useState(false)
+  const [isDeleting] = React.useState(false)
 
   const href = `/editor/${project.id}`
   const apiPath = `/api/projects/${project.id}`
@@ -62,7 +62,7 @@ export function ProjectCard({ project, onDelete }: ProjectCardProps) {
         window.dispatchEvent(new Event("projects-updated"))
         toast.error("Failed to delete project")
       }
-    } catch (error) {
+    } catch (_error) {
       window.dispatchEvent(new Event("projects-updated"))
       toast.error("An error occurred")
     }
@@ -72,9 +72,9 @@ export function ProjectCard({ project, onDelete }: ProjectCardProps) {
     <div className="group flex flex-col gap-3">
       <div className="bg-muted/30 border-border/50 hover:border-primary/20 hover:shadow-primary/5 relative aspect-video overflow-hidden rounded-lg border transition-all hover:shadow-lg">
         <Link href={href} className="absolute inset-0 z-10" />
-        {project.slides && (project.slides as any[]).length > 0 ? (
+        {project.slides && (project.slides as { html?: string }[]).length > 0 ? (
           <SlidePreview
-            html={(project.slides as any[])[0]?.html || ""}
+            html={(project.slides as { html?: string }[])[0]?.html || ""}
             autoScale
           />
         ) : (
@@ -100,7 +100,7 @@ export function ProjectCard({ project, onDelete }: ProjectCardProps) {
               })}
             </span>
             <span className="opacity-30">•</span>
-            <span>{(project.slides as any[]).length} slides</span>
+            <span>{(project.slides as { html?: string }[]).length} slides</span>
           </div>
         </div>
 

@@ -151,7 +151,7 @@ export async function htmlToStructuredSlide(
         y,
         width: width || 400,
         height: height || 300,
-        objectFit: (style.objectFit as any) || "cover",
+        objectFit: (style.objectFit as "cover" | "contain" | "fill") || "cover",
       })
     } else if (textTags.includes(node.tagName) && hasText) {
       const content = (node as HTMLElement).innerText.trim()
@@ -167,7 +167,7 @@ export async function htmlToStructuredSlide(
           fontSize: parseInt(style.fontSize) || 24,
           color: colorToHex(style.color || "#000000"),
           fontWeight: style.fontWeight || "normal",
-          textAlign: (style.textAlign as any) || "left",
+          textAlign: (style.textAlign as "left" | "center" | "right") || "left",
           fontFamily:
             style.fontFamily?.replace(/['"]/g, "") || "Inter, sans-serif",
         })

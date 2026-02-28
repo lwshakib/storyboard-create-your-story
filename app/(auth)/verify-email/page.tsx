@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState, Suspense } from "react"
+import Image from "next/image"
 import { useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -39,7 +40,7 @@ function VerifyEmailContent() {
         }
 
         setStatus("success")
-      } catch (err) {
+      } catch {
         setStatus("error")
         setError("An unexpected error occurred during verification.")
       }
@@ -110,10 +111,11 @@ function VerifyEmailContent() {
         </div>
       </div>
       <div className="bg-muted relative hidden lg:block">
-        <img
+        <Image
           src="/verify-email-bg.png"
           alt="Verify Email Background"
           className="absolute inset-0 h-full w-full object-cover"
+          fill
         />
       </div>
     </div>

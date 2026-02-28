@@ -1,3 +1,4 @@
+import Image from "next/image"
 import { Logo } from "@/components/logo"
 import { LoginForm } from "@/components/login-form"
 
@@ -15,10 +16,11 @@ export default function SignInPage() {
         </div>
       </div>
       <div className="bg-muted relative hidden lg:block">
-        <img
+        <Image
           src="/signin-bg.png"
           alt="Sign In Background"
           className="absolute inset-0 h-full w-full object-cover"
+          fill
         />
       </div>
     </div>

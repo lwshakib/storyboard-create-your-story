@@ -264,7 +264,7 @@ export function ElementWrapper({
       if (direction.includes("w")) {
         let minX = 0
         if (layout === "split-h" && el.zone === 1) minX = 1024 * splitRatio
-        let targetX = Math.max(
+        const targetX = Math.max(
           minX,
           Math.min(startXPos + startWidth - 50, startXPos + deltaX)
         )
@@ -274,7 +274,7 @@ export function ElementWrapper({
       if (direction.includes("n")) {
         let minY = 0
         if (layout === "split-v" && el.zone === 1) minY = 576 * splitRatio
-        let targetY = Math.max(
+        const targetY = Math.max(
           minY,
           Math.min(startYPos + startHeight - 20, startYPos + deltaY)
         )
