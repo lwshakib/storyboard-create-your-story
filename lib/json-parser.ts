@@ -95,7 +95,7 @@ export function parsePartialJson(jsonString: string): unknown {
 
   try {
     return JSON.parse(cleaned)
-  } catch (_e) {
+  } catch {
     // If it still fails, it's too incomplete or malformed
     return null
   }

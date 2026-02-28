@@ -50,6 +50,7 @@ import {
   type ElementData,
 } from "@/components/editor/element-settings"
 import { ThemeSettings } from "@/components/editor/theme-settings"
+import { type Theme } from "@/lib/themes"
 
 interface EditorViewProps {
   initialData?: {
@@ -794,32 +795,33 @@ export function EditorView({
               <ScrollArea className="flex-1">
                 <ThemeSettings
                   activeThemeId={activeThemeId}
-                  onApplyTheme={(theme: Record<string, string>) => {
-                    setActiveThemeId(theme.id)
-                    setAppliedTheme(theme)
+                  onApplyTheme={(theme: Theme & { id: string; cssVars: Theme }) => {
+                    const t = theme as unknown as Record<string, string>
+                    setActiveThemeId(t.id)
+                    setAppliedTheme(t)
 
                     const updatedSlides = slides.map((slide) => {
                       let html = slide.html
                       const themeVars = `:root {
-                    --background: ${theme.background};
-                    --foreground: ${theme.foreground};
-                    --primary: ${theme.primary};
-                    --primary-foreground: ${theme.primaryForeground};
-                    --card: ${theme.card};
-                    --card-foreground: ${theme.cardForeground};
-                    --secondary: ${theme.secondary};
-                    --secondary-foreground: ${theme.secondaryForeground};
-                    --muted: ${theme.muted};
-                    --muted-foreground: ${theme.mutedForeground};
-                    --accent: ${theme.accent};
-                    --accent-foreground: ${theme.accentForeground};
-                    --popover: ${theme.popover || theme.card};
-                    --popover-foreground: ${theme.popoverForeground || theme.cardForeground};
-                    --destructive: ${theme.destructive};
-                    --border: ${theme.border};
-                    --input: ${theme.input};
-                    --ring: ${theme.ring};
-                    --radius: ${theme.radius};
+                    --background: ${t.background};
+                    --foreground: ${t.foreground};
+                    --primary: ${t.primary};
+                    --primary-foreground: ${t.primaryForeground};
+                    --card: ${t.card};
+                    --card-foreground: ${t.cardForeground};
+                    --secondary: ${t.secondary};
+                    --secondary-foreground: ${t.secondaryForeground};
+                    --muted: ${t.muted};
+                    --muted-foreground: ${t.mutedForeground};
+                    --accent: ${t.accent};
+                    --accent-foreground: ${t.accentForeground};
+                    --popover: ${t.popover || t.card};
+                    --popover-foreground: ${t.popoverForeground || t.cardForeground};
+                    --destructive: ${t.destructive};
+                    --border: ${t.border};
+                    --input: ${t.input};
+                    --ring: ${t.ring};
+                    --radius: ${t.radius};
                     }`
 
                       if (html.includes(":root")) {

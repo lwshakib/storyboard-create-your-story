@@ -62,7 +62,7 @@ export function ProjectCard({ project, onDelete }: ProjectCardProps) {
         window.dispatchEvent(new Event("projects-updated"))
         toast.error("Failed to delete project")
       }
-    } catch (_error) {
+    } catch {
       window.dispatchEvent(new Event("projects-updated"))
       toast.error("An error occurred")
     }

@@ -3,7 +3,6 @@
 import * as React from "react"
 import { motion, useMotionValue, AnimatePresence } from "framer-motion"
 import {
-  Type,
   Image as ImageIcon,
   Trash2,
   AlignCenter,
@@ -304,7 +303,7 @@ export function ElementWrapper({
         y: finalY,
         width: finalWidth,
         height: finalHeight,
-        zone: newZone as any,
+        zone: newZone as 0 | 1,
       })
 
       setIsResizing(false)
@@ -346,7 +345,7 @@ export function ElementWrapper({
               }
             }
 
-            onUpdate({ x: newX, y: newY, zone: newZone as any })
+            onUpdate({ x: newX, y: newY, zone: newZone as 0 | 1 })
           }}
           onClick={handleWrapperClick}
           style={{
@@ -961,10 +960,10 @@ export function ElementWrapper({
             >
               <table className="w-full table-fixed border-collapse">
                 <tbody>
-                  {(el.tableData || (el.content as any[]) || []).map(
-                    (row: any[], rowIndex: number) => (
+                  {(el.tableData || (el.content as {text: string; isHeader?: boolean}[][]) || []).map(
+                    (row: {text: string; isHeader?: boolean}[], rowIndex: number) => (
                       <tr key={rowIndex}>
-                        {row.map((cell: any, colIndex: number) => (
+                        {row.map((cell: {text: string; isHeader?: boolean}, colIndex: number) => (
                           <td
                             key={colIndex}
                             className={cn(
@@ -988,7 +987,7 @@ export function ElementWrapper({
                                 }
                                 onUpdate({ tableData: newData })
                               } else {
-                                const newContent = [...((el.content as any[]) || [])]
+                                const newContent = [...((el.content as string[][]) || [])]
                                 newContent[rowIndex] = [...newContent[rowIndex]]
                                 newContent[rowIndex][colIndex] =
                                   e.currentTarget.textContent || ""
@@ -1014,7 +1013,7 @@ export function ElementWrapper({
                 className="bg-primary border-background absolute right-0 -bottom-6 z-[120] flex items-center justify-center rounded-full border-2 p-1.5 text-white opacity-0 shadow-lg transition-all group-hover/table:opacity-100 hover:scale-110 active:scale-90"
                 onClick={(e) => {
                   e.stopPropagation()
-                  const data = el.tableData || (el.content as any[]) || []
+                  const data = el.tableData || (el.content as string[][]) || []
                   if (data.length > 0) {
                     if (el.tableData) {
                       const newRow = new Array(data[0].length)
@@ -1023,7 +1022,7 @@ export function ElementWrapper({
                       onUpdate({ tableData: [...el.tableData, newRow] })
                     } else {
                       const newRow = new Array(data[0].length).fill("")
-                      onUpdate({ content: [...((el.content as any[]) || []), newRow] })
+                      onUpdate({ content: [...((el.content as string[][]) || []), newRow] })
                     }
                   }
                 }}
@@ -1034,17 +1033,17 @@ export function ElementWrapper({
                 className="bg-primary border-background absolute -right-6 bottom-0 z-[120] flex items-center justify-center rounded-full border-2 p-1.5 text-white opacity-0 shadow-lg transition-all group-hover/table:opacity-100 hover:scale-110 active:scale-90"
                 onClick={(e) => {
                   e.stopPropagation()
-                  const data = el.tableData || (el.content as any[]) || []
+                  const data = el.tableData || (el.content as string[][]) || []
                   if (data.length > 0) {
                     if (el.tableData) {
-                      const newData = el.tableData.map((row: any[]) => [
+                      const newData = el.tableData.map((row: {text: string; isHeader?: boolean}[]) => [
                         ...row,
                         { text: "" },
                       ])
                       onUpdate({ tableData: newData })
                     } else {
-                      const newContent = ((el.content as any[]) || []).map(
-                        (row: any[]) => [...row, ""]
+                      const newContent = ((el.content as string[][]) || []).map(
+                        (row: string[]) => [...row, ""]
                       )
                       onUpdate({ content: newContent })
                     }
@@ -1065,8 +1064,8 @@ export function ElementWrapper({
                   const input = document.createElement("input")
                   input.type = "file"
                   input.accept = "image/*"
-                  input.onchange = (e: any) => {
-                    const file = e.target?.files?.[0]
+                  input.onchange = (e: Event) => {
+                    const file = (e.target as HTMLInputElement)?.files?.[0]
                     if (file) {
                       onUpdate({ src: "loading" })
                       uploadFileToCloudinary(file)
@@ -1084,6 +1083,7 @@ export function ElementWrapper({
               }}
             >
               {el.src && el.src !== "loading" ? (
+                // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={el.src}
                   alt="Uploaded content"
@@ -1143,7 +1143,7 @@ export function ElementWrapper({
             <div
               className={cn(
                 "group/chart relative flex h-full w-full flex-col overflow-hidden rounded-2xl p-4",
-                (el as any).showCard !== false &&
+                (el as {showCard?: boolean}).showCard !== false &&
                   "bg-background/30 border-border/10 border backdrop-blur-sm"
               )}
             >

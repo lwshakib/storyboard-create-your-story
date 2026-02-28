@@ -42,7 +42,7 @@ export interface ElementData {
 
 interface ElementSettingsProps {
   selectedElData: ElementData | null
-  onUpdate: (changes: Partial<ElementData> | any) => void
+  onUpdate: (changes: Partial<ElementData> | Record<string, unknown>) => void
   clearSelection: () => void
 }
 
@@ -67,7 +67,7 @@ export function ElementSettings({
     }
   }, [selectedElData])
 
-  const handleUpdate = (changes: Partial<ElementData> | { innerText?: string; display?: string } | { styles?: Partial<ElementData["styles"]>, color?: string, backgroundColor?: string, fontFamily?: string, fontSize?: string, textAlign?: string }) => {
+  const handleUpdate = (changes: Partial<ElementData> | Record<string, unknown>) => {
     onUpdate(changes)
   }
 

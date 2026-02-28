@@ -43,7 +43,7 @@ export const auth = betterAuth({
   },
   emailVerification: {
     sendOnSignUp: true,
-    sendVerificationEmail: async ({ user, url: _url, token }) => {
+    sendVerificationEmail: async ({ user, token }) => {
       try {
         const verificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/verify-email?token=${token}`
         await resend.emails.send({

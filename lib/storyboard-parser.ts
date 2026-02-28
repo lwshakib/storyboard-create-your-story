@@ -1,4 +1,4 @@
-import { Slide, SlideElement, ElementType } from "@/types/editor"
+import { Slide, SlideElement } from "@/types/editor"
 import { colorToHex } from "./utils"
 
 export interface HtmlSlide {

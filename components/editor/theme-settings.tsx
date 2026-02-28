@@ -3,7 +3,6 @@
 import * as React from "react"
 import { THEMES, type Theme } from "@/lib/themes"
 import { Palette, Check, Info } from "lucide-react"
-import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { cn } from "@/lib/utils"
 

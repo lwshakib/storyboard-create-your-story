@@ -34,7 +34,6 @@ export async function generateImage({
   prompt,
   width = 1024,
   height = 1024,
-  negativePrompt: _negativePrompt = "",
 }: GenerateImageOptions): Promise<GenerateImageResult> {
   console.log(
     `[IMAGE_GEN] Generating | Prompt: "${prompt}" | Size: ${width}x${height}`

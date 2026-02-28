@@ -22,7 +22,7 @@ export function getTemplates(): Template[] {
   const folders = items.filter((f) => {
     try {
       return fs.statSync(path.join(INSPIRATIONS_DIR, f)).isDirectory()
-    } catch (_e) {
+    } catch {
       return false
     }
   })
