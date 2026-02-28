@@ -1,69 +1,69 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { useState } from "react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
   FieldSeparator,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { authClient } from "@/lib/auth-client";
-import { Loader2 } from "lucide-react";
+} from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
+import { authClient } from "@/lib/auth-client"
+import { Loader2 } from "lucide-react"
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
-  const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [socialLoading, setSocialLoading] = useState<string | null>(null);
+  const router = useRouter()
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [error, setError] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [socialLoading, setSocialLoading] = useState<string | null>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setIsLoading(true);
+    e.preventDefault()
+    setError("")
+    setIsLoading(true)
 
     try {
       const { error } = await authClient.signIn.email({
         email,
         password,
-      });
+      })
 
       if (error) {
-        setError(error.message || "Failed to sign in");
-        setIsLoading(false);
-        return;
+        setError(error.message || "Failed to sign in")
+        setIsLoading(false)
+        return
       }
 
-      router.push("/home");
-      router.refresh();
+      router.push("/home")
+      router.refresh()
     } catch {
-      setError("An unexpected error occurred");
-      setIsLoading(false);
+      setError("An unexpected error occurred")
+      setIsLoading(false)
     }
-  };
+  }
 
   const handleSocialLogin = async (provider: "google") => {
-    setSocialLoading(provider);
+    setSocialLoading(provider)
     try {
       await authClient.signIn.social({
         provider,
         callbackURL: "/home",
-      });
+      })
     } catch {
-      setError(`Failed to sign in with ${provider}`);
-      setSocialLoading(null);
+      setError(`Failed to sign in with ${provider}`)
+      setSocialLoading(null)
     }
-  };
+  }
 
   return (
     <form
@@ -80,7 +80,7 @@ export function LoginForm({
         </div>
 
         {error && (
-          <div className="bg-destructive/10 text-destructive text-sm p-3 rounded-md text-center">
+          <div className="bg-destructive/10 text-destructive rounded-md p-3 text-center text-sm">
             {error}
           </div>
         )}
@@ -120,7 +120,7 @@ export function LoginForm({
           <Button type="submit" disabled={isLoading}>
             {isLoading ? (
               <>
-                <Loader2 className="size-4 animate-spin mr-2" />
+                <Loader2 className="mr-2 size-4 animate-spin" />
                 Signing in...
               </>
             ) : (
@@ -137,7 +137,7 @@ export function LoginForm({
             onClick={() => handleSocialLogin("google")}
           >
             {socialLoading === "google" ? (
-              <Loader2 className="size-4 animate-spin mr-2" />
+              <Loader2 className="mr-2 size-4 animate-spin" />
             ) : (
               <img
                 src="https://www.svgrepo.com/show/475656/google-color.svg"
@@ -157,5 +157,5 @@ export function LoginForm({
         </Field>
       </FieldGroup>
     </form>
-  );
+  )
 }

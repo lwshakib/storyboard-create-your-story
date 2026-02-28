@@ -1,40 +1,50 @@
-import { GeminiModel } from "@/llm/model";
-import { generateObject } from "ai";
-import { z } from "zod";
-import { formatInspirationsForPrompt } from "@/inspirations/registry";
-import prisma from "@/lib/prisma";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
-import { deductCredits, calculateTextCost, getOrResetCredits } from "@/lib/credits";
+import { GeminiModel } from "@/llm/model"
+import { generateObject } from "ai"
+import { z } from "zod"
+import { formatInspirationsForPrompt } from "@/inspirations/registry"
+import prisma from "@/lib/prisma"
+import { auth } from "@/lib/auth"
+import { headers } from "next/headers"
+import {
+  deductCredits,
+  calculateTextCost,
+  getOrResetCredits,
+} from "@/lib/credits"
 
-export const maxDuration = 60;
+export const maxDuration = 60
 
 export async function POST(req: Request) {
   try {
-    const { prompt, projectId } = await req.json();
+    const { prompt, projectId } = await req.json()
 
     if (!prompt) {
-      return new Response("Prompt is required", { status: 400 });
+      return new Response("Prompt is required", { status: 400 })
     }
 
     const session = await auth.api.getSession({
-        headers: await headers()
-    });
+      headers: await headers(),
+    })
 
     if (!session) {
-        return new Response("Unauthorized", { status: 401 });
+      return new Response("Unauthorized", { status: 401 })
     }
 
     // Preliminary Credit Check (5,000 credits reserve)
-    const userCredits = await getOrResetCredits(session.user.id);
+    const userCredits = await getOrResetCredits(session.user.id)
     if (userCredits < 5000) {
-        return new Response(JSON.stringify({ error: "INSUFFICIENT_CREDITS", message: "Minimum 5,000 credits required for outline generation." }), { 
-            status: 403,
-            headers: { "Content-Type": "application/json" }
-        });
+      return new Response(
+        JSON.stringify({
+          error: "INSUFFICIENT_CREDITS",
+          message: "Minimum 5,000 credits required for outline generation.",
+        }),
+        {
+          status: 403,
+          headers: { "Content-Type": "application/json" },
+        }
+      )
     }
 
-    const designInspirations = formatInspirationsForPrompt();
+    const designInspirations = formatInspirationsForPrompt()
 
     const { object } = await generateObject({
       model: GeminiModel(),
@@ -44,8 +54,16 @@ export async function POST(req: Request) {
         slides: z.array(
           z.object({
             title: z.string(),
-            description: z.string().describe("DETAILED visual and stylistic guide. Must specify if an image is needed, the EXACT image prompt if so, the layout structure (sidebar, bento, etc.), and maintain theme/font/color consistency with all other slides."),
-            content: z.string().describe("COMPREHENSIVE textual content for this slide. Should be detailed and ready for the final slide."),
+            description: z
+              .string()
+              .describe(
+                "DETAILED visual and stylistic guide. Must specify if an image is needed, the EXACT image prompt if so, the layout structure (sidebar, bento, etc.), and maintain theme/font/color consistency with all other slides."
+              ),
+            content: z
+              .string()
+              .describe(
+                "COMPREHENSIVE textual content for this slide. Should be detailed and ready for the final slide."
+              ),
           })
         ),
       }),
@@ -70,23 +88,28 @@ export async function POST(req: Request) {
       - If the user's prompt is simple or very specific, focus on a direct, clear narrative flow without over-engineering.
       - **CRITICAL**: The 'description' for each slide MUST be a professional design blueprint. It should specify the layout (Sidebar, Bento, etc.), if an image is required (including its detailed prompt), and ensure stylistic harmony (theme, fonts, colors) across all slides.
       `,
-    });
+    })
 
     // Calculate Dynamic Credit Cost
-    const totalText = object.title + object.description + object.slides.map(s => s.title + s.description + s.content).join("");
-    const finalTextCost = calculateTextCost(totalText);
+    const totalText =
+      object.title +
+      object.description +
+      object.slides.map((s) => s.title + s.description + s.content).join("")
+    const finalTextCost = calculateTextCost(totalText)
 
     // Final Deduction
     try {
-        await deductCredits(session.user.id, finalTextCost);
-        console.log(`[OUTLINE_GEN] Deducted ${finalTextCost} credits for ${totalText.length} characters.`);
+      await deductCredits(session.user.id, finalTextCost)
+      console.log(
+        `[OUTLINE_GEN] Deducted ${finalTextCost} credits for ${totalText.length} characters.`
+      )
     } catch (err: any) {
-        if (err.message === "INSUFFICIENT_CREDITS") {
-            return new Response(JSON.stringify({ error: "INSUFFICIENT_CREDITS" }), { 
-                status: 403,
-                headers: { "Content-Type": "application/json" }
-            });
-        }
+      if (err.message === "INSUFFICIENT_CREDITS") {
+        return new Response(JSON.stringify({ error: "INSUFFICIENT_CREDITS" }), {
+          status: 403,
+          headers: { "Content-Type": "application/json" },
+        })
+      }
     }
 
     // Format slides for DB structure
@@ -95,8 +118,8 @@ export async function POST(req: Request) {
       title: s.title,
       description: s.description,
       content: s.content,
-      html: "" 
-    }));
+      html: "",
+    }))
 
     // Persist to DB if projectId is provided
     if (projectId) {
@@ -108,18 +131,18 @@ export async function POST(req: Request) {
             description: object.description,
             slides: formattedSlides,
           },
-        });
-        return Response.json(updatedProject);
+        })
+        return Response.json(updatedProject)
       } catch (dbError) {
-        console.error("Failed to update project in DB:", dbError);
+        console.error("Failed to update project in DB:", dbError)
         // Fallback: return generated object if DB fails but generation succeeded
-        return Response.json({ ...object, slides: formattedSlides });
+        return Response.json({ ...object, slides: formattedSlides })
       }
     }
 
-    return Response.json({ ...object, slides: formattedSlides });
+    return Response.json({ ...object, slides: formattedSlides })
   } catch (error) {
-    console.error("Outline Generation Error:", error);
-    return new Response("Outline Generation Failed", { status: 500 });
+    console.error("Outline Generation Error:", error)
+    return new Response("Outline Generation Failed", { status: 500 })
   }
 }

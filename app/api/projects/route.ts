@@ -6,12 +6,12 @@ import { headers } from "next/headers"
 export async function POST(req: Request) {
   try {
     const session = await auth.api.getSession({
-        headers: await headers()
+      headers: await headers(),
     })
-    
+
     const body = await req.json()
     const { title, slides, description } = body
- 
+
     const project = await prisma.project.create({
       data: {
         title: title || "Untitled Storyboard",
@@ -31,24 +31,24 @@ export async function POST(req: Request) {
 export async function GET(req: Request) {
   try {
     const session = await auth.api.getSession({
-        headers: await headers()
+      headers: await headers(),
     })
-    
+
     if (!session) {
       return new NextResponse("Unauthorized", { status: 401 })
     }
 
     const { searchParams } = new URL(req.url)
-    const isDeleted = searchParams.get('deleted') === 'true'
+    const isDeleted = searchParams.get("deleted") === "true"
 
     const projects = await prisma.project.findMany({
       where: {
         userId: session.user.id,
-        isDeleted
+        isDeleted,
       },
       orderBy: {
-        updatedAt: 'desc'
-      }
+        updatedAt: "desc",
+      },
     })
 
     return NextResponse.json(projects)
@@ -61,9 +61,9 @@ export async function GET(req: Request) {
 export async function DELETE(req: Request) {
   try {
     const session = await auth.api.getSession({
-        headers: await headers()
+      headers: await headers(),
     })
-    
+
     if (!session) {
       return new NextResponse("Unauthorized", { status: 401 })
     }
@@ -72,8 +72,8 @@ export async function DELETE(req: Request) {
     await prisma.project.deleteMany({
       where: {
         userId: session.user.id,
-        isDeleted: true
-      }
+        isDeleted: true,
+      },
     })
 
     return new NextResponse(null, { status: 204 })

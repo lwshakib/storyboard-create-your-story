@@ -1,15 +1,7 @@
 "use client"
 
 import * as React from "react"
-import {
-  Home,
-  LayoutTemplate,
-  Trash2,
-  Settings2,
-  Settings,
-} from "lucide-react"
-
-
+import { Home, LayoutTemplate, Trash2, Settings2, Settings } from "lucide-react"
 
 import { LogoIcon } from "@/components/logo"
 import { NavMain } from "@/components/nav-main"
@@ -55,23 +47,25 @@ const navMain = [
 const getProjectUrl = (id: string) => `/editor/${id}`
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const [recentProjects, setRecentProjects] = React.useState<{ name: string, url: string }[]>([])
+  const [recentProjects, setRecentProjects] = React.useState<
+    { name: string; url: string }[]
+  >([])
 
   React.useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await fetch('/api/projects')
+        const response = await fetch("/api/projects")
         if (response.ok) {
           const data = await response.json()
           // Take first 5 projects
           const recent = data.slice(0, 5).map((p: any) => ({
             name: p.title,
-            url: getProjectUrl(p.id)
+            url: getProjectUrl(p.id),
           }))
           setRecentProjects(recent)
         }
       } catch (error) {
-        console.error('Failed to fetch recent projects:', error)
+        console.error("Failed to fetch recent projects:", error)
       }
     }
 
@@ -79,16 +73,19 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
     // Listen for project updates to refresh the list
     const handleUpdate = (e: any) => {
-        // Optimistic delete: if an ID is provided, remove it from state instantly
-        if (e.detail?.deletedId) {
-            setRecentProjects(prev => prev.filter(p => !p.url.includes(e.detail.deletedId)))
-        } else {
-            fetchProjects()
-        }
+      // Optimistic delete: if an ID is provided, remove it from state instantly
+      if (e.detail?.deletedId) {
+        setRecentProjects((prev) =>
+          prev.filter((p) => !p.url.includes(e.detail.deletedId))
+        )
+      } else {
+        fetchProjects()
+      }
     }
 
-    window.addEventListener('projects-updated', handleUpdate as any)
-    return () => window.removeEventListener('projects-updated', handleUpdate as any)
+    window.addEventListener("projects-updated", handleUpdate as any)
+    return () =>
+      window.removeEventListener("projects-updated", handleUpdate as any)
   }, [])
 
   return (
@@ -98,13 +95,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton
               size="lg"
-              className="hover:bg-transparent active:bg-transparent cursor-default"
+              className="cursor-default hover:bg-transparent active:bg-transparent"
             >
               <div className="flex aspect-square size-8 items-center justify-center rounded-lg">
-                <LogoIcon className="size-6 text-primary" />
+                <LogoIcon className="text-primary size-6" />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight group-data-[collapsible=icon]:hidden">
-                <span className="truncate font-bold text-lg tracking-tight text-foreground">
+                <span className="text-foreground truncate text-lg font-bold tracking-tight">
                   Storyboard
                 </span>
               </div>

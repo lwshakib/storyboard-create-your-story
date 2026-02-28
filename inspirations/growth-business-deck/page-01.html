@@ -17,11 +17,18 @@
             },
           },
         },
-      };
+      }
     </script>
     <style>
       .clip-hex {
-        clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        clip-path: polygon(
+          50% 0%,
+          100% 25%,
+          100% 75%,
+          50% 100%,
+          0% 75%,
+          0% 25%
+        );
       }
       .bg-dots {
         background-image: radial-gradient(#2ecc71 1px, transparent 1px);
@@ -29,68 +36,94 @@
       }
     </style>
   </head>
-  <body class="font-sans overflow-hidden">
-    <div class="w-[960px] h-[540px] bg-white relative overflow-hidden flex items-center">
+  <body class="overflow-hidden font-sans">
+    <div
+      class="relative flex h-[540px] w-[960px] items-center overflow-hidden bg-white"
+    >
       <!-- Background Elements -->
-      <div class="absolute top-0 right-0 w-1/2 h-full bg-brandgreen opacity-10 flex items-center justify-center">
-         <div class="w-full h-full bg-dots opacity-20"></div>
+      <div
+        class="bg-brandgreen absolute top-0 right-0 flex h-full w-1/2 items-center justify-center opacity-10"
+      >
+        <div class="bg-dots h-full w-full opacity-20"></div>
       </div>
-      
+
       <!-- Logo -->
       <div class="absolute top-8 left-12 flex items-center">
-        <div class="w-10 h-10 clip-hex bg-brandgreen flex items-center justify-center mr-3 text-white">
-          <i data-lucide="trending-up" class="w-6 h-6"></i>
+        <div
+          class="clip-hex bg-brandgreen mr-3 flex h-10 w-10 items-center justify-center text-white"
+        >
+          <i data-lucide="trending-up" class="h-6 w-6"></i>
         </div>
-        <div class="text-[12px] font-black text-branddark uppercase tracking-[0.2em]">
+        <div
+          class="text-branddark text-[12px] font-black tracking-[0.2em] uppercase"
+        >
           <span class="text-brandgreen">Growth</span> Solutions
         </div>
       </div>
 
       <!-- Left Content -->
-      <div class="w-1/2 pl-12 pr-6 z-10">
-        <h1 class="text-[64px] font-black leading-tight text-brandgreen uppercase mb-0 drop-shadow-sm">
+      <div class="z-10 w-1/2 pr-6 pl-12">
+        <h1
+          class="text-brandgreen mb-0 text-[64px] leading-tight font-black uppercase drop-shadow-sm"
+        >
           GROW YOUR
         </h1>
-        <h1 class="text-[64px] font-black leading-tight text-branddark uppercase mb-6 drop-shadow-sm">
+        <h1
+          class="text-branddark mb-6 text-[64px] leading-tight font-black uppercase drop-shadow-sm"
+        >
           BUSINESS
         </h1>
-        <div class="w-24 h-2 bg-brandgreen mb-8"></div>
-        <p class="text-[14px] text-gray-600 leading-relaxed max-w-sm font-medium">
-          Innovate. Scale. Succeed. Your partner in sustainable business growth and digital transformation. We help you reach new heights with data-driven strategies.
+        <div class="bg-brandgreen mb-8 h-2 w-24"></div>
+        <p
+          class="max-w-sm text-[14px] leading-relaxed font-medium text-gray-600"
+        >
+          Innovate. Scale. Succeed. Your partner in sustainable business growth
+          and digital transformation. We help you reach new heights with
+          data-driven strategies.
         </p>
       </div>
 
       <!-- Right Side -->
-      <div class="w-1/2 h-full relative flex items-center justify-end pr-12">
+      <div class="relative flex h-full w-1/2 items-center justify-end pr-12">
         <!-- Accent Hexagons -->
-        <div class="absolute top-[20%] right-[320px] w-24 h-24 clip-hex bg-brandgreen opacity-20"></div>
-        <div class="absolute bottom-[15%] right-[350px] w-16 h-16 clip-hex bg-branddark opacity-10"></div>
-        
+        <div
+          class="clip-hex bg-brandgreen absolute top-[20%] right-[320px] h-24 w-24 opacity-20"
+        ></div>
+        <div
+          class="clip-hex bg-branddark absolute right-[350px] bottom-[15%] h-16 w-16 opacity-10"
+        ></div>
+
         <!-- Main Hex Image Container -->
-        <div class="relative w-[420px] h-[480px] flex items-center justify-center mt-8">
-            <!-- Border Layers -->
-            <div class="absolute w-[410px] h-[470px] clip-hex bg-brandgreen opacity-30 -mr-8 -mt-8"></div>
-            <div class="absolute w-[400px] h-[460px] clip-hex bg-white p-2 z-10">
-                <div class="w-full h-full clip-hex bg-gray-200 overflow-hidden">
-                    <img
-                        src="/presentation-images/growth-business-deck/avatar-6.jpg"
-                        alt="A diverse professional business team smiling in a modern office"
-                        class="w-full h-full object-cover"
-                    />
-                </div>
+        <div
+          class="relative mt-8 flex h-[480px] w-[420px] items-center justify-center"
+        >
+          <!-- Border Layers -->
+          <div
+            class="clip-hex bg-brandgreen absolute -mt-8 -mr-8 h-[470px] w-[410px] opacity-30"
+          ></div>
+          <div class="clip-hex absolute z-10 h-[460px] w-[400px] bg-white p-2">
+            <div class="clip-hex h-full w-full overflow-hidden bg-gray-200">
+              <img
+                src="/presentation-images/growth-business-deck/avatar-6.jpg"
+                alt="A diverse professional business team smiling in a modern office"
+                class="h-full w-full object-cover"
+              />
             </div>
+          </div>
         </div>
       </div>
-      
+
       <!-- Footer Decor -->
-      <div class="absolute bottom-6 left-12 flex items-center text-[10px] text-gray-400 font-bold tracking-widest uppercase">
-          <div class="w-4 h-4 clip-hex bg-brandgreen mr-2"></div>
-          Our company website here
+      <div
+        class="absolute bottom-6 left-12 flex items-center text-[10px] font-bold tracking-widest text-gray-400 uppercase"
+      >
+        <div class="clip-hex bg-brandgreen mr-2 h-4 w-4"></div>
+        Our company website here
       </div>
     </div>
 
     <script>
-      lucide.createIcons();
+      lucide.createIcons()
     </script>
   </body>
 </html>

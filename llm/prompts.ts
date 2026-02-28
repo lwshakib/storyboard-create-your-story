@@ -1,4 +1,3 @@
-
 export const generateHtmlStoryboardPrompt = (inspirations: string = "") => {
   return `
 You are the world's most elite UI/UX Lead and Creative Director at a top-tier design agency.
@@ -85,5 +84,5 @@ AVOID REPETITION. Do not default to "Full-bleed background image with text on to
 </html>
 
 **CRITICAL**: Adapt the structural patterns from the inspirations (e.g., their use of white space, card layouts, and typography hierarchy), but DO NOT use their interactive elements (buttons). Your goal is a static but premium storyboard slide.
-`;
-};
+`
+}

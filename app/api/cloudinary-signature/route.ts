@@ -1,30 +1,30 @@
-import { v2 as cloudinary } from "cloudinary";
-import { NextResponse } from "next/server";
+import { v2 as cloudinary } from "cloudinary"
+import { NextResponse } from "next/server"
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
   secure: true,
-});
+})
 
 export async function GET() {
   try {
-    const timestamp = Math.floor(Date.now() / 1000);
-    const folder = "infera-notebook";
+    const timestamp = Math.floor(Date.now() / 1000)
+    const folder = "infera-notebook"
     const signature = cloudinary.utils.api_sign_request(
       { timestamp, folder },
       process.env.CLOUDINARY_API_SECRET!
-    );
+    )
     return NextResponse.json({
       signature,
       cloudName: process.env.CLOUDINARY_CLOUD_NAME!,
       timestamp,
       folder,
       apiKey: process.env.CLOUDINARY_API_KEY!,
-    });
+    })
   } catch (error) {
-    console.error("Error in cloudinary-signature GET:", error);
+    console.error("Error in cloudinary-signature GET:", error)
     return NextResponse.json(
       {
         error:
@@ -35,6 +35,6 @@ export async function GET() {
           error instanceof Error && { stack: error.stack }),
       },
       { status: 500 }
-    );
+    )
   }
 }

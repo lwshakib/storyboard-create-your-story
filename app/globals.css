@@ -127,11 +127,13 @@
 /* Global Scrollbar Styling */
 html {
   scrollbar-width: thin;
-  scrollbar-color: color-mix(in srgb, var(--foreground) 10%, transparent) transparent;
+  scrollbar-color: color-mix(in srgb, var(--foreground) 10%, transparent)
+    transparent;
 }
 
 .dark html {
-  scrollbar-color: color-mix(in srgb, var(--foreground) 15%, transparent) transparent;
+  scrollbar-color: color-mix(in srgb, var(--foreground) 15%, transparent)
+    transparent;
 }
 
 ::-webkit-scrollbar {
@@ -168,7 +170,8 @@ html {
 /* Specific utility for thinner scrollbars in sidebars/panels */
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: color-mix(in srgb, var(--primary) 20%, transparent) transparent;
+  scrollbar-color: color-mix(in srgb, var(--primary) 20%, transparent)
+    transparent;
 }
 
 .custom-scrollbar:hover {
@@ -204,7 +207,9 @@ html {
 }
 
 #nprogress .peg {
-  box-shadow: 0 0 10px var(--primary), 0 0 5px var(--primary) !important;
+  box-shadow:
+    0 0 10px var(--primary),
+    0 0 5px var(--primary) !important;
 }
 
 /* Scrollbar Hiding Utility */
@@ -221,14 +226,19 @@ html {
   scrollbar-width: none !important;
   -ms-overflow-style: none !important;
 }
-[data-slot="scroll-area"].no-scrollbar [data-slot="scroll-area-viewport"]::-webkit-scrollbar {
+[data-slot="scroll-area"].no-scrollbar
+  [data-slot="scroll-area-viewport"]::-webkit-scrollbar {
   display: none !important;
 }
 
 /* Shimmer Animation */
 @keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 .animate-shimmer {

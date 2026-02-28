@@ -1,120 +1,136 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Slide 9 - Bar Chart Slide</title>
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        darkblue: '#0F1528',
-                        brandorange: '#F97316',
-                        brandred: '#E11D48',
-                    }
-                }
-            }
-        }
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              darkblue: "#0F1528",
+              brandorange: "#F97316",
+              brandred: "#E11D48",
+            },
+          },
+        },
+      }
     </script>
-</head>
-<body class="font-sans overflow-hidden">
-    <div class="w-[960px] h-[540px] bg-white relative overflow-hidden flex">
-        <div class="w-full h-full bg-white relative overflow-hidden flex">
-            
-            <!-- Left Sidebar Data -->
-            <div class="w-[320px] h-full bg-darkblue p-10 flex flex-col justify-center text-white relative z-10 shadow-xl">
-                <h2 class="text-xl font-bold mb-4 leading-tight text-white mb-6">
-                    Efficiency Growth &<br>Impact Metrics
-                </h2>
-                
-                <p class="text-[10px] text-gray-400 mb-8 leading-relaxed">
-                    The chart on the right illustrates our consistent progress in optimizing resource allocation and reducing industrial waste for our top-tier partners. <br><br>
-                    Data points are normalized across three main categories: Energy Recovery, Operation Speed, and Waste Reduction.
-                </p>
-                
-                <div class="mt-8 border-[6px] border-[#182343] rounded overflow-hidden shadow-2xl drop-shadow-2xl h-[120px] w-full bg-white relative">
-                    <img src="/presentation-images/innovate-business-presentation/slide-9-img-1.jpg" alt="Looking down at server hardware" class="w-full h-full object-cover grayscale opacity-90 mix-blend-multiply">
-                </div>
-            </div>
- 
-            <!-- Right Chart Area -->
-            <div class="flex-1 h-full bg-gradient-to-r from-brandred via-red-500 to-yellow-500 relative p-12">
-                
-                <!-- Subtitle in chart area -->
-                <div class="absolute top-8 right-12 text-white/50 text-xs font-semibold tracking-wide">
-                    2025 QUARTERLY IMPACT REPORT
-                </div>
- 
-                <!-- Chart Container -->
-                <div id="chart-root" class="w-full h-full pt-8 flex items-center justify-center">
-                    <canvas id="impactChart"></canvas>
-                </div>
-            </div>
+  </head>
+  <body class="overflow-hidden font-sans">
+    <div class="relative flex h-[540px] w-[960px] overflow-hidden bg-white">
+      <div class="relative flex h-full w-full overflow-hidden bg-white">
+        <!-- Left Sidebar Data -->
+        <div
+          class="bg-darkblue relative z-10 flex h-full w-[320px] flex-col justify-center p-10 text-white shadow-xl"
+        >
+          <h2 class="mb-4 mb-6 text-xl leading-tight font-bold text-white">
+            Efficiency Growth &<br />Impact Metrics
+          </h2>
+
+          <p class="mb-8 text-[10px] leading-relaxed text-gray-400">
+            The chart on the right illustrates our consistent progress in
+            optimizing resource allocation and reducing industrial waste for our
+            top-tier partners. <br /><br />
+            Data points are normalized across three main categories: Energy
+            Recovery, Operation Speed, and Waste Reduction.
+          </p>
+
+          <div
+            class="relative mt-8 h-[120px] w-full overflow-hidden rounded border-[6px] border-[#182343] bg-white shadow-2xl drop-shadow-2xl"
+          >
+            <img
+              src="/presentation-images/innovate-business-presentation/slide-9-img-1.jpg"
+              alt="Looking down at server hardware"
+              class="h-full w-full object-cover opacity-90 mix-blend-multiply grayscale"
+            />
+          </div>
         </div>
+
+        <!-- Right Chart Area -->
+        <div
+          class="from-brandred relative h-full flex-1 bg-gradient-to-r via-red-500 to-yellow-500 p-12"
+        >
+          <!-- Subtitle in chart area -->
+          <div
+            class="absolute top-8 right-12 text-xs font-semibold tracking-wide text-white/50"
+          >
+            2025 QUARTERLY IMPACT REPORT
+          </div>
+
+          <!-- Chart Container -->
+          <div
+            id="chart-root"
+            class="flex h-full w-full items-center justify-center pt-8"
+          >
+            <canvas id="impactChart"></canvas>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const ctx = document.getElementById('impactChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Q1', 'Q2', 'Q3', 'Q4'],
-                    datasets: [
-                        {
-                            label: 'Energy Recovery',
-                            data: [4000, 4500, 5200, 6100],
-                            backgroundColor: '#ffffff',
-                            borderRadius: 20,
-                            barThickness: 12,
-                        },
-                        {
-                            label: 'Operation Speed',
-                            data: [2400, 3000, 3800, 4300],
-                            backgroundColor: 'rgba(255,255,255,0.5)',
-                            borderRadius: 20,
-                            barThickness: 12,
-                        },
-                        {
-                            label: 'Waste Reduction',
-                            data: [2000, 2200, 2800, 3100],
-                            backgroundColor: '#0F1528',
-                            borderRadius: 20,
-                            barThickness: 12,
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
-                    scales: {
-                        x: {
-                            grid: { display: false },
-                            ticks: { color: 'rgba(255,255,255,0.7)', font: { size: 10 } },
-                            border: { display: false }
-                        },
-                        y: {
-                            grid: { color: 'rgba(255,255,255,0.1)' },
-                            ticks: { color: 'rgba(255,255,255,0.5)', font: { size: 10 } },
-                            border: { display: false }
-                        }
-                    }
-                }
-            });
-        });
+      document.addEventListener("DOMContentLoaded", () => {
+        const ctx = document.getElementById("impactChart").getContext("2d")
+        new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels: ["Q1", "Q2", "Q3", "Q4"],
+            datasets: [
+              {
+                label: "Energy Recovery",
+                data: [4000, 4500, 5200, 6100],
+                backgroundColor: "#ffffff",
+                borderRadius: 20,
+                barThickness: 12,
+              },
+              {
+                label: "Operation Speed",
+                data: [2400, 3000, 3800, 4300],
+                backgroundColor: "rgba(255,255,255,0.5)",
+                borderRadius: 20,
+                barThickness: 12,
+              },
+              {
+                label: "Waste Reduction",
+                data: [2000, 2200, 2800, 3100],
+                backgroundColor: "#0F1528",
+                borderRadius: 20,
+                barThickness: 12,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+            },
+            scales: {
+              x: {
+                grid: { display: false },
+                ticks: { color: "rgba(255,255,255,0.7)", font: { size: 10 } },
+                border: { display: false },
+              },
+              y: {
+                grid: { color: "rgba(255,255,255,0.1)" },
+                ticks: { color: "rgba(255,255,255,0.5)", font: { size: 10 } },
+                border: { display: false },
+              },
+            },
+          },
+        })
+      })
     </script>
     <script>
-        lucide.createIcons();
+      lucide.createIcons()
     </script>
-</body>
+  </body>
 </html>

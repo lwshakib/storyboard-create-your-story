@@ -17,44 +17,67 @@
             },
           },
         },
-      };
+      }
     </script>
   </head>
-  <body class="font-sans overflow-hidden bg-branddark">
-    <div class="w-[960px] h-[540px] relative overflow-hidden flex items-center p-20">
+  <body class="bg-branddark overflow-hidden font-sans">
+    <div
+      class="relative flex h-[540px] w-[960px] items-center overflow-hidden p-20"
+    >
       <!-- Left: Large Circular Ring -->
-      <div class="w-1/2 flex items-center justify-center relative">
-          <div class="w-[450px] h-[450px] border-[50px] border-white/5 rounded-full absolute -left-48"></div>
-          <div class="w-[320px] h-[320px] rounded-full border-[10px] border-transparent p-1 bg-gradient-to-r from-brandyellow via-brandorange to-transparent" style="clip-path: circle(50% at 50% 50%); border-radius: 9999px;">
-              <div class="w-full h-full rounded-full bg-branddark"></div>
-          </div>
+      <div class="relative flex w-1/2 items-center justify-center">
+        <div
+          class="absolute -left-48 h-[450px] w-[450px] rounded-full border-[50px] border-white/5"
+        ></div>
+        <div
+          class="from-brandyellow via-brandorange h-[320px] w-[320px] rounded-full border-[10px] border-transparent bg-gradient-to-r to-transparent p-1"
+          style="clip-path: circle(50% at 50% 50%); border-radius: 9999px"
+        >
+          <div class="bg-branddark h-full w-full rounded-full"></div>
+        </div>
       </div>
 
       <!-- Right: Content -->
-      <div class="w-1/2 flex flex-col justify-center">
-          <h1 class="text-white text-[56px] font-black leading-tight uppercase tracking-tighter mb-6">
-            HEADLINE<br/><span class="text-brandyellow">SLIDE</span>
-          </h1>
-          <div class="w-20 h-1.5 bg-brandyellow mb-8"></div>
-          <p class="text-gray-400 text-[14px] leading-relaxed font-medium mb-12">
-            Leading the industry in cross-border digital payments and decentralized finance solutions. We bridge the gap between traditional finance and modern digital ecosystems.
-          </p>
-          
-          <div class="flex space-x-4">
-              <div class="w-8 h-8 rounded-full bg-brandyellow/10 flex items-center justify-center"><i data-lucide="globe" class="text-brandyellow w-4 h-4"></i></div>
-              <div class="w-8 h-8 rounded-full bg-brandorange/10 flex items-center justify-center"><i data-lucide="zap" class="text-brandorange w-4 h-4"></i></div>
+      <div class="flex w-1/2 flex-col justify-center">
+        <h1
+          class="mb-6 text-[56px] leading-tight font-black tracking-tighter text-white uppercase"
+        >
+          HEADLINE<br /><span class="text-brandyellow">SLIDE</span>
+        </h1>
+        <div class="bg-brandyellow mb-8 h-1.5 w-20"></div>
+        <p class="mb-12 text-[14px] leading-relaxed font-medium text-gray-400">
+          Leading the industry in cross-border digital payments and
+          decentralized finance solutions. We bridge the gap between traditional
+          finance and modern digital ecosystems.
+        </p>
+
+        <div class="flex space-x-4">
+          <div
+            class="bg-brandyellow/10 flex h-8 w-8 items-center justify-center rounded-full"
+          >
+            <i data-lucide="globe" class="text-brandyellow h-4 w-4"></i>
           </div>
+          <div
+            class="bg-brandorange/10 flex h-8 w-8 items-center justify-center rounded-full"
+          >
+            <i data-lucide="zap" class="text-brandorange h-4 w-4"></i>
+          </div>
+        </div>
       </div>
 
       <!-- Decorative Curves -->
       <div class="absolute top-0 right-0 p-12">
-           <div class="w-32 h-32 border-t-[10px] border-r-[10px] border-white/5 rounded-tr-[50px]"></div>
-           <div class="w-24 h-24 border-t border-r border-white/10 rounded-tr-[40px] absolute top-16 right-16"></div>
+        <div
+          class="h-32 w-32 rounded-tr-[50px] border-t-[10px] border-r-[10px] border-white/5"
+        ></div>
+        <div
+          class="absolute top-16 right-16 h-24 w-24 rounded-tr-[40px] border-t border-r border-white/10"
+        ></div>
       </div>
     </div>
 
     <script>
-      lucide.createIcons();
+      lucide.createIcons()
     </script>
   </body>
 </html>

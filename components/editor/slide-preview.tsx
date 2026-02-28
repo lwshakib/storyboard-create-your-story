@@ -11,12 +11,12 @@ interface SlidePreviewProps {
   isEditable?: boolean
 }
 
-export function SlidePreview({ 
-  html, 
-  className, 
-  scale, 
+export function SlidePreview({
+  html,
+  className,
+  scale,
   autoScale = false,
-  isEditable = false
+  isEditable = false,
 }: SlidePreviewProps) {
   const containerRef = React.useRef<HTMLDivElement>(null)
   const iframeRef = React.useRef<HTMLIFrameElement>(null)
@@ -24,22 +24,28 @@ export function SlidePreview({
 
   React.useEffect(() => {
     if (iframeRef.current) {
-      iframeRef.current.contentWindow?.postMessage({
-        type: 'SET_EDIT_MODE',
-        enabled: isEditable
-      }, '*');
+      iframeRef.current.contentWindow?.postMessage(
+        {
+          type: "SET_EDIT_MODE",
+          enabled: isEditable,
+        },
+        "*"
+      )
     }
-  }, [isEditable]);
-  
+  }, [isEditable])
+
   // Also send it when iframe loads
   const handleLoad = () => {
     if (iframeRef.current) {
-      iframeRef.current.contentWindow?.postMessage({
-        type: 'SET_EDIT_MODE',
-        enabled: isEditable
-      }, '*');
+      iframeRef.current.contentWindow?.postMessage(
+        {
+          type: "SET_EDIT_MODE",
+          enabled: isEditable,
+        },
+        "*"
+      )
     }
-  };
+  }
 
   React.useEffect(() => {
     if (!autoScale || scale) return
@@ -48,20 +54,26 @@ export function SlidePreview({
       if (containerRef.current) {
         const { width, height } = containerRef.current.getBoundingClientRect()
         const styles = window.getComputedStyle(containerRef.current)
-        
+
         // Subtract border and padding for exact content fit
-        const borderX = parseFloat(styles.borderLeftWidth) + parseFloat(styles.borderRightWidth) || 0
-        const borderY = parseFloat(styles.borderTopWidth) + parseFloat(styles.borderBottomWidth) || 0
-        const paddingX = parseFloat(styles.paddingLeft) + parseFloat(styles.paddingRight) || 0
-        const paddingY = parseFloat(styles.paddingTop) + parseFloat(styles.paddingBottom) || 0
-        
+        const borderX =
+          parseFloat(styles.borderLeftWidth) +
+            parseFloat(styles.borderRightWidth) || 0
+        const borderY =
+          parseFloat(styles.borderTopWidth) +
+            parseFloat(styles.borderBottomWidth) || 0
+        const paddingX =
+          parseFloat(styles.paddingLeft) + parseFloat(styles.paddingRight) || 0
+        const paddingY =
+          parseFloat(styles.paddingTop) + parseFloat(styles.paddingBottom) || 0
+
         const contentWidth = width - borderX - paddingX
         const contentHeight = height - borderY - paddingY
-        
+
         // Calculate scale to fit our base resolution (960x540)
         const scaleW = contentWidth / 960
         const scaleH = contentHeight / 540
-        
+
         // Use the smaller scale to ensure it fits entirely (contain strategy)
         // Adding a tiny buffer (0.001) to ensure sub-pixel rounding doesn't leave gaps
         const newScale = Math.min(scaleW, scaleH)
@@ -74,17 +86,17 @@ export function SlidePreview({
     updateScale()
     const observer = new ResizeObserver(updateScale)
     if (containerRef.current) observer.observe(containerRef.current)
-    
-    window.addEventListener('resize', updateScale)
+
+    window.addEventListener("resize", updateScale)
     return () => {
-      window.removeEventListener('resize', updateScale)
+      window.removeEventListener("resize", updateScale)
       observer.disconnect()
     }
   }, [autoScale, scale])
 
   const srcDoc = React.useMemo(() => {
     const isFullDoc = /<html/i.test(html)
-    
+
     const editorStyles = `
       <style>
         .edit-hover-highlight {
@@ -213,11 +225,11 @@ export function SlidePreview({
 
     if (isFullDoc) {
       let fullHtml = html
-      if (fullHtml.includes('</head>')) {
-        fullHtml = fullHtml.replace('</head>', `${editorStyles}</head>`)
+      if (fullHtml.includes("</head>")) {
+        fullHtml = fullHtml.replace("</head>", `${editorStyles}</head>`)
       }
-      if (fullHtml.includes('</body>')) {
-        fullHtml = fullHtml.replace('</body>', `${editorScripts}</body>`)
+      if (fullHtml.includes("</body>")) {
+        fullHtml = fullHtml.replace("</body>", `${editorScripts}</body>`)
       } else {
         fullHtml += editorScripts
       }
@@ -268,18 +280,21 @@ export function SlidePreview({
   }, [html])
 
   return (
-    <div 
-      ref={containerRef} 
-      className={cn("w-full h-full overflow-hidden flex items-center justify-center relative", className)}
+    <div
+      ref={containerRef}
+      className={cn(
+        "relative flex h-full w-full items-center justify-center overflow-hidden",
+        className
+      )}
     >
-      <div 
-        className="shrink-0 flex items-center justify-center"
-        style={{ 
-          width: '960px', 
-          height: '540px', 
+      <div
+        className="flex shrink-0 items-center justify-center"
+        style={{
+          width: "960px",
+          height: "540px",
           transform: `scale(${scale || computedScale})`,
-          transformOrigin: 'center center',
-          transition: 'transform 0.1s ease-out'
+          transformOrigin: "center center",
+          transition: "transform 0.1s ease-out",
         }}
       >
         <iframe
@@ -287,7 +302,7 @@ export function SlidePreview({
           srcDoc={srcDoc}
           onLoad={handleLoad}
           className={cn(
-            "w-[960px] h-[540px] border-none shadow-none bg-transparent overflow-hidden",
+            "h-[540px] w-[960px] overflow-hidden border-none bg-transparent shadow-none",
             !isEditable && "pointer-events-none"
           )}
           scrolling="no"

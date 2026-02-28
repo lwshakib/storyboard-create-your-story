@@ -16,7 +16,7 @@
             },
           },
         },
-      };
+      }
     </script>
     <style>
       .clip-top-right {
@@ -30,28 +30,28 @@
       }
     </style>
   </head>
-  <body class="font-sans overflow-hidden">
+  <body class="overflow-hidden font-sans">
     <div
-      class="w-[960px] h-[540px] bg-white relative overflow-hidden flex p-16"
+      class="relative flex h-[540px] w-[960px] overflow-hidden bg-white p-16"
     >
-      <div class="w-full h-full bg-white relative overflow-hidden flex p-16">
+      <div class="relative flex h-full w-full overflow-hidden bg-white p-16">
         <!-- Top right orange triangle -->
         <div
-          class="absolute top-0 right-0 w-[300px] h-[180px] bg-brandorange clip-top-right z-0"
+          class="bg-brandorange clip-top-right absolute top-0 right-0 z-0 h-[180px] w-[300px]"
         ></div>
         <!-- Bottom left pinkish triangle -->
         <div
-          class="absolute bottom-0 left-[35%] w-[350px] h-[150px] bg-brandred clip-bottom-left z-0 opacity-90"
+          class="bg-brandred clip-bottom-left absolute bottom-0 left-[35%] z-0 h-[150px] w-[350px] opacity-90"
         ></div>
 
         <!-- Left Column -->
         <div
-          class="w-[50%] h-full flex flex-col justify-center pr-10 z-10 relative"
+          class="relative z-10 flex h-full w-[50%] flex-col justify-center pr-10"
         >
-          <h2 class="text-2xl font-bold text-gray-800 mb-4 leading-tight">
+          <h2 class="mb-4 text-2xl leading-tight font-bold text-gray-800">
             Why Partners Trust<br />Innovate Solutions
           </h2>
-          <p class="text-[10px] text-gray-400 mb-8 leading-relaxed">
+          <p class="mb-8 text-[10px] leading-relaxed text-gray-400">
             Over the past decade, we have successfully transformed over 200
             global enterprises, delivering measurable impact through our dual
             focus on technical depth and strategic foresight.
@@ -61,15 +61,15 @@
             <!-- Item 1 -->
             <div class="flex items-start">
               <div
-                class="w-10 h-10 bg-brandorange rounded-md flex items-center justify-center text-white mr-4 flex-shrink-0 mt-1 shadow border border-orange-400"
+                class="bg-brandorange mt-1 mr-4 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md border border-orange-400 text-white shadow"
               >
-                <i data-lucide="zap" class="w-5 h-5"></i>
+                <i data-lucide="zap" class="h-5 w-5"></i>
               </div>
               <div>
-                <h4 class="font-bold text-gray-800 text-xs mb-1">
+                <h4 class="mb-1 text-xs font-bold text-gray-800">
                   Rapid Deployment
                 </h4>
-                <p class="text-[10px] text-gray-400 leading-relaxed">
+                <p class="text-[10px] leading-relaxed text-gray-400">
                   Our modular development framework allows us to go from concept
                   to production 40% faster than industry averages.
                 </p>
@@ -79,15 +79,15 @@
             <!-- Item 2 -->
             <div class="flex items-start">
               <div
-                class="w-10 h-10 bg-brandred rounded-md flex items-center justify-center text-white mr-4 flex-shrink-0 mt-1 shadow border border-red-500"
+                class="bg-brandred mt-1 mr-4 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md border border-red-500 text-white shadow"
               >
-                <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+                <i data-lucide="bar-chart-3" class="h-5 w-5"></i>
               </div>
               <div>
-                <h4 class="font-bold text-gray-800 text-xs mb-1">
+                <h4 class="mb-1 text-xs font-bold text-gray-800">
                   Impact Driven
                 </h4>
-                <p class="text-[10px] text-gray-400 leading-relaxed">
+                <p class="text-[10px] leading-relaxed text-gray-400">
                   We track ROI in real-time, ensuring that every technological
                   investment translates into tangible business growth.
                 </p>
@@ -97,18 +97,18 @@
         </div>
 
         <!-- Right Column / Image -->
-        <div class="w-[50%] h-full relative z-10 flex items-center justify-end">
+        <div class="relative z-10 flex h-full w-[50%] items-center justify-end">
           <img
             src="/presentation-images/innovate-business-presentation/slide-5-img-1.jpg"
             alt="A professional team collaborating in a modern office"
-            class="w-[90%] h-[85%] object-cover shadow-lg clip-right-img mr-2"
+            class="clip-right-img mr-2 h-[85%] w-[90%] object-cover shadow-lg"
           />
         </div>
       </div>
     </div>
 
     <script>
-      lucide.createIcons();
+      lucide.createIcons()
     </script>
   </body>
 </html>

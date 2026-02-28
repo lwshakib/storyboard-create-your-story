@@ -77,7 +77,7 @@ Follow these steps to set up the project locally.
     ```
 
     Then update the values in `.env` with your actual credentials.
-    
+
     The `.env` file should look like this:
 
     ```env

@@ -6,46 +6,76 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
-      tailwind.config = { theme: { extend: { colors: { brandred: "#EE1D23", branddark: "#1E1E1E" } } } };
+      tailwind.config = {
+        theme: {
+          extend: { colors: { brandred: "#EE1D23", branddark: "#1E1E1E" } },
+        },
+      }
     </script>
   </head>
-  <body class="font-sans overflow-hidden">
-    <div class="w-[960px] h-[540px] bg-white relative overflow-hidden flex items-center">
+  <body class="overflow-hidden font-sans">
+    <div
+      class="relative flex h-[540px] w-[960px] items-center overflow-hidden bg-white"
+    >
       <!-- Left Content -->
-      <div class="w-1/2 pl-16 pr-8">
-        <label class="text-[10px] uppercase tracking-widest text-gray-400 font-bold block mb-2">A Message From Our Leadership</label>
-        <h2 class="text-4xl font-black text-branddark leading-tight uppercase mb-4">
-          COMPANY<br/>
+      <div class="w-1/2 pr-8 pl-16">
+        <label
+          class="mb-2 block text-[10px] font-bold tracking-widest text-gray-400 uppercase"
+          >A Message From Our Leadership</label
+        >
+        <h2
+          class="text-branddark mb-4 text-4xl leading-tight font-black uppercase"
+        >
+          COMPANY<br />
           <span class="text-brandred">WELCOME MESSAGE</span>
         </h2>
-        <div class="flex items-start mb-4">
-          <i data-lucide="quote" class="w-5 h-5 text-brandred mr-2 mt-1"></i>
+        <div class="mb-4 flex items-start">
+          <i data-lucide="quote" class="text-brandred mt-1 mr-2 h-5 w-5"></i>
           <div>
-            <h4 class="font-bold text-sm text-branddark mb-1">Building the Future Together</h4>
-            <p class="text-[11px] text-gray-500 leading-relaxed italic">
-              "Our journey started with a simple belief: that technology should empower creativity, not hinder it. We are thrilled to show you how our vision has become a reality."
+            <h4 class="text-branddark mb-1 text-sm font-bold">
+              Building the Future Together
+            </h4>
+            <p class="text-[11px] leading-relaxed text-gray-500 italic">
+              "Our journey started with a simple belief: that technology should
+              empower creativity, not hinder it. We are thrilled to show you how
+              our vision has become a reality."
             </p>
           </div>
         </div>
-        <p class="text-[10px] text-gray-500 leading-relaxed mb-4">
-          In today's fast-paced market, agility and innovation are no longer optional—they are the bedrock of success. At our core, we are dedicated to providing the tools and strategies that help our partners lead their industries with confidence and clarity.
+        <p class="mb-4 text-[10px] leading-relaxed text-gray-500">
+          In today's fast-paced market, agility and innovation are no longer
+          optional—they are the bedrock of success. At our core, we are
+          dedicated to providing the tools and strategies that help our partners
+          lead their industries with confidence and clarity.
         </p>
       </div>
 
       <!-- Right Side -->
-      <div class="w-1/2 h-full relative">
+      <div class="relative h-full w-1/2">
         <!-- Background Accents -->
-        <div class="absolute inset-y-0 right-0 w-[80%] bg-brandred rounded-l-full translate-x-[20%] z-0 h-[80%] my-auto"></div>
-        <div class="absolute bottom-[15%] left-[10%] w-[100px] h-[100px] bg-branddark rounded-full z-0 translate-y-[20%]"></div>
-        
+        <div
+          class="bg-brandred absolute inset-y-0 right-0 z-0 my-auto h-[80%] w-[80%] translate-x-[20%] rounded-l-full"
+        ></div>
+        <div
+          class="bg-branddark absolute bottom-[15%] left-[10%] z-0 h-[100px] w-[100px] translate-y-[20%] rounded-full"
+        ></div>
+
         <!-- Image in circle -->
         <div class="absolute inset-0 flex items-center justify-center p-12">
-            <div class="w-[300px] h-[300px] rounded-full border-[12px] border-white shadow-xl overflow-hidden z-10">
-                <img src="/presentation-images/corporate-business-deck/avatar-1.jpg" alt="CEO Smiling" class="w-full h-full object-cover">
-            </div>
+          <div
+            class="z-10 h-[300px] w-[300px] overflow-hidden rounded-full border-[12px] border-white shadow-xl"
+          >
+            <img
+              src="/presentation-images/corporate-business-deck/avatar-1.jpg"
+              alt="CEO Smiling"
+              class="h-full w-full object-cover"
+            />
+          </div>
         </div>
       </div>
     </div>
-    <script>lucide.createIcons();</script>
+    <script>
+      lucide.createIcons()
+    </script>
   </body>
 </html>

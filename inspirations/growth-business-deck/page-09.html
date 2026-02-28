@@ -17,104 +17,177 @@
             },
           },
         },
-      };
+      }
     </script>
     <style>
       .clip-hex {
-        clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        clip-path: polygon(
+          50% 0%,
+          100% 25%,
+          100% 75%,
+          50% 100%,
+          0% 75%,
+          0% 25%
+        );
       }
       .clip-half-hex {
         clip-path: polygon(0% 0%, 75% 0%, 100% 50%, 75% 100%, 0% 100%);
       }
     </style>
   </head>
-  <body class="font-sans overflow-hidden">
-    <div class="w-[960px] h-[540px] bg-white relative overflow-hidden flex items-stretch">
+  <body class="overflow-hidden font-sans">
+    <div
+      class="relative flex h-[540px] w-[960px] items-stretch overflow-hidden bg-white"
+    >
       <!-- Left Content -->
-      <div class="w-1/2 flex flex-col justify-center pl-20 pr-12 z-10 bg-white shadow-[20px_0_50px_white]">
-          <h1 class="text-[64px] font-black leading-tight text-brandgreen uppercase mb-0 drop-shadow-sm">
-            THANK
-          </h1>
-          <h1 class="text-[64px] font-black leading-tight text-branddark uppercase mb-8 drop-shadow-sm">
-            YOU
-          </h1>
-          
-          <div class="w-16 h-1.5 bg-brandgreen mb-10 rounded-full"></div>
-          
-          <div class="grid grid-cols-2 gap-y-6 gap-x-4">
-              <div class="flex items-center group">
-                  <div class="w-9 h-9 clip-hex bg-brandgreen/10 flex items-center justify-center mr-3 transition-all group-hover:bg-brandgreen group-hover:scale-110 shadow-sm">
-                      <i data-lucide="phone" class="w-4 h-4 text-brandgreen transition-colors group-hover:text-white"></i>
-                  </div>
-                  <div>
-                      <p class="text-[8px] text-gray-400 font-bold uppercase tracking-widest">Call</p>
-                      <p class="text-[12px] font-black text-branddark">+1 (555) 0123</p>
-                  </div>
-              </div>
-              
-              <div class="flex items-center group">
-                  <div class="w-9 h-9 clip-hex bg-branddark/5 flex items-center justify-center mr-3 transition-all group-hover:bg-brandgreen group-hover:scale-110 shadow-sm">
-                      <i data-lucide="mail" class="w-4 h-4 text-branddark transition-colors group-hover:text-white"></i>
-                  </div>
-                  <div>
-                      <p class="text-[8px] text-gray-400 font-bold uppercase tracking-widest">Email</p>
-                      <p class="text-[12px] font-black text-branddark">hello@growth.com</p>
-                  </div>
-              </div>
-              
-              <div class="flex items-center group">
-                  <div class="w-9 h-9 clip-hex bg-brandgreen/10 flex items-center justify-center mr-3 transition-all group-hover:bg-brandgreen group-hover:scale-110 shadow-sm">
-                      <i data-lucide="globe" class="w-4 h-4 text-brandgreen transition-colors group-hover:text-white"></i>
-                  </div>
-                  <div>
-                      <p class="text-[8px] text-gray-400 font-bold uppercase tracking-widest">Web</p>
-                      <p class="text-[12px] font-black text-branddark">www.growth.com</p>
-                  </div>
-              </div>
+      <div
+        class="z-10 flex w-1/2 flex-col justify-center bg-white pr-12 pl-20 shadow-[20px_0_50px_white]"
+      >
+        <h1
+          class="text-brandgreen mb-0 text-[64px] leading-tight font-black uppercase drop-shadow-sm"
+        >
+          THANK
+        </h1>
+        <h1
+          class="text-branddark mb-8 text-[64px] leading-tight font-black uppercase drop-shadow-sm"
+        >
+          YOU
+        </h1>
 
-              <div class="flex items-center group">
-                <div class="w-9 h-9 clip-hex bg-branddark/5 flex items-center justify-center mr-3 transition-all group-hover:bg-brandgreen group-hover:scale-110 shadow-sm">
-                    <i data-lucide="map-pin" class="w-4 h-4 text-branddark transition-colors group-hover:text-white"></i>
-                </div>
-                <div>
-                    <p class="text-[8px] text-gray-400 font-bold uppercase tracking-widest">Office</p>
-                    <p class="text-[12px] font-black text-branddark">Tech City, NY</p>
-                </div>
+        <div class="bg-brandgreen mb-10 h-1.5 w-16 rounded-full"></div>
+
+        <div class="grid grid-cols-2 gap-x-4 gap-y-6">
+          <div class="group flex items-center">
+            <div
+              class="clip-hex bg-brandgreen/10 group-hover:bg-brandgreen mr-3 flex h-9 w-9 items-center justify-center shadow-sm transition-all group-hover:scale-110"
+            >
+              <i
+                data-lucide="phone"
+                class="text-brandgreen h-4 w-4 transition-colors group-hover:text-white"
+              ></i>
+            </div>
+            <div>
+              <p
+                class="text-[8px] font-bold tracking-widest text-gray-400 uppercase"
+              >
+                Call
+              </p>
+              <p class="text-branddark text-[12px] font-black">+1 (555) 0123</p>
             </div>
           </div>
+
+          <div class="group flex items-center">
+            <div
+              class="clip-hex bg-branddark/5 group-hover:bg-brandgreen mr-3 flex h-9 w-9 items-center justify-center shadow-sm transition-all group-hover:scale-110"
+            >
+              <i
+                data-lucide="mail"
+                class="text-branddark h-4 w-4 transition-colors group-hover:text-white"
+              ></i>
+            </div>
+            <div>
+              <p
+                class="text-[8px] font-bold tracking-widest text-gray-400 uppercase"
+              >
+                Email
+              </p>
+              <p class="text-branddark text-[12px] font-black">
+                hello@growth.com
+              </p>
+            </div>
+          </div>
+
+          <div class="group flex items-center">
+            <div
+              class="clip-hex bg-brandgreen/10 group-hover:bg-brandgreen mr-3 flex h-9 w-9 items-center justify-center shadow-sm transition-all group-hover:scale-110"
+            >
+              <i
+                data-lucide="globe"
+                class="text-brandgreen h-4 w-4 transition-colors group-hover:text-white"
+              ></i>
+            </div>
+            <div>
+              <p
+                class="text-[8px] font-bold tracking-widest text-gray-400 uppercase"
+              >
+                Web
+              </p>
+              <p class="text-branddark text-[12px] font-black">
+                www.growth.com
+              </p>
+            </div>
+          </div>
+
+          <div class="group flex items-center">
+            <div
+              class="clip-hex bg-branddark/5 group-hover:bg-brandgreen mr-3 flex h-9 w-9 items-center justify-center shadow-sm transition-all group-hover:scale-110"
+            >
+              <i
+                data-lucide="map-pin"
+                class="text-branddark h-4 w-4 transition-colors group-hover:text-white"
+              ></i>
+            </div>
+            <div>
+              <p
+                class="text-[8px] font-bold tracking-widest text-gray-400 uppercase"
+              >
+                Office
+              </p>
+              <p class="text-branddark text-[12px] font-black">Tech City, NY</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Right Side Hex Image -->
-      <div class="w-1/2 relative bg-brandgreen overflow-hidden">
-          <!-- Background Pattern -->
-          <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(white 1px, transparent 1px); background-size: 20px 20px;"></div>
-          
-          <div class="absolute inset-0 flex items-center justify-center">
-              <div class="w-[380px] h-[430px] clip-hex bg-branddark/20 p-2 shadow-2xl">
-                  <div class="w-full h-full clip-hex bg-white p-1">
-                      <div class="w-full h-full clip-hex bg-gray-200 overflow-hidden">
-                          <img src="/presentation-images/growth-business-deck/slide-9-img-1.jpg" alt="A clean and modern professional workspace with plants and laptop" class="w-full h-full object-cover grayscale-[0.2] contrast-125">
-                      </div>
-                  </div>
+      <div class="bg-brandgreen relative w-1/2 overflow-hidden">
+        <!-- Background Pattern -->
+        <div
+          class="absolute inset-0 opacity-10"
+          style="
+            background-image: radial-gradient(white 1px, transparent 1px);
+            background-size: 20px 20px;
+          "
+        ></div>
+
+        <div class="absolute inset-0 flex items-center justify-center">
+          <div
+            class="clip-hex bg-branddark/20 h-[430px] w-[380px] p-2 shadow-2xl"
+          >
+            <div class="clip-hex h-full w-full bg-white p-1">
+              <div class="clip-hex h-full w-full overflow-hidden bg-gray-200">
+                <img
+                  src="/presentation-images/growth-business-deck/slide-9-img-1.jpg"
+                  alt="A clean and modern professional workspace with plants and laptop"
+                  class="h-full w-full object-cover contrast-125 grayscale-[0.2]"
+                />
               </div>
+            </div>
           </div>
-          
-          <!-- Small Accent Elements -->
-          <div class="absolute top-[10%] right-[10%] w-12 h-12 clip-hex bg-white/20 backdrop-blur-sm z-20"></div>
-          <div class="absolute bottom-[10%] left-[10%] w-8 h-8 clip-hex bg-branddark/40 z-20"></div>
-          
-          <div class="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2 w-24 h-24 clip-hex bg-white opacity-20 blur-xl"></div>
+        </div>
+
+        <!-- Small Accent Elements -->
+        <div
+          class="clip-hex absolute top-[10%] right-[10%] z-20 h-12 w-12 bg-white/20 backdrop-blur-sm"
+        ></div>
+        <div
+          class="clip-hex bg-branddark/40 absolute bottom-[10%] left-[10%] z-20 h-8 w-8"
+        ></div>
+
+        <div
+          class="clip-hex absolute top-1/2 left-0 h-24 w-24 -translate-x-1/2 -translate-y-1/2 bg-white opacity-20 blur-xl"
+        ></div>
       </div>
-      
+
       <!-- Footer Decorations -->
       <div class="absolute bottom-6 left-20 flex items-center space-x-2">
-          <div class="w-4 h-1 bg-brandgreen rounded-full"></div>
-          <div class="w-8 h-1 bg-brandgreen opacity-30 rounded-full"></div>
+        <div class="bg-brandgreen h-1 w-4 rounded-full"></div>
+        <div class="bg-brandgreen h-1 w-8 rounded-full opacity-30"></div>
       </div>
     </div>
 
     <script>
-      lucide.createIcons();
+      lucide.createIcons()
     </script>
   </body>
 </html>

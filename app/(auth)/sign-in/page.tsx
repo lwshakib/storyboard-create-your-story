@@ -1,5 +1,5 @@
-import { Logo } from "@/components/logo";
-import { LoginForm } from "@/components/login-form";
+import { Logo } from "@/components/logo"
+import { LoginForm } from "@/components/login-form"
 
 export default function SignInPage() {
   return (
@@ -22,5 +22,5 @@ export default function SignInPage() {
         />
       </div>
     </div>
-  );
+  )
 }

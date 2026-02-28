@@ -13,11 +13,15 @@ interface ThemeSettingsProps {
   onApplyTheme: (theme: any) => void
 }
 
-export function ThemeSettings({ activeThemeId, appliedTheme, onApplyTheme }: ThemeSettingsProps) {
+export function ThemeSettings({
+  activeThemeId,
+  appliedTheme,
+  onApplyTheme,
+}: ThemeSettingsProps) {
   return (
-    <div className="flex-1 flex flex-col p-4 space-y-6 overflow-y-auto">
+    <div className="flex flex-1 flex-col space-y-6 overflow-y-auto p-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+        <h3 className="text-muted-foreground flex items-center gap-2 text-sm font-bold tracking-wider uppercase">
           <Palette className="h-4 w-4" />
           System Themes
         </h3>
@@ -26,10 +30,11 @@ export function ThemeSettings({ activeThemeId, appliedTheme, onApplyTheme }: The
       <Separator />
 
       <div className="space-y-4">
-        <div className="bg-blue-500/5 border border-blue-500/10 rounded-2xl p-4 flex items-start gap-3">
-          <Info className="size-4 text-blue-500 mt-0.5" />
-          <p className="text-[12px] text-zinc-500 leading-relaxed font-medium">
-            Applying a theme will visually sync all existing slides and influence the design of future generations.
+        <div className="flex items-start gap-3 rounded-2xl border border-blue-500/10 bg-blue-500/5 p-4">
+          <Info className="mt-0.5 size-4 text-blue-500" />
+          <p className="text-[12px] leading-relaxed font-medium text-zinc-500">
+            Applying a theme will visually sync all existing slides and
+            influence the design of future generations.
           </p>
         </div>
 
@@ -37,40 +42,62 @@ export function ThemeSettings({ activeThemeId, appliedTheme, onApplyTheme }: The
           {Object.entries(THEMES).map(([key, theme]) => {
             const isActive = activeThemeId === key
             const t = theme as Theme
-            
+
             return (
               <button
                 key={key}
-                onClick={() => onApplyTheme({ ...t, id: key, cssVars: { ...t } })}
+                onClick={() =>
+                  onApplyTheme({ ...t, id: key, cssVars: { ...t } })
+                }
                 className={cn(
-                  "p-4 rounded-2xl border text-left transition-all group relative overflow-hidden",
-                  isActive 
-                    ? "border-primary bg-primary/5 ring-1 ring-primary/20 shadow-xl" 
-                    : "border-border hover:border-zinc-400 hover:bg-muted"
+                  "group relative overflow-hidden rounded-2xl border p-4 text-left transition-all",
+                  isActive
+                    ? "border-primary bg-primary/5 ring-primary/20 shadow-xl ring-1"
+                    : "border-border hover:bg-muted hover:border-zinc-400"
                 )}
               >
                 {isActive && (
-                  <div className="absolute top-2 right-2 h-5 w-5 rounded-full bg-primary flex items-center justify-center">
-                    <Check className="h-3 w-3 text-primary-foreground" />
+                  <div className="bg-primary absolute top-2 right-2 flex h-5 w-5 items-center justify-center rounded-full">
+                    <Check className="text-primary-foreground h-3 w-3" />
                   </div>
                 )}
-                
-                <div className="flex items-center gap-3 mb-3">
-                   <div 
-                     className="h-8 w-8 rounded-lg border border-black/10 flex items-center justify-center font-bold"
-                     style={{ backgroundColor: t.primary, color: t.primaryForeground }}
-                   >
-                     {t.name[0]}
-                   </div>
-                   <span className="font-bold text-sm tracking-tight">{t.name}</span>
+
+                <div className="mb-3 flex items-center gap-3">
+                  <div
+                    className="flex h-8 w-8 items-center justify-center rounded-lg border border-black/10 font-bold"
+                    style={{
+                      backgroundColor: t.primary,
+                      color: t.primaryForeground,
+                    }}
+                  >
+                    {t.name[0]}
+                  </div>
+                  <span className="text-sm font-bold tracking-tight">
+                    {t.name}
+                  </span>
                 </div>
 
                 <div className="flex items-center gap-1.5">
-                   <div className="h-5 w-5 rounded-md border" style={{ backgroundColor: t.background }} />
-                   <div className="h-5 w-5 rounded-md border" style={{ backgroundColor: t.foreground }} />
-                   <div className="h-5 w-5 rounded-md border" style={{ backgroundColor: t.primary }} />
-                   <div className="h-5 w-5 rounded-md border" style={{ backgroundColor: t.secondary || (t as any).muted }} />
-                   <div className="h-5 w-5 rounded-md border" style={{ backgroundColor: t.accent }} />
+                  <div
+                    className="h-5 w-5 rounded-md border"
+                    style={{ backgroundColor: t.background }}
+                  />
+                  <div
+                    className="h-5 w-5 rounded-md border"
+                    style={{ backgroundColor: t.foreground }}
+                  />
+                  <div
+                    className="h-5 w-5 rounded-md border"
+                    style={{ backgroundColor: t.primary }}
+                  />
+                  <div
+                    className="h-5 w-5 rounded-md border"
+                    style={{ backgroundColor: t.secondary || (t as any).muted }}
+                  />
+                  <div
+                    className="h-5 w-5 rounded-md border"
+                    style={{ backgroundColor: t.accent }}
+                  />
                 </div>
               </button>
             )

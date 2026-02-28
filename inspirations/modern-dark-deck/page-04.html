@@ -17,49 +17,66 @@
             },
           },
         },
-      };
+      }
     </script>
   </head>
-  <body class="font-sans overflow-hidden bg-branddark">
-    <div class="w-[960px] h-[540px] relative overflow-hidden flex flex-col p-20">
+  <body class="bg-branddark overflow-hidden font-sans">
+    <div
+      class="relative flex h-[540px] w-[960px] flex-col overflow-hidden p-20"
+    >
       <!-- Top Section -->
-      <div class="flex justify-between items-start mb-12">
-          <div class="max-w-md">
-              <h1 class="text-white text-[48px] font-black leading-tight uppercase tracking-tighter mb-4">
-                HEADLINE<br/><span class="text-brandyellow">SLIDE</span>
-              </h1>
-              <div class="w-16 h-1 bg-brandyellow"></div>
+      <div class="mb-12 flex items-start justify-between">
+        <div class="max-w-md">
+          <h1
+            class="mb-4 text-[48px] leading-tight font-black tracking-tighter text-white uppercase"
+          >
+            HEADLINE<br /><span class="text-brandyellow">SLIDE</span>
+          </h1>
+          <div class="bg-brandyellow h-1 w-16"></div>
+        </div>
+        <div class="flex flex-col space-y-4 pt-4">
+          <div
+            class="border-brandyellow flex h-6 w-6 items-center justify-center rounded-full border-2"
+          >
+            <div class="bg-brandyellow h-2 w-2 rounded-full"></div>
           </div>
-          <div class="flex flex-col space-y-4 pt-4">
-              <div class="w-6 h-6 rounded-full border-2 border-brandyellow flex items-center justify-center">
-                  <div class="w-2 h-2 bg-brandyellow rounded-full"></div>
-              </div>
-              <div class="w-6 h-6 rounded-full border-2 border-brandorange flex items-center justify-center">
-                  <div class="w-2 h-2 bg-brandorange rounded-full"></div>
-              </div>
-              <div class="w-6 h-6 rounded-full border-2 border-brandyellow flex items-center justify-center">
-                  <div class="w-2 h-2 bg-brandyellow rounded-full"></div>
-              </div>
+          <div
+            class="border-brandorange flex h-6 w-6 items-center justify-center rounded-full border-2"
+          >
+            <div class="bg-brandorange h-2 w-2 rounded-full"></div>
           </div>
+          <div
+            class="border-brandyellow flex h-6 w-6 items-center justify-center rounded-full border-2"
+          >
+            <div class="bg-brandyellow h-2 w-2 rounded-full"></div>
+          </div>
+        </div>
       </div>
 
       <!-- Mid Section -->
-      <div class="flex-1 flex items-center">
-          <div class="w-1/2">
-              <p class="text-gray-400 text-[14px] leading-relaxed font-medium">
-                Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi.
-              </p>
-          </div>
+      <div class="flex flex-1 items-center">
+        <div class="w-1/2">
+          <p class="text-[14px] leading-relaxed font-medium text-gray-400">
+            Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse
+            molestie consequat, vel illum dolore eu feugiat nulla facilisis at
+            vero eros et accumsan et iusto odio dignissim qui blandit praesent
+            luptatum zzril delenit augue duis dolore te feugait nulla facilisi.
+          </p>
+        </div>
       </div>
 
       <!-- Bottom Accents -->
-      <div class="absolute bottom-0 right-0 w-[400px] h-[150px] border-t border-l border-white/5 rounded-tl-[150px] p-8 flex items-end justify-end">
-          <div class="w-24 h-24 border border-brandyellow/10 rounded-full mb-[-40px] mr-[-40px]"></div>
+      <div
+        class="absolute right-0 bottom-0 flex h-[150px] w-[400px] items-end justify-end rounded-tl-[150px] border-t border-l border-white/5 p-8"
+      >
+        <div
+          class="border-brandyellow/10 mr-[-40px] mb-[-40px] h-24 w-24 rounded-full border"
+        ></div>
       </div>
     </div>
 
     <script>
-      lucide.createIcons();
+      lucide.createIcons()
     </script>
   </body>
 </html>

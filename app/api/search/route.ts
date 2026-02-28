@@ -6,15 +6,15 @@ import { headers } from "next/headers"
 export async function GET(req: Request) {
   try {
     const session = await auth.api.getSession({
-        headers: await headers()
+      headers: await headers(),
     })
-    
+
     if (!session) {
       return new NextResponse("Unauthorized", { status: 401 })
     }
 
     const { searchParams } = new URL(req.url)
-    const query = searchParams.get('q')
+    const query = searchParams.get("q")
 
     if (!query || query.trim().length < 2) {
       return NextResponse.json([])
@@ -23,7 +23,7 @@ export async function GET(req: Request) {
     const searchTerm = `%${query.toLowerCase()}%`
 
     // Full text search across project title, description, and the "slides" JSON field.
-    // We use a raw query because Prisma doesn't have native full-text search 
+    // We use a raw query because Prisma doesn't have native full-text search
     // for specific keys inside a JSON column in all versions/providers yet.
     const projects = await prisma.$queryRaw`
       SELECT * FROM project

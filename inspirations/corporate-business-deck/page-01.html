@@ -16,7 +16,7 @@
             },
           },
         },
-      };
+      }
     </script>
     <style>
       .clip-circle {
@@ -24,53 +24,74 @@
       }
     </style>
   </head>
-  <body class="font-sans overflow-hidden">
-    <div class="w-[960px] h-[540px] bg-white relative overflow-hidden flex items-center">
+  <body class="overflow-hidden font-sans">
+    <div
+      class="relative flex h-[540px] w-[960px] items-center overflow-hidden bg-white"
+    >
       <!-- Logo -->
       <div class="absolute top-8 left-12 flex items-center">
-        <div class="w-8 h-8 rounded-full bg-brandred flex items-center justify-center mr-2 text-white">
-          <i data-lucide="crown" class="w-5 h-5"></i>
+        <div
+          class="bg-brandred mr-2 flex h-8 w-8 items-center justify-center rounded-full text-white"
+        >
+          <i data-lucide="crown" class="h-5 w-5"></i>
         </div>
-        <div class="text-[10px] font-bold text-gray-800 uppercase tracking-widest">
+        <div
+          class="text-[10px] font-bold tracking-widest text-gray-800 uppercase"
+        >
           <div class="text-brandred">Global Vision</div>
           <div class="text-branddark">Innovating Excellence</div>
         </div>
       </div>
 
       <!-- Left Content -->
-      <div class="w-1/2 pl-12 pr-6">
-        <h1 class="text-[54px] font-black leading-tight text-brandred uppercase mb-0">
+      <div class="w-1/2 pr-6 pl-12">
+        <h1
+          class="text-brandred mb-0 text-[54px] leading-tight font-black uppercase"
+        >
           CORPORATE
         </h1>
-        <h1 class="text-[54px] font-black leading-tight text-branddark uppercase mb-4">
+        <h1
+          class="text-branddark mb-4 text-[54px] leading-tight font-black uppercase"
+        >
           STRATEGY DECK
         </h1>
-        <div class="w-16 h-1 bg-brandred mb-6"></div>
-        <p class="text-[11px] text-gray-500 leading-relaxed max-w-sm">
-          A comprehensive overview of our strategic roadmap, market positioning, and core operational milestones for the upcoming fiscal years.
+        <div class="bg-brandred mb-6 h-1 w-16"></div>
+        <p class="max-w-sm text-[11px] leading-relaxed text-gray-500">
+          A comprehensive overview of our strategic roadmap, market positioning,
+          and core operational milestones for the upcoming fiscal years.
         </p>
-        <p class="text-[10px] text-gray-400 mt-4 italic font-bold uppercase tracking-widest">Global Partner Network 2024</p>
+        <p
+          class="mt-4 text-[10px] font-bold tracking-widest text-gray-400 uppercase italic"
+        >
+          Global Partner Network 2024
+        </p>
       </div>
 
       <!-- Right Side -->
-      <div class="w-1/2 h-full relative flex items-center justify-center">
+      <div class="relative flex h-full w-1/2 items-center justify-center">
         <!-- Background Accents -->
-        <div class="absolute top-[10%] right-[-10%] w-[350px] h-[350px] bg-brandred rounded-full opacity-90"></div>
-        <div class="absolute bottom-[5%] right-[20%] w-[120px] h-[120px] bg-branddark rounded-full"></div>
-        
+        <div
+          class="bg-brandred absolute top-[10%] right-[-10%] h-[350px] w-[350px] rounded-full opacity-90"
+        ></div>
+        <div
+          class="bg-branddark absolute right-[20%] bottom-[5%] h-[120px] w-[120px] rounded-full"
+        ></div>
+
         <!-- Main Circular Image -->
-        <div class="relative w-[340px] h-[340px] border-[10px] border-white rounded-full shadow-2xl overflow-hidden z-10 flex items-center justify-center">
-            <img
+        <div
+          class="relative z-10 flex h-[340px] w-[340px] items-center justify-center overflow-hidden rounded-full border-[10px] border-white shadow-2xl"
+        >
+          <img
             src="/presentation-images/corporate-business-deck/slide-1-img-1.jpg"
             alt="Executive professional on a call"
-            class="w-full h-full object-cover"
+            class="h-full w-full object-cover"
           />
         </div>
       </div>
     </div>
 
     <script>
-      lucide.createIcons();
+      lucide.createIcons()
     </script>
   </body>
 </html>

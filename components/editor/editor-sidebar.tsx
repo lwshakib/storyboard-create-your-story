@@ -1,11 +1,11 @@
 "use client"
 
 import * as React from "react"
-import { 
-  Sidebar, 
-  SidebarContent, 
-  SidebarHeader, 
-  SidebarProvider, 
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarHeader,
+  SidebarProvider,
   SidebarRail,
   SidebarGroup,
   SidebarGroupLabel,
@@ -24,60 +24,72 @@ interface EditorSidebarProps {
   onDeleteSlide: (id: number) => void
 }
 
-export function EditorSidebar({ slides, activeSlideId, setActiveSlideId, onAddSlide, onDeleteSlide }: EditorSidebarProps) {
+export function EditorSidebar({
+  slides,
+  activeSlideId,
+  setActiveSlideId,
+  onAddSlide,
+  onDeleteSlide,
+}: EditorSidebarProps) {
   return (
-    <Sidebar collapsible="none" className="w-72 border-r bg-background/50 backdrop-blur-xl">
+    <Sidebar
+      collapsible="none"
+      className="bg-background/50 w-72 border-r backdrop-blur-xl"
+    >
       <SidebarContent className="p-0">
         <SidebarGroup className="p-0">
-          <div className="flex items-center justify-between py-6 px-6">
-            <SidebarGroupLabel className="text-[10px] uppercase tracking-[0.2em] font-black text-muted-foreground/60">Story Slides</SidebarGroupLabel>
-            <Button 
-                variant="outline" 
-                size="icon" 
-                className="h-8 w-8 rounded-lg border-dashed hover:border-solid hover:bg-primary hover:text-primary-foreground transition-all duration-300" 
-                onClick={onAddSlide}
+          <div className="flex items-center justify-between px-6 py-6">
+            <SidebarGroupLabel className="text-muted-foreground/60 text-[10px] font-black tracking-[0.2em] uppercase">
+              Story Slides
+            </SidebarGroupLabel>
+            <Button
+              variant="outline"
+              size="icon"
+              className="hover:bg-primary hover:text-primary-foreground h-8 w-8 rounded-lg border-dashed transition-all duration-300 hover:border-solid"
+              onClick={onAddSlide}
             >
-                <Plus className="h-4 w-4" />
+              <Plus className="h-4 w-4" />
             </Button>
           </div>
-          <div className="flex flex-col gap-4 px-4 pb-10 overflow-y-auto max-h-[calc(100vh-160px)] custom-scrollbar">
+          <div className="custom-scrollbar flex max-h-[calc(100vh-160px)] flex-col gap-4 overflow-y-auto px-4 pb-10">
             {slides.map((slide, index) => (
-              <div 
-                key={slide.id} 
-                className="relative group pr-2"
-              >
-                <div 
+              <div key={slide.id} className="group relative pr-2">
+                <div
                   onClick={() => setActiveSlideId(slide.id)}
                   className={cn(
-                    "relative aspect-video border-2 cursor-pointer transition-all duration-300 overflow-hidden",
-                    activeSlideId === slide.id 
-                      ? "border-primary bg-background shadow-[0_10px_30px_rgba(var(--primary),0.15)] ring-4 ring-primary/10" 
+                    "relative aspect-video cursor-pointer overflow-hidden border-2 transition-all duration-300",
+                    activeSlideId === slide.id
+                      ? "border-primary bg-background ring-primary/10 shadow-[0_10px_30px_rgba(var(--primary),0.15)] ring-4"
                       : "border-border/40 bg-muted/5 hover:border-border hover:bg-muted/10"
                   )}
                 >
-                    {/* Index Badge */}
-                    <div className={cn(
-                        "absolute top-2 left-2 z-10 w-5 h-5 flex items-center justify-center rounded-md text-[9px] font-black border transition-colors",
-                        activeSlideId === slide.id ? "bg-primary text-white border-primary" : "bg-background text-muted-foreground border-border"
-                    )}>
-                        {index + 1}
-                    </div>
+                  {/* Index Badge */}
+                  <div
+                    className={cn(
+                      "absolute top-2 left-2 z-10 flex h-5 w-5 items-center justify-center rounded-md border text-[9px] font-black transition-colors",
+                      activeSlideId === slide.id
+                        ? "bg-primary border-primary text-white"
+                        : "bg-background text-muted-foreground border-border"
+                    )}
+                  >
+                    {index + 1}
+                  </div>
 
-                    <SlidePreview slide={slide} />
+                  <SlidePreview slide={slide} />
                 </div>
-                
+
                 {slides.length > 1 && (
-                    <Button 
-                        variant="destructive" 
-                        size="icon" 
-                        className="absolute -top-1 -right-1 h-6 w-6 opacity-0 group-hover:opacity-100 rounded-lg shadow-lg hover:scale-110 active:scale-95 transition-all z-20"
-                        onClick={(e) => {
-                            e.stopPropagation()
-                            onDeleteSlide(slide.id)
-                        }}
-                    >
-                        <Trash2 className="h-3 w-3" />
-                    </Button>
+                  <Button
+                    variant="destructive"
+                    size="icon"
+                    className="absolute -top-1 -right-1 z-20 h-6 w-6 rounded-lg opacity-0 shadow-lg transition-all group-hover:opacity-100 hover:scale-110 active:scale-95"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onDeleteSlide(slide.id)
+                    }}
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </Button>
                 )}
               </div>
             ))}

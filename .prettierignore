@@ -6,3 +6,7 @@ generated
 bun.lock
 .env
 .env.*
+test-results
+coverage
+*.json
+playwright-report

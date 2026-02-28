@@ -1,80 +1,104 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Slide 8 - Background Overlay</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brandorange: '#F97316',
-                        brandred: '#E11D48',
-                    }
-                }
-            }
-        }
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brandorange: "#F97316",
+              brandred: "#E11D48",
+            },
+          },
+        },
+      }
     </script>
-</head>
-<body class="font-sans overflow-hidden">
-    <div class="w-[960px] h-[540px] relative overflow-hidden">
-        <div class="w-full h-full relative overflow-hidden">
-            
-            <!-- Background image with heavy gradient overlay -->
-            <div class="absolute inset-0">
-                <img src="/presentation-images/innovate-business-presentation/slide-8-img-1.jpg" alt="A large scale solar energy plant at sunset" class="w-full h-full object-cover">
-                <div class="absolute inset-0 bg-gradient-to-r from-brandred/80 via-red-500/80 to-brandorange/90 mix-blend-multiply"></div>
-                <div class="absolute inset-0 bg-gradient-to-t from-brandred/60 to-transparent"></div>
-            </div>
-
-            <!-- Content -->
-            <div class="absolute bottom-0 w-full h-[35%] bg-white flex justify-center items-center">
-                <div class="flex justify-between w-[80%] pt-4 pb-2">
-                    <!-- Col 1 -->
-                    <div class="flex items-start w-[45%]">
-                        <div class="w-8 h-8 rounded-full border border-gray-200 shadow-sm flex items-center justify-center text-brandorange mr-4 flex-shrink-0 mt-1">
-                            <i data-lucide="sun" class="w-4 h-4"></i>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-gray-800 text-xs mb-1">Renewable Integration</h4>
-                            <p class="text-[9px] text-gray-400 leading-relaxed px-1">
-                                We help energy providers integrate distributed renewable sources into the main grid using advanced AI forecasting.
-                            </p>
-                        </div>
-                    </div>
-                    
-                    <!-- Col 2 -->
-                    <div class="flex items-start w-[45%]">
-                        <div class="w-8 h-8 rounded-full border border-gray-200 shadow-sm flex items-center justify-center text-brandred mr-4 flex-shrink-0 mt-1">
-                            <i data-lucide="globe" class="w-4 h-4"></i>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-gray-800 text-xs mb-1">Global Sustainability</h4>
-                            <p class="text-[9px] text-gray-400 leading-relaxed px-1">
-                                Our projects across four continents have reduced carbon emissions by an estimated 1.2 million tons annually.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Upper text layer -->
-            <div class="absolute top-[25%] left-0 w-full flex flex-col items-center text-center text-white px-32">
-                <h2 class="text-2xl font-bold mb-4">
-                    Pioneering the Transition<br>to Clean Energy
-                </h2>
-                <p class="text-xs text-white/80 leading-loose">
-                    Through relentless innovation and strategic partnerships, Innovate Solutions is building the technological backbone required for a carbon-neutral world. We don't just dream of the future; we engineer it.
-                </p>
-            </div>
+  </head>
+  <body class="overflow-hidden font-sans">
+    <div class="relative h-[540px] w-[960px] overflow-hidden">
+      <div class="relative h-full w-full overflow-hidden">
+        <!-- Background image with heavy gradient overlay -->
+        <div class="absolute inset-0">
+          <img
+            src="/presentation-images/innovate-business-presentation/slide-8-img-1.jpg"
+            alt="A large scale solar energy plant at sunset"
+            class="h-full w-full object-cover"
+          />
+          <div
+            class="from-brandred/80 to-brandorange/90 absolute inset-0 bg-gradient-to-r via-red-500/80 mix-blend-multiply"
+          ></div>
+          <div
+            class="from-brandred/60 absolute inset-0 bg-gradient-to-t to-transparent"
+          ></div>
         </div>
+
+        <!-- Content -->
+        <div
+          class="absolute bottom-0 flex h-[35%] w-full items-center justify-center bg-white"
+        >
+          <div class="flex w-[80%] justify-between pt-4 pb-2">
+            <!-- Col 1 -->
+            <div class="flex w-[45%] items-start">
+              <div
+                class="text-brandorange mt-1 mr-4 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-gray-200 shadow-sm"
+              >
+                <i data-lucide="sun" class="h-4 w-4"></i>
+              </div>
+              <div>
+                <h4 class="mb-1 text-xs font-bold text-gray-800">
+                  Renewable Integration
+                </h4>
+                <p class="px-1 text-[9px] leading-relaxed text-gray-400">
+                  We help energy providers integrate distributed renewable
+                  sources into the main grid using advanced AI forecasting.
+                </p>
+              </div>
+            </div>
+
+            <!-- Col 2 -->
+            <div class="flex w-[45%] items-start">
+              <div
+                class="text-brandred mt-1 mr-4 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border border-gray-200 shadow-sm"
+              >
+                <i data-lucide="globe" class="h-4 w-4"></i>
+              </div>
+              <div>
+                <h4 class="mb-1 text-xs font-bold text-gray-800">
+                  Global Sustainability
+                </h4>
+                <p class="px-1 text-[9px] leading-relaxed text-gray-400">
+                  Our projects across four continents have reduced carbon
+                  emissions by an estimated 1.2 million tons annually.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Upper text layer -->
+        <div
+          class="absolute top-[25%] left-0 flex w-full flex-col items-center px-32 text-center text-white"
+        >
+          <h2 class="mb-4 text-2xl font-bold">
+            Pioneering the Transition<br />to Clean Energy
+          </h2>
+          <p class="text-xs leading-loose text-white/80">
+            Through relentless innovation and strategic partnerships, Innovate
+            Solutions is building the technological backbone required for a
+            carbon-neutral world. We don't just dream of the future; we engineer
+            it.
+          </p>
+        </div>
+      </div>
     </div>
 
     <script>
-        lucide.createIcons();
+      lucide.createIcons()
     </script>
-</body>
+  </body>
 </html>

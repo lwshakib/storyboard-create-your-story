@@ -1,38 +1,38 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { useState } from "react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
   FieldSeparator,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { authClient } from "@/lib/auth-client";
-import { Loader2, MailCheck } from "lucide-react";
+} from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
+import { authClient } from "@/lib/auth-client"
+import { Loader2, MailCheck } from "lucide-react"
 
 export function SignUpForm({
   className,
   ...props
 }: React.ComponentProps<"form">) {
-  const router = useRouter();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [socialLoading, setSocialLoading] = useState<string | null>(null);
-  const [isSent, setIsSent] = useState(false);
+  const router = useRouter()
+  const [name, setName] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [error, setError] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [socialLoading, setSocialLoading] = useState<string | null>(null)
+  const [isSent, setIsSent] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    setIsLoading(true);
+    e.preventDefault()
+    setError("")
+    setIsLoading(true)
 
     try {
       const { error } = await authClient.signUp.email({
@@ -40,51 +40,56 @@ export function SignUpForm({
         password,
         name,
         callbackURL: "/home",
-      });
+      })
 
       if (error) {
-        setError(error.message || "Failed to create account");
-        setIsLoading(false);
-        return;
+        setError(error.message || "Failed to create account")
+        setIsLoading(false)
+        return
       }
 
-      setIsSent(true);
-      setIsLoading(false);
+      setIsSent(true)
+      setIsLoading(false)
     } catch {
-      setError("An unexpected error occurred");
-      setIsLoading(false);
+      setError("An unexpected error occurred")
+      setIsLoading(false)
     }
-  };
+  }
 
   const handleSocialSignUp = async (provider: "google") => {
-    setSocialLoading(provider);
+    setSocialLoading(provider)
     try {
       await authClient.signIn.social({
         provider,
         callbackURL: "/home",
-      });
+      })
     } catch {
-      setError(`Failed to sign up with ${provider}`);
-      setSocialLoading(null);
+      setError(`Failed to sign up with ${provider}`)
+      setSocialLoading(null)
     }
-  };
+  }
 
   if (isSent) {
     return (
-      <div className="flex flex-col items-center gap-6 text-center animate-in fade-in zoom-in duration-300">
-        <div className="bg-primary/10 size-16 rounded-full flex items-center justify-center mb-2">
-          <MailCheck className="size-8 text-primary" />
+      <div className="animate-in fade-in zoom-in flex flex-col items-center gap-6 text-center duration-300">
+        <div className="bg-primary/10 mb-2 flex size-16 items-center justify-center rounded-full">
+          <MailCheck className="text-primary size-8" />
         </div>
         <div className="space-y-2">
           <h1 className="text-2xl font-bold">Check your email</h1>
           <p className="text-muted-foreground text-sm text-balance">
-            We've sent a verification link to <span className="font-medium text-foreground">{email}</span>. 
-            Please verify your email to log in.
+            We've sent a verification link to{" "}
+            <span className="text-foreground font-medium">{email}</span>. Please
+            verify your email to log in.
           </p>
         </div>
-        <div className="flex flex-col w-full gap-2">
+        <div className="flex w-full flex-col gap-2">
           <Button asChild className="w-full">
-            <a href="https://gmail.com" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://gmail.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Go to Gmail
             </a>
           </Button>
@@ -93,9 +98,8 @@ export function SignUpForm({
           </Button>
         </div>
       </div>
-    );
+    )
   }
-
 
   return (
     <form
@@ -112,7 +116,7 @@ export function SignUpForm({
         </div>
 
         {error && (
-          <div className="bg-destructive/10 text-destructive text-sm p-3 rounded-md text-center">
+          <div className="bg-destructive/10 text-destructive rounded-md p-3 text-center text-sm">
             {error}
           </div>
         )}
@@ -156,7 +160,7 @@ export function SignUpForm({
           <Button type="submit" disabled={isLoading}>
             {isLoading ? (
               <>
-                <Loader2 className="size-4 animate-spin mr-2" />
+                <Loader2 className="mr-2 size-4 animate-spin" />
                 Creating account...
               </>
             ) : (
@@ -173,7 +177,7 @@ export function SignUpForm({
             onClick={() => handleSocialSignUp("google")}
           >
             {socialLoading === "google" ? (
-              <Loader2 className="size-4 animate-spin mr-2" />
+              <Loader2 className="mr-2 size-4 animate-spin" />
             ) : (
               <img
                 src="https://www.svgrepo.com/show/475656/google-color.svg"
@@ -193,5 +197,5 @@ export function SignUpForm({
         </Field>
       </FieldGroup>
     </form>
-  );
+  )
 }

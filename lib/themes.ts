@@ -206,8 +206,8 @@ export const THEMES = {
     radius: "0px",
     chart: ["#000000", "#ffff00", "#ff00ff", "#00ffff", "#808080"],
   },
-} as const;
+} as const
 
-export type ThemeKey = keyof typeof THEMES;
-export type Theme = typeof THEMES[ThemeKey];
-export const THEME_NAME_LIST = Object.keys(THEMES) as ThemeKey[];
+export type ThemeKey = keyof typeof THEMES
+export type Theme = (typeof THEMES)[ThemeKey]
+export const THEME_NAME_LIST = Object.keys(THEMES) as ThemeKey[]

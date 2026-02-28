@@ -4,7 +4,8 @@ import "@testing-library/jest-dom"
 jest.mock("framer-motion", () => {
   const React = require("react")
   const mockComponent = (tag: string) => {
-    return ({ children, ...props }: any) => React.createElement(tag, props, children)
+    return ({ children, ...props }: any) =>
+      React.createElement(tag, props, children)
   }
   return {
     motion: {

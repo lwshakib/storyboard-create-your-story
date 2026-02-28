@@ -16,7 +16,7 @@
             },
           },
         },
-      };
+      }
     </script>
     <style>
       .clip-img-container {
@@ -27,36 +27,36 @@
       }
     </style>
   </head>
-  <body class="font-sans overflow-hidden">
-    <div class="w-[960px] h-[540px] bg-white relative overflow-hidden flex">
-      <div class="w-full h-full bg-white relative overflow-hidden flex">
+  <body class="overflow-hidden font-sans">
+    <div class="relative flex h-[540px] w-[960px] overflow-hidden bg-white">
+      <div class="relative flex h-full w-full overflow-hidden bg-white">
         <!-- Left Content -->
         <div
-          class="w-[50%] h-full flex flex-col justify-center pl-16 pr-8 z-10"
+          class="z-10 flex h-full w-[50%] flex-col justify-center pr-8 pl-16"
         >
-          <h2 class="text-2xl font-bold text-gray-800 mb-4 leading-tight">
+          <h2 class="mb-4 text-2xl leading-tight font-bold text-gray-800">
             Strategic Consulting for<br />
             Global Enterprises
           </h2>
 
-          <p class="text-[11px] text-gray-500 mb-10 leading-relaxed pr-8">
+          <p class="mb-10 pr-8 text-[11px] leading-relaxed text-gray-500">
             We provide a comprehensive framework for digital transformation,
             ensuring that your organization remains competitive in a rapidly
             evolving market. Our methodology is data-driven and
             results-oriented.
           </p>
 
-          <div class="flex items-start mt-4">
+          <div class="mt-4 flex items-start">
             <div
-              class="w-12 h-12 rounded-full border border-gray-200 shadow flex items-center justify-center text-brandorange mr-4 flex-shrink-0"
+              class="text-brandorange mr-4 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full border border-gray-200 shadow"
             >
-              <i data-lucide="settings-2" class="w-6 h-6"></i>
+              <i data-lucide="settings-2" class="h-6 w-6"></i>
             </div>
             <div>
-              <h4 class="font-bold text-gray-800 text-sm mb-2">
+              <h4 class="mb-2 text-sm font-bold text-gray-800">
                 Systems Optimization
               </h4>
-              <p class="text-[10px] text-gray-500 leading-relaxed">
+              <p class="text-[10px] leading-relaxed text-gray-500">
                 We analyze your existing workflows to identify bottlenecks and
                 implement automated solutions that reduce overhead and increase
                 throughput.
@@ -67,46 +67,46 @@
 
         <!-- Top Middle Red Accent -->
         <div
-          class="absolute top-0 right-[40%] w-[180px] h-[120px] bg-brandred clip-top-accent z-0"
+          class="bg-brandred clip-top-accent absolute top-0 right-[40%] z-0 h-[120px] w-[180px]"
         ></div>
 
         <!-- Right image area with gradient background block -->
         <div
-          class="absolute inset-y-0 right-0 w-[55%] flex z-10 clip-img-container"
+          class="clip-img-container absolute inset-y-0 right-0 z-10 flex w-[55%]"
         >
           <div
-            class="w-full h-full bg-gradient-to-br from-brandorange to-brandred relative"
+            class="from-brandorange to-brandred relative h-full w-full bg-gradient-to-br"
           >
             <img
               src="/presentation-images/innovate-business-presentation/slide-3-img-1.jpg"
               alt="Professional consultant working with a laptop"
-              class="absolute inset-x-0 bottom-0 top-[0px] w-full h-[100%] object-cover opacity-90 pb-[0px]"
+              class="absolute inset-x-0 top-[0px] bottom-0 h-[100%] w-full object-cover pb-[0px] opacity-90"
             />
             <div
-              class="absolute inset-0 z-0 bg-white clip-img-container left-[15px] pr-1"
+              class="clip-img-container absolute inset-0 left-[15px] z-0 bg-white pr-1"
               style="clip-path: polygon(15% 0, 100% 0, 100% 100%, 0 100%)"
             >
               <img
                 src="/presentation-images/innovate-business-presentation/slide-3-img-2.jpg"
                 alt="Modern tech workspace"
-                class="w-full h-full object-cover"
+                class="h-full w-full object-cover"
               />
             </div>
             <div
-              class="absolute inset-0 bg-gradient-to-r from-brandred to-orange-500 z-[-1]"
+              class="from-brandred absolute inset-0 z-[-1] bg-gradient-to-r to-orange-500"
             ></div>
           </div>
         </div>
 
-        <div class="absolute right-0 top-0 bottom-0 w-[55%] z-10">
+        <div class="absolute top-0 right-0 bottom-0 z-10 w-[55%]">
           <div
-            class="absolute inset-0 bg-gradient-to-tr from-brandred to-orange-500"
+            class="from-brandred absolute inset-0 bg-gradient-to-tr to-orange-500"
             style="clip-path: polygon(10% 0, 100% 0, 100% 100%, 0 100%)"
           ></div>
           <img
             src="/presentation-images/innovate-business-presentation/slide-3-img-3.jpg"
             alt="Executive consulting session"
-            class="absolute inset-0 w-full h-full object-cover"
+            class="absolute inset-0 h-full w-full object-cover"
             style="clip-path: polygon(25% 0, 100% 0, 100% 100%, 15% 100%)"
           />
         </div>
@@ -114,7 +114,7 @@
     </div>
 
     <script>
-      lucide.createIcons();
+      lucide.createIcons()
     </script>
   </body>
 </html>

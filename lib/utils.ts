@@ -10,16 +10,16 @@ export function cn(...inputs: ClassValue[]) {
  * This is crucial for exports like PPTX that strictly require hex.
  */
 export function colorToHex(color: string): string {
-  if (typeof window === 'undefined') return color;
-  if (color.startsWith('#')) return color;
-  
+  if (typeof window === "undefined") return color
+  if (color.startsWith("#")) return color
+
   try {
-    const ctx = document.createElement('canvas').getContext('2d');
-    if (!ctx) return color;
-    ctx.fillStyle = color;
-    return ctx.fillStyle; // Returns hex for most colors
+    const ctx = document.createElement("canvas").getContext("2d")
+    if (!ctx) return color
+    ctx.fillStyle = color
+    return ctx.fillStyle // Returns hex for most colors
   } catch (e) {
-    console.warn("Color conversion failed for:", color);
-    return color;
+    console.warn("Color conversion failed for:", color)
+    return color
   }
 }

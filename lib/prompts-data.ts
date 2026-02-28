@@ -48,5 +48,5 @@ export const RECOMMENDED_PROMPTS = [
   "The construction of a multi-generational ship for interstellar travel.",
   "A hidden city protected by a massive holographic waterfall.",
   "The evolution of communication: Telepathy through neural implants.",
-  "A day in the life of a janitor in a high-tech orbital museum."
-];
+  "A day in the life of a janitor in a high-tech orbital museum.",
+]

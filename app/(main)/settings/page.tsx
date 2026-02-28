@@ -2,7 +2,13 @@
 
 import * as React from "react"
 import { Sparkles, Zap, CreditCard, Clock, Info } from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 
@@ -39,37 +45,45 @@ export default function SettingsPage() {
   }, [])
 
   return (
-    <div className="flex-1 p-10 max-w-4xl mx-auto space-y-12 pb-24">
+    <div className="mx-auto max-w-4xl flex-1 space-y-12 p-10 pb-24">
       {/* Header */}
       <div className="space-y-1">
         <h2 className="text-2xl font-bold tracking-tight">Settings</h2>
-        <p className="text-muted-foreground text-sm font-medium">Manage your workspace and track AI usage.</p>
+        <p className="text-muted-foreground text-sm font-medium">
+          Manage your workspace and track AI usage.
+        </p>
       </div>
 
       <Separator />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
         {/* Credit Overview */}
         <div className="space-y-6">
           <div className="space-y-2">
-            <h3 className="text-sm font-bold tracking-wider text-muted-foreground/60">Credits & Power</h3>
-            <Card className="border-border/50 shadow-sm rounded-2xl">
+            <h3 className="text-muted-foreground/60 text-sm font-bold tracking-wider">
+              Credits & Power
+            </h3>
+            <Card className="border-border/50 rounded-2xl shadow-sm">
               <CardHeader className="pb-2">
-                <CardDescription className="text-[10px] font-bold tracking-widest opacity-60">Available balance</CardDescription>
+                <CardDescription className="text-[10px] font-bold tracking-widest opacity-60">
+                  Available balance
+                </CardDescription>
                 <div className="flex items-baseline gap-2 pt-1">
                   <span className="text-4xl font-bold tracking-tight">
-                    {loading ? "---" : (credits?.toLocaleString() || "0")}
+                    {loading ? "---" : credits?.toLocaleString() || "0"}
                   </span>
-                  <span className="text-xs font-bold text-muted-foreground/50">credits</span>
+                  <span className="text-muted-foreground/50 text-xs font-bold">
+                    credits
+                  </span>
                 </div>
               </CardHeader>
-              <CardContent className="pt-4 space-y-4">
-                <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-                  <Clock className="size-3.5 text-primary" />
+              <CardContent className="space-y-4 pt-4">
+                <div className="text-muted-foreground flex items-center gap-2 text-xs font-medium">
+                  <Clock className="text-primary size-3.5" />
                   Resets to 50,000 at 12:00 AM UTC
                 </div>
-                <div className="w-full bg-muted h-1.5 rounded-full overflow-hidden">
-                  <div 
+                <div className="bg-muted h-1.5 w-full overflow-hidden rounded-full">
+                  <div
                     className="bg-primary h-full transition-all duration-1000 ease-out"
                     style={{ width: `${(credits || 0) / 500}%` }}
                   />
@@ -82,39 +96,46 @@ export default function SettingsPage() {
         {/* Usage Activity */}
         <div className="space-y-6">
           <div className="space-y-2">
-            <h3 className="text-sm font-bold tracking-wider text-muted-foreground/60">Activity</h3>
-            <Card className="border-border/50 shadow-sm rounded-2xl h-[264px] flex flex-col">
+            <h3 className="text-muted-foreground/60 text-sm font-bold tracking-wider">
+              Activity
+            </h3>
+            <Card className="border-border/50 flex h-[264px] flex-col rounded-2xl shadow-sm">
               <CardHeader className="pb-4">
-                <CardTitle className="text-xs font-bold tracking-widest flex items-center justify-between opacity-60">
-                   Usage trends
-                   <Info className="size-3 text-muted-foreground/40" />
+                <CardTitle className="flex items-center justify-between text-xs font-bold tracking-widest opacity-60">
+                  Usage trends
+                  <Info className="text-muted-foreground/40 size-3" />
                 </CardTitle>
               </CardHeader>
-              <CardContent className="flex-1 flex items-end justify-between gap-2 pt-6">
+              <CardContent className="flex flex-1 items-end justify-between gap-2 pt-6">
                 {USAGE_DATA.map((item) => (
-                  <div key={item.day} className="flex-1 flex flex-col items-center gap-2">
-                    <div 
-                      className="w-full bg-primary/10 rounded-sm relative group"
+                  <div
+                    key={item.day}
+                    className="flex flex-1 flex-col items-center gap-2"
+                  >
+                    <div
+                      className="bg-primary/10 group relative w-full rounded-sm"
                       style={{ height: `${item.value}%` }}
                     >
-                      <div className="absolute inset-0 bg-primary opacity-20 group-hover:opacity-40 transition-opacity" />
+                      <div className="bg-primary absolute inset-0 opacity-20 transition-opacity group-hover:opacity-40" />
                     </div>
-                    <span className="text-[9px] font-bold text-muted-foreground/40">{item.day}</span>
+                    <span className="text-muted-foreground/40 text-[9px] font-bold">
+                      {item.day}
+                    </span>
                   </div>
                 ))}
               </CardContent>
             </Card>
           </div>
 
-          <div className="bg-muted/30 border border-border/50 rounded-2xl p-4 flex gap-3">
-             <Info className="size-4 text-primary shrink-0 mt-0.5" />
-             <p className="text-[10px] font-medium leading-relaxed text-muted-foreground">
-                Your daily credit allotment is shared across all projects. High-density generations may take longer during peak usage.
-             </p>
+          <div className="bg-muted/30 border-border/50 flex gap-3 rounded-2xl border p-4">
+            <Info className="text-primary mt-0.5 size-4 shrink-0" />
+            <p className="text-muted-foreground text-[10px] leading-relaxed font-medium">
+              Your daily credit allotment is shared across all projects.
+              High-density generations may take longer during peak usage.
+            </p>
           </div>
         </div>
       </div>
     </div>
   )
 }
-

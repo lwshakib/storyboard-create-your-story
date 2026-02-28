@@ -17,51 +17,71 @@
             },
           },
         },
-      };
+      }
     </script>
   </head>
-  <body class="font-sans overflow-hidden bg-white">
-    <div class="w-[960px] h-[540px] relative overflow-hidden p-20 flex flex-col items-center justify-center text-center">
+  <body class="overflow-hidden bg-white font-sans">
+    <div
+      class="relative flex h-[540px] w-[960px] flex-col items-center justify-center overflow-hidden p-20 text-center"
+    >
       <!-- Background Abstract Shapes -->
-      <svg class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none" viewBox="0 0 960 540" preserveAspectRatio="none">
-          <path d="M0,0 L960,0 L960,100 C700,50 300,150 0,100 Z" fill="#3abef9" />
-          <path d="M0,540 C300,450 700,550 960,450 L960,540 L0,540 Z" fill="#522583" />
+      <svg
+        class="pointer-events-none absolute top-0 left-0 h-full w-full opacity-10"
+        viewBox="0 0 960 540"
+        preserveAspectRatio="none"
+      >
+        <path d="M0,0 L960,0 L960,100 C700,50 300,150 0,100 Z" fill="#3abef9" />
+        <path
+          d="M0,540 C300,450 700,550 960,450 L960,540 L0,540 Z"
+          fill="#522583"
+        />
       </svg>
-      
+
       <!-- Colorful Streaks -->
-      <div class="absolute top-10 left-1/2 -translate-x-1/2 flex space-x-4 opacity-30">
-          <div class="w-1 h-32 bg-mainpurple rounded-full"></div>
-          <div class="w-1 h-48 bg-brandblue rounded-full translate-y-10"></div>
-          <div class="w-1 h-32 bg-brandyellow rounded-full"></div>
+      <div
+        class="absolute top-10 left-1/2 flex -translate-x-1/2 space-x-4 opacity-30"
+      >
+        <div class="bg-mainpurple h-32 w-1 rounded-full"></div>
+        <div class="bg-brandblue h-48 w-1 translate-y-10 rounded-full"></div>
+        <div class="bg-brandyellow h-32 w-1 rounded-full"></div>
       </div>
 
       <div class="relative z-10 max-w-2xl">
-          <h1 class="text-brandyellow text-6xl font-black uppercase tracking-tight mb-8">DETAILS & MORE</h1>
-          <p class="text-gray-600 text-lg leading-relaxed font-medium mb-10">
-            Comprehensive analysis of project requirements, technical specifications, and expected milestones for the upcoming development cycles. We ensure every aspect is meticulously planned.
-          </p>
-          
-          <div class="grid grid-cols-2 gap-6 text-left">
-              <div class="border-l-4 border-brandblue pl-4">
-                  <h3 class="font-black text-mainpurple">Phase 01</h3>
-                  <p class="text-xs text-gray-500">Infrastructure Setup</p>
-              </div>
-              <div class="border-l-4 border-brandyellow pl-4">
-                  <h3 class="font-black text-mainpurple">Phase 02</h3>
-                  <p class="text-xs text-gray-500">Core Feature Implementation</p>
-              </div>
+        <h1
+          class="text-brandyellow mb-8 text-6xl font-black tracking-tight uppercase"
+        >
+          DETAILS & MORE
+        </h1>
+        <p class="mb-10 text-lg leading-relaxed font-medium text-gray-600">
+          Comprehensive analysis of project requirements, technical
+          specifications, and expected milestones for the upcoming development
+          cycles. We ensure every aspect is meticulously planned.
+        </p>
+
+        <div class="grid grid-cols-2 gap-6 text-left">
+          <div class="border-brandblue border-l-4 pl-4">
+            <h3 class="text-mainpurple font-black">Phase 01</h3>
+            <p class="text-xs text-gray-500">Infrastructure Setup</p>
           </div>
+          <div class="border-brandyellow border-l-4 pl-4">
+            <h3 class="text-mainpurple font-black">Phase 02</h3>
+            <p class="text-xs text-gray-500">Core Feature Implementation</p>
+          </div>
+        </div>
       </div>
 
       <!-- Leaf in bottom corner -->
       <div class="absolute -bottom-10 -left-10 opacity-20">
-          <svg width="150" height="150" viewBox="0 0 100 100">
-              <path d="M50,0 C70,20 100,50 50,100 C0,50 30,20 50,0" fill="#522583" />
-          </svg>
+        <svg width="150" height="150" viewBox="0 0 100 100">
+          <path
+            d="M50,0 C70,20 100,50 50,100 C0,50 30,20 50,0"
+            fill="#522583"
+          />
+        </svg>
       </div>
     </div>
     <script>
-      lucide.createIcons();
+      lucide.createIcons()
     </script>
   </body>
 </html>

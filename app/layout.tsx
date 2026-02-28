@@ -1,8 +1,8 @@
-import type { Metadata } from "next";
-import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
-import { Toaster } from "@/components/ui/sonner";
-import NextTopLoader from 'nextjs-toploader';
+import type { Metadata } from "next"
+import "./globals.css"
+import { ThemeProvider } from "@/components/theme-provider"
+import { Toaster } from "@/components/ui/sonner"
+import NextTopLoader from "nextjs-toploader"
 
 export const metadata: Metadata = {
   title: "Storyboard",
@@ -34,33 +34,33 @@ export const metadata: Metadata = {
     apple: "/favicon_io/apple-touch-icon.png",
   },
   manifest: "/favicon_io/site.webmanifest",
-};
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-    <body>
+      <body>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <NextTopLoader 
+          <NextTopLoader
             showSpinner={false}
             height={3}
             crawl={true}
             speed={200}
             initialPosition={0.08}
           />
-            {children}
+          {children}
           <Toaster />
         </ThemeProvider>
       </body>
     </html>
-  );
+  )
 }

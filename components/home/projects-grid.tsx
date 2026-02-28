@@ -18,26 +18,31 @@ export function ProjectsGrid({ initialProjects }: ProjectsGridProps) {
   }, [initialProjects])
 
   const handleOptimisticDelete = (projectId: string) => {
-    setProjects(prev => prev.filter(p => p.id !== projectId))
+    setProjects((prev) => prev.filter((p) => p.id !== projectId))
   }
 
   if (projects.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-32 border border-dashed border-border/40 gap-6 text-center rounded-3xl bg-muted/5">
-        <p className="font-semibold text-sm tracking-tight text-foreground/40">No storyboards yet</p>
-        <Link href="/new" className="text-sm font-semibold tracking-tight text-primary hover:text-primary/70 transition-colors">
-            Create your first project →
+      <div className="border-border/40 bg-muted/5 flex flex-col items-center justify-center gap-6 rounded-3xl border border-dashed py-32 text-center">
+        <p className="text-foreground/40 text-sm font-semibold tracking-tight">
+          No storyboards yet
+        </p>
+        <Link
+          href="/new"
+          className="text-primary hover:text-primary/70 text-sm font-semibold tracking-tight transition-colors"
+        >
+          Create your first project →
         </Link>
       </div>
     )
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-10 gap-y-16">
+    <div className="grid grid-cols-1 gap-x-10 gap-y-16 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
       {projects.map((project) => (
-        <ProjectCard 
-          key={project.id} 
-          project={project} 
+        <ProjectCard
+          key={project.id}
+          project={project}
           onDelete={() => handleOptimisticDelete(project.id)}
         />
       ))}

@@ -16,91 +16,137 @@
             },
           },
         },
-      };
+      }
     </script>
     <style>
       .clip-hex {
-        clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+        clip-path: polygon(
+          50% 0%,
+          100% 25%,
+          100% 75%,
+          50% 100%,
+          0% 75%,
+          0% 25%
+        );
       }
     </style>
   </head>
-  <body class="font-sans overflow-hidden">
-    <div class="w-[960px] h-[540px] bg-[#f8fcf9] relative overflow-hidden p-16">
+  <body class="overflow-hidden font-sans">
+    <div class="relative h-[540px] w-[960px] overflow-hidden bg-[#f8fcf9] p-16">
       <!-- Title -->
-      <div class="flex items-start mb-12">
-        <div class="w-16 h-[2px] bg-brandgreen mt-6 mr-6"></div>
+      <div class="mb-12 flex items-start">
+        <div class="bg-brandgreen mt-6 mr-6 h-[2px] w-16"></div>
         <div>
-          <h2 class="text-[48px] font-black text-branddark uppercase leading-none">ABOUT</h2>
-          <h2 class="text-[48px] font-black text-brandgreen uppercase leading-none">COMPANY</h2>
+          <h2
+            class="text-branddark text-[48px] leading-none font-black uppercase"
+          >
+            ABOUT
+          </h2>
+          <h2
+            class="text-brandgreen text-[48px] leading-none font-black uppercase"
+          >
+            COMPANY
+          </h2>
         </div>
       </div>
 
       <div class="flex">
         <!-- Left Content -->
         <div class="w-1/2 pr-12">
-          <p class="text-[14px] text-branddark leading-relaxed mb-6 font-medium">
-            Founded in 2015, we provide cutting-edge solutions for modern enterprises. Our expertise spans across strategic planning, market analysis, and digital integration.
+          <p
+            class="text-branddark mb-6 text-[14px] leading-relaxed font-medium"
+          >
+            Founded in 2015, we provide cutting-edge solutions for modern
+            enterprises. Our expertise spans across strategic planning, market
+            analysis, and digital integration.
           </p>
           <div class="space-y-4">
-             <div class="flex items-center">
-                 <div class="w-2 h-2 clip-hex bg-brandgreen mr-3"></div>
-                 <p class="text-[12px] text-gray-600 font-bold uppercase tracking-wider">Strategic Innovation</p>
-             </div>
-             <div class="flex items-center">
-                 <div class="w-2 h-2 clip-hex bg-brandgreen mr-3"></div>
-                 <p class="text-[12px] text-gray-600 font-bold uppercase tracking-wider">Operational Excellence</p>
-             </div>
-             <div class="flex items-center">
-                 <div class="w-2 h-2 clip-hex bg-brandgreen mr-3"></div>
-                 <p class="text-[12px] text-gray-600 font-bold uppercase tracking-wider">Global Connectivity</p>
-             </div>
+            <div class="flex items-center">
+              <div class="clip-hex bg-brandgreen mr-3 h-2 w-2"></div>
+              <p
+                class="text-[12px] font-bold tracking-wider text-gray-600 uppercase"
+              >
+                Strategic Innovation
+              </p>
+            </div>
+            <div class="flex items-center">
+              <div class="clip-hex bg-brandgreen mr-3 h-2 w-2"></div>
+              <p
+                class="text-[12px] font-bold tracking-wider text-gray-600 uppercase"
+              >
+                Operational Excellence
+              </p>
+            </div>
+            <div class="flex items-center">
+              <div class="clip-hex bg-brandgreen mr-3 h-2 w-2"></div>
+              <p
+                class="text-[12px] font-bold tracking-wider text-gray-600 uppercase"
+              >
+                Global Connectivity
+              </p>
+            </div>
           </div>
-          
-          <div class="mt-12 bg-white p-6 shadow-xl border-l-4 border-brandgreen rounded-r-lg">
-             <h4 class="text-[12px] font-black text-brandgreen uppercase mb-2">Company Position</h4>
-             <p class="text-[11px] text-gray-500 leading-relaxed italic">
-                 Leading the industry with over 500 successful project implementations globally.
-             </p>
+
+          <div
+            class="border-brandgreen mt-12 rounded-r-lg border-l-4 bg-white p-6 shadow-xl"
+          >
+            <h4 class="text-brandgreen mb-2 text-[12px] font-black uppercase">
+              Company Position
+            </h4>
+            <p class="text-[11px] leading-relaxed text-gray-500 italic">
+              Leading the industry with over 500 successful project
+              implementations globally.
+            </p>
           </div>
         </div>
 
         <!-- Right Side: Hex Images -->
-        <div class="w-1/2 flex items-center justify-center relative">
-            <div class="relative w-[280px] h-[320px] clip-hex bg-brandgreen p-1">
-                <div class="w-full h-full clip-hex bg-white p-1">
-                    <img
-                        src="/presentation-images/growth-business-deck/slide-2-img-1.jpg"
-                        alt="A high-rise modern corporate building exterior"
-                        class="w-full h-full object-cover"
-                    />
-                </div>
+        <div class="relative flex w-1/2 items-center justify-center">
+          <div class="clip-hex bg-brandgreen relative h-[320px] w-[280px] p-1">
+            <div class="clip-hex h-full w-full bg-white p-1">
+              <img
+                src="/presentation-images/growth-business-deck/slide-2-img-1.jpg"
+                alt="A high-rise modern corporate building exterior"
+                class="h-full w-full object-cover"
+              />
             </div>
-            
-            <!-- Secondary Overlapping Hex -->
-            <div class="absolute -bottom-10 -right-4 w-[160px] h-[180px] clip-hex bg-branddark p-1 z-10">
-                <div class="w-full h-full clip-hex bg-white p-1">
-                    <img
-                        src="/presentation-images/growth-business-deck/slide-2-img-2.jpg"
-                        alt="Business professionals collaborating in a meeting"
-                        class="w-full h-full object-cover"
-                    />
-                </div>
+          </div>
+
+          <!-- Secondary Overlapping Hex -->
+          <div
+            class="clip-hex bg-branddark absolute -right-4 -bottom-10 z-10 h-[180px] w-[160px] p-1"
+          >
+            <div class="clip-hex h-full w-full bg-white p-1">
+              <img
+                src="/presentation-images/growth-business-deck/slide-2-img-2.jpg"
+                alt="Business professionals collaborating in a meeting"
+                class="h-full w-full object-cover"
+              />
             </div>
-            
-            <!-- Floating Elements -->
-            <div class="absolute top-0 right-0 w-8 h-8 clip-hex bg-brandgreen opacity-40"></div>
-            <div class="absolute bottom-20 left-0 w-6 h-6 clip-hex border-2 border-brandgreen"></div>
+          </div>
+
+          <!-- Floating Elements -->
+          <div
+            class="clip-hex bg-brandgreen absolute top-0 right-0 h-8 w-8 opacity-40"
+          ></div>
+          <div
+            class="clip-hex border-brandgreen absolute bottom-20 left-0 h-6 w-6 border-2"
+          ></div>
         </div>
       </div>
-      
+
       <!-- Footer Page Number -->
-      <div class="absolute bottom-10 right-10 flex items-center">
-         <div class="w-10 h-10 clip-hex bg-transparent border-2 border-brandgreen flex items-center justify-center font-bold text-brandgreen">02</div>
+      <div class="absolute right-10 bottom-10 flex items-center">
+        <div
+          class="clip-hex border-brandgreen text-brandgreen flex h-10 w-10 items-center justify-center border-2 bg-transparent font-bold"
+        >
+          02
+        </div>
       </div>
     </div>
 
     <script>
-      lucide.createIcons();
+      lucide.createIcons()
     </script>
   </body>
 </html>

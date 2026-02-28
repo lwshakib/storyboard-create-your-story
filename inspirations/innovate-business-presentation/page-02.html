@@ -16,7 +16,7 @@
             },
           },
         },
-      };
+      }
     </script>
     <style>
       .clip-img-container {
@@ -30,51 +30,51 @@
       }
     </style>
   </head>
-  <body class="font-sans overflow-hidden">
-    <div class="w-[960px] h-[540px] bg-white relative overflow-hidden flex">
-      <div class="w-full h-full bg-white relative overflow-hidden flex">
+  <body class="overflow-hidden font-sans">
+    <div class="relative flex h-[540px] w-[960px] overflow-hidden bg-white">
+      <div class="relative flex h-full w-full overflow-hidden bg-white">
         <!-- Bottom left accent shape -->
         <div
-          class="absolute bottom-0 left-0 w-[350px] h-[250px] bg-gradient-to-tr from-brandred to-brandorange clip-bottom-accent z-0 opacity-90"
+          class="from-brandred to-brandorange clip-bottom-accent absolute bottom-0 left-0 z-0 h-[250px] w-[350px] bg-gradient-to-tr opacity-90"
         ></div>
 
         <!-- Left Image -->
-        <div class="w-[55%] h-full relative z-10 clip-img-container pr-1">
+        <div class="clip-img-container relative z-10 h-full w-[55%] pr-1">
           <img
             src="/presentation-images/innovate-business-presentation/slide-2-img-1.jpg"
             alt="High precision engineering component close-up"
-            class="w-full h-full object-cover"
+            class="h-full w-full object-cover"
           />
         </div>
 
         <!-- Right Content -->
         <div
-          class="w-[45%] h-full flex flex-col justify-center pr-12 pl-6 z-10"
+          class="z-10 flex h-full w-[45%] flex-col justify-center pr-12 pl-6"
         >
-          <h2 class="text-3xl font-bold text-gray-800 mb-6 leading-tight">
+          <h2 class="mb-6 text-3xl leading-tight font-bold text-gray-800">
             Engineering for a<br />
             Sustainable Future
           </h2>
 
-          <p class="text-xs text-gray-500 mb-4 leading-relaxed">
+          <p class="mb-4 text-xs leading-relaxed text-gray-500">
             Our team delivers high-performance solutions that balance technical
             efficiency with environmental responsibility. We leverage advanced
             R&D to optimize resource consumption.
           </p>
-          <p class="text-xs text-gray-500 mb-8 leading-relaxed">
+          <p class="mb-8 text-xs leading-relaxed text-gray-500">
             By integrating smart automation and renewable energy protocols, we
             help businesses transition to a circular economy model while
             maximizing their operational output.
           </p>
 
           <button
-            class="flex items-center w-max bg-gradient-to-r from-brandred to-brandorange text-white rounded-full overflow-hidden shadow-lg h-9 hover:-translate-y-0.5 transition-transform"
+            class="from-brandred to-brandorange flex h-9 w-max items-center overflow-hidden rounded-full bg-gradient-to-r text-white shadow-lg transition-transform hover:-translate-y-0.5"
           >
-            <span class="text-xs font-semibold px-5 py-2">Our Workflow</span>
+            <span class="px-5 py-2 text-xs font-semibold">Our Workflow</span>
             <span
-              class="bg-white/20 h-full flex items-center justify-center px-3 clip-button-icon"
+              class="clip-button-icon flex h-full items-center justify-center bg-white/20 px-3"
             >
-              <i data-lucide="chevron-right" class="w-4 h-4 text-white"></i>
+              <i data-lucide="chevron-right" class="h-4 w-4 text-white"></i>
             </span>
           </button>
         </div>
@@ -82,7 +82,7 @@
     </div>
 
     <script>
-      lucide.createIcons();
+      lucide.createIcons()
     </script>
   </body>
 </html>

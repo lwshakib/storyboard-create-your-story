@@ -8,7 +8,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const {id} = await params;
+    const { id } = await params
     const project = await prisma.project.findUnique({
       where: {
         id,
@@ -32,24 +32,25 @@ export async function PATCH(
 ) {
   try {
     const session = await auth.api.getSession({
-        headers: await headers()
+      headers: await headers(),
     })
-    
+
     const body = await req.json()
     const { title, description, slides, isDeleted } = body
-    const {id} = await params;
+    const { id } = await params
 
     const project = await prisma.project.update({
       where: {
         id,
-        userId: session?.user?.id
+        userId: session?.user?.id,
       },
       data: {
         title,
         description,
         slides,
         isDeleted,
-        deletedAt: isDeleted === false ? null : (isDeleted ? new Date() : undefined)
+        deletedAt:
+          isDeleted === false ? null : isDeleted ? new Date() : undefined,
       },
     })
 
@@ -66,37 +67,37 @@ export async function DELETE(
 ) {
   try {
     const session = await auth.api.getSession({
-        headers: await headers()
+      headers: await headers(),
     })
-    
+
     if (!session) {
       return new NextResponse("Unauthorized", { status: 401 })
     }
 
-    const { id } = await params;
+    const { id } = await params
 
     const project = await prisma.project.findUnique({
-      where: { id, userId: session.user.id }
+      where: { id, userId: session.user.id },
     })
 
     if (!project) {
-        return new NextResponse("Not Found", { status: 404 })
+      return new NextResponse("Not Found", { status: 404 })
     }
 
     if (!project.isDeleted) {
-        // Soft delete: Move to trash
-        await prisma.project.update({
-            where: { id },
-            data: { 
-                isDeleted: true,
-                deletedAt: new Date()
-            }
-        })
+      // Soft delete: Move to trash
+      await prisma.project.update({
+        where: { id },
+        data: {
+          isDeleted: true,
+          deletedAt: new Date(),
+        },
+      })
     } else {
-        // Permanent delete: Remove from DB
-        await prisma.project.delete({
-            where: { id }
-        })
+      // Permanent delete: Remove from DB
+      await prisma.project.delete({
+        where: { id },
+      })
     }
 
     return new NextResponse(null, { status: 204 })

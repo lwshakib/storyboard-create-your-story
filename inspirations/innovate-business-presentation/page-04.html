@@ -16,7 +16,7 @@
             },
           },
         },
-      };
+      }
     </script>
     <style>
       .clip-left-ribbon {
@@ -24,24 +24,24 @@
       }
     </style>
   </head>
-  <body class="font-sans overflow-hidden">
+  <body class="overflow-hidden font-sans">
     <div
-      class="w-[960px] h-[540px] bg-white relative overflow-hidden flex items-center"
+      class="relative flex h-[540px] w-[960px] items-center overflow-hidden bg-white"
     >
       <div
-        class="w-full h-full bg-white relative overflow-hidden flex items-center"
+        class="relative flex h-full w-full items-center overflow-hidden bg-white"
       >
         <!-- Left large red-orange gradient shape -->
         <div
-          class="absolute top-0 left-0 bottom-0 w-[60%] bg-gradient-to-br from-brandred to-orange-500 clip-left-ribbon z-0"
+          class="from-brandred clip-left-ribbon absolute top-0 bottom-0 left-0 z-0 w-[60%] bg-gradient-to-br to-orange-500"
         ></div>
 
         <!-- Content container -->
         <div
-          class="w-full h-full px-12 py-10 flex flex-col relative z-10 top-0"
+          class="relative top-0 z-10 flex h-full w-full flex-col px-12 py-10"
         >
           <!-- Top title in the colored ribbon -->
-          <div class="w-[45%] mb-auto pt-4 text-white">
+          <div class="mb-auto w-[45%] pt-4 text-white">
             <h2 class="text-xl font-bold tracking-wide">
               Scalable Infrastructure<br />for Digital Growth
             </h2>
@@ -49,36 +49,36 @@
 
           <!-- Center Card -->
           <div
-            class="flex flex-row items-center w-full h-[320px] bg-white rounded shadow-md mt-6"
+            class="mt-6 flex h-[320px] w-full flex-row items-center rounded bg-white shadow-md"
           >
             <!-- Inner Left side - Image -->
-            <div class="w-[50%] h-full p-2">
+            <div class="h-full w-[50%] p-2">
               <img
                 src="/presentation-images/innovate-business-presentation/slide-4-img-1.jpg"
                 alt="A high-tech cloud server array in a data center"
-                class="w-full h-full object-cover rounded-l-sm"
+                class="h-full w-full rounded-l-sm object-cover"
               />
             </div>
 
             <!-- Inner Right side - Text -->
-            <div class="w-[50%] h-full flex flex-col justify-center px-10">
-              <p class="text-[10px] text-gray-400 mb-6 leading-relaxed">
+            <div class="flex h-full w-[50%] flex-col justify-center px-10">
+              <p class="mb-6 text-[10px] leading-relaxed text-gray-400">
                 We design and deploy resilient cloud infrastructures that
                 support millions of concurrent users while optimizing for cost
                 and performance.
               </p>
 
-              <div class="flex items-center mb-6">
+              <div class="mb-6 flex items-center">
                 <div
-                  class="w-10 h-10 rounded-full border border-gray-200 shadow-sm flex items-center justify-center text-brandorange mr-4 flex-shrink-0"
+                  class="text-brandorange mr-4 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border border-gray-200 shadow-sm"
                 >
-                  <i data-lucide="cloud" class="w-5 h-5"></i>
+                  <i data-lucide="cloud" class="h-5 w-5"></i>
                 </div>
                 <div>
-                  <h4 class="font-bold text-gray-800 text-xs mb-1">
+                  <h4 class="mb-1 text-xs font-bold text-gray-800">
                     Cloud Native
                   </h4>
-                  <p class="text-[9px] text-gray-400 leading-relaxed">
+                  <p class="text-[9px] leading-relaxed text-gray-400">
                     Our solutions are built using Kubernetes and microservices,
                     ensuring maximum uptime and easy horizontal scaling.
                   </p>
@@ -87,15 +87,15 @@
 
               <div class="flex items-center">
                 <div
-                  class="w-10 h-10 rounded-full border border-gray-200 shadow-sm flex items-center justify-center text-brandorange mr-4 flex-shrink-0"
+                  class="text-brandorange mr-4 flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full border border-gray-200 shadow-sm"
                 >
-                  <i data-lucide="shield-check" class="w-5 h-5"></i>
+                  <i data-lucide="shield-check" class="h-5 w-5"></i>
                 </div>
                 <div>
-                  <h4 class="font-bold text-gray-800 text-xs mb-1">
+                  <h4 class="mb-1 text-xs font-bold text-gray-800">
                     Enterprise Security
                   </h4>
-                  <p class="text-[9px] text-gray-400 leading-relaxed">
+                  <p class="text-[9px] leading-relaxed text-gray-400">
                     Zero-trust architecture and automated vulnerability scanning
                     are integrated into every deployment.
                   </p>
@@ -108,7 +108,7 @@
     </div>
 
     <script>
-      lucide.createIcons();
+      lucide.createIcons()
     </script>
   </body>
 </html>

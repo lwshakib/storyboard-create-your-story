@@ -17,75 +17,114 @@
             },
           },
         },
-      };
+      }
     </script>
     <style>
-       .arc-line {
-          fill: none;
-          stroke: rgba(255, 255, 255, 0.05);
-          stroke-width: 1;
-       }
+      .arc-line {
+        fill: none;
+        stroke: rgba(255, 255, 255, 0.05);
+        stroke-width: 1;
+      }
     </style>
   </head>
-  <body class="font-sans overflow-hidden bg-branddark">
-    <div class="w-[960px] h-[540px] relative overflow-hidden flex flex-col p-20 items-center">
-      
+  <body class="bg-branddark overflow-hidden font-sans">
+    <div
+      class="relative flex h-[540px] w-[960px] flex-col items-center overflow-hidden p-20"
+    >
       <!-- Header Area -->
-      <div class="w-full flex flex-col items-center mb-16 relative z-10">
-          <h2 class="text-brandyellow text-[12px] font-black uppercase tracking-[0.5em] mb-4">Our Global Network</h2>
-          <h1 class="text-white text-[56px] font-black uppercase tracking-tighter shadow-sm mb-4">
-            HEADLINE <span class="text-gray-400">SLIDE</span>
-          </h1>
-          <div class="w-16 h-1 bg-brandyellow rounded-full"></div>
+      <div class="relative z-10 mb-16 flex w-full flex-col items-center">
+        <h2
+          class="text-brandyellow mb-4 text-[12px] font-black tracking-[0.5em] uppercase"
+        >
+          Our Global Network
+        </h2>
+        <h1
+          class="mb-4 text-[56px] font-black tracking-tighter text-white uppercase shadow-sm"
+        >
+          HEADLINE <span class="text-gray-400">SLIDE</span>
+        </h1>
+        <div class="bg-brandyellow h-1 w-16 rounded-full"></div>
       </div>
 
       <!-- Main Hubs -->
-      <div class="w-full flex justify-between px-20 relative z-10">
-          <!-- Hub A -->
-          <div class="flex flex-col items-center group">
-              <div class="w-24 h-24 rounded-full border border-brandyellow/30 bg-white/5 flex items-center justify-center mb-6 relative transition-transform group-hover:scale-110">
-                  <div class="absolute inset-0 border-[6px] border-brandyellow/10 rounded-full"></div>
-                  <span class="text-[32px] font-black text-brandyellow">A</span>
-              </div>
-              <h4 class="text-white text-[14px] font-black uppercase mb-1">North America</h4>
-              <p class="text-gray-500 text-[10px] font-bold uppercase tracking-widest">Primary Hub</p>
+      <div class="relative z-10 flex w-full justify-between px-20">
+        <!-- Hub A -->
+        <div class="group flex flex-col items-center">
+          <div
+            class="border-brandyellow/30 relative mb-6 flex h-24 w-24 items-center justify-center rounded-full border bg-white/5 transition-transform group-hover:scale-110"
+          >
+            <div
+              class="border-brandyellow/10 absolute inset-0 rounded-full border-[6px]"
+            ></div>
+            <span class="text-brandyellow text-[32px] font-black">A</span>
           </div>
+          <h4 class="mb-1 text-[14px] font-black text-white uppercase">
+            North America
+          </h4>
+          <p
+            class="text-[10px] font-bold tracking-widest text-gray-500 uppercase"
+          >
+            Primary Hub
+          </p>
+        </div>
 
-          <!-- Hub B -->
-          <div class="flex flex-col items-center group">
-              <div class="w-24 h-24 rounded-full border border-brandorange/30 bg-white/5 flex items-center justify-center mb-6 relative transition-transform group-hover:scale-110">
-                  <div class="absolute inset-0 border-[6px] border-brandorange/10 rounded-full"></div>
-                  <span class="text-[32px] font-black text-brandorange">B</span>
-              </div>
-              <h4 class="text-white text-[14px] font-black uppercase mb-1">Europe & MEA</h4>
-              <p class="text-gray-500 text-[10px] font-bold uppercase tracking-widest">Regional Hub</p>
+        <!-- Hub B -->
+        <div class="group flex flex-col items-center">
+          <div
+            class="border-brandorange/30 relative mb-6 flex h-24 w-24 items-center justify-center rounded-full border bg-white/5 transition-transform group-hover:scale-110"
+          >
+            <div
+              class="border-brandorange/10 absolute inset-0 rounded-full border-[6px]"
+            ></div>
+            <span class="text-brandorange text-[32px] font-black">B</span>
           </div>
+          <h4 class="mb-1 text-[14px] font-black text-white uppercase">
+            Europe & MEA
+          </h4>
+          <p
+            class="text-[10px] font-bold tracking-widest text-gray-500 uppercase"
+          >
+            Regional Hub
+          </p>
+        </div>
 
-          <!-- Hub C -->
-          <div class="flex flex-col items-center group">
-              <div class="w-24 h-24 rounded-full border border-white/20 bg-white/5 flex items-center justify-center mb-6 relative transition-transform group-hover:scale-110">
-                  <div class="absolute inset-0 border-[6px] border-white/5 rounded-full"></div>
-                  <span class="text-[32px] font-black text-white/40">C</span>
-              </div>
-              <h4 class="text-white text-[14px] font-black uppercase mb-1">Asia-Pacific</h4>
-              <p class="text-gray-500 text-[10px] font-bold uppercase tracking-widest">Growth Node</p>
+        <!-- Hub C -->
+        <div class="group flex flex-col items-center">
+          <div
+            class="relative mb-6 flex h-24 w-24 items-center justify-center rounded-full border border-white/20 bg-white/5 transition-transform group-hover:scale-110"
+          >
+            <div
+              class="absolute inset-0 rounded-full border-[6px] border-white/5"
+            ></div>
+            <span class="text-[32px] font-black text-white/40">C</span>
           </div>
+          <h4 class="mb-1 text-[14px] font-black text-white uppercase">
+            Asia-Pacific
+          </h4>
+          <p
+            class="text-[10px] font-bold tracking-widest text-gray-500 uppercase"
+          >
+            Growth Node
+          </p>
+        </div>
       </div>
 
       <!-- Background Arcs -->
-      <div class="absolute inset-0 z-0 pointer-events-none">
-          <svg viewBox="0 0 960 540" class="w-full h-full">
-              <path d="M100,270 Q480,-50 860,270" class="arc-line" />
-              <path d="M100,270 Q480,590 860,270" class="arc-line" />
-          </svg>
+      <div class="pointer-events-none absolute inset-0 z-0">
+        <svg viewBox="0 0 960 540" class="h-full w-full">
+          <path d="M100,270 Q480,-50 860,270" class="arc-line" />
+          <path d="M100,270 Q480,590 860,270" class="arc-line" />
+        </svg>
       </div>
 
       <!-- Corner Accent -->
-      <div class="absolute bottom-[-100px] right-[-100px] w-64 h-64 border-t-[30px] border-l-[30px] border-white/5 rounded-tl-[150px]"></div>
+      <div
+        class="absolute right-[-100px] bottom-[-100px] h-64 w-64 rounded-tl-[150px] border-t-[30px] border-l-[30px] border-white/5"
+      ></div>
     </div>
 
     <script>
-      lucide.createIcons();
+      lucide.createIcons()
     </script>
   </body>
 </html>

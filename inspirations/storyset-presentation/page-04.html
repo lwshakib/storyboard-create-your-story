@@ -17,43 +17,77 @@
             },
           },
         },
-      };
+      }
     </script>
   </head>
-  <body class="font-sans overflow-hidden bg-white">
-    <div class="w-[960px] h-[540px] relative overflow-hidden flex items-center p-20">
+  <body class="overflow-hidden bg-white font-sans">
+    <div
+      class="relative flex h-[540px] w-[960px] items-center overflow-hidden p-20"
+    >
       <!-- Background Waves -->
-      <svg class="absolute bottom-0 left-0 w-full h-40" viewBox="0 0 960 160" preserveAspectRatio="none">
-         <path d="M0,100 C300,40 700,160 960,100 L960,160 L0,160 Z" fill="#522583" />
-         <path d="M0,80 C200,140 500,60 960,120 L960,160 L0,160 Z" fill="#522583" opacity="0.4" />
+      <svg
+        class="absolute bottom-0 left-0 h-40 w-full"
+        viewBox="0 0 960 160"
+        preserveAspectRatio="none"
+      >
+        <path
+          d="M0,100 C300,40 700,160 960,100 L960,160 L0,160 Z"
+          fill="#522583"
+        />
+        <path
+          d="M0,80 C200,140 500,60 960,120 L960,160 L0,160 Z"
+          fill="#522583"
+          opacity="0.4"
+        />
       </svg>
 
       <!-- Left: Storyset Image -->
-      <div class="w-1/2 flex items-center justify-center relative z-10">
-          <img src="/storyset/Take Away-pana.svg" alt="Woman holding coffee" class="w-full max-w-[380px]" />
-          <!-- Abstract circles -->
-          <div class="absolute top-10 left-10 w-20 h-20 border-2 border-mainpurple/10 rounded-full"></div>
-          <div class="absolute bottom-10 right-10 w-32 h-32 border border-mainpurple/5 rounded-full"></div>
+      <div class="relative z-10 flex w-1/2 items-center justify-center">
+        <img
+          src="/storyset/Take Away-pana.svg"
+          alt="Woman holding coffee"
+          class="w-full max-w-[380px]"
+        />
+        <!-- Abstract circles -->
+        <div
+          class="border-mainpurple/10 absolute top-10 left-10 h-20 w-20 rounded-full border-2"
+        ></div>
+        <div
+          class="border-mainpurple/5 absolute right-10 bottom-10 h-32 w-32 rounded-full border"
+        ></div>
       </div>
 
       <!-- Right: Content -->
-      <div class="w-1/2 pl-12 relative z-10">
-          <h1 class="text-brandyellow text-6xl font-black uppercase tracking-tight mb-6">ABOUT US</h1>
-          <p class="text-gray-600 text-lg leading-relaxed font-medium">
-            We are a diverse team of creators, engineers, and strategists dedicated to delivering high-quality digital experiences that resonate with users worldwide. Our culture is built on creativity and collaboration.
-          </p>
-          <div class="w-16 h-1 bg-mainpurple mt-8"></div>
+      <div class="relative z-10 w-1/2 pl-12">
+        <h1
+          class="text-brandyellow mb-6 text-6xl font-black tracking-tight uppercase"
+        >
+          ABOUT US
+        </h1>
+        <p class="text-lg leading-relaxed font-medium text-gray-600">
+          We are a diverse team of creators, engineers, and strategists
+          dedicated to delivering high-quality digital experiences that resonate
+          with users worldwide. Our culture is built on creativity and
+          collaboration.
+        </p>
+        <div class="bg-mainpurple mt-8 h-1 w-16"></div>
       </div>
 
       <!-- Corner Accent -->
       <div class="absolute top-0 right-0 p-12">
-          <svg width="60" height="60" viewBox="0 0 60 60">
-              <path d="M0,0 Q30,60 60,0" fill="none" stroke="#ffcc33" stroke-width="4" stroke-linecap="round" />
-          </svg>
+        <svg width="60" height="60" viewBox="0 0 60 60">
+          <path
+            d="M0,0 Q30,60 60,0"
+            fill="none"
+            stroke="#ffcc33"
+            stroke-width="4"
+            stroke-linecap="round"
+          />
+        </svg>
       </div>
     </div>
     <script>
-      lucide.createIcons();
+      lucide.createIcons()
     </script>
   </body>
 </html>

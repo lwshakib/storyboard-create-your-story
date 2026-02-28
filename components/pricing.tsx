@@ -1,8 +1,8 @@
-"use client";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import NumberFlow from "@number-flow/react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+"use client"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import NumberFlow from "@number-flow/react"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -10,11 +10,11 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-import { Sparkles, ArrowRight, Check, Star, Zap, Shield } from "lucide-react";
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+} from "@/components/ui/card"
+import { cn } from "@/lib/utils"
+import { Sparkles, ArrowRight, Check, Star, Zap, Shield } from "lucide-react"
+import { useState, useEffect } from "react"
+import { motion } from "framer-motion"
 
 const plans = [
   {
@@ -78,17 +78,17 @@ const plans = [
     ],
     cta: "Contact sales",
   },
-];
+]
 
 export default function SimplePricing() {
-  const [frequency, setFrequency] = useState<string>("monthly");
-  const [mounted, setMounted] = useState(false);
+  const [frequency, setFrequency] = useState<string>("monthly")
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
+    setMounted(true)
+  }, [])
 
-  if (!mounted) return null;
+  if (!mounted) return null
 
   return (
     <div
@@ -312,5 +312,5 @@ export default function SimplePricing() {
         </div>
       </div>
     </div>
-  );
+  )
 }

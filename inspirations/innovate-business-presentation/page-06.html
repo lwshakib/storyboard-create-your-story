@@ -1,103 +1,161 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Slide 6 - Our Best Team Meet</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brandorange: '#F97316',
-                        brandred: '#E11D48',
-                    }
-                }
-            }
-        }
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brandorange: "#F97316",
+              brandred: "#E11D48",
+            },
+          },
+        },
+      }
     </script>
     <style>
-        .clip-hex { clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); }
+      .clip-hex {
+        clip-path: polygon(
+          50% 0%,
+          100% 25%,
+          100% 75%,
+          50% 100%,
+          0% 75%,
+          0% 25%
+        );
+      }
     </style>
-</head>
-<body class="font-sans overflow-hidden">
-    <div class="w-[960px] h-[540px] bg-white relative overflow-hidden p-12">
-        <div class="w-full h-full bg-white relative overflow-hidden p-12">
-            
-            <!-- Header -->
-            <div class="text-center mb-16 pt-8">
-                <h2 class="text-2xl font-bold text-gray-800 mb-4">Our Executive Leadership</h2>
-                <p class="text-[11px] text-gray-400 max-w-2xl mx-auto leading-relaxed">
-                    Our leadership combines decades of experience in software engineering, environmental science, and business strategy to drive our mission forward.
-                </p>
-            </div>
-            
-            <!-- Team Grid -->
-            <div class="flex justify-between items-start px-10">
-                
-                <!-- Member 1 -->
-                <div class="flex flex-col items-center w-1/4 px-2">
-                    <div class="relative w-32 h-32 flex items-center justify-center mb-6">
-                        <div class="absolute inset-0 bg-gradient-to-br from-brandred to-brandorange clip-hex"></div>
-                        <div class="absolute inset-0 m-1 bg-white clip-hex overflow-hidden">
-                            <img src="/presentation-images/innovate-business-presentation/avatar-11.jpg" alt="Sarah Jenkins, CEO" class="w-full h-full object-cover">
-                        </div>
-                    </div>
-                    <h4 class="font-bold text-gray-800 text-sm mb-2">Sarah Jenkins</h4>
-                    <p class="text-[9px] text-gray-400 text-center leading-relaxed">
-                        Chief Executive Officer with 15 years in sustainable business growth.
-                    </p>
-                </div>
-
-                <!-- Member 2 -->
-                <div class="flex flex-col items-center w-1/4 px-2">
-                    <div class="relative w-32 h-32 flex items-center justify-center mb-6">
-                        <div class="absolute inset-0 bg-gradient-to-br from-brandred to-brandorange clip-hex"></div>
-                        <div class="absolute inset-0 m-1 bg-white clip-hex overflow-hidden">
-                            <img src="/presentation-images/innovate-business-presentation/avatar-12.jpg" alt="Marcus Chen, CTO" class="w-full h-full object-cover">
-                        </div>
-                    </div>
-                    <h4 class="font-bold text-gray-800 text-sm mb-2">Marcus Chen</h4>
-                    <p class="text-[9px] text-gray-400 text-center leading-relaxed">
-                        Chief Technology Officer specializing in scalable cloud architectures.
-                    </p>
-                </div>
-
-                <!-- Member 3 -->
-                <div class="flex flex-col items-center w-1/4 px-2">
-                    <div class="relative w-32 h-32 flex items-center justify-center mb-6">
-                        <div class="absolute inset-0 bg-gradient-to-br from-brandred to-brandorange clip-hex"></div>
-                        <div class="absolute inset-0 m-1 bg-white clip-hex overflow-hidden">
-                            <img src="/presentation-images/innovate-business-presentation/avatar-13.jpg" alt="Elena Rodriguez, COO" class="w-full h-full object-cover">
-                        </div>
-                    </div>
-                    <h4 class="font-bold text-gray-800 text-sm mb-2">Elena Rodriguez</h4>
-                    <p class="text-[9px] text-gray-400 text-center leading-relaxed">
-                        Chief Operating Officer focused on global supply chain efficiency.
-                    </p>
-                </div>
-
-                <!-- Member 4 -->
-                <div class="flex flex-col items-center w-1/4 px-2">
-                    <div class="relative w-32 h-32 flex items-center justify-center mb-6">
-                        <div class="absolute inset-0 bg-gradient-to-br from-brandred to-brandorange clip-hex"></div>
-                        <div class="absolute inset-0 m-1 bg-white clip-hex overflow-hidden">
-                            <img src="/presentation-images/innovate-business-presentation/avatar-14.jpg" alt="David Lee, CMO" class="w-full h-full object-cover">
-                        </div>
-                    </div>
-                    <h4 class="font-bold text-gray-800 text-sm mb-2">David Lee</h4>
-                    <p class="text-[9px] text-gray-400 text-center leading-relaxed">
-                        Chief Marketing Officer bridging the gap between tech and storytelling.
-                    </p>
-                </div>
-            </div>
+  </head>
+  <body class="overflow-hidden font-sans">
+    <div class="relative h-[540px] w-[960px] overflow-hidden bg-white p-12">
+      <div class="relative h-full w-full overflow-hidden bg-white p-12">
+        <!-- Header -->
+        <div class="mb-16 pt-8 text-center">
+          <h2 class="mb-4 text-2xl font-bold text-gray-800">
+            Our Executive Leadership
+          </h2>
+          <p
+            class="mx-auto max-w-2xl text-[11px] leading-relaxed text-gray-400"
+          >
+            Our leadership combines decades of experience in software
+            engineering, environmental science, and business strategy to drive
+            our mission forward.
+          </p>
         </div>
+
+        <!-- Team Grid -->
+        <div class="flex items-start justify-between px-10">
+          <!-- Member 1 -->
+          <div class="flex w-1/4 flex-col items-center px-2">
+            <div
+              class="relative mb-6 flex h-32 w-32 items-center justify-center"
+            >
+              <div
+                class="from-brandred to-brandorange clip-hex absolute inset-0 bg-gradient-to-br"
+              ></div>
+              <div
+                class="clip-hex absolute inset-0 m-1 overflow-hidden bg-white"
+              >
+                <img
+                  src="/presentation-images/innovate-business-presentation/avatar-11.jpg"
+                  alt="Sarah Jenkins, CEO"
+                  class="h-full w-full object-cover"
+                />
+              </div>
+            </div>
+            <h4 class="mb-2 text-sm font-bold text-gray-800">Sarah Jenkins</h4>
+            <p class="text-center text-[9px] leading-relaxed text-gray-400">
+              Chief Executive Officer with 15 years in sustainable business
+              growth.
+            </p>
+          </div>
+
+          <!-- Member 2 -->
+          <div class="flex w-1/4 flex-col items-center px-2">
+            <div
+              class="relative mb-6 flex h-32 w-32 items-center justify-center"
+            >
+              <div
+                class="from-brandred to-brandorange clip-hex absolute inset-0 bg-gradient-to-br"
+              ></div>
+              <div
+                class="clip-hex absolute inset-0 m-1 overflow-hidden bg-white"
+              >
+                <img
+                  src="/presentation-images/innovate-business-presentation/avatar-12.jpg"
+                  alt="Marcus Chen, CTO"
+                  class="h-full w-full object-cover"
+                />
+              </div>
+            </div>
+            <h4 class="mb-2 text-sm font-bold text-gray-800">Marcus Chen</h4>
+            <p class="text-center text-[9px] leading-relaxed text-gray-400">
+              Chief Technology Officer specializing in scalable cloud
+              architectures.
+            </p>
+          </div>
+
+          <!-- Member 3 -->
+          <div class="flex w-1/4 flex-col items-center px-2">
+            <div
+              class="relative mb-6 flex h-32 w-32 items-center justify-center"
+            >
+              <div
+                class="from-brandred to-brandorange clip-hex absolute inset-0 bg-gradient-to-br"
+              ></div>
+              <div
+                class="clip-hex absolute inset-0 m-1 overflow-hidden bg-white"
+              >
+                <img
+                  src="/presentation-images/innovate-business-presentation/avatar-13.jpg"
+                  alt="Elena Rodriguez, COO"
+                  class="h-full w-full object-cover"
+                />
+              </div>
+            </div>
+            <h4 class="mb-2 text-sm font-bold text-gray-800">
+              Elena Rodriguez
+            </h4>
+            <p class="text-center text-[9px] leading-relaxed text-gray-400">
+              Chief Operating Officer focused on global supply chain efficiency.
+            </p>
+          </div>
+
+          <!-- Member 4 -->
+          <div class="flex w-1/4 flex-col items-center px-2">
+            <div
+              class="relative mb-6 flex h-32 w-32 items-center justify-center"
+            >
+              <div
+                class="from-brandred to-brandorange clip-hex absolute inset-0 bg-gradient-to-br"
+              ></div>
+              <div
+                class="clip-hex absolute inset-0 m-1 overflow-hidden bg-white"
+              >
+                <img
+                  src="/presentation-images/innovate-business-presentation/avatar-14.jpg"
+                  alt="David Lee, CMO"
+                  class="h-full w-full object-cover"
+                />
+              </div>
+            </div>
+            <h4 class="mb-2 text-sm font-bold text-gray-800">David Lee</h4>
+            <p class="text-center text-[9px] leading-relaxed text-gray-400">
+              Chief Marketing Officer bridging the gap between tech and
+              storytelling.
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script>
-        lucide.createIcons();
+      lucide.createIcons()
     </script>
-</body>
+  </body>
 </html>

@@ -1,6 +1,6 @@
-import { Tool } from "ai";
-import { z } from "zod";
-import { generateImage } from "./generate-image";
+import { Tool } from "ai"
+import { z } from "zod"
+import { generateImage } from "./generate-image"
 
 export const generateImageTool: Tool = {
   description:
@@ -17,14 +17,18 @@ export const generateImageTool: Tool = {
       .min(256)
       .max(2048)
       .default(1024)
-      .describe("Width of the image in pixels. Supported: 1024 (1:1/9:16), 1792 (16:9)"),
+      .describe(
+        "Width of the image in pixels. Supported: 1024 (1:1/9:16), 1792 (16:9)"
+      ),
     height: z
       .number()
       .int()
       .min(256)
       .max(2048)
       .default(1024)
-      .describe("Height of the image in pixels. Supported: 1024 (1:1/16:9), 1792 (9:16)"),
+      .describe(
+        "Height of the image in pixels. Supported: 1024 (1:1/16:9), 1792 (9:16)"
+      ),
     negative_prompt: z
       .string()
       .optional()
@@ -40,11 +44,11 @@ export const generateImageTool: Tool = {
       prompt,
       width,
       height,
-      negativePrompt: negative_prompt
-    });
+      negativePrompt: negative_prompt,
+    })
   },
-};
+}
 
 export const tools = {
   generateImage: generateImageTool,
-};
+}
