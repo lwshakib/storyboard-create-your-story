@@ -56,7 +56,7 @@ export default function NewProjectPage() {
         window.dispatchEvent(new Event("projects-updated"))
         // 2. Redirect to the project's editor page with the prompt
         router.push(
-          `/editor/${project.id}?prompt=${encodeURIComponent(prompt)}`
+          `/project/${project.id}?prompt=${encodeURIComponent(prompt)}`
         )
       } else {
         throw new Error("Failed to create project")
@@ -91,7 +91,7 @@ export default function NewProjectPage() {
       if (res.ok) {
         const project = await res.json()
         window.dispatchEvent(new Event("projects-updated"))
-        router.push(`/editor/${project.id}`)
+        router.push(`/project/${project.id}`)
       }
     } catch (error) {
       console.error("Failed to start from scratch", error)

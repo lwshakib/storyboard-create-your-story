@@ -1,5 +1,4 @@
-import { GeminiModel } from "@/llm/model"
-import { generateObject } from "ai"
+import { generateObject } from "@/llm/generate-object"
 import { z } from "zod"
 import { formatInspirationsForPrompt } from "@/inspirations/registry"
 import prisma from "@/lib/prisma"
@@ -46,8 +45,11 @@ export async function POST(req: Request) {
 
     const designInspirations = formatInspirationsForPrompt()
 
-    const { object } = await generateObject({
-      model: GeminiModel(),
+    const { object } = await generateObject<{
+      title: string
+      description: string
+      slides: { title: string; description: string; content: string }[]
+    }>({
       schema: z.object({
         title: z.string(),
         description: z.string(),
@@ -83,6 +85,7 @@ export async function POST(req: Request) {
       ${designInspirations}
       
       ### 📋 RULES FOR THE ARCHITECT:
+      - **VISUAL COHESION (MANDATORY)**: You MUST define a unified visual theme (color palette, typography, mood) for the entire storyboard. Every slide's 'description' must reference this theme to ensure a seamless "Brand Flow" from start to finish.
       - Use the inspirations only IF NEEDED (e.g., if the user's prompt matches a high-end corporate or creative style).
       - If you use an inspiration, adapt its structure and narrative density to the user's topic.
       - If the user's prompt is simple or very specific, focus on a direct, clear narrative flow without over-engineering.
@@ -112,13 +115,15 @@ export async function POST(req: Request) {
       }
     }
 
-    // Format slides for DB structure
-    const formattedSlides = object.slides.map((s, idx) => ({
-      id: idx + 1,
+    // Prepare slides for database persistence
+    const reindexedSlides = object.slides.map((s: any, idx: number) => ({
+      index: idx,
       title: s.title,
       description: s.description,
       content: s.content,
       html: "",
+      prompt: "",
+      assets: []
     }))
 
     // Persist to DB if projectId is provided
@@ -129,18 +134,26 @@ export async function POST(req: Request) {
           data: {
             title: object.title,
             description: object.description,
-            slides: formattedSlides,
+            slides: {
+              deleteMany: {},
+              create: reindexedSlides
+            },
           },
+          include: {
+            slides: {
+              orderBy: { index: "asc" }
+            }
+          }
         })
         return Response.json(updatedProject)
       } catch (dbError) {
         console.error("Failed to update project in DB:", dbError)
         // Fallback: return generated object if DB fails but generation succeeded
-        return Response.json({ ...object, slides: formattedSlides })
+        return Response.json({ ...object, slides: reindexedSlides })
       }
     }
 
-    return Response.json({ ...object, slides: formattedSlides })
+    return Response.json({ ...object, slides: reindexedSlides })
   } catch (error) {
     console.error("Outline Generation Error:", error)
     return new Response("Outline Generation Failed", { status: 500 })

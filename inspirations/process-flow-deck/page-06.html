@@ -1,187 +1,132 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Slide 6 - Hub Node Grid</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide 6 - Concentric Service Model</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              c1: "#2d5a27",
-              c2: "#c0392b",
-              c3: "#2c3e50",
-              c4: "#d35400",
-            },
-          },
-        },
-      }
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        outfit: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            navy: '#2A3A4A',
+                            orange: '#C65C17',
+                            green: '#2D5A27',
+                            red: '#8B1111',
+                        }
+                    }
+                }
+            }
+        }
     </script>
-    <style>
-      .grid-bg {
-        background-image: radial-gradient(#eee 1px, transparent 1px);
-        background-size: 20px 20px;
-      }
-    </style>
-  </head>
-  <body class="overflow-hidden bg-white font-sans">
-    <div
-      class="relative flex h-[540px] w-[960px] flex-col overflow-hidden p-12"
-    >
-      <!-- Header -->
-      <div
-        class="mb-8 flex items-center justify-between border-b border-gray-100 pb-4"
-      >
-        <div
-          class="text-[10px] font-black tracking-widest text-gray-300 uppercase"
-        >
-          Process Page
+</head>
+<body class="overflow-hidden font-sans bg-neutral-100 flex items-center justify-center min-h-screen">
+
+    <!-- Fixed Area Container (960x540) -->
+    <div class="relative h-[540px] w-[960px] overflow-hidden bg-white shadow-2xl flex flex-col">
+
+        <!-- Header -->
+        <div class="px-12 pt-10 flex justify-between items-end z-20">
+            <div>
+                <h1 class="text-2xl font-outfit font-black text-brand-navy uppercase tracking-tighter leading-none">Service Architecture</h1>
+                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] mt-1">Concentric Operational Ecosystem</p>
+            </div>
+            <div class="border-b-[3px] border-slate-100 flex-1 mx-8 mb-1"></div>
+            <div class="text-[10px] font-black font-outfit text-brand-navy/30 uppercase tracking-widest mb-1">
+                Phase 06 / 2024
+            </div>
         </div>
-        <div
-          class="text-[10px] font-black tracking-widest text-gray-300 uppercase"
-        >
-          LOGOTYPE
+
+        <div class="flex-1 flex px-16 items-center justify-center relative mt-6">
+            
+            <!-- Concentric Diagram Container -->
+            <div class="relative w-[800px] h-[360px] flex items-center justify-center">
+                
+                <!-- Left Hand Labels (Interactive Flow) -->
+                <div class="absolute left-0 top-1/2 -translate-y-1/2 flex flex-col gap-10">
+                    <div class="flex items-center gap-4 group cursor-pointer hover:scale-105 transition-transform">
+                        <div class="font-outfit font-black text-brand-navy text-[10px] uppercase w-20 text-right tracking-[0.1em] opacity-80 leading-none">Global Strategy</div>
+                        <div class="w-8 h-8 rounded-full bg-slate-50 border-2 border-slate-100 flex items-center justify-center shadow-lg group-hover:border-brand-red">
+                            <i data-lucide="crosshair" class="w-4 h-4 text-brand-red"></i>
+                        </div>
+                    </div>
+                     <div class="flex items-center gap-4 group cursor-pointer hover:scale-105 transition-transform">
+                        <div class="font-outfit font-black text-brand-navy text-[10px] uppercase w-20 text-right tracking-[0.1em] opacity-80 leading-none">System Flow</div>
+                        <div class="w-8 h-8 rounded-full bg-slate-50 border-2 border-slate-100 flex items-center justify-center shadow-lg group-hover:border-brand-navy">
+                            <i data-lucide="activity" class="w-4 h-4 text-brand-navy"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Hand Labels -->
+                <div class="absolute right-0 top-1/2 -translate-y-1/2 flex flex-col gap-10">
+                    <div class="flex flex-row-reverse items-center gap-4 group cursor-pointer hover:scale-105 transition-transform">
+                        <div class="font-outfit font-black text-brand-navy text-[10px] uppercase w-20 text-left tracking-[0.1em] opacity-80 leading-none">Market Growth</div>
+                        <div class="w-8 h-8 rounded-full bg-slate-50 border-2 border-slate-100 flex items-center justify-center shadow-lg group-hover:border-brand-orange">
+                            <i data-lucide="trending-up" class="w-4 h-4 text-brand-orange"></i>
+                        </div>
+                    </div>
+                     <div class="flex flex-row-reverse items-center gap-4 group cursor-pointer hover:scale-105 transition-transform">
+                        <div class="font-outfit font-black text-brand-navy text-[10px] uppercase w-20 text-left tracking-[0.1em] opacity-80 leading-none">Infrastructure</div>
+                        <div class="w-8 h-8 rounded-full bg-slate-50 border-2 border-slate-100 flex items-center justify-center shadow-lg group-hover:border-brand-green">
+                            <i data-lucide="database" class="w-4 h-4 text-brand-green"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Central Rings (Depth Effect) -->
+                <div class="relative w-[340px] h-[340px] flex items-center justify-center">
+                    
+                    <!-- Outer Layer (Level 03) -->
+                    <div class="absolute inset-0 rounded-full border-[10px] border-brand-green/30 shadow-inner [mask-image:conic-gradient(#000_0deg_360deg)]"></div>
+                    <div class="absolute top-[20px] left-1/2 -translate-x-1/2 bg-brand-green/90 px-3 py-1 rounded shadow-xl z-50 transform group-hover:scale-105">
+                         <span class="font-outfit font-black text-white text-[8px] uppercase tracking-widest whitespace-nowrap leading-none">L3: Operational Scope</span>
+                    </div>
+
+                    <!-- Middle Layer (Level 02) -->
+                    <div class="absolute w-[240px] h-[240px] rounded-full border-[10px] border-brand-navy/30 shadow-lg flex items-center justify-center">
+                         <div class="absolute top-[-15px] left-1/2 -translate-x-1/2 bg-brand-navy/90 px-3 py-1 rounded shadow-xl z-50 transform group-hover:scale-105">
+                             <span class="font-outfit font-black text-white text-[8px] uppercase tracking-widest whitespace-nowrap leading-none">L2: Strategic Core</span>
+                        </div>
+                    </div>
+
+                    <!-- Inner Core Hub -->
+                    <div class="w-32 h-32 bg-brand-red rounded-full flex flex-col items-center justify-center text-center p-4 shadow-2xl z-40 relative group cursor-pointer hover:scale-105 transition-transform border-[6px] border-white/20 active:translate-y-px">
+                        <h5 class="font-outfit font-black text-white text-[13px] uppercase mt-1 tracking-wider leading-none">Innovation</h5>
+                        <div class="w-6 h-[2px] bg-white opacity-40 mt-2"></div>
+                        <p class="text-[8px] text-white/70 font-bold leading-tight mt-2 font-sans italic">Mission Critical Hub</p>
+                    </div>
+
+                </div>
+
+            </div>
         </div>
-      </div>
 
-      <div
-        class="grid-bg relative flex w-full flex-1 items-center justify-center"
-      >
-        <!-- 4 Node Hub -->
-        <div class="relative h-[350px] w-[500px]">
-          <!-- Center Hub -->
-          <div
-            class="absolute top-1/2 left-1/2 z-10 flex h-48 w-48 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-[15px] border-white bg-gray-50 shadow-2xl"
-          >
-            <div class="text-center">
-              <p
-                class="text-[10px] font-black tracking-widest text-gray-400 uppercase"
-              >
-                Main
-              </p>
-              <p class="text-[18px] font-black text-gray-800 uppercase">
-                Title
-              </p>
+        <!-- Footer -->
+        <div class="px-12 pb-10 flex justify-end items-center z-20">
+            <div class="flex items-center gap-3">
+                <div class="text-right">
+                    <div class="text-[10px] font-black font-outfit text-brand-navy uppercase tracking-widest leading-none">Global Operations</div>
+                    <div class="text-[8px] font-bold text-slate-400 uppercase tracking-widest mt-1">Foundational Process Stack</div>
+                </div>
+                <div class="h-10 w-[2px] bg-slate-100 mx-2"></div>
+                <div class="bg-brand-navy text-white text-sm font-black font-outfit w-10 h-10 flex items-center justify-center rounded-lg shadow-lg">06</div>
             </div>
-          </div>
-
-          <!-- Spoke Lines Background -->
-          <svg viewBox="0 0 500 350" class="absolute inset-0 z-0">
-            <line
-              x1="250"
-              y1="175"
-              x2="100"
-              y2="75"
-              stroke="#ddd"
-              stroke-width="2"
-            />
-            <line
-              x1="250"
-              y1="175"
-              x2="400"
-              y2="75"
-              stroke="#ddd"
-              stroke-width="2"
-            />
-            <line
-              x1="250"
-              y1="175"
-              x2="100"
-              y2="275"
-              stroke="#ddd"
-              stroke-width="2"
-            />
-            <line
-              x1="250"
-              y1="175"
-              x2="400"
-              y2="275"
-              stroke="#ddd"
-              stroke-width="2"
-            />
-          </svg>
-
-          <!-- Node 1 (Top Left) -->
-          <div class="absolute top-4 left-[30px] flex flex-col items-center">
-            <div
-              class="bg-c1 flex h-14 w-14 items-center justify-center rounded-full border-4 border-white shadow-lg"
-            >
-              <i data-lucide="database" class="h-6 w-6 text-white"></i>
-            </div>
-            <h4 class="mt-2 text-[10px] font-black text-gray-800 uppercase">
-              Your Title
-            </h4>
-          </div>
-
-          <!-- Node 2 (Top Right) -->
-          <div class="absolute top-4 right-[30px] flex flex-col items-center">
-            <div
-              class="bg-c2 flex h-14 w-14 items-center justify-center rounded-full border-4 border-white shadow-lg"
-            >
-              <i data-lucide="anchor" class="h-6 w-6 text-white"></i>
-            </div>
-            <h4 class="mt-2 text-[10px] font-black text-gray-800 uppercase">
-              Your Title
-            </h4>
-          </div>
-
-          <!-- Node 3 (Bottom Left) -->
-          <div class="absolute bottom-4 left-[30px] flex flex-col items-center">
-            <div
-              class="bg-c3 flex h-14 w-14 items-center justify-center rounded-full border-4 border-white shadow-lg"
-            >
-              <i data-lucide="clock" class="h-6 w-6 text-white"></i>
-            </div>
-            <h4 class="mt-2 text-[10px] font-black text-gray-800 uppercase">
-              Your Title
-            </h4>
-          </div>
-
-          <!-- Node 4 (Bottom Right) -->
-          <div
-            class="absolute right-[30px] bottom-4 flex flex-col items-center"
-          >
-            <div
-              class="bg-c4 flex h-14 w-14 items-center justify-center rounded-full border-4 border-white shadow-lg"
-            >
-              <i data-lucide="settings" class="h-6 w-6 text-white"></i>
-            </div>
-            <h4 class="mt-2 text-[10px] font-black text-gray-800 uppercase">
-              Your Title
-            </h4>
-          </div>
-
-          <!-- Labels Far out -->
-          <div
-            class="absolute top-1/2 left-[-120px] w-36 -translate-y-1/2 text-right"
-          >
-            <h5 class="text-[11px] font-black text-gray-800 uppercase">
-              Process Description
-            </h5>
-            <p class="text-[8px] text-gray-400">
-              Pellentesque egestas, neque ut amet convallis, pulvinar justo
-              nulla.
-            </p>
-          </div>
-          <div
-            class="absolute top-1/2 right-[-120px] w-36 -translate-y-1/2 text-left"
-          >
-            <h5 class="text-[11px] font-black text-gray-800 uppercase">
-              System Integration
-            </h5>
-            <p class="text-[8px] text-gray-400">
-              Pellentesque egestas, neque ut amet convallis, pulvinar justo
-              nulla.
-            </p>
-          </div>
         </div>
-      </div>
     </div>
+
     <script>
-      lucide.createIcons()
+        window.addEventListener('load', function() {
+            lucide.createIcons();
+        });
     </script>
-  </body>
+</body>
 </html>

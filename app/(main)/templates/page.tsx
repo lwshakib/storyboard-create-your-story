@@ -54,7 +54,7 @@ export default function TemplatesPage() {
       if (response.ok) {
         const project = await response.json()
         toast.success(`Created project from ${template.title}`)
-        router.push(`/editor/${project.id}`)
+        router.push(`/project/${project.id}`)
       } else {
         toast.error("Failed to create project from template")
       }

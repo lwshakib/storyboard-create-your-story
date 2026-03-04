@@ -134,7 +134,7 @@ export default function MainLayout({
                                   <button
                                     key={project.id}
                                     onClick={() => {
-                                      router.push(`/editor/${project.id}`)
+                                      router.push(`/project/${project.id}`)
                                       setSearchQuery("")
                                     }}
                                     className="hover:bg-primary/5 group/item flex flex-col items-start rounded-xl p-3 text-left transition-colors"
@@ -257,7 +257,7 @@ export default function MainLayout({
                           if (res.ok) {
                             const newProject = await res.json()
                             toast.success("Project created successfully")
-                            router.push(`/editor/${newProject.id}`)
+                            router.push(`/project/${newProject.id}`)
                           } else {
                             throw new Error("Failed to create project")
                           }
@@ -338,7 +338,7 @@ export default function MainLayout({
                                 <button
                                   key={project.id}
                                   onClick={() => {
-                                    router.push(`/editor/${project.id}`)
+                                    router.push(`/project/${project.id}`)
                                     setSearchQuery("")
                                     setIsSearchActive(false)
                                   }}

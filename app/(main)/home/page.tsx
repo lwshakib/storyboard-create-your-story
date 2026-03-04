@@ -13,6 +13,13 @@ export default async function HomePage() {
       userId: session?.user?.id || "",
       isDeleted: false,
     },
+    include: {
+      slides: {
+        orderBy: {
+          index: "asc",
+        },
+      },
+    },
     orderBy: {
       updatedAt: "desc",
     },
@@ -20,7 +27,10 @@ export default async function HomePage() {
 
   const allProjects = projects.map((p) => ({
     ...p,
-    slides: Array.isArray(p.slides) ? (p.slides as { html?: string }[]) : [],
+    slides: p.slides.map((s) => ({
+      ...s,
+      html: s.html || undefined,
+    })),
     projectType: "advanced",
   }))
 

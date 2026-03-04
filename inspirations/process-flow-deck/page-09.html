@@ -1,189 +1,133 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Slide 9 - Circular Spoke Diagram</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide 9 - Alternate Stream Phasing</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              c1: "#2d5a27",
-              c2: "#c0392b",
-              c3: "#2c3e50",
-              c4: "#e67e22",
-            },
-          },
-        },
-      }
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        outfit: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            navy: '#2A3A4A',
+                            orange: '#C65C17',
+                            green: '#2D5A27',
+                            red: '#8B1111',
+                        }
+                    }
+                }
+            }
+        }
     </script>
-  </head>
-  <body class="overflow-hidden bg-white font-sans">
-    <div
-      class="relative flex h-[540px] w-[960px] flex-col items-center overflow-hidden p-12"
-    >
-      <!-- Header -->
-      <div
-        class="mb-12 flex w-full items-center justify-between border-b border-gray-100 px-4 pb-4"
-      >
-        <div
-          class="text-[12px] font-black tracking-widest text-gray-400 uppercase"
-        >
-          Process Page
+    <style>
+        .tab-right { border-radius: 40px 10px 40px 40px; }
+        .tab-left { border-radius: 10px 40px 40px 40px; }
+    </style>
+</head>
+<body class="overflow-hidden font-sans bg-neutral-100 flex items-center justify-center min-h-screen">
+
+    <!-- Fixed Area Container (960x540) -->
+    <div class="relative h-[540px] w-[960px] overflow-hidden bg-white shadow-2xl flex flex-col">
+
+        <!-- Header -->
+        <div class="px-12 pt-10 flex justify-between items-end z-20">
+            <div class="flex items-end">
+                <div class="bg-brand-navy p-2 rounded-lg mr-4">
+                    <i data-lucide="layers-2" class="w-6 h-6 text-white"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-outfit font-black text-brand-navy uppercase tracking-tighter leading-none">Process Flow Deck</h1>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] mt-1">Alternate Stream Phasing</p>
+                </div>
+            </div>
+            <div class="border-b-[3px] border-slate-100 flex-1 mx-8 mb-1"></div>
+            <div class="text-[10px] font-black font-outfit text-brand-navy/30 uppercase tracking-widest mb-1">
+                Phase 09 / 2024
+            </div>
         </div>
-        <div
-          class="text-[12px] font-black tracking-widest text-gray-400 uppercase"
-        >
-          LOGOTYPE
+
+        <div class="flex-1 flex items-center justify-center relative mt-4">
+            <div class="relative w-[500px] h-[360px]">
+                <!-- Central vertical line -->
+                <div class="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-[2px] bg-slate-50"></div>
+
+                <!-- Step 04 (Top Right) -->
+                <div class="absolute top-0 right-[-40px] w-[280px] flex items-center group">
+                    <div class="w-10 h-10 rounded-full bg-white border-2 border-slate-50 shadow-md flex items-center justify-center z-10 transition-transform group-hover:scale-110">
+                        <i data-lucide="check-circle" class="w-5 h-5 text-brand-navy"></i>
+                    </div>
+                    <div class="ml-4 bg-brand-navy tab-right p-4 text-white shadow-xl flex-1">
+                        <div class="font-outfit font-black text-[10px] uppercase mb-1 tracking-widest">Final Phase</div>
+                        <p class="text-[9px] text-white/50 font-medium font-sans">Project closure and comprehensive performance audit.</p>
+                    </div>
+                </div>
+
+                <!-- Step 03 (Mid Top Left) -->
+                <div class="absolute top-[90px] left-[-40px] w-[280px] flex items-center flex-row-reverse group">
+                    <div class="w-10 h-10 rounded-full bg-white border-2 border-slate-50 shadow-md flex items-center justify-center z-10 transition-transform group-hover:scale-110">
+                        <i data-lucide="message-square" class="w-5 h-5 text-brand-orange"></i>
+                    </div>
+                    <div class="mr-4 bg-brand-orange tab-left p-4 text-white shadow-xl flex-1 text-right">
+                        <div class="font-outfit font-black text-[10px] uppercase mb-1 tracking-widest">Communication</div>
+                        <p class="text-[9px] text-white/50 font-medium font-sans">Active stakeholder engagement and review cycles.</p>
+                    </div>
+                </div>
+
+                <!-- Step 02 (Mid Bottom Right) -->
+                <div class="absolute top-[180px] right-[-40px] w-[280px] flex items-center group">
+                    <div class="w-10 h-10 rounded-full bg-white border-2 border-slate-50 shadow-md flex items-center justify-center z-10 transition-transform group-hover:scale-110">
+                        <i data-lucide="activity" class="w-5 h-5 text-brand-green"></i>
+                    </div>
+                    <div class="ml-4 bg-brand-green tab-right p-4 text-white shadow-xl flex-1">
+                        <div class="font-outfit font-black text-[10px] uppercase mb-1 tracking-widest">Operational Build</div>
+                        <p class="text-[9px] text-white/50 font-medium font-sans">Core system development and asset integration.</p>
+                    </div>
+                </div>
+
+                <!-- Step 01 (Bottom Left) -->
+                <div class="absolute top-[270px] left-[-40px] w-[280px] flex items-center flex-row-reverse group">
+                    <div class="w-10 h-10 rounded-full bg-white border-2 border-slate-50 shadow-md flex items-center justify-center z-10 transition-transform group-hover:scale-110">
+                        <i data-lucide="lightbulb" class="w-5 h-5 text-brand-red"></i>
+                    </div>
+                    <div class="mr-4 bg-brand-red tab-left p-4 text-white shadow-xl flex-1 text-right">
+                        <div class="font-outfit font-black text-[10px] uppercase mb-1 tracking-widest">Discovery</div>
+                        <p class="text-[9px] text-white/50 font-medium font-sans">Initial research and project scoping phase.</p>
+                    </div>
+                </div>
+
+                <!-- Background Category Labels (Vertical) -->
+                <div class="absolute inset-x-0 h-full pointer-events-none">
+                     <div class="absolute top-4 right-[-140px] font-outfit font-black text-slate-100 text-[14px] uppercase rotate-90 tracking-[0.2em]">Strategy</div>
+                     <div class="absolute top-[100px] left-[-140px] font-outfit font-black text-slate-100 text-[14px] uppercase -rotate-90 tracking-[0.2em]">Deployment</div>
+                </div>
+            </div>
         </div>
-      </div>
 
-      <div class="relative flex w-full flex-1 items-center justify-center">
-        <!-- Spoke Lines -->
-        <svg viewBox="0 0 500 400" class="absolute inset-0 z-0 h-full w-full">
-          <line
-            x1="250"
-            y1="200"
-            x2="100"
-            y2="100"
-            stroke="#eee"
-            stroke-width="4"
-            stroke-linecap="round"
-          />
-          <line
-            x1="250"
-            y1="200"
-            x2="400"
-            y2="100"
-            stroke="#eee"
-            stroke-width="4"
-            stroke-linecap="round"
-          />
-          <line
-            x1="250"
-            y1="200"
-            x2="100"
-            y2="300"
-            stroke="#eee"
-            stroke-width="4"
-            stroke-linecap="round"
-          />
-          <line
-            x1="250"
-            y1="200"
-            x2="400"
-            y2="300"
-            stroke="#eee"
-            stroke-width="4"
-            stroke-linecap="round"
-          />
-        </svg>
-
-        <!-- Diagram Hub -->
-        <div class="relative h-[400px] w-[500px]">
-          <!-- Center Hub -->
-          <div
-            class="absolute top-1/2 left-1/2 z-10 flex h-40 w-40 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-[12px] border-gray-50 bg-white shadow-2xl"
-          >
-            <div class="text-center">
-              <i
-                data-lucide="layers"
-                class="mx-auto mb-1 h-10 w-10 text-gray-300"
-              ></i>
-              <p class="text-[10px] font-black text-gray-400 uppercase">
-                Main Title
-              </p>
+        <!-- Footer -->
+        <div class="px-12 pb-10 flex justify-end items-center z-20">
+            <div class="flex items-center gap-3">
+                <div class="text-right">
+                    <div class="text-[10px] font-black font-outfit text-brand-navy uppercase tracking-widest">Process Deck</div>
+                    <div class="text-[8px] font-bold text-slate-400 uppercase tracking-widest">Confidential / 2024</div>
+                </div>
+                <div class="h-10 w-[2px] bg-slate-100 mx-2"></div>
+                <div class="bg-brand-navy text-white text-sm font-black font-outfit w-10 h-10 flex items-center justify-center rounded-lg shadow-lg">09</div>
             </div>
-          </div>
-
-          <!-- Node 1 -->
-          <div
-            class="absolute top-[30px] left-[40px] flex flex-col items-center"
-          >
-            <div
-              class="bg-c1 flex h-16 w-16 items-center justify-center rounded-full border-4 border-white shadow-xl transition-transform hover:scale-110"
-            >
-              <i data-lucide="database" class="h-8 w-8 text-white"></i>
-            </div>
-            <h4 class="mt-4 text-[11px] font-black text-gray-800 uppercase">
-              Database
-            </h4>
-          </div>
-
-          <!-- Node 2 -->
-          <div
-            class="absolute top-[30px] right-[40px] flex flex-col items-center"
-          >
-            <div
-              class="bg-c2 flex h-16 w-16 items-center justify-center rounded-full border-4 border-white shadow-xl transition-transform hover:scale-110"
-            >
-              <i data-lucide="anchor" class="h-8 w-8 text-white"></i>
-            </div>
-            <h4 class="mt-4 text-[11px] font-black text-gray-800 uppercase">
-              Security
-            </h4>
-          </div>
-
-          <!-- Node 3 -->
-          <div
-            class="absolute bottom-[30px] left-[40px] flex flex-col items-center"
-          >
-            <div
-              class="bg-c3 flex h-16 w-16 items-center justify-center rounded-full border-4 border-white shadow-xl transition-transform hover:scale-110"
-            >
-              <i data-lucide="clock" class="h-8 w-8 text-white"></i>
-            </div>
-            <h4 class="mt-4 text-[11px] font-black text-gray-800 uppercase">
-              Schedule
-            </h4>
-          </div>
-
-          <!-- Node 4 -->
-          <div
-            class="absolute right-[40px] bottom-[30px] flex flex-col items-center"
-          >
-            <div
-              class="bg-c4 flex h-16 w-16 items-center justify-center rounded-full border-4 border-white shadow-xl transition-transform hover:scale-110"
-            >
-              <i data-lucide="settings" class="h-8 w-8 text-white"></i>
-            </div>
-            <h4 class="mt-4 text-[11px] font-black text-gray-800 uppercase">
-              Operations
-            </h4>
-          </div>
-
-          <!-- Content Labels -->
-          <div
-            class="absolute top-1/2 left-[-150px] w-48 -translate-y-1/2 pr-6 text-right"
-          >
-            <p class="text-[12px] font-medium text-gray-400 italic">
-              "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
-              officia deserunt mollit anim."
-            </p>
-          </div>
-          <div
-            class="absolute top-1/2 right-[-150px] w-48 -translate-y-1/2 pl-6 text-left"
-          >
-            <p class="text-[12px] font-medium text-gray-400 italic">
-              "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
-              officia deserunt mollit anim."
-            </p>
-          </div>
         </div>
-      </div>
-
-      <!-- Footer Page Number -->
-      <div
-        class="absolute right-12 bottom-10 text-[10px] font-black text-gray-200"
-      >
-        PAGE 09
-      </div>
     </div>
+
     <script>
-      lucide.createIcons()
+        window.addEventListener('load', function() {
+            lucide.createIcons();
+        });
     </script>
-  </body>
+</body>
 </html>

@@ -10,6 +10,12 @@ import { toast } from "sonner"
 import { motion } from "framer-motion"
 import { parseStoryboard, HtmlSlide } from "@/lib/storyboard-parser"
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+
 function EditorContent() {
   const { id } = useParams()
   const router = useRouter()
@@ -33,6 +39,8 @@ function EditorContent() {
   const [generatingSections, setGeneratingSections] = useState<Set<number>>(
     new Set()
   )
+
+  const [isExpanding, setIsExpanding] = useState(false)
 
   const hasStartedOutlineRef = useRef(false)
 
@@ -102,7 +110,7 @@ function EditorContent() {
         setStreamingSlides(updatedProject.slides)
 
         // 2. Clear prompt from URL
-        router.replace(`/editor/${id}`, { scroll: false })
+        router.replace(`/project/${id}`, { scroll: false })
 
         toast.success("Outline generated and saved")
       } catch (err: unknown) {
@@ -220,6 +228,43 @@ function EditorContent() {
     [project, id, streamingSlides]
   )
 
+  const handleExpandSection = useCallback(
+    async (index?: number) => {
+      setIsExpanding(true)
+      try {
+        const res = await fetch("/api/generate-sections/expand", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ projectId: id, index }),
+        })
+        if (!res.ok) {
+          if (res.status === 403) {
+            const data = await res.json()
+            if (data.error === "INSUFFICIENT_CREDITS") {
+              throw new Error("INSUFFICIENT_CREDITS")
+            }
+          }
+          throw new Error("Section expansion failed")
+        }
+
+        const updatedProject = await res.json()
+        setProject(updatedProject)
+        setStreamingSlides(updatedProject.slides)
+        toast.success("AI added a new section")
+      } catch (err: unknown) {
+        console.error(err)
+        if (err instanceof Error && err.message === "INSUFFICIENT_CREDITS") {
+          toast.error("Low credits for AI expansion.")
+        } else {
+          toast.error("Failed to add AI section")
+        }
+      } finally {
+        setIsExpanding(false)
+      }
+    },
+    [id]
+  )
+
   const renderLoader = () => (
     <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-[#F8F9FB] dark:bg-[#0A0A0B]">
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -312,29 +357,44 @@ function EditorContent() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <Button
-            variant="outline"
-            className="h-11 rounded-none px-8 text-[10px] font-black tracking-widest uppercase"
-            onClick={() => router.push("/trash")}
-          >
-            Go to Trash
-          </Button>
-          <Button
-            className="h-11 rounded-none px-8 text-[10px] font-black tracking-widest uppercase"
-            onClick={async () => {
-              const res = await fetch(`/api/projects/${id}`, {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ isDeleted: false }),
-              })
-              if (res.ok) {
-                toast.success("Project restored")
-                window.location.reload()
-              }
-            }}
-          >
-            Restore Project
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="outline"
+                className="h-11 rounded-none px-8 text-[10px] font-black tracking-widest"
+                onClick={() => router.push("/trash")}
+              >
+                Go to Trash
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" sideOffset={10}>
+              <p className="font-bold">View all deleted projects</p>
+            </TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                className="h-11 rounded-none px-8 text-[10px] font-black tracking-widest"
+                onClick={async () => {
+                  const res = await fetch(`/api/projects/${id}`, {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ isDeleted: false }),
+                  })
+                  if (res.ok) {
+                    toast.success("Project restored")
+                    window.location.reload()
+                  }
+                }}
+              >
+                Restore Project
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" sideOffset={10}>
+              <p className="font-bold">Bring this storyboard back to life</p>
+            </TooltipContent>
+          </Tooltip>
         </div>
       </div>
     )
@@ -349,6 +409,8 @@ function EditorContent() {
       isGenerating={false}
       generatingSections={generatingSections}
       onGenerateSection={handleGenerateSection}
+      onExpandSection={handleExpandSection}
+      isExpanding={isExpanding}
       onSaveSuccess={handleSaveSuccess}
     />
   )

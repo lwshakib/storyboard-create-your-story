@@ -61,14 +61,13 @@ export type LayoutType =
   | "title"
 
 export interface Slide {
-  id: number
-  elements: SlideElement[]
-  bgColor?: string
-  bgImage?: string
-  layout?: LayoutType
-  splitRatio?: number
+  id: string | number
+  index: number
+  elements?: SlideElement[]
   html?: string
   title?: string
   description?: string
   content?: string
+  prompt?: string
+  assets?: { publicId: string; url: string; type: string }[]
 }

@@ -1,11 +1,13 @@
-import { generateObject, generateText } from "@/llm/generate-text"
+import { generateText } from "@/llm/generate-text"
+import { generateObject } from "@/llm/generate-object"
 import { generateHtmlStoryboardPrompt } from "@/llm/prompts"
 import { formatInspirationsForPrompt } from "@/inspirations/registry"
-import { generateImage } from "@/llm/generate-image"
+import { generateImage } from "@/lib/a4f"
 import { z } from "zod"
 import prisma from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
+import { deleteMultipleFromCloudinary } from "@/lib/cloudinary"
 import {
   deductCredits,
   COST_PER_IMAGE,
@@ -57,10 +59,26 @@ export async function POST(req: Request) {
 
     console.log("[SECTION_GEN] Initializing iterative generation loop...")
 
-    const inspirations = formatInspirationsForPrompt()
-    const systemPrompt = generateHtmlStoryboardPrompt(inspirations)
+    // 1. PRE-FETCH SLIDE DATA for Context, Reuse & Cleanup
+    const allSlides = await prisma.slide.findMany({
+      where: { projectId: projectId },
+      orderBy: { index: "asc" }
+    })
+    
+    // 2. Identify Theme Context (The first slide that actually has code sets the theme)
+    const themeDriver = allSlides.find(s => s.html && s.html.length > 50)
+    const themeContext = themeDriver 
+      ? `THEME TEMPLATE FROM SLIDE ${themeDriver.index + 1}:\n${themeDriver.html}` 
+      : ""
 
-    let currentHtml = ""
+    const inspirations = formatInspirationsForPrompt()
+    const systemPrompt = generateHtmlStoryboardPrompt(inspirations, themeContext)
+
+    const targetSlide = allSlides[index]
+    const existingAssets = (targetSlide?.assets as any[]) || []
+    const existingPrompt = targetSlide?.prompt || ""
+
+    let currentHtml = targetSlide?.html || ""
     const stepResults: {
       action: string
       status: string
@@ -90,6 +108,35 @@ export async function POST(req: Request) {
             width: 1792,
             height: 1024,
           })
+
+          // Fetch the specific slide to link assets
+          const slides = await prisma.slide.findMany({
+            where: { projectId: projectId },
+            orderBy: { index: "asc" }
+          })
+          const targetSlide = slides[index]
+
+          // Save to Asset Json field on slide (Temporary accumulation)
+          if (res.success && res.publicId && res.secure_url && targetSlide) {
+            const currentAssetsRes = await prisma.slide.findUnique({
+              where: { id: targetSlide.id },
+              select: { assets: true }
+            })
+            const currentAssets = (currentAssetsRes?.assets as any[]) || []
+            const newAssets = [
+              ...currentAssets, 
+              { publicId: res.publicId, url: res.secure_url, type: res.resourceType || "image" }
+            ]
+            
+            await prisma.slide.update({
+              where: { id: targetSlide.id },
+              data: { assets: newAssets },
+            })
+            console.log(
+              `[SECTION_GEN] Added ${res.publicId} to assets tracking for slide ${targetSlide.id}.`
+            )
+          }
+
           stepResults.push({
             action: "GENERATE_IMAGE",
             status: "SUCCESS",
@@ -140,6 +187,7 @@ export async function POST(req: Request) {
       console.log(`[SECTION_GEN] Starting loop iteration ${loopCount}...`)
 
       const step = await generateObject({
+        system: systemPrompt,
         schema: z.object({
           action: z.enum(["GENERATE_IMAGE", "GENERATE_HTML", "END"]),
           thought: z
@@ -152,16 +200,22 @@ export async function POST(req: Request) {
           USER_PROMPT: ${initialPrompt}
           PROJECT_CONTEXT: ${context}
           
+          SLIDE_HISTORY:
+          - Previous Refinement Prompt: ${existingPrompt || "None"}
+          - Available Assets (URLs you can reuse): ${JSON.stringify(existingAssets.map(a => a.url), null, 2)}
+
           PREVIOUS_ACTIONS_AND_RESULTS:
           ${JSON.stringify(stepResults, null, 2)}
           
           CURRENT_HTML: ${currentHtml ? "Present" : "Not yet generated"}
  
           INSTRUCTIONS:
-          1. Evaluate the progress. If you need a cinematic background or specific visuals, use GENERATE_IMAGE.
-          2. If you have all assets, use GENERATE_HTML to write the code.
-          3. If the code is perfect and contains all assets, choose END.
-          4. ALWAYS prioritize high-end design (8K, cinematic, professional layouts).
+          1. Evaluate the progress. 
+          2. REUSE existing assets from the "Available Assets" list if they fit the vision.
+          3. Only use GENERATE_IMAGE if the existing assets are insufficient or the user requested a fresh start.
+          4. If you have all assets, use GENERATE_HTML to write the code.
+          5. If the code is perfect and contains all assets, choose END.
+          6. ALWAYS prioritize high-end design (8K, cinematic, professional layouts).
         `,
       })
 
@@ -236,24 +290,47 @@ export async function POST(req: Request) {
         </div>`
     }
 
-    // PERSIST TO DATABASE
+    // PERSIST TO DATABASE & CLEANUP
     try {
-      const project = await prisma.project.findUnique({
-        where: { id: projectId },
-      })
+      if (targetSlide) {
+        // 1. ANALYZE USED ASSETS
+        const finalAssetsRes = await prisma.slide.findUnique({
+          where: { id: targetSlide.id },
+          select: { assets: true }
+        })
+        const allPossibleAssets = (finalAssetsRes?.assets as any[]) || []
+        
+        // Find URLs present in the HTML
+        const usedAssets = allPossibleAssets.filter(asset => 
+          htmlOutput.includes(asset.url)
+        )
+        const unusedAssets = allPossibleAssets.filter(asset => 
+          !htmlOutput.includes(asset.url)
+        )
 
-      if (project) {
-        const slides = project.slides as { html?: string }[]
-        if (slides[index]) {
-          slides[index].html = htmlOutput
-          await prisma.project.update({
-            where: { id: projectId },
-            data: { slides: slides },
-          })
-          console.log(
-            `[SECTION_GEN] Successfully saved refined HTML for slide ${index + 1} to database.`
-          )
+        // 2. PURGE ORPHANED ASSETS FROM CLOUDINARY
+        if (unusedAssets.length > 0) {
+          const publicIdsToPurge = unusedAssets.map(a => a.publicId)
+          try {
+            await deleteMultipleFromCloudinary(publicIdsToPurge)
+            console.log(`[SECTION_GEN] Purged ${publicIdsToPurge.length} unused assets from Cloudinary for slide ${targetSlide.id}.`)
+          } catch (purgeErr) {
+            console.error("[SECTION_GEN] Cloudinary purge failed:", purgeErr)
+          }
         }
+
+        // 3. UPDATE DB
+        await prisma.slide.update({
+          where: { id: targetSlide.id },
+          data: { 
+            html: htmlOutput,
+            prompt: initialPrompt,
+            assets: usedAssets // Only keep what's actually in the HTML
+          }
+        })
+        console.log(
+          `[SECTION_GEN] Successfully saved refined HTML, prompt, and optimized assets for slide ${index + 1} (${targetSlide.id}).`
+        )
       }
     } catch (saveError) {
       console.error("[SECTION_GEN] Database save error:", saveError)

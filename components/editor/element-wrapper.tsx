@@ -66,7 +66,7 @@ import { Separator } from "@/components/ui/separator"
 import { HexColorPicker } from "react-colorful"
 import { cn } from "@/lib/utils"
 import { SlideElement, LayoutType } from "@/types/editor"
-import { uploadFileToCloudinary } from "@/lib/editor-utils"
+import { uploadFileToCloudinary } from "@/lib/cloudinary"
 
 interface ElementWrapperProps {
   el: SlideElement

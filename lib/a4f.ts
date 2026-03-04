@@ -1,12 +1,5 @@
-import { v2 as cloudinary } from "cloudinary"
+import { uploadBufferToCloudinary } from "@/lib/cloudinary"
 import { A4F_API_KEY } from "@/lib/env"
-
-// Configure Cloudinary
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-})
 
 export interface GenerateImageOptions {
   prompt: string
@@ -21,13 +14,14 @@ export interface GenerateImageResult {
   secure_url?: string
   publicId?: string
   error?: string
+  resourceType?: string
   prompt: string
   width: number
   height: number
 }
 
 /**
- * Autonomous image generation function.
+ * Autonomous image generation function using the A4F API.
  * Handles API call to A4F and persistence to Cloudinary.
  */
 export async function generateImage({
@@ -89,13 +83,12 @@ export async function generateImage({
     const base64Image = data.data?.[0]?.b64_json
     const imageUrl = data.data?.[0]?.url
 
-    let imageBuffer: Buffer
+    let imageInput: Buffer | string
 
     if (base64Image) {
-      imageBuffer = Buffer.from(base64Image, "base64")
+      imageInput = Buffer.from(base64Image, "base64")
     } else if (imageUrl) {
-      const imgResponse = await fetch(imageUrl)
-      imageBuffer = Buffer.from(await imgResponse.arrayBuffer())
+      imageInput = imageUrl
     } else {
       return {
         success: false,
@@ -106,28 +99,10 @@ export async function generateImage({
       }
     }
 
-    // Upload to Cloudinary
-    const uploadResult = await new Promise<{
-      secure_url: string
-      public_id: string
-    }>((resolve, reject) => {
-      cloudinary.uploader
-        .upload_stream(
-          {
-            folder: "storyboard-app",
-            resource_type: "image",
-          },
-          (error, result) => {
-            if (error) reject(error)
-            else if (result)
-              resolve({
-                secure_url: result.secure_url,
-                public_id: result.public_id,
-              })
-            else reject(new Error("Upload failed"))
-          }
-        )
-        .end(imageBuffer)
+    // Upload to Cloudinary using centralized helper
+    const uploadResult = await uploadBufferToCloudinary(imageInput, {
+      folder: "storyboard-app",
+      resource_type: "image",
     })
 
     return {
@@ -135,6 +110,7 @@ export async function generateImage({
       url: uploadResult.secure_url,
       secure_url: uploadResult.secure_url,
       publicId: uploadResult.public_id,
+      resourceType: uploadResult.resource_type,
       prompt,
       width,
       height,

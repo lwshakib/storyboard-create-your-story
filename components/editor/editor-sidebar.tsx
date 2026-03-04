@@ -37,7 +37,7 @@ export function EditorSidebar({
       <SidebarContent className="p-0">
         <SidebarGroup className="p-0">
           <div className="flex items-center justify-between px-6 py-6">
-            <SidebarGroupLabel className="text-muted-foreground/60 text-[10px] font-black tracking-[0.2em] uppercase">
+            <SidebarGroupLabel className="text-muted-foreground/60 text-[10px] font-black tracking-[0.2em]">
               Story Slides
             </SidebarGroupLabel>
             <Button
@@ -53,7 +53,7 @@ export function EditorSidebar({
             {slides.map((slide, index) => (
               <div key={slide.id} className="group relative pr-2">
                 <div
-                  onClick={() => setActiveSlideId(slide.id)}
+                  onClick={() => setActiveSlideId(slide.id as number)}
                   className={cn(
                     "relative aspect-video cursor-pointer overflow-hidden border-2 transition-all duration-300",
                     activeSlideId === slide.id
@@ -86,7 +86,7 @@ export function EditorSidebar({
                     className="absolute -top-1 -right-1 z-20 h-6 w-6 rounded-lg opacity-0 shadow-lg transition-all group-hover:opacity-100 hover:scale-110 active:scale-95"
                     onClick={(e) => {
                       e.stopPropagation()
-                      onDeleteSlide(slide.id)
+                      onDeleteSlide(slide.id as number)
                     }}
                   >
                     <Trash2 className="h-3 w-3" />

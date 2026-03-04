@@ -36,7 +36,12 @@ import { Input } from "@/components/ui/input"
 import { HexColorPicker } from "react-colorful"
 import { cn } from "@/lib/utils"
 import { Slide, ElementType, SlideElement } from "@/types/editor"
-import { uploadFileToCloudinary } from "@/lib/editor-utils"
+import { uploadFileToCloudinary } from "@/lib/cloudinary"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 interface MainToolbarProps {
   activeSlide: Slide
@@ -373,6 +378,7 @@ function ToolButton({
   active,
   onClick,
   onDragStart,
+  tooltip,
 }: {
   icon: React.ReactNode
   tooltip?: string
@@ -381,21 +387,30 @@ function ToolButton({
   onDragStart?: (e: React.DragEvent) => void
 }) {
   return (
-    <Button
-      variant="ghost"
-      size="icon"
-      onClick={onClick}
-      draggable={!!onDragStart}
-      onDragStart={onDragStart}
-      className={cn(
-        "h-9 w-9 rounded-xl border-none shadow-none transition-all duration-300",
-        active
-          ? "bg-primary text-primary-foreground shadow-primary/20 scale-110 shadow-lg"
-          : "hover:bg-primary/5 hover:text-primary active:scale-90",
-        onDragStart && "cursor-grab active:cursor-grabbing"
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onClick}
+          draggable={!!onDragStart}
+          onDragStart={onDragStart}
+          className={cn(
+            "h-9 w-9 rounded-xl border-none shadow-none transition-all duration-300",
+            active
+              ? "bg-primary text-primary-foreground shadow-primary/20 scale-110 shadow-lg"
+              : "hover:bg-primary/5 hover:text-primary active:scale-90",
+            onDragStart && "cursor-grab active:cursor-grabbing"
+          )}
+        >
+          {icon}
+        </Button>
+      </TooltipTrigger>
+      {tooltip && (
+        <TooltipContent side="top" sideOffset={8}>
+          <p className="font-bold">{tooltip}</p>
+        </TooltipContent>
       )}
-    >
-      {icon}
-    </Button>
+    </Tooltip>
   )
 }

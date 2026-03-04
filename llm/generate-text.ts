@@ -1,7 +1,4 @@
-import {
-  generateText as aiGenerateText,
-  generateObject as aiGenerateObject,
-} from "ai"
+import { generateText as aiGenerateText } from "ai"
 import { GeminiModel } from "./model"
 
 /**
@@ -25,18 +22,4 @@ export async function generateText(options: any) {
   })
 
   return result
-}
-
-/**
- * A generic wrapper for object generation that ensures a fresh model instance
- * and random key rotation for every structured task.
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function generateObject(options: any) {
-  console.log("[GENERATOR] Initializing object generation...")
-
-  return await aiGenerateObject({
-    model: GeminiModel(),
-    ...options,
-  })
 }

@@ -34,7 +34,7 @@ export function ProjectCard({ project, onDelete }: ProjectCardProps) {
   const router = useRouter()
   const [isDeleting] = React.useState(false)
 
-  const href = `/editor/${project.id}`
+  const href = `/project/${project.id}`
   const apiPath = `/api/projects/${project.id}`
 
   const handleDelete = async () => {

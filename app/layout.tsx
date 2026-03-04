@@ -36,6 +36,8 @@ export const metadata: Metadata = {
   manifest: "/favicon_io/site.webmanifest",
 }
 
+import { TooltipProvider } from "@/components/ui/tooltip"
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -50,15 +52,17 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <NextTopLoader
-            showSpinner={false}
-            height={3}
-            crawl={true}
-            speed={200}
-            initialPosition={0.08}
-          />
-          {children}
-          <Toaster />
+          <TooltipProvider>
+            <NextTopLoader
+              showSpinner={false}
+              height={3}
+              crawl={true}
+              speed={200}
+              initialPosition={0.08}
+            />
+            {children}
+            <Toaster />
+          </TooltipProvider>
         </ThemeProvider>
       </body>
     </html>

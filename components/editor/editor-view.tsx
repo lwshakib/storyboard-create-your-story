@@ -18,11 +18,18 @@ import {
   Trash,
   Image as ImageIcon,
   Upload,
+  Wand2,
+  Compass,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -52,6 +59,9 @@ import {
 import { ThemeSettings } from "@/components/editor/theme-settings"
 import { type Theme } from "@/lib/themes"
 
+import Link from "next/link"
+import { ModeToggle } from "@/components/mode-toggle"
+
 interface EditorViewProps {
   initialData?: {
     id?: string
@@ -62,7 +72,9 @@ interface EditorViewProps {
   isGenerating?: boolean
   onGenerate?: () => void
   onGenerateSection?: (index: number) => void
+  onExpandSection?: (index?: number) => void
   generatingSections?: Set<number>
+  isExpanding?: boolean
   onSaveSuccess?: (data: {
     id: string
     title: string
@@ -121,7 +133,9 @@ const AutoResizeTextarea = ({
 export function EditorView({
   initialData,
   onGenerateSection,
+  onExpandSection,
   generatingSections,
+  isExpanding,
   onSaveSuccess,
 }: EditorViewProps) {
   const router = useRouter()
@@ -313,7 +327,7 @@ export function EditorView({
         if (res.ok) {
           const newProject = await res.json()
           toast.success("Project created successfully")
-          router.push(`/editor/${newProject.id}`)
+          router.push(`/project/${newProject.id}`)
         } else {
           throw new Error("Failed to create project")
         }
@@ -352,7 +366,7 @@ export function EditorView({
           initialData?.id ? "Project updated" : "Project saved successfully"
         )
         if (!initialData?.id) {
-          router.push(`/editor/${data.id}`)
+          router.push(`/project/${data.id}`)
         } else {
           if (onSaveSuccess) onSaveSuccess(data)
           router.refresh()
@@ -430,21 +444,22 @@ export function EditorView({
 
   return (
     <div className="relative flex h-screen w-full flex-col overflow-hidden bg-[#FAFBFC] font-sans dark:bg-[#050505]">
-      <header className="bg-background/80 z-[100] flex h-12 shrink-0 items-center justify-between gap-4 border-b px-4 backdrop-blur-xl">
+      <header className="bg-background/95 z-[100] flex h-16 shrink-0 items-center justify-between gap-4 border-b px-6 backdrop-blur-md">
         <div className="flex items-center gap-4">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => router.push("/home")}
-            className="hover:bg-muted size-8 rounded-lg transition-all active:scale-95"
+            className="hover:bg-muted size-9 rounded-full transition-all active:scale-95"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="h-5 w-5" />
           </Button>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
+            <div className="bg-border h-4 w-[1px] mx-1" />
             {isEditingTitle ? (
               <input
                 autoFocus
-                className="m-0 w-48 border-none bg-transparent p-0 text-xs font-bold tracking-tight outline-none focus:ring-0"
+                className="m-0 w-48 border-none bg-transparent p-0 text-sm font-bold tracking-tight outline-none focus:ring-0"
                 value={storyTitle}
                 onChange={(e) => {
                   setStoryTitle(e.target.value)
@@ -455,7 +470,7 @@ export function EditorView({
             ) : (
               <span
                 onDoubleClick={() => setIsEditingTitle(true)}
-                className="max-w-[200px] cursor-text truncate text-xs font-bold tracking-tight"
+                className="max-w-[300px] cursor-text truncate text-sm font-bold tracking-tight opacity-80"
               >
                 {storyTitle}
               </span>
@@ -463,7 +478,7 @@ export function EditorView({
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <input
             type="file"
             ref={fileInputRef}
@@ -471,51 +486,64 @@ export function EditorView({
             accept=".json"
             onChange={handleImportJson}
           />
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-8 gap-2 rounded-lg px-3 text-xs font-bold"
-            onClick={() => fileInputRef.current?.click()}
-          >
-            <Upload className="h-3 w-3" />
-            <span>Import</span>
-          </Button>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+          <Tooltip>
+            <TooltipTrigger asChild>
               <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 gap-2 rounded-lg px-3 text-xs font-bold"
+                variant="outline"
+                className="border-border/50 hover:bg-muted/50 hidden h-10 items-center gap-2 rounded-full px-6 font-medium shadow-sm sm:flex"
+                onClick={() => fileInputRef.current?.click()}
               >
-                <Download className="h-3 w-3" />
-                <span>Export</span>
+                <Upload className="size-4 opacity-70" />
+                <span>Import</span>
               </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="border-border/50 bg-background/95 mt-1 w-48 rounded-xl p-1 shadow-xl backdrop-blur-xl">
-              <DropdownMenuItem
-                onClick={() => handleExport("json")}
-                className="h-9 cursor-pointer gap-2 rounded-lg px-2 text-xs font-medium"
-              >
-                <FileJson className="text-primary size-3.5" />
-                <span>JSON</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => handleExport("pdf")}
-                className="h-9 cursor-pointer gap-2 rounded-lg px-2 text-xs font-medium"
-              >
-                <FileDown className="size-3.5 text-red-500" />
-                <span>PDF Document</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => handleExport("pptx")}
-                className="h-9 cursor-pointer gap-2 rounded-lg px-2 text-xs font-medium"
-              >
-                <PresentationIcon className="size-3.5 text-orange-500" />
-                <span>PowerPoint</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" sideOffset={10}>
+              <p className="font-bold">Import JSON</p>
+            </TooltipContent>
+          </Tooltip>
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="border-border/50 hover:bg-muted/50 flex h-10 items-center gap-2 rounded-full px-6 font-medium shadow-sm"
+                  >
+                    <Download className="size-4 opacity-70" />
+                    <span className="hidden sm:inline">Export</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="border-border/50 bg-background/95 mt-1 w-48 rounded-xl p-1 shadow-xl backdrop-blur-xl">
+                  <DropdownMenuItem
+                    onClick={() => handleExport("json")}
+                    className="h-9 cursor-pointer gap-2 rounded-lg px-2 text-xs font-medium"
+                  >
+                    <FileJson className="text-primary size-3.5" />
+                    <span>JSON</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => handleExport("pdf")}
+                    className="h-9 cursor-pointer gap-2 rounded-lg px-2 text-xs font-medium"
+                  >
+                    <FileDown className="size-3.5 text-red-500" />
+                    <span>PDF Document</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => handleExport("pptx")}
+                    className="h-9 cursor-pointer gap-2 rounded-lg px-2 text-xs font-medium"
+                  >
+                    <PresentationIcon className="size-3.5 text-orange-500" />
+                    <span>PowerPoint</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" sideOffset={10}>
+              <p className="font-bold">Export Options</p>
+            </TooltipContent>
+          </Tooltip>
 
           <AnimatePresence>
             {hasChanges && (
@@ -525,36 +553,63 @@ export function EditorView({
                 exit={{ opacity: 0, x: 20, filter: "blur(10px)" }}
                 transition={{ type: "spring", stiffness: 400, damping: 30 }}
               >
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="hover:border-border/50 bg-primary/5 text-primary hover:bg-primary/10 h-8 gap-2 rounded-lg border border-transparent px-3 text-xs font-bold transition-colors"
-                  onClick={handleSave}
-                  disabled={isSaving}
-                >
-                  {isSaving ? (
-                    <Loader2 className="h-3 w-3 animate-spin" />
-                  ) : (
-                    <Save className="h-3 w-3" />
-                  )}
-                  <span>Save</span>
-                </Button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      onClick={handleSave}
+                      disabled={isSaving}
+                      className="bg-primary hover:bg-primary/90 text-primary-foreground flex h-10 items-center gap-2 rounded-full px-6 font-medium shadow-sm"
+                    >
+                      {isSaving ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Save className="h-4 w-4" />
+                      )}
+                      <span>Save</span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="bottom" sideOffset={10}>
+                    <p className="font-bold">Save Project</p>
+                  </TooltipContent>
+                </Tooltip>
               </motion.div>
             )}
           </AnimatePresence>
 
           <Button
-            onClick={async () => {
-              const element = document.documentElement
-              if (element.requestFullscreen) {
-                await element.requestFullscreen()
-              }
-            }}
-            size="sm"
-            className="bg-primary text-primary-foreground ml-1 h-8 rounded-lg px-4 text-xs font-black shadow-sm transition-all hover:scale-[1.02] active:scale-95"
+            asChild
+            className="bg-primary hover:bg-primary/90 text-primary-foreground hidden h-10 items-center gap-2 rounded-full px-6 font-medium shadow-sm md:flex"
           >
-            Present
+            <Link href="/new">
+              <Plus className="size-4" />
+              <span>New Project</span>
+            </Link>
           </Button>
+
+          <div className="bg-border h-4 w-[1px] mx-1" />
+
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={async () => {
+                  const element = document.documentElement
+                  if (element.requestFullscreen) {
+                    await element.requestFullscreen()
+                  }
+                }}
+                className="hover:bg-muted size-9 rounded-full transition-all active:scale-95"
+              >
+                <PresentationIcon className="h-5 w-5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" sideOffset={10}>
+              <p className="font-bold">Preview Mode</p>
+            </TooltipContent>
+          </Tooltip>
+
+          <ModeToggle />
         </div>
       </header>
 
@@ -701,41 +756,98 @@ export function EditorView({
 
                     {/* Section Toolbar */}
                     <div className="bg-background ring-background absolute -bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1 rounded-full border p-1 opacity-0 shadow-2xl ring-4 transition-opacity group-hover:opacity-100">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="hover:bg-muted size-8 rounded-full"
-                        onClick={() => setSelectedVisualsIndex(i)}
-                      >
-                        <ImageIcon className="size-3.5" />
-                      </Button>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="hover:bg-muted size-8 rounded-full"
+                            onClick={() => setSelectedVisualsIndex(i)}
+                          >
+                            <Compass className="size-3.5" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="bottom" sideOffset={10}>
+                          <p className="font-bold">Visual Direction</p>
+                        </TooltipContent>
+                      </Tooltip>
+
                       <div className="bg-border h-3 w-[1px]" />
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="bg-primary/5 hover:bg-primary/10 group/btn size-8 rounded-full"
-                        onClick={() => handleGenerateSection(i)}
-                      >
-                        <Sparkles className="text-primary size-3.5 transition-transform group-hover/btn:scale-110" />
-                      </Button>
+
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="bg-primary/5 hover:bg-primary/10 group/btn size-8 rounded-full"
+                            onClick={() => handleGenerateSection(i)}
+                          >
+                            <Wand2 className="text-primary size-3.5 transition-transform group-hover/btn:scale-110" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="bottom" sideOffset={10}>
+                          <p className="font-bold">Refine Slide</p>
+                        </TooltipContent>
+                      </Tooltip>
+
                       <div className="bg-border h-3 w-[1px]" />
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="hover:bg-muted size-8 rounded-full"
-                        onClick={() => addOutlineSection(i)}
-                      >
-                        <Plus className="text-primary size-3.5" />
-                      </Button>
+
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="hover:bg-muted size-8 rounded-full"
+                            onClick={() => addOutlineSection(i)}
+                          >
+                            <Plus className="text-primary size-3.5" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="bottom" sideOffset={10}>
+                          <p className="font-bold">Add Section</p>
+                        </TooltipContent>
+                      </Tooltip>
+
                       <div className="bg-border h-3 w-[1px]" />
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="hover:bg-destructive/10 hover:text-destructive size-8 rounded-full"
-                        onClick={() => removeOutlineSection(i)}
-                      >
-                        <Trash className="size-3.5" />
-                      </Button>
+
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="bg-primary/5 hover:bg-primary/10 group/btn size-8 rounded-full"
+                            onClick={() => onExpandSection?.(i)}
+                            disabled={isExpanding}
+                          >
+                            {isExpanding ? (
+                              <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+                            ) : (
+                              <Sparkles className="text-primary size-3.5 transition-transform group-hover/btn:scale-110" />
+                            )}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="bottom" sideOffset={10}>
+                          <p className="font-bold">AI Expand</p>
+                        </TooltipContent>
+                      </Tooltip>
+
+                      <div className="bg-border h-3 w-[1px]" />
+
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="hover:bg-destructive/10 hover:text-destructive size-8 rounded-full"
+                            onClick={() => removeOutlineSection(i)}
+                          >
+                            <Trash className="size-3.5" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="bottom" sideOffset={10}>
+                          <p className="font-bold">Remove Section</p>
+                        </TooltipContent>
+                      </Tooltip>
                     </div>
                   </Reorder.Item>
                 ))}
@@ -869,7 +981,7 @@ export function EditorView({
           <div className="space-y-6 p-8">
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2 text-xl font-bold">
-                <ImageIcon className="text-primary size-5" />
+                <Compass className="text-primary size-5" />
                 Visual Direction
               </DialogTitle>
               <DialogDescription className="text-sm">
