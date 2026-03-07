@@ -58,6 +58,7 @@ import {
 } from "@/components/editor/element-settings"
 import { ThemeSettings } from "@/components/editor/theme-settings"
 import { type Theme } from "@/lib/themes"
+import { PresentationMode } from "./presentation-mode"
 
 import Link from "next/link"
 import { ModeToggle } from "@/components/mode-toggle"
@@ -162,6 +163,7 @@ export function EditorView({
     string,
     string
   > | null>(null)
+  const [isPresenting, setIsPresenting] = React.useState(false)
 
   const handleGenerateSection = (index: number) => {
     if (onGenerateSection) {
@@ -591,21 +593,16 @@ export function EditorView({
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
-                variant="ghost"
-                size="icon"
-                onClick={async () => {
-                  const element = document.documentElement
-                  if (element.requestFullscreen) {
-                    await element.requestFullscreen()
-                  }
-                }}
-                className="hover:bg-muted size-9 rounded-full transition-all active:scale-95"
+                variant="outline"
+                className="border-primary/20 hover:bg-primary/5 hidden h-10 items-center gap-2 rounded-full px-6 font-bold shadow-sm md:flex"
+                onClick={() => setIsPresenting(true)}
               >
-                <PresentationIcon className="h-5 w-5" />
+                <PresentationIcon className="text-primary size-4" />
+                <span>Present</span>
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom" sideOffset={10}>
-              <p className="font-bold">Preview Mode</p>
+              <p className="font-bold">Enter Presentation Mode</p>
             </TooltipContent>
           </Tooltip>
 
@@ -838,6 +835,27 @@ export function EditorView({
                           <Button
                             variant="ghost"
                             size="icon"
+                            className="hover:bg-muted size-8 rounded-full"
+                            onClick={() => {
+                              setActiveSlideIndex(i)
+                              setIsPresenting(true)
+                            }}
+                          >
+                            <PresentationIcon className="size-3.5 text-primary" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="bottom" sideOffset={10}>
+                          <p className="font-bold">Present from here</p>
+                        </TooltipContent>
+                      </Tooltip>
+
+                      <div className="bg-border h-3 w-[1px]" />
+
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
                             className="hover:bg-destructive/10 hover:text-destructive size-8 rounded-full"
                             onClick={() => removeOutlineSection(i)}
                           >
@@ -1014,6 +1032,16 @@ export function EditorView({
           </div>
         </DialogContent>
       </Dialog>
+
+      <AnimatePresence>
+        {isPresenting && (
+          <PresentationMode
+            slides={slides}
+            initialIndex={activeSlideIndex}
+            onClose={() => setIsPresenting(false)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   )
 }
