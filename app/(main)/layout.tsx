@@ -19,16 +19,27 @@ import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { GenerateDialog } from "@/components/home/generate-dialog"
 
+/**
+ * MainLayout: The primary layout for authenticated users.
+ * Features:
+ * - Collapsible sidebar via SidebarProvider.
+ * - Global search with real-time results dropdown.
+ * - Credit balance tracking.
+ * - Project import functionality (JSON).
+ * - Global "New Project" entry points.
+ */
 export default function MainLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const [isSearchActive, setIsSearchActive] = React.useState(false)
-  const [isGenerateOpen, setIsGenerateOpen] = React.useState(false)
-  const [isImporting, setIsImporting] = React.useState(false)
-  const [credits, setCredits] = React.useState<number | null>(null)
+  // --- UI STATES ---
+  const [isSearchActive, setIsSearchActive] = React.useState(false) // For mobile search view toggle
+  const [isGenerateOpen, setIsGenerateOpen] = React.useState(false) // New Project dialog state
+  const [isImporting, setIsImporting] = React.useState(false)       // Loading state for file imports
+  const [credits, setCredits] = React.useState<number | null>(null) // User credit balance
 
+  // --- SEARCH LOGIC ---
   const [searchQuery, setSearchQuery] = React.useState("")
   const [searchResults, setSearchResults] = React.useState<
     { id: string; title: string; updatedAt: string; description?: string }[]
@@ -37,6 +48,9 @@ export default function MainLayout({
 
   const router = useRouter()
 
+  /**
+   * Fetch current user credits on mount.
+   */
   React.useEffect(() => {
     const fetchCredits = async () => {
       try {
@@ -52,6 +66,10 @@ export default function MainLayout({
     fetchCredits()
   }, [])
 
+  /**
+   * Debounced search effect.
+   * Waits 400ms after the last keystroke before querying the API.
+   */
   React.useEffect(() => {
     const timer = setTimeout(async () => {
       if (searchQuery.trim().length >= 2) {
@@ -77,6 +95,10 @@ export default function MainLayout({
     return () => clearTimeout(timer)
   }, [searchQuery])
 
+  /**
+   * Listen for global events to open the generation dialog.
+   * This allow other components to trigger the shared dialog.
+   */
   React.useEffect(() => {
     const handleOpenDialog = () => setIsGenerateOpen(true)
     window.addEventListener("open-generate-dialog", handleOpenDialog)
@@ -86,11 +108,15 @@ export default function MainLayout({
 
   return (
     <SidebarProvider>
+      {/* Primary Navigation Sidebar */}
       <AppSidebar />
+      
       <SidebarInset>
+        {/* SHARED HEADER */}
         <header className="bg-background/80 sticky top-0 z-50 flex h-16 shrink-0 items-center justify-between gap-2 border-b px-4 backdrop-blur-md transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
           <AnimatePresence mode="wait">
             {!isSearchActive ? (
+              /* DEFAULT HEADER VIEW */
               <motion.div
                 key="default-header"
                 initial={{ opacity: 0, y: 10 }}
@@ -105,7 +131,7 @@ export default function MainLayout({
                     className="mr-2 data-[orientation=vertical]:h-4"
                   />
 
-                  {/* Desktop Search */}
+                  {/* Desktop Search Input with Dropdown Results */}
                   <div className="group relative hidden w-full max-w-md md:block">
                     <Search
                       className={`absolute top-2.5 left-2.5 h-4 w-4 transition-colors ${isSearching ? "text-primary animate-pulse" : "text-muted-foreground"}`}
@@ -118,7 +144,7 @@ export default function MainLayout({
                       className="bg-muted/50 focus-visible:ring-primary hover:bg-muted w-full rounded-full border-none pl-9 shadow-sm transition-all focus-visible:ring-1"
                     />
 
-                    {/* Search Results Dropdown */}
+                    {/* Search Results Dropdown Overlay */}
                     <AnimatePresence>
                       {searchQuery.length >= 2 && (
                         <motion.div
@@ -179,7 +205,7 @@ export default function MainLayout({
                     </AnimatePresence>
                   </div>
 
-                  {/* Mobile Search Trigger */}
+                  {/* Mobile Search Trigger Button */}
                   <Button
                     variant="ghost"
                     size="icon"
@@ -190,7 +216,9 @@ export default function MainLayout({
                   </Button>
                 </div>
 
+                {/* HEADER ACTION TOOLS */}
                 <div className="flex items-center gap-2 md:gap-4">
+                  {/* Credit Display */}
                   <div className="hidden lg:block">
                     <span className="text-[10px] font-bold tabular-nums opacity-60">
                       {credits !== null
@@ -200,6 +228,7 @@ export default function MainLayout({
                     </span>
                   </div>
 
+                  {/* HIDDEN FILE INPUT FOR IMPORT */}
                   <input
                     type="file"
                     id="main-import-json"
@@ -218,6 +247,7 @@ export default function MainLayout({
                           toast.info("Checking compatibility...")
                           const data = JSON.parse(content)
 
+                          // Basic validation of keys for stability
                           if (
                             !data ||
                             typeof data !== "object" ||
@@ -230,6 +260,7 @@ export default function MainLayout({
                           setIsImporting(true)
                           toast.info("Creating project...")
 
+                          // Standardize payload format
                           const payload = {
                             title:
                               data.projectTitle ||
@@ -272,6 +303,8 @@ export default function MainLayout({
                       reader.readAsText(file)
                     }}
                   />
+                  
+                  {/* Import Button */}
                   <Button
                     variant="outline"
                     disabled={isImporting}
@@ -288,6 +321,7 @@ export default function MainLayout({
                     <span className="hidden sm:inline">Import</span>
                   </Button>
 
+                  {/* New Project Button */}
                   <Button
                     asChild
                     className="bg-primary hover:bg-primary/90 text-primary-foreground flex items-center gap-2 rounded-full px-4 font-medium shadow-sm md:px-6"
@@ -298,10 +332,12 @@ export default function MainLayout({
                       <span className="sm:hidden">New</span>
                     </Link>
                   </Button>
+                  
                   <ModeToggle />
                 </div>
               </motion.div>
             ) : (
+              /* MOBILE FULL SEARCH OVERLAY */
               <motion.div
                 key="mobile-search"
                 initial={{ opacity: 0, x: 20 }}
@@ -322,7 +358,7 @@ export default function MainLayout({
                     className="bg-muted/50 focus-visible:ring-primary h-10 w-full rounded-full border-none pl-10 focus-visible:ring-1"
                   />
 
-                  {/* Mobile Search Results */}
+                  {/* Mobile Search Results Dropdown */}
                   <AnimatePresence>
                     {searchQuery.length >= 2 && (
                       <motion.div
@@ -380,7 +416,11 @@ export default function MainLayout({
             )}
           </AnimatePresence>
         </header>
+
+        {/* MAIN PAGE CONTENT AREA */}
         <main className="flex flex-1 flex-col gap-4 p-4">{children}</main>
+
+        {/* SHARED PROJECT GENERATION DIALOG */}
         <GenerateDialog
           open={isGenerateOpen}
           onOpenChange={setIsGenerateOpen}

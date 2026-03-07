@@ -68,23 +68,34 @@ import { cn } from "@/lib/utils"
 import { SlideElement, LayoutType } from "@/types/editor"
 import { uploadFileToCloudinary } from "@/lib/cloudinary"
 
+/**
+ * ElementWrapperProps defines the interaction surface for any object on a slide.
+ */
 interface ElementWrapperProps {
-  el: SlideElement
+  el: SlideElement // The data model for the element (text, image, chart, etc.)
   isSelected: boolean
   onSelect: () => void
-  onUpdate: (updates: Partial<SlideElement>) => void
+  onUpdate: (updates: Partial<SlideElement>) => void // Syncs changes back to the Slide state
   onDelete: () => void
   onBringToFront: () => void
   onSendToBack: () => void
   onBringForward: () => void
   onSendBackward: () => void
-  canvasRef: React.RefObject<HTMLDivElement | null>
-  layout: LayoutType
-  splitRatio: number
-  canvasScale: number
+  canvasRef: React.RefObject<HTMLDivElement | null> // Reference to parent for boundary checks
+  layout: LayoutType // Current slide layout (single, split-h, split-v)
+  splitRatio: number // Ratio for split layouts
+  canvasScale: number // Current zoom/scale factor of the canvas
   defaultTextColor: string
 }
 
+/**
+ * ElementWrapper component: The interactive "container" for slide content.
+ * Features:
+ * - Drag and Drop: Using Framer Motion's `drag` for high-performance movements.
+ * - Resizing: Manual pointer-based resizing with boundary awareness.
+ * - Zone Detection: Automatically detects which side of a split-layout the element resides in.
+ * - Contextual Toolbars: Floating UI for editing text properties, chart data, or table styles.
+ */
 export function ElementWrapper({
   el,
   isSelected,
@@ -105,6 +116,8 @@ export function ElementWrapper({
   const [isDragging, setIsDragging] = React.useState(false)
   const [isEditing, setIsEditing] = React.useState(false)
 
+  // --- MOTION SYNC ---
+  // We use MotionValues for smooth, hardware-accelerated updates during dragging/resizing
   const x = useMotionValue(el.x)
   const y = useMotionValue(el.y)
   const width = useMotionValue(el.width)
@@ -117,6 +130,7 @@ export function ElementWrapper({
     height: el.height,
   })
 
+  // Sync MotionValues with prop changes (e.g. when AI updates the slide layout)
   React.useEffect(() => {
     if (!isResizing && !isDragging) {
       if (el.x !== lastProps.current.x) x.set(el.x)
@@ -144,6 +158,7 @@ export function ElementWrapper({
     height,
   ])
 
+  // Reset editing state when selection is lost
   React.useEffect(() => {
     if (!isSelected) {
       setIsEditing(false)
@@ -202,6 +217,11 @@ export function ElementWrapper({
     }
   }
 
+  /**
+   * startResize: Low-level manual resizing logic.
+   * Calculates deltas based on pointer movement and canvas scale.
+   * Handles proportional resizing when Shift key is held.
+   */
   const startResize = (e: React.PointerEvent, direction: string) => {
     e.stopPropagation()
     const target = e.currentTarget as HTMLElement
@@ -226,12 +246,15 @@ export function ElementWrapper({
       let newX = startXPos
       let newY = startYPos
 
+      // Horizontal Resize Logic
       if (direction.includes("e")) {
         let maxW = 1024 - startXPos
         if (layout === "split-h" && el.zone === 0)
           maxW = 1024 * splitRatio - startXPos
         newWidth = Math.max(50, Math.min(maxW, startWidth + deltaX))
       }
+      
+      // Vertical Resize Logic
       if (direction.includes("s")) {
         let maxH = 576 - startYPos
         if (layout === "split-v" && el.zone === 0)
@@ -239,6 +262,7 @@ export function ElementWrapper({
         newHeight = Math.max(20, Math.min(maxH, startHeight + deltaY))
       }
 
+      // Handle West/North resizing by moving X/Y coordinates while adjusting dimensions
       if (direction.includes("w")) {
         let minX = 0
         if (layout === "split-h" && el.zone === 1) minX = 1024 * splitRatio
@@ -249,6 +273,7 @@ export function ElementWrapper({
         newWidth = startWidth + (startXPos - targetX)
         newX = targetX
       }
+      
       if (direction.includes("n")) {
         let minY = 0
         if (layout === "split-v" && el.zone === 1) minY = 576 * splitRatio
@@ -260,6 +285,7 @@ export function ElementWrapper({
         newY = targetY
       }
 
+      // Shift key for Aspect Ratio locking
       if (moveEvent.shiftKey) {
         const ratio = startWidth / startHeight
         if (direction.includes("e") || direction.includes("w")) {
@@ -285,6 +311,7 @@ export function ElementWrapper({
       const finalWidth = width.get()
       const finalHeight = height.get()
 
+      // Detect "Zone" based on center point after resizing
       let newZone = el.zone || 0
       if (canvasRef.current) {
         const rect = canvasRef.current.getBoundingClientRect()

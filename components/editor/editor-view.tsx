@@ -63,6 +63,17 @@ import { PresentationMode } from "./presentation-mode"
 import Link from "next/link"
 import { ModeToggle } from "@/components/mode-toggle"
 
+/**
+ * EditorViewProps defines the input for the main canvas component.
+ * @property initialData - The project state (title, description, slides) received from the API or creation flow.
+ * @property isGenerating - Global generating status.
+ * @property onGenerate - General generation trigger.
+ * @property onGenerateSection - Specific trigger to refine a single slide's HTML.
+ * @property onExpandSection - Trigger to let AI add a new section seamlessly.
+ * @property generatingSections - A set of slide indices currently being processed by the AI.
+ * @property isExpanding - Specifically tracks if the project is being lengthened by AI.
+ * @property onSaveSuccess - Callback to update parent state after a successful DB save.
+ */
 interface EditorViewProps {
   initialData?: {
     id?: string
@@ -131,6 +142,11 @@ const AutoResizeTextarea = ({
   )
 }
 
+/**
+ * EditorView component: The high-fidelity narrative canvas.
+ * This is the core workspace where users refine their stories.
+ * It features a split-view of narrative content and live slide previews.
+ */
 export function EditorView({
   initialData,
   onGenerateSection,
@@ -141,6 +157,7 @@ export function EditorView({
 }: EditorViewProps) {
   const router = useRouter()
 
+  // --- LOCAL STATE ---
   const [slides, setSlides] = React.useState<HtmlSlide[]>(
     initialData?.slides || []
   )
@@ -155,6 +172,7 @@ export function EditorView({
   const [activeSlideIndex, setActiveSlideIndex] = React.useState(0)
   const mainScrollRef = React.useRef<HTMLDivElement>(null)
 
+  // Settings Panel States
   const [isThemeMode, setIsThemeMode] = React.useState(false)
   const [selectedElData, setSelectedElData] =
     React.useState<ElementData | null>(null)
@@ -207,6 +225,12 @@ export function EditorView({
     if (el) el.scrollIntoView({ behavior: "smooth" })
   }
 
+  /**
+   * updateSelectedElement: Communicates with the slide iframe to apply real-time CSS/Data changes.
+   * Logic:
+   * 1. Finds the iframe corresponding to the currently viewed slide.
+   * 2. Sends a postMessage with the elementId and the requested changes (e.g. fontSize, color).
+   */
   const updateSelectedElement = (changes: Partial<ElementData>) => {
     if (!selectedElData) return
     const mainIframes = document.querySelectorAll("main iframe")
@@ -223,6 +247,13 @@ export function EditorView({
     }
   }
 
+  /**
+   * handleExport: Captures slide previews and generates the requested format.
+   * Logic:
+   * - JSON: Simple serialization of current state.
+   * - PDF/PPTX: Uses `html-to-image` to capture the content of each slide's iframe, 
+   *   then converts those captured images into a document.
+   */
   const handleExport = async (format: "json" | "pdf" | "pptx") => {
     try {
       if (format === "json") {
@@ -234,19 +265,17 @@ export function EditorView({
         )
 
         const images: string[] = []
-        // Target the rendered slide preview containers
-
+        // Loop through all slides and capture their visual state
         for (let i = 0; i < slides.length; i++) {
           const previewEl = document.getElementById(
             `slide-preview-${slides[i].id}`
           )
           if (previewEl) {
-            // Find the iframe
             const iframe = previewEl.querySelector("iframe")
             if (iframe && iframe.contentDocument) {
               const root = iframe.contentDocument.getElementById("preview-root")
               if (root) {
-                // Ensure it's rendered. We might need a small delay or check
+                // toPng captures the DOM node as a high-quality data URL
                 const dataUrl = await toPng(root, {
                   width: 960,
                   height: 540,
@@ -691,6 +720,7 @@ export function EditorView({
                             const matchingSlide = slides[i]
                             const isGenerating = generatingSections?.has(i)
 
+                            // 1. GENERATING STATE: Show a premium shimmer loader while AI is building the HTML
                             if (isGenerating) {
                               return (
                                 <motion.div
@@ -725,6 +755,7 @@ export function EditorView({
                               )
                             }
 
+                            // 2. RENDERED STATE: Show the actual slide HTML using the SlidePreview component
                             if (matchingSlide && matchingSlide.html) {
                               return (
                                 <motion.div

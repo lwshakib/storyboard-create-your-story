@@ -2,7 +2,7 @@ import { generateText } from "@/llm/generate-text"
 import { generateObject } from "@/llm/generate-object"
 import { generateHtmlStoryboardPrompt } from "@/llm/prompts"
 import { formatInspirationsForPrompt } from "@/inspirations/registry"
-import { generateImage } from "@/lib/a4f"
+import { generateImage } from "@/llm/generate-image"
 import { z } from "zod"
 import prisma from "@/lib/prisma"
 import { auth } from "@/lib/auth"
@@ -15,8 +15,16 @@ import {
   getOrResetCredits,
 } from "@/lib/credits"
 
+// High duration for iterative agentic loops
 export const maxDuration = 120
 
+/**
+ * POST: Refines a specific slide by generating full high-fidelity HTML and images.
+ * This route implements an 'AGENTIC LOOP' where the AI can:
+ * 1. Decide to generate a new cinematic image.
+ * 2. Write/Refine the Tailwind-based HTML.
+ * 3. Verify its own progress before finishing.
+ */
 export async function POST(req: Request) {
   try {
     const {
@@ -42,7 +50,7 @@ export async function POST(req: Request) {
       return new Response("Unauthorized", { status: 401 })
     }
 
-    // Preliminary Credit Check (10,000 credits reserve)
+    // 1. CREDIT RESERVE CHECK: Slide refinement is expensive (10,000 credit reserve)
     const userCredits = await getOrResetCredits(session.user.id)
     if (userCredits < 10000) {
       return new Response(
@@ -57,15 +65,13 @@ export async function POST(req: Request) {
       )
     }
 
-    console.log("[SECTION_GEN] Initializing iterative generation loop...")
-
-    // 1. PRE-FETCH SLIDE DATA for Context, Reuse & Cleanup
+    // 2. CONTEXT & THEME PREPARATION: Pull global project state to insure consistency
     const allSlides = await prisma.slide.findMany({
       where: { projectId: projectId },
       orderBy: { index: "asc" }
     })
     
-    // 2. Identify Theme Context (The first slide that actually has code sets the theme)
+    // THEME INHERITANCE: If slide 1 already has design tokens, pass them to the AI for slide N
     const themeDriver = allSlides.find(s => s.html && s.html.length > 50)
     const themeContext = themeDriver 
       ? `THEME TEMPLATE FROM SLIDE ${themeDriver.index + 1}:\n${themeDriver.html}` 
@@ -87,9 +93,11 @@ export async function POST(req: Request) {
     }[] = []
     let isFinished = false
     let loopCount = 0
-    const MAX_STEPS = 5
+    const MAX_STEPS = 5 // Maximum iterations the agent can perform per request
 
-    // Action Registry - maps AI actions to execution logic
+    /**
+     * HANDLER REGISTRY: Logic for actions the AI Agent can take.
+     */
     const handlers: Record<
       string,
       (decision: {
@@ -98,9 +106,9 @@ export async function POST(req: Request) {
         args?: { imagePrompt?: string }
       }) => Promise<void>
     > = {
+      // ACTION: GENERATE CINEMATIC IMAGE
       GENERATE_IMAGE: async (decision) => {
         try {
-          // Deduct credits for image generation
           await deductCredits(session.user.id, COST_PER_IMAGE)
 
           const res = await generateImage({
@@ -109,15 +117,14 @@ export async function POST(req: Request) {
             height: 1024,
           })
 
-          // Fetch the specific slide to link assets
           const slides = await prisma.slide.findMany({
             where: { projectId: projectId },
             orderBy: { index: "asc" }
           })
           const targetSlide = slides[index]
 
-          // Save to Asset Json field on slide (Temporary accumulation)
-          if (res.success && res.publicId && res.secure_url && targetSlide) {
+          // Save asset to DB instantly so the project has it even if loop fails midway
+          if (res.success && res.publicId && res.image && targetSlide) {
             const currentAssetsRes = await prisma.slide.findUnique({
               where: { id: targetSlide.id },
               select: { assets: true }
@@ -125,16 +132,13 @@ export async function POST(req: Request) {
             const currentAssets = (currentAssetsRes?.assets as any[]) || []
             const newAssets = [
               ...currentAssets, 
-              { publicId: res.publicId, url: res.secure_url, type: res.resourceType || "image" }
+              { publicId: res.publicId, url: res.image, type: "image" }
             ]
             
             await prisma.slide.update({
               where: { id: targetSlide.id },
               data: { assets: newAssets },
             })
-            console.log(
-              `[SECTION_GEN] Added ${res.publicId} to assets tracking for slide ${targetSlide.id}.`
-            )
           }
 
           stepResults.push({
@@ -142,9 +146,6 @@ export async function POST(req: Request) {
             status: "SUCCESS",
             result: res,
           })
-          console.log(
-            `[SECTION_GEN] Deducted ${COST_PER_IMAGE} credits for image generation.`
-          )
         } catch (err: unknown) {
           console.error("[SECTION_GEN] Image generation failed:", err)
           stepResults.push({
@@ -152,10 +153,9 @@ export async function POST(req: Request) {
             status: "FAILED",
             error: String(err),
           })
-
-          // Note: Credits are deducted upfront for the attempt
         }
       },
+      // ACTION: GENERATE/REFINE HTML CODE
       GENERATE_HTML: async () => {
         const result = await generateText({
           system: systemPrompt,
@@ -177,14 +177,18 @@ export async function POST(req: Request) {
           result: "HTML code updated in memory",
         })
       },
+      // ACTION: TERMINATE LOOP
       END: async () => {
         isFinished = true
       },
     }
 
+    /**
+     * THE AGENTIC LOOP:
+     * Continues until the AI decides 'END' or reaches the iteration limit.
+     */
     while (!isFinished && loopCount < MAX_STEPS) {
       loopCount++
-      console.log(`[SECTION_GEN] Starting loop iteration ${loopCount}...`)
 
       const step = await generateObject({
         system: systemPrompt,
@@ -208,7 +212,7 @@ export async function POST(req: Request) {
           ${JSON.stringify(stepResults, null, 2)}
           
           CURRENT_HTML: ${currentHtml ? "Present" : "Not yet generated"}
- 
+  
           INSTRUCTIONS:
           1. Evaluate the progress. 
           2. REUSE existing assets from the "Available Assets" list if they fit the vision.
@@ -224,31 +228,28 @@ export async function POST(req: Request) {
         thought: string
         args?: { imagePrompt?: string }
       }
-      console.log(
-        `[SECTION_GEN] Iteration ${loopCount} Decision: ${decision.action} | Thought: ${decision.thought}`
-      )
 
       const handler = handlers[decision.action]
       if (handler) {
         await handler(decision)
       } else {
-        console.warn(
-          `[SECTION_GEN] No handler found for action: ${decision.action}`
-        )
-        isFinished = true // Safety break
+        isFinished = true 
       }
     }
 
+    /**
+     * CLEANUP & PERSISTENCE:
+     * Extract clean HTML, optimize assets, and save to DB.
+     */
     const extractHtml = (text: string) => {
       let clean = text.trim()
+      // Remove any markdown fencing or hallucinated slide tags
       clean = clean
         .replace(/```[a-z]*\n?/gi, "")
         .replace(/\n?```/g, "")
         .replace(/```/g, "")
-      clean = clean
         .replace(/<slide-\d+[^>]*>/gi, "")
         .replace(/<\/slide-\d+>/gi, "")
-      clean = clean
         .replace(/<structured-data>[\s\S]*?<\/structured-data>/gi, "")
         .trim()
 
@@ -267,40 +268,33 @@ export async function POST(req: Request) {
 
     let htmlOutput = extractHtml(currentHtml)
 
-    // Deduct final HTML text cost
+    // CHARGE FOR FINAL TEXT: Based on generated HTML length
     if (htmlOutput) {
       const textCost = calculateTextCost(htmlOutput)
       try {
         await deductCredits(session.user.id, textCost)
-        console.log(
-          `[SECTION_GEN] Deducted ${textCost} credits for ${htmlOutput.length} characters of HTML.`
-        )
       } catch (err) {
         console.error("[SECTION_GEN] Failed to deduct final text credits:", err)
       }
     }
 
+    // FALLBACK: If AI failed to output valid HTML, show a placeholder
     if (!htmlOutput || !htmlOutput.includes("<")) {
-      console.warn(
-        "[SECTION_GEN] Warning: Generated HTML is empty or invalid. Using fallback."
-      )
       htmlOutput = `<div id="preview-root" class="w-[960px] h-[540px] flex items-center justify-center bg-muted/10 text-muted-foreground p-20 text-center flex-col gap-4">
             <h1 class="text-3xl font-black uppercase">Partial Creation</h1>
             <p class="max-w-md opacity-60">The generation loop finished but the HTML output was malformed. Please try refining again.</p>
         </div>`
     }
 
-    // PERSIST TO DATABASE & CLEANUP
+    // 1. ASSET OPTIMIZATION: Only keep images that are actually referenced in the HTML
     try {
       if (targetSlide) {
-        // 1. ANALYZE USED ASSETS
         const finalAssetsRes = await prisma.slide.findUnique({
           where: { id: targetSlide.id },
           select: { assets: true }
         })
         const allPossibleAssets = (finalAssetsRes?.assets as any[]) || []
         
-        // Find URLs present in the HTML
         const usedAssets = allPossibleAssets.filter(asset => 
           htmlOutput.includes(asset.url)
         )
@@ -308,29 +302,26 @@ export async function POST(req: Request) {
           !htmlOutput.includes(asset.url)
         )
 
-        // 2. PURGE ORPHANED ASSETS FROM CLOUDINARY
+        // 2. ORPHANED ASSET PURGE: Remove unused images from Cloudinary storage
         if (unusedAssets.length > 0) {
           const publicIdsToPurge = unusedAssets.map(a => a.publicId)
           try {
             await deleteMultipleFromCloudinary(publicIdsToPurge)
-            console.log(`[SECTION_GEN] Purged ${publicIdsToPurge.length} unused assets from Cloudinary for slide ${targetSlide.id}.`)
+            console.log(`[SECTION_GEN] Purged ${publicIdsToPurge.length} unused assets for slide ${targetSlide.id}.`)
           } catch (purgeErr) {
             console.error("[SECTION_GEN] Cloudinary purge failed:", purgeErr)
           }
         }
 
-        // 3. UPDATE DB
+        // 3. DATABASE SYNC: Update slide with final HTML and cleaned asset list
         await prisma.slide.update({
           where: { id: targetSlide.id },
           data: { 
             html: htmlOutput,
             prompt: initialPrompt,
-            assets: usedAssets // Only keep what's actually in the HTML
+            assets: usedAssets 
           }
         })
-        console.log(
-          `[SECTION_GEN] Successfully saved refined HTML, prompt, and optimized assets for slide ${index + 1} (${targetSlide.id}).`
-        )
       }
     } catch (saveError) {
       console.error("[SECTION_GEN] Database save error:", saveError)

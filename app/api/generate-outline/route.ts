@@ -10,8 +10,17 @@ import {
   getOrResetCredits,
 } from "@/lib/credits"
 
+// Allow long-running AI generation (up to 60s)
 export const maxDuration = 60
 
+/**
+ * POST: Orchestrates the AI generation of a storyboard outline.
+ * Process:
+ * 1. Checks user credits (requires a 5,000 credit reserve).
+ * 2. Uses an LLM to generate a structured JSON object (title, slides).
+ * 3. Calculates the dynamic credit cost based on the generated text length.
+ * 4. Deducts credits and persists the project structure to the database.
+ */
 export async function POST(req: Request) {
   try {
     const { prompt, projectId } = await req.json()
@@ -28,7 +37,7 @@ export async function POST(req: Request) {
       return new Response("Unauthorized", { status: 401 })
     }
 
-    // Preliminary Credit Check (5,000 credits reserve)
+    // 1. PRELIMINARY CREDIT CHECK: Ensure the user has enough 'fuel' to start
     const userCredits = await getOrResetCredits(session.user.id)
     if (userCredits < 5000) {
       return new Response(
@@ -43,8 +52,10 @@ export async function POST(req: Request) {
       )
     }
 
+    // 2. INSPIRATION INJECTION: Pull agency-level design patterns from the registry
     const designInspirations = formatInspirationsForPrompt()
 
+    // 3. AI GENERATION: Use 'generateObject' to enforce a strict JSON schema
     const { object } = await generateObject<{
       title: string
       description: string
@@ -93,14 +104,14 @@ export async function POST(req: Request) {
       `,
     })
 
-    // Calculate Dynamic Credit Cost
+    // 4. DYNAMIC COST CALCULATION: Charge based on the actual output volume
     const totalText =
       object.title +
       object.description +
       object.slides.map((s) => s.title + s.description + s.content).join("")
     const finalTextCost = calculateTextCost(totalText)
 
-    // Final Deduction
+    // 5. CREDIT DEDUCTION: Finalize the payment
     try {
       await deductCredits(session.user.id, finalTextCost)
       console.log(
@@ -115,7 +126,7 @@ export async function POST(req: Request) {
       }
     }
 
-    // Prepare slides for database persistence
+    // 6. DB PERSISTENCE: Save the new structure to the database
     const reindexedSlides = object.slides.map((s: any, idx: number) => ({
       index: idx,
       title: s.title,
@@ -126,7 +137,6 @@ export async function POST(req: Request) {
       assets: []
     }))
 
-    // Persist to DB if projectId is provided
     if (projectId) {
       try {
         const updatedProject = await prisma.project.update({
@@ -135,7 +145,7 @@ export async function POST(req: Request) {
             title: object.title,
             description: object.description,
             slides: {
-              deleteMany: {},
+              deleteMany: {}, // Clean slate for the new outline
               create: reindexedSlides
             },
           },

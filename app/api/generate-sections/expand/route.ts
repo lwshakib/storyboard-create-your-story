@@ -11,8 +11,14 @@ import {
   getOrResetCredits,
 } from "@/lib/credits"
 
+// Allow up to 60s for the AI to reason about the expansion
 export const maxDuration = 60
 
+/**
+ * POST: Generates a NEW section (slide) for an existing project.
+ * Unlike initial outline generation, this requires 'Theme Inheritance' logic 
+ * to ensure the new slide looks like it belongs to the same deck.
+ */
 export async function POST(req: Request) {
   try {
     const { projectId, index } = await req.json()
@@ -29,7 +35,7 @@ export async function POST(req: Request) {
       return new Response("Unauthorized", { status: 401 })
     }
 
-    // Preliminary Credit Check (2,000 credits for expansion)
+    // 1. CREDIT CHECK: Expansion is a lightweight operation (2,000 credit reserve)
     const userCredits = await getOrResetCredits(session.user.id)
     if (userCredits < 2000) {
       return new Response(
@@ -44,6 +50,7 @@ export async function POST(req: Request) {
       )
     }
 
+    // 2. CONTEXT LOADING: Fetch existing slides to understand current narrative/theme
     const project = await prisma.project.findUnique({
       where: { id: projectId },
       include: { slides: { orderBy: { index: "asc" } } }
@@ -55,7 +62,7 @@ export async function POST(req: Request) {
 
     const existingSlides = project.slides
 
-    // IDENTIFY THEME CONTEXT
+    // 3. THEME INHERITANCE: Find a slide that already has HTML to use as a style template
     const themeDriver = existingSlides.find(s => s.html && s.html.length > 50)
     const themeContext = themeDriver 
       ? `THEME TEMPLATE FROM SLIDE ${themeDriver.index + 1}:\n${themeDriver.html}` 
@@ -64,6 +71,7 @@ export async function POST(req: Request) {
     const inspirations = formatInspirationsForPrompt()
     const systemPrompt = generateHtmlStoryboardPrompt(inspirations, themeContext)
 
+    // 4. AI GENERATION: Create the new slide metadata
     const { object } = await generateObject<{
       title: string
       description: string
@@ -95,7 +103,7 @@ export async function POST(req: Request) {
       `,
     })
 
-    // Deduct credits
+    // 5. CREDIT DEDUCTION
     const totalText = object.title + object.description + object.content
     const textCost = calculateTextCost(totalText)
     await deductCredits(session.user.id, textCost)
@@ -108,11 +116,11 @@ export async function POST(req: Request) {
       prompt: ""
     }
 
+    // 6. SPLICE & REINDEX: Insert the new slide into the correct position
     const updatedSlides = [...existingSlides] as any[]
     const insertIndex = typeof index === "number" ? index + 1 : updatedSlides.length
     updatedSlides.splice(insertIndex, 0, newSlide)
 
-    // Re-index and prepare for database persistence
     const reindexedSlides = updatedSlides.map((s, i) => ({
       index: i,
       title: s.title,
@@ -123,12 +131,13 @@ export async function POST(req: Request) {
       assets: s.assets || []
     }))
 
+    // 7. DB PERSISTENCE
     const updatedProject = await prisma.project.update({
       where: { id: projectId },
       data: {
         slides: {
-          deleteMany: {},
-          create: reindexedSlides
+          deleteMany: {}, // Clean wipe...
+          create: reindexedSlides // ...and re-insert the expanded array
         },
       },
       include: {

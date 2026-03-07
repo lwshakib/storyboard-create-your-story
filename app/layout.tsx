@@ -3,7 +3,12 @@ import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/sonner"
 import NextTopLoader from "nextjs-toploader"
+import { TooltipProvider } from "@/components/ui/tooltip"
 
+/**
+ * Metadata configuration for the entire application.
+ * Defines titles, descriptions, and comprehensive favicon/icon sets for various platforms.
+ */
 export const metadata: Metadata = {
   title: "Storyboard",
   description: "Create your own story",
@@ -36,8 +41,14 @@ export const metadata: Metadata = {
   manifest: "/favicon_io/site.webmanifest",
 }
 
-import { TooltipProvider } from "@/components/ui/tooltip"
-
+/**
+ * RootLayout is the top-level layout wrapper for the entire application.
+ * It provides essential providers and global components:
+ * 1. ThemeProvider: Manages light/dark mode.
+ * 2. TooltipProvider: Enables Shadcn/UI tooltips globally.
+ * 3. NextTopLoader: Displays a progress bar during navigation.
+ * 4. Toaster: Handles application-wide notifications.
+ */
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -45,7 +56,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body>
+      <body className="antialiased">
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -53,6 +64,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <TooltipProvider>
+            {/* Global navigation progress bar */}
             <NextTopLoader
               showSpinner={false}
               height={3}
@@ -60,7 +72,9 @@ export default function RootLayout({
               speed={200}
               initialPosition={0.08}
             />
+            {/* Main content of the application */}
             {children}
+            {/* Global toast notification system */}
             <Toaster />
           </TooltipProvider>
         </ThemeProvider>

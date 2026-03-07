@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Sparkles, RefreshCw } from "lucide-react"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
-import { RECOMMENDED_PROMPTS } from "@/lib/prompts-data"
+import { RECOMMENDED_PROMPTS } from "@/llm/prompts"
 
 interface GenerateDialogProps {
   open: boolean

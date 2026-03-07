@@ -16,7 +16,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { RECOMMENDED_PROMPTS } from "@/lib/prompts-data"
+import { RECOMMENDED_PROMPTS } from "@/llm/prompts"
 
 export default function NewProjectPage() {
   const [showGenerateDialog, setShowGenerateDialog] = React.useState(false)

@@ -16,6 +16,10 @@ import { Input } from "@/components/ui/input"
 import { authClient } from "@/lib/auth-client"
 import { Loader2 } from "lucide-react"
 
+/**
+ * LoginForm Component: Handles user authentication via email or social providers.
+ * Integration: Uses 'authClient' for robust sessions and password management.
+ */
 export function LoginForm({
   className,
   ...props
@@ -27,6 +31,12 @@ export function LoginForm({
   const [isLoading, setIsLoading] = useState(false)
   const [socialLoading, setSocialLoading] = useState<string | null>(null)
 
+  /**
+   * EMAIL SIGN-IN FLOW:
+   * 1. Clear previous errors.
+   * 2. Attempt authentication via authClient.
+   * 3. On success, redirect to the home dashboard and refresh the server state.
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
@@ -52,6 +62,9 @@ export function LoginForm({
     }
   }
 
+  /**
+   * SOCIAL LOGIN: Currently supports Google.
+   */
   const handleSocialLogin = async (provider: "google") => {
     setSocialLoading(provider)
     try {
@@ -73,36 +86,41 @@ export function LoginForm({
     >
       <FieldGroup>
         <div className="flex flex-col items-center gap-1 text-center">
-          <h1 className="text-2xl font-bold">Login to your account</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Login to your account</h1>
           <p className="text-muted-foreground text-sm text-balance">
-            Enter your email below to login to your account
+            Enter your credentials to continue your storytelling journey
           </p>
         </div>
 
+        {/* ERROR MESSAGE DISPLAY */}
         {error && (
-          <div className="bg-destructive/10 text-destructive rounded-md p-3 text-center text-sm">
+          <div className="bg-destructive/10 text-destructive rounded-xl p-3 text-center text-sm font-medium">
             {error}
           </div>
         )}
 
+        {/* EMAIL FIELD */}
         <Field>
           <FieldLabel htmlFor="email">Email</FieldLabel>
           <Input
             id="email"
             type="email"
-            placeholder="m@example.com"
+            placeholder="name@example.com"
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             disabled={isLoading}
+            className="rounded-xl"
           />
         </Field>
+
+        {/* PASSWORD FIELD */}
         <Field>
           <div className="flex items-center">
             <FieldLabel htmlFor="password">Password</FieldLabel>
             <Link
               href="/forgot-password"
-              className="ml-auto text-sm underline-offset-4 hover:underline"
+              className="text-primary ml-auto text-sm font-medium underline-offset-4 hover:underline"
             >
               Forgot your password?
             </Link>
@@ -114,10 +132,13 @@ export function LoginForm({
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             disabled={isLoading}
+            className="rounded-xl"
           />
         </Field>
+
+        {/* ACTION BUTTON */}
         <Field>
-          <Button type="submit" disabled={isLoading}>
+          <Button type="submit" disabled={isLoading} className="h-11 rounded-xl font-bold">
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 size-4 animate-spin" />
@@ -128,13 +149,19 @@ export function LoginForm({
             )}
           </Button>
         </Field>
-        <FieldSeparator>Or continue with</FieldSeparator>
+
+        <FieldSeparator className="text-[10px] font-black tracking-widest uppercase opacity-40">
+          Or continue with
+        </FieldSeparator>
+
+        {/* SOCIAL LOGIN SECTION */}
         <Field className="gap-2">
           <Button
             variant="outline"
             type="button"
             disabled={socialLoading !== null}
             onClick={() => handleSocialLogin("google")}
+            className="h-11 rounded-xl font-bold"
           >
             {socialLoading === "google" ? (
               <Loader2 className="mr-2 size-4 animate-spin" />
@@ -149,9 +176,9 @@ export function LoginForm({
             Login with Google
           </Button>
 
-          <FieldDescription className="text-center">
+          <FieldDescription className="mt-4 text-center">
             Don&apos;t have an account?{" "}
-            <Link href="/sign-up" className="underline underline-offset-4">
+            <Link href="/sign-up" className="text-primary font-bold underline underline-offset-4">
               Sign up
             </Link>
           </FieldDescription>

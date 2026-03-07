@@ -13,6 +13,10 @@ import {
 
 import Link from "next/link"
 
+/**
+ * NavMain: Renders the primary sidebar navigation items.
+ * Uses the Next.js pathname to automatically highlight the active route.
+ */
 export function NavMain({
   items,
 }: {
@@ -27,7 +31,9 @@ export function NavMain({
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Platform</SidebarGroupLabel>
+      <SidebarGroupLabel className="text-[10px] font-black tracking-widest uppercase opacity-40">
+        Platform
+      </SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <SidebarMenuItem key={item.title}>
@@ -35,6 +41,7 @@ export function NavMain({
               asChild
               tooltip={item.title}
               isActive={pathname === item.url}
+              className="data-[active=true]:bg-primary/10 data-[active=true]:text-primary font-bold"
             >
               <Link href={item.url}>
                 {item.icon && <item.icon />}

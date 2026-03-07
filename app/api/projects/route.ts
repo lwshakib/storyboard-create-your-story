@@ -4,8 +4,13 @@ import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
 import { deleteMultipleFromCloudinary } from "@/lib/cloudinary"
 
+/**
+ * POST: Creates a new project for the authenticated user.
+ * It initializes the project with title, description, and an optional array of slides.
+ */
 export async function POST(req: Request) {
   try {
+    // 1. AUTHENTICATION: Ensure the user is logged in
     const session = await auth.api.getSession({
       headers: await headers(),
     })
@@ -13,6 +18,7 @@ export async function POST(req: Request) {
     const body = await req.json()
     const { title, slides, description } = body
 
+    // 2. DATABASE PERSISTENCE: Create project and its initial slides in a single transaction
     const project = await prisma.project.create({
       data: {
         title: title || "Untitled Storyboard",
@@ -45,6 +51,10 @@ export async function POST(req: Request) {
   }
 }
 
+/**
+ * GET: Retrieves all projects for the authenticated user.
+ * Supports a '?deleted=true' query param to fetch projects from the trash.
+ */
 export async function GET(req: Request) {
   try {
     const session = await auth.api.getSession({
@@ -82,6 +92,10 @@ export async function GET(req: Request) {
   }
 }
 
+/**
+ * DELETE: Empties the trash for the authenticated user.
+ * This is a destructive operation that removes both DB records and Cloudinary assets.
+ */
 export async function DELETE() {
   try {
     const session = await auth.api.getSession({
@@ -92,7 +106,7 @@ export async function DELETE() {
       return new NextResponse("Unauthorized", { status: 401 })
     }
 
-    // 1. Fetch all projects to be deleted with their slides
+    // 1. RETRIEVE TRASHED PROJECTS: Find everything marked for deletion
     const trashProjects = await prisma.project.findMany({
       where: {
         userId: session.user.id,
@@ -103,7 +117,7 @@ export async function DELETE() {
       },
     })
 
-    // 2. Collect all assets from all slides of these projects
+    // 2. ASSET DISCOVERY: Extract public IDs for all images/videos in these projects
     const allPublicIds = trashProjects.flatMap(project => 
       project.slides.flatMap(slide => {
         const assets = (slide.assets as any[]) || []
@@ -111,7 +125,7 @@ export async function DELETE() {
       })
     )
 
-    // 3. Purge from Cloudinary
+    // 3. CLOUDINARY PURGE: Remove physical files from Cloudinary storage
     if (allPublicIds.length > 0) {
       try {
         await deleteMultipleFromCloudinary(allPublicIds)
@@ -121,7 +135,7 @@ export async function DELETE() {
       }
     }
 
-    // 4. Delete from DB
+    // 4. DATABASE PURGE: Permanently remove the project records
     await prisma.project.deleteMany({
       where: {
         userId: session.user.id,

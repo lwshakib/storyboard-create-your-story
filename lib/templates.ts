@@ -64,19 +64,26 @@ export function getTemplates(): Template[] {
 
       return {
         id: index + 1,
+        index: index,
         html: content,
-        bgImage,
         title:
           slideOutline?.title || file.replace(".html", "").replace(/-/g, " "),
         description: slideOutline?.description || "",
         content: slideOutline?.content || "",
         elements: [],
+        assets: [
+          {
+            publicId: `temp-${index}`,
+            url: bgImage,
+            type: "image",
+          },
+        ],
       }
     })
 
     const firstSlideImage =
       slides.length > 0
-        ? slides[0].bgImage
+        ? slides[0].assets?.[0]?.url
         : "https://placehold.co/800x450/0f172a/white?text=Template"
 
     return {

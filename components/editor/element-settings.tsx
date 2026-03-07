@@ -24,6 +24,10 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
+/**
+ * ElementData: Interface representing the properties of a selected HTML element on the slide.
+ * These properties are extracted from the slide's iframe and used to populate the settings panel.
+ */
 export interface ElementData {
   elementId: string
   tagName: string
@@ -46,17 +50,26 @@ interface ElementSettingsProps {
   clearSelection: () => void
 }
 
+/**
+ * ElementSettings Component: A contextual sidebar panel for editing individual HTML elements.
+ * Features:
+ * - Real-time synchronization: Edits in the panel are sent to the slide iframe via postMessage.
+ * - Dynamic UI: Adjusts based on the selected tag (Text, Div, etc.).
+ * - Color Picker: Converts CSS RGB values to Hex for the standard HTML color input.
+ */
 export function ElementSettings({
   selectedElData,
   onUpdate,
   clearSelection,
 }: ElementSettingsProps) {
+  // --- LOCAL INPUT STATES ---
   const [text, setText] = React.useState("")
   const [color, setColor] = React.useState("")
   const [bgColor, setBgColor] = React.useState("")
   const [fontSize, setFontSize] = React.useState("")
   const [fontFamily, setFontFamily] = React.useState("")
 
+  // Update local state when a new element is selected or current element changes externally
   React.useEffect(() => {
     if (selectedElData) {
       setText(selectedElData.content || "")
@@ -73,11 +86,16 @@ export function ElementSettings({
     onUpdate(changes)
   }
 
+  /**
+   * deleteElement: Effectively removes an element by setting its display to none.
+   * This is sent as a style update to the slide preview.
+   */
   const deleteElement = () => {
-    handleUpdate({ display: "none" }) // Simplest way to "remove" via styles
+    handleUpdate({ display: "none" }) 
     clearSelection()
   }
 
+  // EMPTY STATE: If no element is selected, show a helpful message
   if (!selectedElData) {
     return (
       <div className="text-muted-foreground flex flex-1 flex-col items-center justify-center p-8 text-center">
@@ -91,6 +109,7 @@ export function ElementSettings({
 
   return (
     <div className="flex flex-1 flex-col space-y-6 overflow-y-auto p-4">
+      {/* HEADER */}
       <div className="flex items-center justify-between">
         <h3 className="text-muted-foreground flex items-center gap-2 text-sm font-bold tracking-wider uppercase">
           <Type className="h-4 w-4" />
@@ -109,7 +128,7 @@ export function ElementSettings({
       <Separator />
 
       <div className="space-y-4">
-        {/* Text Content */}
+        {/* TEXT CONTENT FIELD */}
         <div className="space-y-2">
           <Label className="text-muted-foreground text-xs font-semibold">
             Text Content
@@ -123,7 +142,7 @@ export function ElementSettings({
           />
         </div>
 
-        {/* Colors */}
+        {/* COLORS GRID: Text and Background */}
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label className="text-muted-foreground flex items-center gap-1 text-xs font-semibold">
@@ -175,7 +194,7 @@ export function ElementSettings({
           </div>
         </div>
 
-        {/* Typography */}
+        {/* TYPOGRAPHY Selectors */}
         <div className="space-y-2">
           <Label className="text-muted-foreground flex items-center gap-1 text-xs font-semibold">
             <FontIcon className="h-3 w-3" /> Font Family
@@ -198,6 +217,7 @@ export function ElementSettings({
           </Select>
         </div>
 
+        {/* SIZE AND ALIGNMENT Controls */}
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label className="text-muted-foreground text-xs font-semibold">
@@ -247,6 +267,7 @@ export function ElementSettings({
 
       <Separator />
 
+      {/* DANGEROUS ACTION: Removal */}
       <Button
         variant="destructive"
         className="w-full gap-2"
@@ -259,6 +280,9 @@ export function ElementSettings({
   )
 }
 
+/**
+ * TriggerWithLabel: Custom select trigger that displays the current value as a placeholder.
+ */
 function TriggerWithLabel({ val }: { val: string }) {
   return (
     <SelectTrigger className="w-full text-xs">
@@ -267,6 +291,10 @@ function TriggerWithLabel({ val }: { val: string }) {
   )
 }
 
+/**
+ * rgbToHex: Utility to convert CSS computed color strings (rgb/rgba) to Hex format.
+ * Necessary because HTML color inputs only accept #RRGGBB.
+ */
 function rgbToHex(rgb: string) {
   if (!rgb) return "#000000"
   if (rgb.startsWith("#")) return rgb

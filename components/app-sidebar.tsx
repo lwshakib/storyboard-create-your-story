@@ -19,7 +19,9 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 
-// This is sample data.
+/**
+ * STATIC NAVIGATION DEFINITION: Core application routes.
+ */
 const navMain = [
   {
     title: "Home",
@@ -43,21 +45,27 @@ const navMain = [
   },
 ]
 
-// Helper to construct project URL - check if we're in editor or project view
 const getProjectUrl = (id: string) => `/project/${id}`
 
+/**
+ * AppSidebar: The primary shell navigation component.
+ * Features:
+ * - Dynamic Data: Fetches and displays the user's recent projects.
+ * - Reactive: Listens for 'projects-updated' events to refresh the project list without a full page reload.
+ * - Responsive: Collapses to icons on smaller viewports or when toggled.
+ */
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [recentProjects, setRecentProjects] = React.useState<
     { name: string; url: string }[]
   >([])
 
+  // FETCH LOGIC: Retrieves recent projects from the API
   React.useEffect(() => {
     const fetchProjects = async () => {
       try {
         const response = await fetch("/api/projects")
         if (response.ok) {
           const data = await response.json()
-          // Take first 5 projects
           const recent = data
             .slice(0, 5)
             .map((p: { title: string; id: string }) => ({
@@ -73,10 +81,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
     fetchProjects()
 
-    // Listen for project updates to refresh the list
+    // EVENT BUS HANDLER: Refreshes projects when other parts of the app modify them.
     const handleUpdate = (e: Event) => {
       const customEvent = e as CustomEvent<{ deletedId?: string }>
-      // Optimistic delete: if an ID is provided, remove it from state instantly
+      
+      // Optimistic delete: if an ID is provided, remove it from state instantly to improve UX.
       if (customEvent.detail?.deletedId) {
         setRecentProjects((prev) =>
           prev.filter((p) => !p.url.includes(customEvent.detail.deletedId!))
@@ -92,6 +101,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   return (
     <Sidebar collapsible="icon" {...props}>
+      {/* HEADER: Branding & App Logo */}
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -111,10 +121,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
+
+      {/* CONTENT: Main & Project Navigation */}
       <SidebarContent>
         <NavMain items={navMain} />
         <NavProjects projects={recentProjects} />
       </SidebarContent>
+
+      {/* FOOTER: User Account Management */}
       <SidebarFooter>
         <NavUser />
       </SidebarFooter>

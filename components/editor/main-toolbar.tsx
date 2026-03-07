@@ -1,7 +1,6 @@
 "use client"
 
 import Image from "next/image"
-
 import * as React from "react"
 import { motion } from "framer-motion"
 import {
@@ -52,19 +51,29 @@ interface MainToolbarProps {
   onUpdateElement: (id: string, updates: Partial<SlideElement>) => void
 }
 
+/**
+ * MainToolbar Component: The floating utility bar for adding content to slides.
+ * Features:
+ * - Content Creation: Buttons for text, tables, images, shapes, and various charts.
+ * - Drag & Drop: Tools can be dragged onto the canvas to place them exactly.
+ * - Image Upload: Integrated with Cloudinary for persistent visual assets.
+ * - Slide Styles: Quick access to background colors and preset high-end textures.
+ */
 export function MainToolbar({
   activeSlide,
   onAddElement,
   onUpdateSlide,
   onUpdateElement,
 }: MainToolbarProps) {
+  
+  // Drag handling to pass the element type to the canvas drop zone
   const handleDragStart = (e: React.DragEvent, type: ElementType) => {
     e.dataTransfer.setData("elementType", type)
   }
 
   const [tableRows, setTableRows] = React.useState(3)
   const [tableCols, setTableCols] = React.useState(3)
-  const [isTableDialogOpen, setIsTableDialogOpen] = React.useState(false)
+  const [isTableDialogOpen] = React.useState(false) // Note: Controlled by Dialog's trigger usually
 
   return (
     <div className="absolute bottom-20 left-1/2 z-[100] flex -translate-x-1/2 flex-col items-center gap-4">
@@ -73,7 +82,7 @@ export function MainToolbar({
         animate={{ opacity: 1, y: 0 }}
         className="bg-background/80 flex items-center gap-2 rounded-[28px] border p-2 shadow-2xl ring-1 ring-black/5 backdrop-blur-2xl"
       >
-        {/* Global Tools Section */}
+        {/* SECTION 1: Narrative & Structural Tools */}
         <div className="flex items-center gap-1.5">
           <ToolButton
             onDragStart={(e) => handleDragStart(e, "text")}
@@ -82,7 +91,8 @@ export function MainToolbar({
             tooltip="Text"
           />
 
-          <Dialog open={isTableDialogOpen} onOpenChange={setIsTableDialogOpen}>
+          {/* TABLE CREATION: Opens a dialog to specify dimensions */}
+          <Dialog>
             <DialogTrigger asChild>
               <ToolButton
                 onDragStart={(e) => handleDragStart(e, "table")}
@@ -98,14 +108,10 @@ export function MainToolbar({
               </DialogHeader>
               <div className="grid gap-6 py-2 font-sans">
                 <div className="space-y-3">
-                  <Label
-                    htmlFor="rows"
-                    className="ml-1 text-[9px] font-black tracking-[0.2em] uppercase opacity-40"
-                  >
+                  <Label className="ml-1 text-[9px] font-black tracking-[0.2em] uppercase opacity-40">
                     Rows
                   </Label>
                   <Input
-                    id="rows"
                     type="number"
                     value={tableRows}
                     min={1}
@@ -115,14 +121,10 @@ export function MainToolbar({
                   />
                 </div>
                 <div className="space-y-3">
-                  <Label
-                    htmlFor="cols"
-                    className="ml-1 text-[9px] font-black tracking-[0.2em] uppercase opacity-40"
-                  >
+                  <Label className="ml-1 text-[9px] font-black tracking-[0.2em] uppercase opacity-40">
                     Columns
                   </Label>
                   <Input
-                    id="cols"
                     type="number"
                     value={tableCols}
                     min={1}
@@ -137,7 +139,6 @@ export function MainToolbar({
                   className="bg-primary shadow-primary/30 h-14 w-full rounded-[20px] text-[10px] font-black tracking-widest uppercase shadow-2xl transition-all hover:scale-[1.02] active:scale-[0.98]"
                   onClick={() => {
                     onAddElement("table", { rows: tableRows, cols: tableCols })
-                    setIsTableDialogOpen(false)
                   }}
                 >
                   Create Table
@@ -145,6 +146,8 @@ export function MainToolbar({
               </DialogFooter>
             </DialogContent>
           </Dialog>
+
+          {/* IMAGE UPLOADER: Handles local file selection and Cloudinary upload */}
           <div className="relative">
             <ToolButton
               onDragStart={(e) => handleDragStart(e, "image")}
@@ -161,10 +164,10 @@ export function MainToolbar({
                 const file = e.target.files?.[0]
                 if (file) {
                   const newId = Math.random().toString(36).substr(2, 9)
-                  // Add with loading state
                   const x = 100 + activeSlide.elements.length * 20
                   const y = 100 + activeSlide.elements.length * 20
 
+                  // 1. Add a placeholder image with a 'loading' src
                   const newElement: SlideElement = {
                     id: newId,
                     type: "image",
@@ -173,13 +176,14 @@ export function MainToolbar({
                     y,
                     width: 400,
                     height: 300,
-                    src: "loading",
+                    src: "loading", 
                     zone: 0,
                   }
                   onUpdateSlide({
                     elements: [...activeSlide.elements, newElement],
                   })
 
+                  // 2. Perform the async upload and update the element when done
                   uploadFileToCloudinary(file).then((data) => {
                     onUpdateElement(newId, { src: data.secureUrl })
                   })
@@ -187,6 +191,8 @@ export function MainToolbar({
               }}
             />
           </div>
+
+          {/* SHAPES: Basic vector representations */}
           <ToolButton
             onDragStart={(e) => handleDragStart(e, "shape")}
             onClick={() => onAddElement("shape", { shapeType: "rectangle" })}
@@ -200,6 +206,7 @@ export function MainToolbar({
             tooltip="Circle"
           />
 
+          {/* CHARTS MENU: Multiple data-driven visualization options */}
           <Popover>
             <PopoverTrigger asChild>
               <ToolButton
@@ -216,46 +223,22 @@ export function MainToolbar({
                 Add Chart
               </div>
               <div className="grid grid-cols-1 gap-1">
-                <Button
-                  variant="ghost"
-                  className="h-10 justify-start gap-3 rounded-xl text-xs font-bold"
-                  onClick={() => onAddElement("bar-chart")}
-                >
+                <Button variant="ghost" className="h-10 justify-start gap-3 rounded-xl text-xs font-bold" onClick={() => onAddElement("bar-chart")}>
                   <BarChart2 className="size-4 text-blue-500" /> Bar Chart
                 </Button>
-                <Button
-                  variant="ghost"
-                  className="h-10 justify-start gap-3 rounded-xl text-xs font-bold"
-                  onClick={() => onAddElement("pie-chart")}
-                >
+                <Button variant="ghost" className="h-10 justify-start gap-3 rounded-xl text-xs font-bold" onClick={() => onAddElement("pie-chart")}>
                   <PieChartIcon className="size-4 text-orange-500" /> Pie Chart
                 </Button>
-                <Button
-                  variant="ghost"
-                  className="h-10 justify-start gap-3 rounded-xl text-xs font-bold"
-                  onClick={() => onAddElement("line-chart")}
-                >
+                <Button variant="ghost" className="h-10 justify-start gap-3 rounded-xl text-xs font-bold" onClick={() => onAddElement("line-chart")}>
                   <TrendingUp className="size-4 text-green-500" /> Line Chart
                 </Button>
-                <Button
-                  variant="ghost"
-                  className="h-10 justify-start gap-3 rounded-xl text-xs font-bold"
-                  onClick={() => onAddElement("area-chart")}
-                >
+                <Button variant="ghost" className="h-10 justify-start gap-3 rounded-xl text-xs font-bold" onClick={() => onAddElement("area-chart")}>
                   <Plus className="size-4 text-purple-500" /> Area Chart
                 </Button>
-                <Button
-                  variant="ghost"
-                  className="h-10 justify-start gap-3 rounded-xl text-xs font-bold"
-                  onClick={() => onAddElement("radar-chart")}
-                >
+                <Button variant="ghost" className="h-10 justify-start gap-3 rounded-xl text-xs font-bold" onClick={() => onAddElement("radar-chart")}>
                   <Plus className="size-4 text-pink-500" /> Radar Chart
                 </Button>
-                <Button
-                  variant="ghost"
-                  className="h-10 justify-start gap-3 rounded-xl text-xs font-bold"
-                  onClick={() => onAddElement("radial-chart")}
-                >
+                <Button variant="ghost" className="h-10 justify-start gap-3 rounded-xl text-xs font-bold" onClick={() => onAddElement("radial-chart")}>
                   <Plus className="size-4 text-yellow-500" /> Radial Chart
                 </Button>
               </div>
@@ -265,7 +248,7 @@ export function MainToolbar({
 
         <Separator orientation="vertical" className="h-6 opacity-30" />
 
-        {/* Background Settings Section */}
+        {/* SECTION 2: Background & Aesthetics */}
         <div className="flex items-center gap-1.5">
           <Popover>
             <PopoverTrigger asChild>
@@ -285,6 +268,7 @@ export function MainToolbar({
               <div className="text-primary/40 mb-2 px-3 py-2 text-[9px] font-black tracking-[0.3em] uppercase">
                 Preset Backgrounds
               </div>
+              {/* Renders a grid of pre-captured professional background textures */}
               <div className="mb-4 grid grid-cols-4 gap-2">
                 {Array.from({ length: 13 }).map((_, i) => (
                   <button
@@ -309,44 +293,14 @@ export function MainToolbar({
                     />
                   </button>
                 ))}
-                <button
-                  onClick={() => onUpdateSlide({ bgImage: "" })}
-                  className="border-border hover:bg-muted flex aspect-video items-center justify-center rounded-lg border text-[8px] font-black uppercase transition-all"
-                >
-                  None
-                </button>
               </div>
+
               <Separator className="my-3 opacity-50" />
               <div className="text-primary/40 mb-2 px-3 py-2 text-[9px] font-black tracking-[0.3em] uppercase">
                 Background Color
               </div>
-              <div className="mb-4 flex flex-wrap gap-2">
-                {[
-                  "#ffffff",
-                  "#f8f9fa",
-                  "#f1f3f5",
-                  "#e9ecef",
-                  "#dee2e6",
-                  "#333333",
-                  "#1a1a1a",
-                  "#000000",
-                ].map((color) => (
-                  <button
-                    key={color}
-                    onClick={() =>
-                      onUpdateSlide({ bgColor: color, bgImage: "" })
-                    }
-                    className={cn(
-                      "size-6 rounded-lg border border-black/5 transition-all hover:scale-110 active:scale-90",
-                      activeSlide.bgColor === color &&
-                        !activeSlide.bgImage &&
-                        "ring-primary ring-2 ring-offset-2"
-                    )}
-                    style={{ backgroundColor: color }}
-                  />
-                ))}
-              </div>
-              <Separator className="my-3 opacity-50" />
+              
+              {/* Color Picker for solid backgrounds */}
               <div className="space-y-3">
                 <HexColorPicker
                   color={activeSlide.bgColor}
@@ -355,15 +309,13 @@ export function MainToolbar({
                   }
                   className="!h-32 !w-full"
                 />
-                <div className="flex gap-2">
-                  <Input
-                    className="border-primary/10 h-8 rounded-lg font-mono text-[11px]"
-                    value={activeSlide.bgColor}
-                    onChange={(e) =>
-                      onUpdateSlide({ bgColor: e.target.value, bgImage: "" })
-                    }
-                  />
-                </div>
+                <Input
+                  className="border-primary/10 h-8 rounded-lg font-mono text-[11px]"
+                  value={activeSlide.bgColor}
+                  onChange={(e) =>
+                    onUpdateSlide({ bgColor: e.target.value, bgImage: "" })
+                  }
+                />
               </div>
             </PopoverContent>
           </Popover>
@@ -373,6 +325,10 @@ export function MainToolbar({
   )
 }
 
+/**
+ * ToolButton: Standardizes the look and feel of toolbar actions.
+ * Includes tooltips and Framer Motion hover states.
+ */
 function ToolButton({
   icon,
   active,

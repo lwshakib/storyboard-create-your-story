@@ -3,6 +3,13 @@ import prisma from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
 
+/**
+ * GET: Performs a deep search across the user's projects.
+ * Logic:
+ * - Searches top-level fields (Title, Description).
+ * - Drills into the 'slides' JSONB column to find matches within specific slide content.
+ * - Uses Case-Insensitive partial matching (ILIKE).
+ */
 export async function GET(req: Request) {
   try {
     const session = await auth.api.getSession({
@@ -22,9 +29,12 @@ export async function GET(req: Request) {
 
     const searchTerm = `%${query.toLowerCase()}%`
 
-    // Full text search across project title, description, and the "slides" JSON field.
-    // We use a raw query because Prisma doesn't have native full-text search
-    // for specific keys inside a JSON column in all versions/providers yet.
+    // COMPLEX RAW QUERY:
+    // We use $queryRaw because standard Prisma filtering on nested JSON arrays (slides)
+    // is limited. This query checks if the search term exists in:
+    // 1. The project title
+    // 2. The project description
+    // 3. ANY 'title', 'content', or 'description' key inside the 'slides' JSON array.
     const projects = await prisma.$queryRaw`
       SELECT * FROM project
       WHERE "userId" = ${session.user.id}

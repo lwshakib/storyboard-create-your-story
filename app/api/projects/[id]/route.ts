@@ -4,6 +4,9 @@ import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
 import { deleteMultipleFromCloudinary } from "@/lib/cloudinary"
 
+/**
+ * GET: Fetches a single project by ID, including its ordered slides.
+ */
 export async function GET(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -34,6 +37,11 @@ export async function GET(
   }
 }
 
+/**
+ * PATCH: Updates project metadata or slides.
+ * Includes "Asset Cleanup" logic: if slides are removed, their associated 
+ * Cloudinary assets are automatically purged to save storage space.
+ */
 export async function PATCH(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -47,7 +55,7 @@ export async function PATCH(
     const { title, description, slides, isDeleted } = body
     const { id } = await params
 
-    // ASSET CLEANUP FOR REMOVED SLIDES
+    // 1. ASSET CLEANUP: Identify slides that are being removed in this update
     if (slides) {
       const currentProject = await prisma.project.findUnique({
         where: { id },
@@ -55,13 +63,16 @@ export async function PATCH(
       })
       
       if (currentProject) {
+        // Find slide IDs that exist in the DB but NOT in the incoming update
         const incomingIds = new Set((slides as any[]).map(s => s.id).filter(id => typeof id === "string"))
         const removedSlides = currentProject.slides.filter(s => !incomingIds.has(s.id))
         
+        // Extract assets (images) from these removed slides
         const assetsToPurge = removedSlides.flatMap(s => (s.assets as any[]) || [])
         if (assetsToPurge.length > 0) {
           const publicIds = assetsToPurge.map(a => a.publicId)
           try {
+            // Permanently remove files from Cloudinary
             await deleteMultipleFromCloudinary(publicIds)
             console.log(`[PROJECT_PATCH] Purged ${publicIds.length} assets for ${removedSlides.length} removed slides.`)
           } catch (err) {
@@ -71,6 +82,7 @@ export async function PATCH(
       }
     }
 
+    // 2. DATABASE UPDATE: Update project fields and replace slides
     const project = await prisma.project.update({
       where: {
         id,
@@ -83,8 +95,8 @@ export async function PATCH(
         deletedAt:
           isDeleted === false ? null : isDeleted ? new Date() : undefined,
         slides: slides ? {
-          deleteMany: {},
-          create: (slides as any[]).map((s, idx) => ({
+          deleteMany: {}, // Atomic replacement: wipe existing slides...
+          create: (slides as any[]).map((s, idx) => ({ // ...and create new ones
             index: idx,
             title: s.title,
             description: s.description,
@@ -104,6 +116,9 @@ export async function PATCH(
   }
 }
 
+/**
+ * DELETE: Handles both soft-deletion (moving to trash) and permanent deletion.
+ */
 export async function DELETE(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -131,7 +146,7 @@ export async function DELETE(
     }
 
     if (!project.isDeleted) {
-      // Soft delete: Move to trash
+      // PHASE 1: Soft delete - Move to trash
       await prisma.project.update({
         where: { id },
         data: {
@@ -140,8 +155,9 @@ export async function DELETE(
         },
       })
     } else {
-      // Permanent delete: Remove from DB
-      // 1. Delete associated Cloudinary assets from all slides
+      // PHASE 2: Permanent delete - Actual removal
+      
+      // 1. ASSET PURGE: Remove all Cloudinary assets associated with this project's slides
       const allAssets = project.slides.flatMap(slide => (slide.assets as any[]) || [])
       if (allAssets.length > 0) {
         const publicIds = allAssets.map((asset) => asset.publicId)
@@ -158,7 +174,7 @@ export async function DELETE(
         }
       }
 
-      // 2. Delete from DB (onDelete: Cascade will handle Asset records)
+      // 2. DATABASE REMOVAL: Delete the project record
       await prisma.project.delete({
         where: { id },
       })

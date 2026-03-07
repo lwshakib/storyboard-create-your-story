@@ -11,6 +11,9 @@ import {
 
 import Link from "next/link"
 
+/**
+ * NavProjects: Renders a list of the user's most recently accessed projects.
+ */
 export function NavProjects({
   projects,
 }: {
@@ -23,13 +26,19 @@ export function NavProjects({
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel>Recently Opened</SidebarGroupLabel>
+      <SidebarGroupLabel className="text-[10px] font-black tracking-widest uppercase opacity-40">
+        Recently Opened
+      </SidebarGroupLabel>
       <SidebarMenu>
         {projects.map((item) => (
           <SidebarMenuItem key={item.url}>
-            <SidebarMenuButton asChild isActive={pathname === item.url}>
+            <SidebarMenuButton 
+              asChild 
+              isActive={pathname === item.url}
+              className="data-[active=true]:bg-primary/10 data-[active=true]:text-primary font-bold transition-all"
+            >
               <Link href={item.url}>
-                <span>{item.name}</span>
+                <span className="truncate">{item.name}</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

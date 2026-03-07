@@ -8,12 +8,27 @@ import { Button } from "@/components/ui/button"
 import { Logo } from "@/components/logo"
 import { ModeToggle } from "@/components/mode-toggle"
 
+/**
+ * LandingPage component: The public-facing marketing page.
+ * Features:
+ * - Parallax scroll effects with Framer Motion.
+ * - Responsive navigation with mobile menu.
+ * - Conceptual sections (Vision, Capabilities, Process).
+ * - High-fidelity design following the project's premium aesthetic.
+ */
 export default function LandingPage() {
+  // Hook into scroll progress for parallax effects in the hero section
   const { scrollYProgress } = useScroll()
   const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0])
   const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95])
+  
+  // State for mobile navigation menu toggle
   const [isMenuOpen, setIsMenuOpen] = React.useState(false)
 
+  /**
+   * Data definition for the landing page sections.
+   * Centralizing content here allows for easier maintenance and dynamic rendering.
+   */
   const sections = [
     {
       id: "vision",
@@ -71,12 +86,16 @@ export default function LandingPage() {
 
   return (
     <div className="bg-background text-foreground selection:bg-primary/20 selection:text-foreground flex min-h-screen flex-col font-sans tracking-tight transition-colors duration-500">
+      
+      {/* PERSISTENT HEADER NAVIGATION */}
       <nav className="border-border/40 bg-background/70 fixed top-0 z-50 w-full border-b backdrop-blur-xl">
         <div className="container mx-auto flex h-16 items-center justify-between px-8">
+          {/* Brand Logo */}
           <Link href="/">
             <Logo className="scale-90" />
           </Link>
 
+          {/* Desktop Navigation Links */}
           <div className="flex items-center gap-4 md:gap-10">
             <div className="hidden items-center gap-10 md:flex">
               <Link
@@ -102,7 +121,7 @@ export default function LandingPage() {
               </Link>
             </div>
 
-            {/* Mobile Menu Trigger */}
+            {/* Mobile Menu Toggle Button */}
             <div className="flex items-center gap-4 md:hidden">
               <ModeToggle />
               <Button
@@ -121,7 +140,7 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Mobile menu overlay */}
+        {/* MOBILE NAVIGATION OVERLAY (Animated) */}
         <AnimatePresence>
           {isMenuOpen && (
             <motion.div
@@ -157,7 +176,8 @@ export default function LandingPage() {
       </nav>
 
       <main className="flex-1">
-        {/* HERO */}
+        
+        {/* HERO SECTION: Uses parallax transformations for a premium feeling */}
         <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-8">
           <motion.div
             style={{ opacity, scale }}
@@ -209,7 +229,7 @@ export default function LandingPage() {
           </motion.div>
         </section>
 
-        {/* CONTENT SECTIONS */}
+        {/* DYNAMIC CONTENT SECTIONS: Vision, Capabilities, Process */}
         {sections.map((section) => (
           <section
             key={section.id}
@@ -218,6 +238,8 @@ export default function LandingPage() {
           >
             <div className="container mx-auto max-w-7xl">
               <div className="grid grid-cols-1 gap-20 md:grid-cols-12 md:gap-32">
+                
+                {/* Section Sticky Side Label */}
                 <div className="md:col-span-4 lg:col-span-3">
                   <div className="sticky top-40 space-y-6">
                     <span className="text-muted-foreground/50 text-xs font-semibold">
@@ -228,6 +250,7 @@ export default function LandingPage() {
                 </div>
 
                 <div className="space-y-32 md:col-span-8 lg:col-span-9">
+                  {/* Section Title & Description */}
                   <div className="space-y-10">
                     <h2 className="text-foreground/95 text-5xl font-light tracking-tighter md:text-8xl">
                       {section.title}
@@ -239,6 +262,7 @@ export default function LandingPage() {
                     )}
                   </div>
 
+                  {/* Feature Grid (for Capabilities) */}
                   {section.items && (
                     <div className="grid grid-cols-1 gap-x-20 gap-y-28 sm:grid-cols-2">
                       {section.items.map((item, i) => (
@@ -257,6 +281,7 @@ export default function LandingPage() {
                     </div>
                   )}
 
+                  {/* Multi-step list (for Process) */}
                   {section.steps && (
                     <div className="space-y-24">
                       {section.steps.map((step, i) => (
@@ -285,7 +310,7 @@ export default function LandingPage() {
           </section>
         ))}
 
-        {/* CTA */}
+        {/* CALL TO ACTION (CTA): Final conversion point */}
         <section className="bg-background border-border/5 border-t py-48 transition-colors duration-500 md:py-80">
           <div className="text-foreground container mx-auto px-8 text-center">
             <motion.div
@@ -316,6 +341,7 @@ export default function LandingPage() {
         </section>
       </main>
 
+      {/* FOOTER: Site map & Social links */}
       <footer className="bg-background border-border/10 border-t px-8 py-32">
         <div className="container mx-auto">
           <div className="flex flex-col items-start justify-between gap-20 lg:flex-row">
@@ -347,6 +373,7 @@ export default function LandingPage() {
               </div>
             </div>
 
+            {/* Navigation Grid */}
             <div className="grid grid-cols-2 gap-x-20 gap-y-12 sm:grid-cols-3">
               <div className="space-y-6">
                 <span className="text-muted-foreground/40 text-sm font-semibold">
@@ -408,6 +435,7 @@ export default function LandingPage() {
             </div>
           </div>
 
+          {/* Sub-Footer Meta Info */}
           <div className="border-border/5 mt-28 flex flex-col items-center justify-between gap-8 border-t pt-12 md:flex-row">
             <p className="text-muted-foreground/30 text-xs font-medium italic">
               © 2026 Storyboard Architect Inc.

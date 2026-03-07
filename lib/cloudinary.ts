@@ -108,6 +108,22 @@ export const uploadBufferToCloudinary = async (
 }
 
 /**
+ * Server-side: Alias for uploadBufferToCloudinary with simplified response.
+ */
+export const saveImageToCloudinary = async (
+  buffer: Buffer,
+  folder: string = "storyboard-architect"
+) => {
+  const result = await uploadBufferToCloudinary(buffer, {
+    folder,
+    resource_type: "image",
+  })
+  return {
+    url: result.secure_url,
+    publicId: result.public_id,
+  }
+}
+/**
  * Client-side: Uploads a file directly to Cloudinary using a signed request.
  * This fetches a fresh signature from our API before each upload.
  */

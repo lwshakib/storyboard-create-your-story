@@ -1,5 +1,10 @@
 import { cn } from "@/lib/utils"
 
+/**
+ * LogoIcon: Core vector mark for the Storyboard application.
+ * Represents two overlapping narrative volumes, symbolizing the transition from
+ * raw idea to high-fidelity visual story.
+ */
 export const LogoIcon = ({ className }: { className?: string }) => {
   return (
     <svg
@@ -21,6 +26,10 @@ export const LogoIcon = ({ className }: { className?: string }) => {
   )
 }
 
+/**
+ * Logo: The primary branding component.
+ * Combines the LogoIcon mark with high-legibility typography.
+ */
 export const Logo = ({ className }: { className?: string }) => {
   return (
     <div

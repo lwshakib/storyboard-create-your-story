@@ -11,6 +11,15 @@ interface SlidePreviewProps {
   isEditable?: boolean
 }
 
+/**
+ * SlidePreview Component: The high-fidelity sandbox for rendering AI-generated HTML slides.
+ * Features:
+ * - Isolation: Uses <iframe> srcDoc to prevent style leakage between slides and the app.
+ * - Auto-scaling: Uses ResizeObserver to perfectly fit the 16:9 960x540 canvas into any container.
+ * - Interactivity Bridge: Injects a script into the iframe to handle clicks, double-clicks (text editing),
+ *   and real-time style updates.
+ * - Asset Loading: Loads Tailwind CSS and Lucide icons inside the sandbox.
+ */
 export function SlidePreview({
   html,
   className,
@@ -22,6 +31,7 @@ export function SlidePreview({
   const iframeRef = React.useRef<HTMLIFrameElement>(null)
   const [computedScale, setComputedScale] = React.useState(scale || 1)
 
+  // Toggle Edit Mode inside the iframe when the prop changes
   React.useEffect(() => {
     if (iframeRef.current) {
       iframeRef.current.contentWindow?.postMessage(
@@ -34,9 +44,9 @@ export function SlidePreview({
     }
   }, [isEditable])
 
-  // Also send it when iframe loads
   const handleLoad = () => {
     if (iframeRef.current) {
+      // Initialize edit mode on first load
       iframeRef.current.contentWindow?.postMessage(
         {
           type: "SET_EDIT_MODE",
@@ -47,6 +57,8 @@ export function SlidePreview({
     }
   }
 
+  // --- AUTO-SCALING LOGIC ---
+  // Ensures the 960x540 canvas fits perfectly in sidebar thumbnails or main editor view.
   React.useEffect(() => {
     if (!autoScale || scale) return
 
@@ -55,28 +67,20 @@ export function SlidePreview({
         const { width, height } = containerRef.current.getBoundingClientRect()
         const styles = window.getComputedStyle(containerRef.current)
 
-        // Subtract border and padding for exact content fit
-        const borderX =
-          parseFloat(styles.borderLeftWidth) +
-            parseFloat(styles.borderRightWidth) || 0
-        const borderY =
-          parseFloat(styles.borderTopWidth) +
-            parseFloat(styles.borderBottomWidth) || 0
-        const paddingX =
-          parseFloat(styles.paddingLeft) + parseFloat(styles.paddingRight) || 0
-        const paddingY =
-          parseFloat(styles.paddingTop) + parseFloat(styles.paddingBottom) || 0
+        // Calculate actual available space (subtracting borders/padding)
+        const borderX = parseFloat(styles.borderLeftWidth) + parseFloat(styles.borderRightWidth) || 0
+        const borderY = parseFloat(styles.borderTopWidth) + parseFloat(styles.borderBottomWidth) || 0
+        const paddingX = parseFloat(styles.paddingLeft) + parseFloat(styles.paddingRight) || 0
+        const paddingY = parseFloat(styles.paddingTop) + parseFloat(styles.paddingBottom) || 0
 
         const contentWidth = width - borderX - paddingX
         const contentHeight = height - borderY - paddingY
 
-        // Calculate scale to fit our base resolution (960x540)
+        // Fit strategy: Maintain 16:9 while fitting within the container
         const scaleW = contentWidth / 960
         const scaleH = contentHeight / 540
-
-        // Use the smaller scale to ensure it fits entirely (contain strategy)
-        // Adding a tiny buffer (0.001) to ensure sub-pixel rounding doesn't leave gaps
         const newScale = Math.min(scaleW, scaleH)
+        
         if (newScale > 0) {
           setComputedScale(newScale)
         }
@@ -94,6 +98,13 @@ export function SlidePreview({
     }
   }, [autoScale, scale])
 
+  /**
+   * srcDoc Memo: Constructs the complete sandboxed HTML document.
+   * Injects:
+   * 1. Tailwind & Lucide scripts.
+   * 2. Interaction CSS (hover highlights, selection rings).
+   * 3. Message Bridge: Listens for style updates from the parent app and reports clicks back.
+   */
   const srcDoc = React.useMemo(() => {
     const isFullDoc = /<html/i.test(html)
 
@@ -128,12 +139,14 @@ export function SlidePreview({
 
     const editorScripts = `
       <script>
+        // --- BRIDGE SCRIPT ---
         window.addEventListener('message', (e) => {
           if (e.data.type === 'SET_EDIT_MODE') {
             document.body.dataset.editMode = e.data.enabled;
           }
         });
 
+        // Hover effect for visual clarity
         document.addEventListener('mouseover', (e) => {
           if (document.body.dataset.editMode !== 'true') return;
           const target = e.target.closest('*');
@@ -149,6 +162,7 @@ export function SlidePreview({
           }
         });
 
+        // Interaction Handler: Reports selection and handles inline text editing
         const handleElementInteraction = (e) => {
           if (document.body.dataset.editMode !== 'true') return;
           const target = e.target.closest('*');
@@ -157,6 +171,8 @@ export function SlidePreview({
           if (e.type === 'click' || e.type === 'dblclick') {
             document.querySelectorAll('.edit-selected-highlight').forEach(el => el.classList.remove('edit-selected-highlight'));
             target.classList.add('edit-selected-highlight');
+            
+            // Extract computed styles to pass up to the Settings Panel
             const computed = window.getComputedStyle(target);
             const styles = {
               color: computed.color,
@@ -168,7 +184,9 @@ export function SlidePreview({
               margin: computed.margin,
               borderRadius: computed.borderRadius,
             };
+            
             if (!target.id) target.id = 'el-' + Math.random().toString(36).substr(2, 9);
+            
             window.parent.postMessage({
               type: 'ELEMENT_CLICKED',
               elementId: target.id,
@@ -178,6 +196,7 @@ export function SlidePreview({
             }, '*');
           }
 
+          // Native ContentEditable Integration
           if (e.type === 'dblclick') {
             const isText = ['H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'P', 'SPAN', 'DIV', 'LI', 'B', 'I', 'STRONG', 'EM'].includes(target.tagName);
             if (isText && target.children.length === 0) {
@@ -186,10 +205,12 @@ export function SlidePreview({
               target.contentEditable = 'true';
               target.focus();
               target.classList.add('editing-active');
+              
               const onBlur = () => {
                 target.contentEditable = 'false';
                 target.classList.remove('editing-active');
                 target.removeEventListener('blur', onBlur);
+                // Sync the modified HTML back to the main app state
                 window.parent.postMessage({
                   type: 'HTML_UPDATED',
                   html: document.getElementById('preview-root')?.innerHTML || document.body.innerHTML
@@ -203,6 +224,7 @@ export function SlidePreview({
         document.addEventListener('click', handleElementInteraction);
         document.addEventListener('dblclick', handleElementInteraction);
 
+        // Listener for style updates from the Property Panel
         window.addEventListener('message', (e) => {
           if (e.data.type === 'UPDATE_ELEMENT') {
             const { elementId, changes } = e.data;
@@ -212,7 +234,10 @@ export function SlidePreview({
                 if (key === 'innerText') el.innerText = value;
                 else el.style[key] = value;
               });
+              // Re-run Lucide transformation if icons were updated
               if (window.lucide) lucide.createIcons();
+              
+              // Report update back to app state
               window.parent.postMessage({
                 type: 'HTML_UPDATED',
                 html: document.getElementById('preview-root')?.innerHTML || document.body.innerHTML
@@ -258,6 +283,7 @@ export function SlidePreview({
               justify-content: center;
               -ms-overflow-style: none;
               scrollbar-width: none;
+              user-select: none;
             }
             body::-webkit-scrollbar { display: none; }
             * { box-sizing: border-box; }
