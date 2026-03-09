@@ -75,7 +75,7 @@ export default function ForgotPasswordPage() {
         </div>
         <div className="bg-muted relative hidden lg:block">
           <Image
-            src="/forgot-password-bg.png"
+            src="/auth-backgrounds/forgot-password-bg.png"
             alt="Forgot Password Background"
             className="absolute inset-0 h-full w-full object-cover"
             fill
@@ -143,7 +143,7 @@ export default function ForgotPasswordPage() {
       </div>
       <div className="bg-muted relative hidden lg:block">
         <Image
-          src="/forgot-password-bg.png"
+          src="/auth-backgrounds/forgot-password-bg.png"
           alt="Forgot Password Background"
           className="absolute inset-0 h-full w-full object-cover"
           fill

@@ -112,7 +112,7 @@ function VerifyEmailContent() {
       </div>
       <div className="bg-muted relative hidden lg:block">
         <Image
-          src="/verify-email-bg.png"
+          src="/auth-backgrounds/verify-email-bg.png"
           alt="Verify Email Background"
           className="absolute inset-0 h-full w-full object-cover"
           fill

@@ -73,9 +73,12 @@ This section guides you through submitting an enhancement suggestion, including 
 
 We use Jest for unit tests and Playwright for end-to-end testing:
 
-- **Run unit tests**: `bun test` or `npm run test`
+- **Run unit tests**: `bun run test` or `npm run test`
+- **Run unit tests (watch mode)**: `bun run test:watch` or `npm run test:watch`
 - **Run E2E tests**: `bun run test:e2e` or `npm run test:e2e`
+- **Run E2E tests with UI**: `bun run test:e2e:ui` or `npm run test:e2e:ui`
 - **Linting**: `bun run lint` or `npm run lint`
+- **Format check**: `bun run format:check` or `npm run format:check`
 - **Formatting**: `bun run format` or `npm run format`
 
 ## 💬 Community

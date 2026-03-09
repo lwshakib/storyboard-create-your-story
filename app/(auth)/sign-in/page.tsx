@@ -17,7 +17,7 @@ export default function SignInPage() {
       </div>
       <div className="bg-muted relative hidden lg:block">
         <Image
-          src="/signin-bg.png"
+          src="/auth-backgrounds/signin-bg.png"
           alt="Sign In Background"
           className="absolute inset-0 h-full w-full object-cover"
           fill

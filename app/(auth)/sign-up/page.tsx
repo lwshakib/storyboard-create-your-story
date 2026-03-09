@@ -7,7 +7,7 @@ export default function SignUpPage() {
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="bg-muted relative hidden lg:block">
         <Image
-          src="/signup-bg.png"
+          src="/auth-backgrounds/signup-bg.png"
           alt="Sign Up Background"
           className="absolute inset-0 h-full w-full object-cover"
           fill

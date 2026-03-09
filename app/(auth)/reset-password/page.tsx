@@ -85,7 +85,7 @@ function ResetPasswordContent() {
         </div>
         <div className="bg-muted relative hidden lg:block">
           <Image
-            src="/reset-password-bg.png"
+            src="/auth-backgrounds/reset-password-bg.png"
             alt="Reset Password Background"
             className="absolute inset-0 h-full w-full object-cover"
             fill
@@ -157,7 +157,7 @@ function ResetPasswordContent() {
       </div>
       <div className="bg-muted relative hidden lg:block">
         <Image
-          src="/reset-password-bg.png"
+          src="/auth-backgrounds/reset-password-bg.png"
           alt="Reset Password Background"
           className="absolute inset-0 h-full w-full object-cover"
           fill
