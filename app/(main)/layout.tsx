@@ -36,7 +36,7 @@ export default function MainLayout({
   // --- UI STATES ---
   const [isSearchActive, setIsSearchActive] = React.useState(false) // For mobile search view toggle
   const [isGenerateOpen, setIsGenerateOpen] = React.useState(false) // New Project dialog state
-  const [isImporting, setIsImporting] = React.useState(false)       // Loading state for file imports
+  const [isImporting, setIsImporting] = React.useState(false) // Loading state for file imports
   const [credits, setCredits] = React.useState<number | null>(null) // User credit balance
 
   // --- SEARCH LOGIC ---
@@ -110,7 +110,7 @@ export default function MainLayout({
     <SidebarProvider>
       {/* Primary Navigation Sidebar */}
       <AppSidebar />
-      
+
       <SidebarInset>
         {/* SHARED HEADER */}
         <header className="bg-background/80 sticky top-0 z-50 flex h-16 shrink-0 items-center justify-between gap-2 border-b px-4 backdrop-blur-md transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
@@ -221,10 +221,7 @@ export default function MainLayout({
                   {/* Credit Display */}
                   <div className="hidden lg:block">
                     <span className="text-[10px] font-bold tabular-nums opacity-60">
-                      {credits !== null
-                        ? credits
-                        : "---"}{" "}
-                      credits remaining
+                      {credits !== null ? credits : "---"} credits remaining
                     </span>
                   </div>
 
@@ -303,12 +300,12 @@ export default function MainLayout({
                       reader.readAsText(file)
                     }}
                   />
-                  
+
                   {/* Import Button */}
                   <Button
                     variant="outline"
                     disabled={isImporting}
-                    className="border-border/50 hover:bg-muted/50 flex size-9 items-center justify-center p-0 md:h-10 md:w-auto md:px-6 md:gap-2 rounded-full font-medium shadow-sm"
+                    className="border-border/50 hover:bg-muted/50 flex size-9 items-center justify-center rounded-full p-0 font-medium shadow-sm md:h-10 md:w-auto md:gap-2 md:px-6"
                     onClick={() =>
                       document.getElementById("main-import-json")?.click()
                     }
@@ -324,14 +321,14 @@ export default function MainLayout({
                   {/* New Project Button */}
                   <Button
                     asChild
-                    className="bg-primary hover:bg-primary/90 text-primary-foreground flex size-9 items-center justify-center p-0 md:h-10 md:w-auto md:px-6 md:gap-2 rounded-full font-medium shadow-sm"
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground flex size-9 items-center justify-center rounded-full p-0 font-medium shadow-sm md:h-10 md:w-auto md:gap-2 md:px-6"
                   >
                     <Link href="/new">
                       <Plus className="size-4" />
                       <span className="hidden md:inline">New Project</span>
                     </Link>
                   </Button>
-                  
+
                   <ModeToggle />
                 </div>
               </motion.div>

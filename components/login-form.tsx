@@ -86,7 +86,9 @@ export function LoginForm({
     >
       <FieldGroup>
         <div className="flex flex-col items-center gap-1 text-center">
-          <h1 className="text-2xl font-bold tracking-tight">Login to your account</h1>
+          <h1 className="text-2xl font-bold tracking-tight">
+            Login to your account
+          </h1>
           <p className="text-muted-foreground text-sm text-balance">
             Enter your credentials to continue your storytelling journey
           </p>
@@ -138,7 +140,11 @@ export function LoginForm({
 
         {/* ACTION BUTTON */}
         <Field>
-          <Button type="submit" disabled={isLoading} className="h-11 rounded-xl font-bold">
+          <Button
+            type="submit"
+            disabled={isLoading}
+            className="h-11 rounded-xl font-bold"
+          >
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 size-4 animate-spin" />
@@ -178,7 +184,10 @@ export function LoginForm({
 
           <FieldDescription className="mt-4 text-center">
             Don&apos;t have an account?{" "}
-            <Link href="/sign-up" className="text-primary font-bold underline underline-offset-4">
+            <Link
+              href="/sign-up"
+              className="text-primary font-bold underline underline-offset-4"
+            >
               Sign up
             </Link>
           </FieldDescription>

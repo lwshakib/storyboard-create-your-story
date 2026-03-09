@@ -1,132 +1,221 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Slide 6 - Concentric Service Model</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        outfit: ['Outfit', 'sans-serif'],
-                    },
-                    colors: {
-                        brand: {
-                            navy: '#2A3A4A',
-                            orange: '#C65C17',
-                            green: '#2D5A27',
-                            red: '#8B1111',
-                        }
-                    }
-                }
-            }
-        }
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+              outfit: ["Outfit", "sans-serif"],
+            },
+            colors: {
+              brand: {
+                navy: "#2A3A4A",
+                orange: "#C65C17",
+                green: "#2D5A27",
+                red: "#8B1111",
+              },
+            },
+          },
+        },
+      }
     </script>
-</head>
-<body class="overflow-hidden font-sans bg-neutral-100 flex items-center justify-center min-h-screen">
-
+  </head>
+  <body
+    class="flex min-h-screen items-center justify-center overflow-hidden bg-neutral-100 font-sans"
+  >
     <!-- Fixed Area Container (960x540) -->
-    <div class="relative h-[540px] w-[960px] overflow-hidden bg-white shadow-2xl flex flex-col">
-
-        <!-- Header -->
-        <div class="px-12 pt-10 flex justify-between items-end z-20">
-            <div>
-                <h1 class="text-2xl font-outfit font-black text-brand-navy uppercase tracking-tighter leading-none">Service Architecture</h1>
-                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] mt-1">Concentric Operational Ecosystem</p>
-            </div>
-            <div class="border-b-[3px] border-slate-100 flex-1 mx-8 mb-1"></div>
-            <div class="text-[10px] font-black font-outfit text-brand-navy/30 uppercase tracking-widest mb-1">
-                Phase 06 / 2024
-            </div>
+    <div
+      class="relative flex h-[540px] w-[960px] flex-col overflow-hidden bg-white shadow-2xl"
+    >
+      <!-- Header -->
+      <div class="z-20 flex items-end justify-between px-12 pt-10">
+        <div>
+          <h1
+            class="font-outfit text-brand-navy text-2xl leading-none font-black tracking-tighter uppercase"
+          >
+            Service Architecture
+          </h1>
+          <p
+            class="mt-1 text-[10px] font-bold tracking-[0.2em] text-slate-400 uppercase"
+          >
+            Concentric Operational Ecosystem
+          </p>
         </div>
-
-        <div class="flex-1 flex px-16 items-center justify-center relative mt-6">
-            
-            <!-- Concentric Diagram Container -->
-            <div class="relative w-[800px] h-[360px] flex items-center justify-center">
-                
-                <!-- Left Hand Labels (Interactive Flow) -->
-                <div class="absolute left-0 top-1/2 -translate-y-1/2 flex flex-col gap-10">
-                    <div class="flex items-center gap-4 group cursor-pointer hover:scale-105 transition-transform">
-                        <div class="font-outfit font-black text-brand-navy text-[10px] uppercase w-20 text-right tracking-[0.1em] opacity-80 leading-none">Global Strategy</div>
-                        <div class="w-8 h-8 rounded-full bg-slate-50 border-2 border-slate-100 flex items-center justify-center shadow-lg group-hover:border-brand-red">
-                            <i data-lucide="crosshair" class="w-4 h-4 text-brand-red"></i>
-                        </div>
-                    </div>
-                     <div class="flex items-center gap-4 group cursor-pointer hover:scale-105 transition-transform">
-                        <div class="font-outfit font-black text-brand-navy text-[10px] uppercase w-20 text-right tracking-[0.1em] opacity-80 leading-none">System Flow</div>
-                        <div class="w-8 h-8 rounded-full bg-slate-50 border-2 border-slate-100 flex items-center justify-center shadow-lg group-hover:border-brand-navy">
-                            <i data-lucide="activity" class="w-4 h-4 text-brand-navy"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Right Hand Labels -->
-                <div class="absolute right-0 top-1/2 -translate-y-1/2 flex flex-col gap-10">
-                    <div class="flex flex-row-reverse items-center gap-4 group cursor-pointer hover:scale-105 transition-transform">
-                        <div class="font-outfit font-black text-brand-navy text-[10px] uppercase w-20 text-left tracking-[0.1em] opacity-80 leading-none">Market Growth</div>
-                        <div class="w-8 h-8 rounded-full bg-slate-50 border-2 border-slate-100 flex items-center justify-center shadow-lg group-hover:border-brand-orange">
-                            <i data-lucide="trending-up" class="w-4 h-4 text-brand-orange"></i>
-                        </div>
-                    </div>
-                     <div class="flex flex-row-reverse items-center gap-4 group cursor-pointer hover:scale-105 transition-transform">
-                        <div class="font-outfit font-black text-brand-navy text-[10px] uppercase w-20 text-left tracking-[0.1em] opacity-80 leading-none">Infrastructure</div>
-                        <div class="w-8 h-8 rounded-full bg-slate-50 border-2 border-slate-100 flex items-center justify-center shadow-lg group-hover:border-brand-green">
-                            <i data-lucide="database" class="w-4 h-4 text-brand-green"></i>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Central Rings (Depth Effect) -->
-                <div class="relative w-[340px] h-[340px] flex items-center justify-center">
-                    
-                    <!-- Outer Layer (Level 03) -->
-                    <div class="absolute inset-0 rounded-full border-[10px] border-brand-green/30 shadow-inner [mask-image:conic-gradient(#000_0deg_360deg)]"></div>
-                    <div class="absolute top-[20px] left-1/2 -translate-x-1/2 bg-brand-green/90 px-3 py-1 rounded shadow-xl z-50 transform group-hover:scale-105">
-                         <span class="font-outfit font-black text-white text-[8px] uppercase tracking-widest whitespace-nowrap leading-none">L3: Operational Scope</span>
-                    </div>
-
-                    <!-- Middle Layer (Level 02) -->
-                    <div class="absolute w-[240px] h-[240px] rounded-full border-[10px] border-brand-navy/30 shadow-lg flex items-center justify-center">
-                         <div class="absolute top-[-15px] left-1/2 -translate-x-1/2 bg-brand-navy/90 px-3 py-1 rounded shadow-xl z-50 transform group-hover:scale-105">
-                             <span class="font-outfit font-black text-white text-[8px] uppercase tracking-widest whitespace-nowrap leading-none">L2: Strategic Core</span>
-                        </div>
-                    </div>
-
-                    <!-- Inner Core Hub -->
-                    <div class="w-32 h-32 bg-brand-red rounded-full flex flex-col items-center justify-center text-center p-4 shadow-2xl z-40 relative group cursor-pointer hover:scale-105 transition-transform border-[6px] border-white/20 active:translate-y-px">
-                        <h5 class="font-outfit font-black text-white text-[13px] uppercase mt-1 tracking-wider leading-none">Innovation</h5>
-                        <div class="w-6 h-[2px] bg-white opacity-40 mt-2"></div>
-                        <p class="text-[8px] text-white/70 font-bold leading-tight mt-2 font-sans italic">Mission Critical Hub</p>
-                    </div>
-
-                </div>
-
-            </div>
+        <div class="mx-8 mb-1 flex-1 border-b-[3px] border-slate-100"></div>
+        <div
+          class="font-outfit text-brand-navy/30 mb-1 text-[10px] font-black tracking-widest uppercase"
+        >
+          Phase 06 / 2024
         </div>
+      </div>
 
-        <!-- Footer -->
-        <div class="px-12 pb-10 flex justify-end items-center z-20">
-            <div class="flex items-center gap-3">
-                <div class="text-right">
-                    <div class="text-[10px] font-black font-outfit text-brand-navy uppercase tracking-widest leading-none">Global Operations</div>
-                    <div class="text-[8px] font-bold text-slate-400 uppercase tracking-widest mt-1">Foundational Process Stack</div>
-                </div>
-                <div class="h-10 w-[2px] bg-slate-100 mx-2"></div>
-                <div class="bg-brand-navy text-white text-sm font-black font-outfit w-10 h-10 flex items-center justify-center rounded-lg shadow-lg">06</div>
+      <div class="relative mt-6 flex flex-1 items-center justify-center px-16">
+        <!-- Concentric Diagram Container -->
+        <div
+          class="relative flex h-[360px] w-[800px] items-center justify-center"
+        >
+          <!-- Left Hand Labels (Interactive Flow) -->
+          <div
+            class="absolute top-1/2 left-0 flex -translate-y-1/2 flex-col gap-10"
+          >
+            <div
+              class="group flex cursor-pointer items-center gap-4 transition-transform hover:scale-105"
+            >
+              <div
+                class="font-outfit text-brand-navy w-20 text-right text-[10px] leading-none font-black tracking-[0.1em] uppercase opacity-80"
+              >
+                Global Strategy
+              </div>
+              <div
+                class="group-hover:border-brand-red flex h-8 w-8 items-center justify-center rounded-full border-2 border-slate-100 bg-slate-50 shadow-lg"
+              >
+                <i data-lucide="crosshair" class="text-brand-red h-4 w-4"></i>
+              </div>
             </div>
+            <div
+              class="group flex cursor-pointer items-center gap-4 transition-transform hover:scale-105"
+            >
+              <div
+                class="font-outfit text-brand-navy w-20 text-right text-[10px] leading-none font-black tracking-[0.1em] uppercase opacity-80"
+              >
+                System Flow
+              </div>
+              <div
+                class="group-hover:border-brand-navy flex h-8 w-8 items-center justify-center rounded-full border-2 border-slate-100 bg-slate-50 shadow-lg"
+              >
+                <i data-lucide="activity" class="text-brand-navy h-4 w-4"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Hand Labels -->
+          <div
+            class="absolute top-1/2 right-0 flex -translate-y-1/2 flex-col gap-10"
+          >
+            <div
+              class="group flex cursor-pointer flex-row-reverse items-center gap-4 transition-transform hover:scale-105"
+            >
+              <div
+                class="font-outfit text-brand-navy w-20 text-left text-[10px] leading-none font-black tracking-[0.1em] uppercase opacity-80"
+              >
+                Market Growth
+              </div>
+              <div
+                class="group-hover:border-brand-orange flex h-8 w-8 items-center justify-center rounded-full border-2 border-slate-100 bg-slate-50 shadow-lg"
+              >
+                <i
+                  data-lucide="trending-up"
+                  class="text-brand-orange h-4 w-4"
+                ></i>
+              </div>
+            </div>
+            <div
+              class="group flex cursor-pointer flex-row-reverse items-center gap-4 transition-transform hover:scale-105"
+            >
+              <div
+                class="font-outfit text-brand-navy w-20 text-left text-[10px] leading-none font-black tracking-[0.1em] uppercase opacity-80"
+              >
+                Infrastructure
+              </div>
+              <div
+                class="group-hover:border-brand-green flex h-8 w-8 items-center justify-center rounded-full border-2 border-slate-100 bg-slate-50 shadow-lg"
+              >
+                <i data-lucide="database" class="text-brand-green h-4 w-4"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- Central Rings (Depth Effect) -->
+          <div
+            class="relative flex h-[340px] w-[340px] items-center justify-center"
+          >
+            <!-- Outer Layer (Level 03) -->
+            <div
+              class="border-brand-green/30 absolute inset-0 rounded-full border-[10px] [mask-image:conic-gradient(#000_0deg_360deg)] shadow-inner"
+            ></div>
+            <div
+              class="bg-brand-green/90 absolute top-[20px] left-1/2 z-50 -translate-x-1/2 transform rounded px-3 py-1 shadow-xl group-hover:scale-105"
+            >
+              <span
+                class="font-outfit text-[8px] leading-none font-black tracking-widest whitespace-nowrap text-white uppercase"
+                >L3: Operational Scope</span
+              >
+            </div>
+
+            <!-- Middle Layer (Level 02) -->
+            <div
+              class="border-brand-navy/30 absolute flex h-[240px] w-[240px] items-center justify-center rounded-full border-[10px] shadow-lg"
+            >
+              <div
+                class="bg-brand-navy/90 absolute top-[-15px] left-1/2 z-50 -translate-x-1/2 transform rounded px-3 py-1 shadow-xl group-hover:scale-105"
+              >
+                <span
+                  class="font-outfit text-[8px] leading-none font-black tracking-widest whitespace-nowrap text-white uppercase"
+                  >L2: Strategic Core</span
+                >
+              </div>
+            </div>
+
+            <!-- Inner Core Hub -->
+            <div
+              class="bg-brand-red group relative z-40 flex h-32 w-32 cursor-pointer flex-col items-center justify-center rounded-full border-[6px] border-white/20 p-4 text-center shadow-2xl transition-transform hover:scale-105 active:translate-y-px"
+            >
+              <h5
+                class="font-outfit mt-1 text-[13px] leading-none font-black tracking-wider text-white uppercase"
+              >
+                Innovation
+              </h5>
+              <div class="mt-2 h-[2px] w-6 bg-white opacity-40"></div>
+              <p
+                class="mt-2 font-sans text-[8px] leading-tight font-bold text-white/70 italic"
+              >
+                Mission Critical Hub
+              </p>
+            </div>
+          </div>
         </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="z-20 flex items-center justify-end px-12 pb-10">
+        <div class="flex items-center gap-3">
+          <div class="text-right">
+            <div
+              class="font-outfit text-brand-navy text-[10px] leading-none font-black tracking-widest uppercase"
+            >
+              Global Operations
+            </div>
+            <div
+              class="mt-1 text-[8px] font-bold tracking-widest text-slate-400 uppercase"
+            >
+              Foundational Process Stack
+            </div>
+          </div>
+          <div class="mx-2 h-10 w-[2px] bg-slate-100"></div>
+          <div
+            class="bg-brand-navy font-outfit flex h-10 w-10 items-center justify-center rounded-lg text-sm font-black text-white shadow-lg"
+          >
+            06
+          </div>
+        </div>
+      </div>
     </div>
 
     <script>
-        window.addEventListener('load', function() {
-            lucide.createIcons();
-        });
+      window.addEventListener("load", function () {
+        lucide.createIcons()
+      })
     </script>
-</body>
+  </body>
 </html>

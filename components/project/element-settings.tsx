@@ -91,7 +91,7 @@ export function ElementSettings({
    * This is sent as a style update to the slide preview.
    */
   const deleteElement = () => {
-    handleUpdate({ display: "none" }) 
+    handleUpdate({ display: "none" })
     clearSelection()
   }
 

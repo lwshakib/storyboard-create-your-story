@@ -42,10 +42,10 @@ export async function getOrResetCredits(userId: string) {
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: {
-        credits: DEFAULT_DAILY_CREDITS,      // Reset baseline token pool to active standard
-        creditsLastReset: new Date(),        // Save physical execution date-time 
+        credits: DEFAULT_DAILY_CREDITS, // Reset baseline token pool to active standard
+        creditsLastReset: new Date(), // Save physical execution date-time
       },
-      select: { credits: true },             // Optimization return filter
+      select: { credits: true }, // Optimization return filter
     })
     // Immediately return updated pool balance
     return updatedUser.credits

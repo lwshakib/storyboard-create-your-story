@@ -5,18 +5,18 @@ import path from "path"
  * Interface representing an individual slide within an inspiration template.
  */
 export interface InspirationSlide {
-  title: string      // The human-readable title of the slide
-  html: string       // The raw HTML/CSS content of the slide
+  title: string // The human-readable title of the slide
+  html: string // The raw HTML/CSS content of the slide
   description?: string // AI-friendly description of visual/layout goals
-  content?: string     // The narrative or text content for the slide
+  content?: string // The narrative or text content for the slide
 }
 
 /**
  * Interface representing a full presentation template (inspiration).
  */
 export interface InspirationPresentation {
-  name: string        // Directory name of the inspiration
-  title: string       // Display title for the template
+  name: string // Directory name of the inspiration
+  title: string // Display title for the template
   description: string // High-level description of the template's purpose
   slides: InspirationSlide[] // Array of slides belonging to this template
 }
@@ -58,7 +58,7 @@ function getPresentationSlides(presentationName: string): InspirationSlide[] {
   let outline: {
     slides?: Array<{ title?: string; description?: string; content?: string }>
   } | null = null
-  
+
   if (fs.existsSync(outlinePath)) {
     outline = JSON.parse(fs.readFileSync(outlinePath, "utf8"))
   }
@@ -105,15 +105,17 @@ export const getInspirations = (): InspirationPresentation[] => {
   // Map each registered directory to a full InspirationPresentation object
   return REGISTERED_INSPIRATIONS.map((presName) => {
     const presPath = path.join(INSPIRATIONS_DIR, presName)
-    
+
     // Check if the directory actually exists
     if (!fs.existsSync(presPath) || !fs.statSync(presPath).isDirectory()) {
-      console.warn(`Registry warning: Inspiration folder '${presName}' not found.`)
+      console.warn(
+        `Registry warning: Inspiration folder '${presName}' not found.`
+      )
       return null
     }
 
     const outlinePath = path.join(presPath, "outline.json")
-    
+
     // Default metadata derived from the folder name
     let title = presName.replace(/-/g, " ")
     let description = `High-fidelity presentation template: ${title}`
@@ -162,13 +164,13 @@ export const formatInspirationsForPrompt = (): string => {
   inspirations.forEach((pres) => {
     output += `#### Presentation: ${pres.title}\n`
     output += `Overall Description: ${pres.description}\n`
-    
+
     pres.slides.forEach((slide, idx) => {
       output += `\n**Example Slide ${idx + 1}: ${slide.title.toUpperCase()}**\n`
       if (slide.description)
         output += `*Design Concept:* ${slide.description}\n`
       if (slide.content) output += `*Core Content:* ${slide.content}\n`
-      
+
       // The HTML structure is the most critical part for the AI to learn from
       output += `*HTML Structure:*\n${stripImages(slide.html)}\n`
     })
@@ -177,4 +179,3 @@ export const formatInspirationsForPrompt = (): string => {
 
   return output
 }
-

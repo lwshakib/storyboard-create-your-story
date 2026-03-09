@@ -163,12 +163,15 @@ export function ProjectView({
   const [slides, setSlides] = React.useState<HtmlSlide[]>(
     initialData?.slides || []
   )
-  const [title, setTitle] = React.useState(initialData?.title || "Advanced AI Storyboard")
+  const [title, setTitle] = React.useState(
+    initialData?.title || "Advanced AI Storyboard"
+  )
   const [description, setDescription] = React.useState(
     initialData?.description || ""
   )
 
-  const isBusy = (generatingSections?.size ?? 0) > 0 || (expandingSections?.size ?? 0) > 0
+  const isBusy =
+    (generatingSections?.size ?? 0) > 0 || (expandingSections?.size ?? 0) > 0
   const [isEditingTitle, setIsEditingTitle] = React.useState(false)
   const [, setIsSaving] = React.useState(false)
   const [activeSlideIndex, setActiveSlideIndex] = React.useState(0)
@@ -189,7 +192,11 @@ export function ProjectView({
     number | null
   >(null)
 
-  const saveProjectData = async (payload: { title?: string, description?: string, slides?: HtmlSlide[] }) => {
+  const saveProjectData = async (payload: {
+    title?: string
+    description?: string
+    slides?: HtmlSlide[]
+  }) => {
     if (!initialData?.id) return
     setIsSaving(true)
     try {
@@ -226,7 +233,6 @@ export function ProjectView({
     return () => clearTimeout(timeoutId)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [title, description, slides])
-
 
   React.useEffect(() => {
     if (initialData?.slides) {
@@ -274,7 +280,7 @@ export function ProjectView({
    * handleExport: Captures slide previews and generates the requested format.
    * Logic:
    * - JSON: Simple serialization of current state.
-   * - PDF/PPTX: Uses `html-to-image` to capture the content of each slide's iframe, 
+   * - PDF/PPTX: Uses `html-to-image` to capture the content of each slide's iframe,
    *   then converts those captured images into a document.
    */
   const handleExport = async (format: "json" | "pdf" | "pptx") => {
@@ -396,8 +402,6 @@ export function ProjectView({
     reader.readAsText(file)
   }
 
-
-
   const handleScroll = () => {
     if (!mainScrollRef.current) return
     const scrollPos = mainScrollRef.current.scrollTop
@@ -437,7 +441,7 @@ export function ProjectView({
       const res = await fetch(`/api/projects/${initialData?.id}/slides`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ index: index + 1 })
+        body: JSON.stringify({ index: index + 1 }),
       })
 
       if (res.ok) {
@@ -467,11 +471,11 @@ export function ProjectView({
       toast.error("Slide reference not found")
       return
     }
-    
+
     setIsSaving(true)
     try {
       const res = await fetch(`/api/slides/${slideId}`, {
-        method: "DELETE"
+        method: "DELETE",
       })
 
       if (res.ok) {
@@ -503,7 +507,7 @@ export function ProjectView({
             <ChevronLeft className="h-5 w-5" />
           </Button>
           <div className="flex items-center gap-3">
-            <div className="bg-border h-4 w-[1px] mx-1" />
+            <div className="bg-border mx-1 h-4 w-[1px]" />
             {isEditingTitle ? (
               <input
                 autoFocus
@@ -528,15 +532,12 @@ export function ProjectView({
         </div>
 
         <div className="flex items-center gap-3">
-          <div className="bg-border h-4 w-[1px] mx-1" />
-          
+          <div className="bg-border mx-1 h-4 w-[1px]" />
+
           {/* Credit Display */}
           <div className="hidden lg:block">
             <span className="text-[10px] font-bold tabular-nums opacity-60">
-              {credits !== null
-                ? credits
-                : "---"}{" "}
-              credits remaining
+              {credits !== null ? credits : "---"} credits remaining
             </span>
           </div>
 
@@ -544,7 +545,7 @@ export function ProjectView({
             <TooltipTrigger asChild>
               <Button
                 variant="outline"
-                className="border-border/50 hover:bg-muted/50 flex size-9 items-center justify-center p-0 md:h-10 md:w-auto md:px-6 md:gap-2 rounded-full font-medium shadow-sm"
+                className="border-border/50 hover:bg-muted/50 flex size-9 items-center justify-center rounded-full p-0 font-medium shadow-sm md:h-10 md:w-auto md:gap-2 md:px-6"
                 onClick={() => fileInputRef.current?.click()}
               >
                 <Upload className="size-4 opacity-70" />
@@ -570,7 +571,7 @@ export function ProjectView({
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="outline"
-                    className="border-border/50 hover:bg-muted/50 flex size-9 items-center justify-center p-0 md:h-10 md:w-auto md:px-6 md:gap-2 rounded-full font-medium shadow-sm"
+                    className="border-border/50 hover:bg-muted/50 flex size-9 items-center justify-center rounded-full p-0 font-medium shadow-sm md:h-10 md:w-auto md:gap-2 md:px-6"
                   >
                     <Download className="size-4 opacity-70" />
                     <span className="hidden md:inline">Export</span>
@@ -610,7 +611,7 @@ export function ProjectView({
 
           <Button
             asChild
-            className="bg-primary hover:bg-primary/90 text-primary-foreground flex size-9 items-center justify-center p-0 md:h-10 md:w-auto md:px-6 md:gap-2 rounded-full font-medium shadow-sm"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground flex size-9 items-center justify-center rounded-full p-0 font-medium shadow-sm md:h-10 md:w-auto md:gap-2 md:px-6"
           >
             <Link href="/new">
               <Plus className="size-4" />
@@ -618,13 +619,13 @@ export function ProjectView({
             </Link>
           </Button>
 
-          <div className="bg-border h-4 w-[1px] mx-1" />
+          <div className="bg-border mx-1 h-4 w-[1px]" />
 
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
                 variant="outline"
-                className="border-primary/20 hover:bg-primary/5 flex size-9 items-center justify-center p-0 md:h-10 md:w-auto md:px-6 md:gap-2 rounded-full font-bold shadow-sm"
+                className="border-primary/20 hover:bg-primary/5 flex size-9 items-center justify-center rounded-full p-0 font-bold shadow-sm md:h-10 md:w-auto md:gap-2 md:px-6"
                 onClick={() => setIsPresenting(true)}
               >
                 <PresentationIcon className="text-primary size-4" />
@@ -703,12 +704,12 @@ export function ProjectView({
                       <motion.div layout className="flex-1 space-y-6">
                         {s.html === "SKELETON" ? (
                           <div className="space-y-6">
-                            <div className="space-y-4 animate-pulse">
-                              <div className="h-10 w-2/3 rounded-lg bg-muted/40" />
+                            <div className="animate-pulse space-y-4">
+                              <div className="bg-muted/40 h-10 w-2/3 rounded-lg" />
                               <div className="space-y-2">
-                                <div className="h-4 w-full rounded bg-muted/20" />
-                                <div className="h-4 w-[90%] rounded bg-muted/20" />
-                                <div className="h-4 w-[95%] rounded bg-muted/20" />
+                                <div className="bg-muted/20 h-4 w-full rounded" />
+                                <div className="bg-muted/20 h-4 w-[90%] rounded" />
+                                <div className="bg-muted/20 h-4 w-[95%] rounded" />
                               </div>
                             </div>
                           </div>
@@ -740,20 +741,35 @@ export function ProjectView({
                             <AnimatePresence mode="sync">
                               {(() => {
                                 const matchingSlide = slides[i]
-                                
+
                                 // REFINEMENT STATE: Show skeleton even if NO HTML exists yet
                                 if (generatingSections?.has(i)) {
                                   return (
                                     <motion.div
                                       key="skeleton"
-                                      initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                                      animate={{ opacity: 1, height: "auto", marginTop: 32 }}
-                                      exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                                      transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+                                      initial={{
+                                        opacity: 0,
+                                        height: 0,
+                                        marginTop: 0,
+                                      }}
+                                      animate={{
+                                        opacity: 1,
+                                        height: "auto",
+                                        marginTop: 32,
+                                      }}
+                                      exit={{
+                                        opacity: 0,
+                                        height: 0,
+                                        marginTop: 0,
+                                      }}
+                                      transition={{
+                                        duration: 0.4,
+                                        ease: [0.23, 1, 0.32, 1],
+                                      }}
                                       className="overflow-hidden"
                                     >
-                                      <div className="border-border ring-primary/20 slide-preview-container aspect-video w-full overflow-hidden rounded-2xl border bg-muted/10 shadow-lg ring-1 transition-all relative">
-                                        <div className="relative h-full w-full overflow-hidden bg-muted/20">
+                                      <div className="border-border ring-primary/20 slide-preview-container bg-muted/10 relative aspect-video w-full overflow-hidden rounded-2xl border shadow-lg ring-1 transition-all">
+                                        <div className="bg-muted/20 relative h-full w-full overflow-hidden">
                                           <div className="animate-shimmer absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                                         </div>
                                       </div>
@@ -766,14 +782,29 @@ export function ProjectView({
                                   return (
                                     <motion.div
                                       key="content"
-                                      initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                                      animate={{ opacity: 1, height: "auto", marginTop: 32 }}
-                                      exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                                      transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+                                      initial={{
+                                        opacity: 0,
+                                        height: 0,
+                                        marginTop: 0,
+                                      }}
+                                      animate={{
+                                        opacity: 1,
+                                        height: "auto",
+                                        marginTop: 32,
+                                      }}
+                                      exit={{
+                                        opacity: 0,
+                                        height: 0,
+                                        marginTop: 0,
+                                      }}
+                                      transition={{
+                                        duration: 0.4,
+                                        ease: [0.23, 1, 0.32, 1],
+                                      }}
                                       className="group/preview relative overflow-hidden"
                                     >
                                       <div
-                                        className="border-border/50 ring-primary/5 group-hover:ring-primary/20 slide-preview-container aspect-video w-full overflow-hidden rounded-2xl border bg-black/5 shadow-2xl ring-1 transition-all relative"
+                                        className="border-border/50 ring-primary/5 group-hover:ring-primary/20 slide-preview-container relative aspect-video w-full overflow-hidden rounded-2xl border bg-black/5 shadow-2xl ring-1 transition-all"
                                         id={`slide-preview-${matchingSlide.id}`}
                                       >
                                         <SlidePreview
@@ -799,21 +830,23 @@ export function ProjectView({
                             initial={{ opacity: 0, x: 20 }}
                             animate={{ opacity: 1, x: 0 }}
                             exit={{ opacity: 0, x: 20 }}
-                            className="absolute top-1/2 -right-12 -translate-y-1/2 z-[60]"
+                            className="absolute top-1/2 -right-12 z-[60] -translate-y-1/2"
                           >
                             <Tooltip>
                               <TooltipTrigger asChild>
                                 <Button
                                   variant="destructive"
                                   size="icon"
-                                  className="size-10 rounded-full border-4 border-background shadow-xl hover:scale-110 active:scale-95 transition-all"
+                                  className="border-background size-10 rounded-full border-4 shadow-xl transition-all hover:scale-110 active:scale-95"
                                   onClick={() => onCancelExpand?.(i - 1)}
                                 >
                                   <X className="size-5" />
                                 </Button>
                               </TooltipTrigger>
                               <TooltipContent side="right">
-                                <p className="font-bold uppercase tracking-widest text-[10px]">Abort Expand</p>
+                                <p className="text-[10px] font-bold tracking-widest uppercase">
+                                  Abort Expand
+                                </p>
                               </TooltipContent>
                             </Tooltip>
                           </motion.div>
@@ -823,10 +856,14 @@ export function ProjectView({
 
                     {/* Section Toolbar - Hidden only for skeletons */}
                     {s.html !== "SKELETON" && (
-                      <div className={cn(
-                        "bg-background ring-background absolute -bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1 rounded-full border p-1 shadow-2xl ring-4 transition-all duration-300",
-                        generatingSections?.has(i) ? "opacity-100 scale-105" : "opacity-0 group-hover:opacity-100"
-                      )}>
+                      <div
+                        className={cn(
+                          "bg-background ring-background absolute -bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1 rounded-full border p-1 shadow-2xl ring-4 transition-all duration-300",
+                          generatingSections?.has(i)
+                            ? "scale-105 opacity-100"
+                            : "opacity-0 group-hover:opacity-100"
+                        )}
+                      >
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Button
@@ -853,8 +890,8 @@ export function ProjectView({
                               size="icon"
                               className={cn(
                                 "group/btn size-8 rounded-full transition-all duration-300",
-                                generatingSections?.has(i) 
-                                  ? "bg-red-500/10 text-red-500 hover:bg-red-500/20 shadow-lg ring-1 ring-red-500/30" 
+                                generatingSections?.has(i)
+                                  ? "bg-red-500/10 text-red-500 shadow-lg ring-1 ring-red-500/30 hover:bg-red-500/20"
                                   : "bg-primary/5 hover:bg-primary/10 text-primary"
                               )}
                               onClick={() => handleGenerateSection(i)}
@@ -869,7 +906,9 @@ export function ProjectView({
                           </TooltipTrigger>
                           <TooltipContent side="bottom" sideOffset={10}>
                             <p className="font-bold">
-                              {generatingSections?.has(i) ? "Abort Refinement" : "Refine Slide"}
+                              {generatingSections?.has(i)
+                                ? "Abort Refinement"
+                                : "Refine Slide"}
                             </p>
                           </TooltipContent>
                         </Tooltip>
@@ -900,7 +939,7 @@ export function ProjectView({
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="bg-primary/5 hover:bg-primary/10 group/btn size-8 rounded-full text-primary disabled:opacity-30"
+                              className="bg-primary/5 hover:bg-primary/10 group/btn text-primary size-8 rounded-full disabled:opacity-30"
                               onClick={() => onExpandSection?.(i)}
                               disabled={isBusy}
                             >
@@ -926,7 +965,7 @@ export function ProjectView({
                               }}
                               disabled={isBusy}
                             >
-                              <PresentationIcon className="size-3.5 text-primary" />
+                              <PresentationIcon className="text-primary size-3.5" />
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent side="bottom" sideOffset={10}>
@@ -996,7 +1035,6 @@ export function ProjectView({
           </motion.aside>
         )}
       </AnimatePresence>
-
 
       <Dialog
         open={selectedVisualsIndex !== null}

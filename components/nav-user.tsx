@@ -76,14 +76,18 @@ export function NavUser() {
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-bold tracking-tight">{user.name}</span>
-                <span className="truncate text-xs opacity-50">{user.email}</span>
+                <span className="truncate font-bold tracking-tight">
+                  {user.name}
+                </span>
+                <span className="truncate text-xs opacity-50">
+                  {user.email}
+                </span>
               </div>
               <ChevronsUpDown className="ml-auto size-4 opacity-40" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-(--radix-dropdown-menu-trigger-width) bg-background/95 min-w-56 rounded-xl border-none p-2 shadow-2xl ring-1 ring-black/5 backdrop-blur-2xl"
+            className="bg-background/95 w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-xl border-none p-2 shadow-2xl ring-1 ring-black/5 backdrop-blur-2xl"
             side={isMobile ? "bottom" : "right"}
             align="end"
             sideOffset={4}
@@ -97,16 +101,20 @@ export function NavUser() {
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-bold tracking-tight">{user.name}</span>
-                  <span className="truncate text-xs opacity-50">{user.email}</span>
+                  <span className="truncate font-bold tracking-tight">
+                    {user.name}
+                  </span>
+                  <span className="truncate text-xs opacity-50">
+                    {user.email}
+                  </span>
                 </div>
               </div>
             </DropdownMenuLabel>
-            
+
             <DropdownMenuSeparator className="opacity-50" />
-            
+
             <DropdownMenuGroup>
-              <DropdownMenuItem 
+              <DropdownMenuItem
                 onClick={() => router.push("/billing")}
                 className="hover:bg-primary/5 hover:text-primary cursor-pointer rounded-lg font-bold transition-all"
               >
@@ -114,27 +122,39 @@ export function NavUser() {
                 Upgrade to Pro
               </DropdownMenuItem>
             </DropdownMenuGroup>
-            
+
             <DropdownMenuSeparator className="opacity-50" />
-            
+
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => router.push("/account")} className="cursor-pointer rounded-lg font-medium">
+              <DropdownMenuItem
+                onClick={() => router.push("/account")}
+                className="cursor-pointer rounded-lg font-medium"
+              >
                 <BadgeCheck className="mr-2 h-4 w-4 opacity-40" />
                 Account
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => router.push("/billing")} className="cursor-pointer rounded-lg font-medium">
+              <DropdownMenuItem
+                onClick={() => router.push("/billing")}
+                className="cursor-pointer rounded-lg font-medium"
+              >
                 <CreditCard className="mr-2 h-4 w-4 opacity-40" />
                 Billing
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => router.push("/notifications")} className="cursor-pointer rounded-lg font-medium">
+              <DropdownMenuItem
+                onClick={() => router.push("/notifications")}
+                className="cursor-pointer rounded-lg font-medium"
+              >
                 <Bell className="mr-2 h-4 w-4 opacity-40" />
                 Notifications
               </DropdownMenuItem>
             </DropdownMenuGroup>
-            
+
             <DropdownMenuSeparator className="opacity-50" />
-            
-            <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:bg-destructive/10 focus:text-destructive cursor-pointer rounded-lg font-bold">
+
+            <DropdownMenuItem
+              onClick={handleLogout}
+              className="text-destructive focus:bg-destructive/10 focus:text-destructive cursor-pointer rounded-lg font-bold"
+            >
               <LogOut className="mr-2 h-4 w-4" />
               Log out
             </DropdownMenuItem>

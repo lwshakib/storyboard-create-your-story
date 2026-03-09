@@ -24,7 +24,7 @@ export async function POST(
 
     // 1. Ownership check
     const project = await prisma.project.findUnique({
-      where: { id: projectId, userId: session.user.id }
+      where: { id: projectId, userId: session.user.id },
     })
 
     if (!project) {
@@ -36,7 +36,7 @@ export async function POST(
       // Find current slides
       const currentSlides = await tx.slide.findMany({
         where: { projectId },
-        orderBy: { index: "asc" }
+        orderBy: { index: "asc" },
       })
 
       // Insert the new slide
@@ -47,20 +47,20 @@ export async function POST(
           content: "",
           prompt: "",
           html: "",
-          projectId
-        }
+          projectId,
+        },
       })
 
       // Re-fetch all and re-index
       const allSlides = await tx.slide.findMany({
         where: { projectId },
-        orderBy: { index: "asc" }
+        orderBy: { index: "asc" },
       })
 
       for (let i = 0; i < allSlides.length; i++) {
         await tx.slide.update({
           where: { id: allSlides[i].id },
-          data: { index: i }
+          data: { index: i },
         })
       }
     })
@@ -68,7 +68,7 @@ export async function POST(
     // 3. Return fresh project
     const updatedProject = await prisma.project.findUnique({
       where: { id: projectId },
-      include: { slides: { orderBy: { index: "asc" } } }
+      include: { slides: { orderBy: { index: "asc" } } },
     })
 
     return NextResponse.json(updatedProject)

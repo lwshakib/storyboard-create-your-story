@@ -88,7 +88,7 @@ export default function HeroSection() {
           </div>
         </nav>
       </header>
-      
+
       <main className="overflow-hidden">
         {/* MAIN HERO CONTENT */}
         <section>
@@ -112,12 +112,12 @@ export default function HeroSection() {
                   Visual high-fidelity stories, generated in seconds.
                 </h1>
                 <p className="mx-auto mt-8 hidden max-w-2xl text-lg text-wrap sm:block">
-                  Transform raw narratives into stunning, interactive storyboards. 
-                  Leverage AI to craft high-conversion decks and prototypes without 
-                  leaving your browser.
+                  Transform raw narratives into stunning, interactive
+                  storyboards. Leverage AI to craft high-conversion decks and
+                  prototypes without leaving your browser.
                 </p>
                 <p className="mx-auto mt-6 max-w-2xl text-wrap sm:hidden">
-                  High-fidelity storytelling for the modern web. From idea to 
+                  High-fidelity storytelling for the modern web. From idea to
                   interactive storyboard in seconds.
                 </p>
 
@@ -135,14 +135,14 @@ export default function HeroSection() {
             {/* PRODUCT SHOWCASE PREVIEW */}
             <div className="relative mx-auto mt-16 max-w-6xl overflow-hidden mask-b-from-55% px-4">
               <Image
-                className="border-border/25 relative z-2 hidden rounded-2xl border dark:block shadow-2xl"
+                className="border-border/25 relative z-2 hidden rounded-2xl border shadow-2xl dark:block"
                 src="/music.png"
                 alt="app screen"
                 width={2796}
                 height={2008}
               />
               <Image
-                className="border-border/25 relative z-2 rounded-2xl border dark:hidden shadow-2xl"
+                className="border-border/25 relative z-2 rounded-2xl border shadow-2xl dark:hidden"
                 src="/music-light.png"
                 alt="app screen"
                 width={2796}
@@ -158,7 +158,7 @@ export default function HeroSection() {
             <h2 className="text-center text-lg font-medium opacity-50">
               Trusted by innovative storytellers worldwide
             </h2>
-            <div className="mx-auto mt-12 flex max-w-4xl flex-wrap items-center justify-center gap-x-12 gap-y-8 sm:gap-x-16 sm:gap-y-12 greyscale opacity-30 transition-opacity hover:opacity-100">
+            <div className="greyscale mx-auto mt-12 flex max-w-4xl flex-wrap items-center justify-center gap-x-12 gap-y-8 opacity-30 transition-opacity hover:opacity-100 sm:gap-x-16 sm:gap-y-12">
               <Image
                 className="h-5 w-fit dark:invert"
                 src="https://html.tailus.io/blocks/customers/nvidia.svg"

@@ -18,5 +18,5 @@ const prisma = globalForPrisma.prisma || new PrismaClient({ adapter })
 // Append our working memory singleton cache instance so live reload cycles won't leak disconnected client references and cause pooling errors
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma
 
-// Expose driver globally to handle all database transactions 
+// Expose driver globally to handle all database transactions
 export default prisma

@@ -68,10 +68,16 @@ export function SlidePreview({
         const styles = window.getComputedStyle(containerRef.current)
 
         // Calculate actual available space (subtracting borders/padding)
-        const borderX = parseFloat(styles.borderLeftWidth) + parseFloat(styles.borderRightWidth) || 0
-        const borderY = parseFloat(styles.borderTopWidth) + parseFloat(styles.borderBottomWidth) || 0
-        const paddingX = parseFloat(styles.paddingLeft) + parseFloat(styles.paddingRight) || 0
-        const paddingY = parseFloat(styles.paddingTop) + parseFloat(styles.paddingBottom) || 0
+        const borderX =
+          parseFloat(styles.borderLeftWidth) +
+            parseFloat(styles.borderRightWidth) || 0
+        const borderY =
+          parseFloat(styles.borderTopWidth) +
+            parseFloat(styles.borderBottomWidth) || 0
+        const paddingX =
+          parseFloat(styles.paddingLeft) + parseFloat(styles.paddingRight) || 0
+        const paddingY =
+          parseFloat(styles.paddingTop) + parseFloat(styles.paddingBottom) || 0
 
         const contentWidth = width - borderX - paddingX
         const contentHeight = height - borderY - paddingY
@@ -80,7 +86,7 @@ export function SlidePreview({
         const scaleW = contentWidth / 960
         const scaleH = contentHeight / 540
         const newScale = Math.min(scaleW, scaleH)
-        
+
         if (newScale > 0) {
           setComputedScale(newScale)
         }

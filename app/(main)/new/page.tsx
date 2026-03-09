@@ -55,7 +55,7 @@ export default function NewProjectPage() {
 
   const handleStartGeneration = async () => {
     if (!prompt.trim()) return
-    
+
     // Check credits
     if (credits !== null && credits < 1) {
       toast.error("Credits exhausted.", {

@@ -84,7 +84,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     // EVENT BUS HANDLER: Refreshes projects when other parts of the app modify them.
     const handleUpdate = (e: Event) => {
       const customEvent = e as CustomEvent<{ deletedId?: string }>
-      
+
       // Optimistic delete: if an ID is provided, remove it from state instantly to improve UX.
       if (customEvent.detail?.deletedId) {
         setRecentProjects((prev) =>

@@ -30,8 +30,8 @@ export function NavProjects({
       <SidebarMenu>
         {projects.map((item) => (
           <SidebarMenuItem key={item.url}>
-            <SidebarMenuButton 
-              asChild 
+            <SidebarMenuButton
+              asChild
               isActive={pathname === item.url}
               className="data-[active=true]:bg-primary/10 data-[active=true]:text-primary font-bold transition-all"
             >

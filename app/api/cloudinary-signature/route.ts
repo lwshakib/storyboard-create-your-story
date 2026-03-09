@@ -3,7 +3,7 @@ import { NextResponse } from "next/server"
 
 /**
  * GET: Generates a secure authentication signature for Cloudinary.
- * This allows the client-side (browser) to upload files directly to Cloudinary 
+ * This allows the client-side (browser) to upload files directly to Cloudinary
  * without exposing secret API keys in the frontend.
  */
 export async function GET() {

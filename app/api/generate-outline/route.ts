@@ -4,10 +4,7 @@ import { formatInspirationsForPrompt } from "@/inspirations/registry"
 import prisma from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
-import {
-  deductCredits,
-  getOrResetCredits,
-} from "@/lib/credits"
+import { deductCredits, getOrResetCredits } from "@/lib/credits"
 
 // Allow long-running AI generation (up to 60s)
 export const maxDuration = 60
@@ -108,7 +105,6 @@ export async function POST(req: Request) {
       temperature: 0.7,
     })) as { object: z.infer<typeof outlineSchema> }
 
-
     // 4. DYNAMIC COST CALCULATION: Outline generation costs 1 credit
     const finalTextCost = 1
 
@@ -134,7 +130,7 @@ export async function POST(req: Request) {
       prompt: s.prompt,
       content: s.content,
       html: "",
-      assets: []
+      assets: [],
     }))
 
     if (projectId) {
@@ -146,14 +142,14 @@ export async function POST(req: Request) {
             description: object.description,
             slides: {
               deleteMany: {}, // Clean slate for the new outline
-              create: reindexedSlides
+              create: reindexedSlides,
             },
           },
           include: {
             slides: {
-              orderBy: { index: "asc" }
-            }
-          }
+              orderBy: { index: "asc" },
+            },
+          },
         })
         return Response.json(updatedProject)
       } catch (dbError) {

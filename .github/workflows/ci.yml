@@ -34,7 +34,6 @@ jobs:
       - name: Build
         run: bun run build
         env:
-
           BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
           BETTER_AUTH_URL: "http://localhost:3000"
           CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_API_KEY }}
@@ -71,7 +70,6 @@ jobs:
       - name: Run E2E Tests
         run: bun run test:e2e
         env:
-
           BETTER_AUTH_SECRET: ${{ secrets.BETTER_AUTH_SECRET }}
           BETTER_AUTH_URL: "http://localhost:3000"
           CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_API_KEY }}

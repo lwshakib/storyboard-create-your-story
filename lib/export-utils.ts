@@ -16,10 +16,10 @@ import { colorToHex } from "./utils"
 export const exportToJson = (title: string, slides: Slide[]) => {
   // Construct the structured backup object mapping standard attributes
   const data = {
-    title,                       // Project title
-    slides,                      // The raw array dataset defining slide structures
+    title, // Project title
+    slides, // The raw array dataset defining slide structures
     exportedAt: new Date().toISOString(), // Timestamp signature
-    version: "1.0",              // Format version marker for future-proofing reader
+    version: "1.0", // Format version marker for future-proofing reader
   }
   // Convert JSON object representation string to an immutable browser Blob payload
   const blob = new Blob([JSON.stringify(data, null, 2)], {
@@ -35,7 +35,7 @@ export const exportToJson = (title: string, slides: Slide[]) => {
   link.download = `${title.replace(/\s+/g, "_")}.json`
   // Attach the phantom element physical document tree (Required by Firefox)
   document.body.appendChild(link)
-  // Automatically trigger a left click on the anchor causing forced download 
+  // Automatically trigger a left click on the anchor causing forced download
   link.click()
   // Clean up side-effects destroying the phantom link element
   document.body.removeChild(link)
@@ -68,7 +68,7 @@ export const exportToPpptx = async (title: string, slides: Slide[]) => {
       slide.background = { path: slideData.bgImage }
     }
 
-    // Iterate map translating standard application layout elements into PPTX specific layout nodes 
+    // Iterate map translating standard application layout elements into PPTX specific layout nodes
     ;(slideData.elements || []).forEach((el: SlideElement) => {
       // 1024x576 is our internal canvas size.
       // Powerpoint default is usually 10x5.625 inches (16:9).
@@ -86,7 +86,7 @@ export const exportToPpptx = async (title: string, slides: Slide[]) => {
           w,
           h,
           // Shrink font size inherently to map CSS scaling closer to physical Word/PPT Points definitions
-          fontSize: el.fontSize ? el.fontSize * 0.75 : 18, 
+          fontSize: el.fontSize ? el.fontSize * 0.75 : 18,
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           align: (el.textAlign as any) || "left",
           fontFace: el.fontFamily || "Arial",
@@ -94,7 +94,7 @@ export const exportToPpptx = async (title: string, slides: Slide[]) => {
           bold: el.fontWeight === "900" || el.fontWeight === "bold",
           valign: "middle", // Force centering vertical axis naturally
         })
-      // Render Image elements
+        // Render Image elements
       } else if (el.type === "image" && el.src && el.src !== "loading") {
         slide.addImage({
           path: el.src, // Bind remote source URL directly, PPT generator natively handles fetch
@@ -103,7 +103,7 @@ export const exportToPpptx = async (title: string, slides: Slide[]) => {
           w,
           h,
         })
-      // Render Shape configurations
+        // Render Shape configurations
       } else if (el.type === "shape" && el.shapeType) {
         // Switch evaluating ppt primitive enumerator bindings based on raw text match
         const shapeType =
@@ -121,9 +121,9 @@ export const exportToPpptx = async (title: string, slides: Slide[]) => {
             alpha: (el.opacity || 1) * 100, // Multiply standard CSS 0-1 opacity into 0-100 PPT percentage formatting
           },
         })
-      // Render Data grids
+        // Render Data grids
       } else if (el.type === "table" && el.tableData) {
-        // Reduce complex table properties extracting pure raw text structures 
+        // Reduce complex table properties extracting pure raw text structures
         const rows = el.tableData.map((row) => row.map((cell) => cell.text))
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         slide.addTable(rows as any[], {
@@ -135,7 +135,7 @@ export const exportToPpptx = async (title: string, slides: Slide[]) => {
           fill: { color: "F8F8F8" }, // Inject subtle gray contrast backfill
           fontSize: 12,
         })
-      // Render dynamic Rechart equivalents
+        // Render dynamic Rechart equivalents
       } else if (
         [
           "bar-chart",
@@ -151,10 +151,10 @@ export const exportToPpptx = async (title: string, slides: Slide[]) => {
         const labels = el.chartData.map((d) => d.label)
         const values = el.chartData.map((d) => d.value)
         const colors = el.chartData.map(
-          (d) => d.color?.replace("#", "") || "3b82f6" // Format arrays mapping defaults 
+          (d) => d.color?.replace("#", "") || "3b82f6" // Format arrays mapping defaults
         )
 
-        // Conditional checks binding PPT renderer specific visual generation targets 
+        // Conditional checks binding PPT renderer specific visual generation targets
         let chartType = pres.ChartType.bar
         if (el.type === "pie-chart" || el.type === "radial-chart")
           chartType = pres.ChartType.pie
@@ -200,13 +200,13 @@ export const exportHtmlToJson = (
     projectTitle: title, // Legacy duplication parameter
     description,
     projectDescription: description, // Legacy duplication parameter
-    slides, // Standard HTML mapping array string maps 
+    slides, // Standard HTML mapping array string maps
     exportedAt: new Date().toISOString(),
     format: "html-storyboard", // Internal format logic identifier map tracking system type
     version: "1.0",
   }
-  
-  // JSON -> Blob serialization conversion mapping 
+
+  // JSON -> Blob serialization conversion mapping
   const blob = new Blob([JSON.stringify(data, null, 2)], {
     type: "application/json",
   })
@@ -227,11 +227,11 @@ export const exportHtmlToJson = (
  * Advanced sequence extracting and translating raw HTML slide representations natively into scalable PDF vector documents.
  */
 export const exportHtmlToPdf = async (title: string, slides: HtmlSlide[]) => {
-  // Setup horizontal orientation A4 paper format 
+  // Setup horizontal orientation A4 paper format
   const doc = new jsPDF({
     orientation: "landscape",
-    unit: "pt", // Draw logic scale referencing discrete geometric points 
-    format: [1024, 576], // Map explicit canvas constraint resolutions 
+    unit: "pt", // Draw logic scale referencing discrete geometric points
+    format: [1024, 576], // Map explicit canvas constraint resolutions
   })
 
   // Run async parallel layout conversion mapper scanning DOM output converting pure HTML layers back to vector metadata definitions
@@ -239,13 +239,13 @@ export const exportHtmlToPdf = async (title: string, slides: HtmlSlide[]) => {
     slides.map((s) => htmlToStructuredSlide(s))
   )
 
-  // Map individual vector output 
+  // Map individual vector output
   for (let i = 0; i < structuredSlides.length; i++) {
-    // Inject pagination slice dividing multiple screens explicitly 
+    // Inject pagination slice dividing multiple screens explicitly
     if (i > 0) doc.addPage([1024, 576], "landscape")
     const slide = structuredSlides[i]
 
-    // Handle painting Background vectors directly natively 
+    // Handle painting Background vectors directly natively
     if (slide.bgColor) {
       // Decode hex color format using generic mapper
       const hex = colorToHex(slide.bgColor)
@@ -255,10 +255,10 @@ export const exportHtmlToPdf = async (title: string, slides: HtmlSlide[]) => {
       }
     }
 
-    // Step across mapped DOM abstractions output 
-    for (const el of (slide.elements || [])) {
+    // Step across mapped DOM abstractions output
+    for (const el of slide.elements || []) {
       if (el.type === "text") {
-        // Validate explicit text color parameters 
+        // Validate explicit text color parameters
         const hex = colorToHex(el.color || "#000000")
         if (hex.startsWith("#")) doc.setTextColor(hex)
         // Bind explicit pixel scale font configuration mapping properties
@@ -273,7 +273,7 @@ export const exportHtmlToPdf = async (title: string, slides: HtmlSlide[]) => {
           console.warn("Failed to add image to PDF", _e)
         }
       } else if (el.type === "shape" && el.color) {
-        // Resolve pure css block vector primitives back into standard rendering operations format coordinates paths 
+        // Resolve pure css block vector primitives back into standard rendering operations format coordinates paths
         const hex = colorToHex(el.color)
         if (hex.startsWith("#")) {
           // Mount active primitive format painter configurations
@@ -294,7 +294,7 @@ export const exportHtmlToPdf = async (title: string, slides: HtmlSlide[]) => {
     }
   }
 
-  // Force PDF processing finish 
+  // Force PDF processing finish
   doc.save(`${title.replace(/\s+/g, "_")}.pdf`)
 }
 
@@ -306,12 +306,12 @@ export const exportHtmlToPpptx = async (title: string, slides: HtmlSlide[]) => {
   const structuredSlides = await Promise.all(
     slides.map((s) => htmlToStructuredSlide(s))
   )
-  // Call internal standard layout object translation route handler 
+  // Call internal standard layout object translation route handler
   await exportToPpptx(title, structuredSlides)
 }
 
 /**
- * Creates a raw PDF strictly rendering completely collapsed flattened full-screen snapshot strings variables images 
+ * Creates a raw PDF strictly rendering completely collapsed flattened full-screen snapshot strings variables images
  */
 export const exportImagesToPdf = async (title: string, images: string[]) => {
   // Intialize baseline configuration
@@ -321,10 +321,10 @@ export const exportImagesToPdf = async (title: string, images: string[]) => {
     format: [1024, 576],
   })
 
-  // Iteratively push sequential snapshot strings rendering explicitly bounded native blocks 
+  // Iteratively push sequential snapshot strings rendering explicitly bounded native blocks
   for (let i = 0; i < images.length; i++) {
     if (i > 0) doc.addPage([1024, 576], "landscape")
-    // Force fill canvas 
+    // Force fill canvas
     doc.addImage(images[i], "PNG", 0, 0, 1024, 576)
   }
 
@@ -332,14 +332,14 @@ export const exportImagesToPdf = async (title: string, images: string[]) => {
 }
 
 /**
- * Bootstraps quick standard Powerpoint structure using flattened full background static frame slides 
+ * Bootstraps quick standard Powerpoint structure using flattened full background static frame slides
  */
 export const exportImagesToPpptx = async (title: string, images: string[]) => {
-  // Create blank sequence 
+  // Create blank sequence
   const pres = new pptxgen()
   pres.title = title
 
-  // Add individual full slide blocks configurations mappings appending new object models iteratively mapped flat layout params 
+  // Add individual full slide blocks configurations mappings appending new object models iteratively mapped flat layout params
   images.forEach((imgData) => {
     const slide = pres.addSlide()
     slide.addImage({
@@ -351,6 +351,6 @@ export const exportImagesToPpptx = async (title: string, images: string[]) => {
     })
   })
 
-  // Finalize export 
+  // Finalize export
   await pres.writeFile({ fileName: `${title.replace(/\s+/g, "_")}.pptx` })
 }

@@ -1,159 +1,258 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Slide 4 - Organizational Hierarchy</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        outfit: ['Outfit', 'sans-serif'],
-                    },
-                    colors: {
-                        brand: {
-                            navy: '#2A3A4A',
-                            orange: '#C65C17',
-                            green: '#2D5A27',
-                            red: '#8B1111',
-                        }
-                    }
-                }
-            }
-        }
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+              outfit: ["Outfit", "sans-serif"],
+            },
+            colors: {
+              brand: {
+                navy: "#2A3A4A",
+                orange: "#C65C17",
+                green: "#2D5A27",
+                red: "#8B1111",
+              },
+            },
+          },
+        },
+      }
     </script>
-</head>
-<body class="overflow-hidden font-sans bg-neutral-100 flex items-center justify-center min-h-screen">
-
+  </head>
+  <body
+    class="flex min-h-screen items-center justify-center overflow-hidden bg-neutral-100 font-sans"
+  >
     <!-- Fixed Area Container (960x540) -->
-    <div class="relative h-[540px] w-[960px] overflow-hidden bg-white shadow-2xl flex flex-col">
-
-        <!-- Header -->
-        <div class="px-12 pt-10 flex justify-between items-end z-20">
-            <div>
-                <h1 class="text-2xl font-outfit font-black text-brand-navy uppercase tracking-tighter leading-none">Organizational Stack</h1>
-                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] mt-1">Strategic Leadership Structure</p>
-            </div>
-            <div class="border-b-[3px] border-slate-100 flex-1 mx-8 mb-1"></div>
-            <div class="text-[10px] font-black font-outfit text-brand-navy/30 uppercase tracking-widest mb-1">
-                Phase 04 / 2024
-            </div>
+    <div
+      class="relative flex h-[540px] w-[960px] flex-col overflow-hidden bg-white shadow-2xl"
+    >
+      <!-- Header -->
+      <div class="z-20 flex items-end justify-between px-12 pt-10">
+        <div>
+          <h1
+            class="font-outfit text-brand-navy text-2xl leading-none font-black tracking-tighter uppercase"
+          >
+            Organizational Stack
+          </h1>
+          <p
+            class="mt-1 text-[10px] font-bold tracking-[0.2em] text-slate-400 uppercase"
+          >
+            Strategic Leadership Structure
+          </p>
         </div>
-
-        <!-- Main Content: Refined Hierarchy -->
-        <div class="flex-1 flex flex-col items-center justify-center -mt-4 relative">
-            
-            <!-- Hierarchy Diagram -->
-            <div class="relative w-[800px] h-[320px] flex flex-col items-center">
-                
-                <!-- Level 1: Root -->
-                <div class="relative z-30 group cursor-pointer hover:scale-105 transition-transform">
-                    <div class="bg-brand-red p-[2px] rounded-xl shadow-2xl">
-                        <div class="bg-white px-8 py-4 rounded-xl flex items-center gap-4">
-                            <div class="w-10 h-10 rounded-lg bg-brand-red flex items-center justify-center shadow-md">
-                                <i data-lucide="crown" class="w-6 h-6 text-white"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-outfit font-black text-brand-navy text-[14px] uppercase leading-none mb-1">Executive Root</h3>
-                                <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Global Governance</p>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Vertical Line Connector Down -->
-                    <div class="absolute left-1/2 -bottom-6 w-[2px] h-6 bg-slate-100 -translate-x-1/2"></div>
-                </div>
-
-                <!-- Horizontal Connector Line -->
-                <div class="absolute top-[86px] left-[150px] right-[150px] h-[2px] bg-slate-100 z-10"></div>
-
-                <!-- Level 2: Branches -->
-                <div class="flex justify-between w-full mt-10 relative z-20">
-                    
-                    <!-- Left Branch: Infrastructure -->
-                    <div class="flex flex-col items-center group cursor-pointer hover:scale-105 transition-transform">
-                        <div class="absolute top-[-14px] w-[2px] h-[14px] bg-slate-100"></div>
-                        <div class="bg-brand-green p-[1px] rounded-lg shadow-xl w-60">
-                            <div class="bg-white p-4 rounded-lg">
-                                <div class="flex items-center gap-3 mb-3">
-                                    <div class="w-8 h-8 rounded bg-brand-green flex items-center justify-center">
-                                        <i data-lucide="database" class="w-4 h-4 text-white"></i>
-                                    </div>
-                                    <h4 class="font-outfit font-black text-brand-navy text-[10px] uppercase tracking-wider">Infrastructure</h4>
-                                </div>
-                                <p class="text-[9px] text-slate-500 leading-relaxed font-sans opacity-80">Managing core cloud assets and distributed system scalability.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Middle Branch: Operations -->
-                    <div class="flex flex-col items-center group cursor-pointer hover:scale-105 transition-transform">
-                        <div class="absolute top-[-14px] w-[2px] h-[14px] bg-slate-100"></div>
-                        <div class="bg-brand-navy p-[1px] rounded-lg shadow-xl w-60">
-                            <div class="bg-white p-4 rounded-lg">
-                                <div class="flex items-center gap-3 mb-3">
-                                    <div class="w-8 h-8 rounded bg-brand-navy flex items-center justify-center">
-                                        <i data-lucide="activity" class="w-4 h-4 text-white"></i>
-                                    </div>
-                                    <h4 class="font-outfit font-black text-brand-navy text-[10px] uppercase tracking-wider">Operational Core</h4>
-                                </div>
-                                <p class="text-[9px] text-slate-500 leading-relaxed font-sans opacity-80">Synchronizing team workflows and stakeholder communications.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Right Branch: Strategy -->
-                    <div class="flex flex-col items-center group cursor-pointer hover:scale-105 transition-transform">
-                        <div class="absolute top-[-14px] w-[2px] h-[14px] bg-slate-100"></div>
-                        <div class="bg-brand-orange p-[1px] rounded-lg shadow-xl w-60">
-                            <div class="bg-white p-4 rounded-lg">
-                                <div class="flex items-center gap-3 mb-3">
-                                    <div class="w-8 h-8 rounded bg-brand-orange flex items-center justify-center">
-                                        <i data-lucide="trending-up" class="w-4 h-4 text-white"></i>
-                                    </div>
-                                    <h4 class="font-outfit font-black text-brand-navy text-[10px] uppercase tracking-wider">Product Strategy</h4>
-                                </div>
-                                <p class="text-[9px] text-slate-500 leading-relaxed font-sans opacity-80">Defining market positioning and long-term project viability.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Bottom Title: Anchored -->
-                <div class="mt-auto pt-12 border-t border-slate-50 w-full flex justify-center">
-                     <div class="flex items-center gap-6">
-                        <div class="text-right">
-                            <div class="font-outfit font-black text-brand-navy text-[16px] uppercase tracking-[0.1em] leading-none mb-1">Leadership Protocol V.2</div>
-                            <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest">Global Executive Blueprint</p>
-                        </div>
-                        <div class="w-12 h-1 bg-brand-red rounded-full"></div>
-                     </div>
-                </div>
-
-            </div>
+        <div class="mx-8 mb-1 flex-1 border-b-[3px] border-slate-100"></div>
+        <div
+          class="font-outfit text-brand-navy/30 mb-1 text-[10px] font-black tracking-widest uppercase"
+        >
+          Phase 04 / 2024
         </div>
+      </div>
 
-        <!-- Footer -->
-        <div class="px-12 pb-10 flex justify-end items-center z-20">
-            <div class="flex items-center gap-3">
-                <div class="text-right">
-                    <div class="text-[10px] font-black font-outfit text-brand-navy uppercase tracking-widest leading-none">Management Core</div>
-                    <div class="text-[8px] font-bold text-slate-400 uppercase tracking-widest mt-1">Confidential Internal Framework</div>
+      <!-- Main Content: Refined Hierarchy -->
+      <div
+        class="relative -mt-4 flex flex-1 flex-col items-center justify-center"
+      >
+        <!-- Hierarchy Diagram -->
+        <div class="relative flex h-[320px] w-[800px] flex-col items-center">
+          <!-- Level 1: Root -->
+          <div
+            class="group relative z-30 cursor-pointer transition-transform hover:scale-105"
+          >
+            <div class="bg-brand-red rounded-xl p-[2px] shadow-2xl">
+              <div
+                class="flex items-center gap-4 rounded-xl bg-white px-8 py-4"
+              >
+                <div
+                  class="bg-brand-red flex h-10 w-10 items-center justify-center rounded-lg shadow-md"
+                >
+                  <i data-lucide="crown" class="h-6 w-6 text-white"></i>
                 </div>
-                <div class="h-10 w-[2px] bg-slate-100 mx-2"></div>
-                <div class="bg-brand-navy text-white text-sm font-black font-outfit w-10 h-10 flex items-center justify-center rounded-lg shadow-lg">04</div>
+                <div>
+                  <h3
+                    class="font-outfit text-brand-navy mb-1 text-[14px] leading-none font-black uppercase"
+                  >
+                    Executive Root
+                  </h3>
+                  <p
+                    class="text-[9px] font-bold tracking-widest text-slate-400 uppercase"
+                  >
+                    Global Governance
+                  </p>
+                </div>
+              </div>
             </div>
+            <!-- Vertical Line Connector Down -->
+            <div
+              class="absolute -bottom-6 left-1/2 h-6 w-[2px] -translate-x-1/2 bg-slate-100"
+            ></div>
+          </div>
+
+          <!-- Horizontal Connector Line -->
+          <div
+            class="absolute top-[86px] right-[150px] left-[150px] z-10 h-[2px] bg-slate-100"
+          ></div>
+
+          <!-- Level 2: Branches -->
+          <div class="relative z-20 mt-10 flex w-full justify-between">
+            <!-- Left Branch: Infrastructure -->
+            <div
+              class="group flex cursor-pointer flex-col items-center transition-transform hover:scale-105"
+            >
+              <div
+                class="absolute top-[-14px] h-[14px] w-[2px] bg-slate-100"
+              ></div>
+              <div class="bg-brand-green w-60 rounded-lg p-[1px] shadow-xl">
+                <div class="rounded-lg bg-white p-4">
+                  <div class="mb-3 flex items-center gap-3">
+                    <div
+                      class="bg-brand-green flex h-8 w-8 items-center justify-center rounded"
+                    >
+                      <i data-lucide="database" class="h-4 w-4 text-white"></i>
+                    </div>
+                    <h4
+                      class="font-outfit text-brand-navy text-[10px] font-black tracking-wider uppercase"
+                    >
+                      Infrastructure
+                    </h4>
+                  </div>
+                  <p
+                    class="font-sans text-[9px] leading-relaxed text-slate-500 opacity-80"
+                  >
+                    Managing core cloud assets and distributed system
+                    scalability.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Middle Branch: Operations -->
+            <div
+              class="group flex cursor-pointer flex-col items-center transition-transform hover:scale-105"
+            >
+              <div
+                class="absolute top-[-14px] h-[14px] w-[2px] bg-slate-100"
+              ></div>
+              <div class="bg-brand-navy w-60 rounded-lg p-[1px] shadow-xl">
+                <div class="rounded-lg bg-white p-4">
+                  <div class="mb-3 flex items-center gap-3">
+                    <div
+                      class="bg-brand-navy flex h-8 w-8 items-center justify-center rounded"
+                    >
+                      <i data-lucide="activity" class="h-4 w-4 text-white"></i>
+                    </div>
+                    <h4
+                      class="font-outfit text-brand-navy text-[10px] font-black tracking-wider uppercase"
+                    >
+                      Operational Core
+                    </h4>
+                  </div>
+                  <p
+                    class="font-sans text-[9px] leading-relaxed text-slate-500 opacity-80"
+                  >
+                    Synchronizing team workflows and stakeholder communications.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Branch: Strategy -->
+            <div
+              class="group flex cursor-pointer flex-col items-center transition-transform hover:scale-105"
+            >
+              <div
+                class="absolute top-[-14px] h-[14px] w-[2px] bg-slate-100"
+              ></div>
+              <div class="bg-brand-orange w-60 rounded-lg p-[1px] shadow-xl">
+                <div class="rounded-lg bg-white p-4">
+                  <div class="mb-3 flex items-center gap-3">
+                    <div
+                      class="bg-brand-orange flex h-8 w-8 items-center justify-center rounded"
+                    >
+                      <i
+                        data-lucide="trending-up"
+                        class="h-4 w-4 text-white"
+                      ></i>
+                    </div>
+                    <h4
+                      class="font-outfit text-brand-navy text-[10px] font-black tracking-wider uppercase"
+                    >
+                      Product Strategy
+                    </h4>
+                  </div>
+                  <p
+                    class="font-sans text-[9px] leading-relaxed text-slate-500 opacity-80"
+                  >
+                    Defining market positioning and long-term project viability.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Title: Anchored -->
+          <div
+            class="mt-auto flex w-full justify-center border-t border-slate-50 pt-12"
+          >
+            <div class="flex items-center gap-6">
+              <div class="text-right">
+                <div
+                  class="font-outfit text-brand-navy mb-1 text-[16px] leading-none font-black tracking-[0.1em] uppercase"
+                >
+                  Leadership Protocol V.2
+                </div>
+                <p
+                  class="text-[9px] font-bold tracking-widest text-slate-400 uppercase"
+                >
+                  Global Executive Blueprint
+                </p>
+              </div>
+              <div class="bg-brand-red h-1 w-12 rounded-full"></div>
+            </div>
+          </div>
         </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="z-20 flex items-center justify-end px-12 pb-10">
+        <div class="flex items-center gap-3">
+          <div class="text-right">
+            <div
+              class="font-outfit text-brand-navy text-[10px] leading-none font-black tracking-widest uppercase"
+            >
+              Management Core
+            </div>
+            <div
+              class="mt-1 text-[8px] font-bold tracking-widest text-slate-400 uppercase"
+            >
+              Confidential Internal Framework
+            </div>
+          </div>
+          <div class="mx-2 h-10 w-[2px] bg-slate-100"></div>
+          <div
+            class="bg-brand-navy font-outfit flex h-10 w-10 items-center justify-center rounded-lg text-sm font-black text-white shadow-lg"
+          >
+            04
+          </div>
+        </div>
+      </div>
     </div>
 
     <script>
-        window.addEventListener('load', function() {
-            lucide.createIcons();
-        });
+      window.addEventListener("load", function () {
+        lucide.createIcons()
+      })
     </script>
-</body>
+  </body>
 </html>

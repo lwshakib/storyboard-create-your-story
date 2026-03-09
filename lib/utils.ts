@@ -32,7 +32,7 @@ export function colorToHex(color: string): string {
     // Read the serialized internal state property which implicitly calculates a standard hex value
     return ctx.fillStyle // Returns hex for most colors
   } catch {
-    // Gracefully handle failure preventing app crash mapping unsupported color syntaxes 
+    // Gracefully handle failure preventing app crash mapping unsupported color syntaxes
     console.warn("Color conversion failed for:", color)
     return color
   }

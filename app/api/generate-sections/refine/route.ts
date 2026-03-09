@@ -7,10 +7,7 @@ import prisma from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
 import { deleteMultipleFromCloudinary } from "@/lib/cloudinary"
-import {
-  deductCredits,
-  getOrResetCredits,
-} from "@/lib/credits"
+import { deductCredits, getOrResetCredits } from "@/lib/credits"
 
 // High duration for agentic loops
 export const maxDuration = 120
@@ -53,23 +50,29 @@ export async function POST(req: Request) {
     // 2. CONTEXT & THEME PREPARATION
     const allSlides = await prisma.slide.findMany({
       where: { projectId: projectId },
-      orderBy: { index: "asc" }
+      orderBy: { index: "asc" },
     })
-    
-    const themeDriver = allSlides.find(s => s.html && s.html.length > 50)
-    const themeContext = themeDriver 
-      ? `THEME TEMPLATE FROM SLIDE ${themeDriver.index + 1}:\n${themeDriver.html}` 
+
+    const themeDriver = allSlides.find((s) => s.html && s.html.length > 50)
+    const themeContext = themeDriver
+      ? `THEME TEMPLATE FROM SLIDE ${themeDriver.index + 1}:\n${themeDriver.html}`
       : "No theme established yet. Set the design language with this slide."
 
     const inspirations = formatInspirationsForPrompt()
 
     const targetSlide = allSlides[index]
-    const existingAssets = (targetSlide?.assets as {url: string}[]) || []
+    const existingAssets = (targetSlide?.assets as { url: string }[]) || []
     const existingPrompt = targetSlide?.prompt || ""
 
-    const messages: Array<{role: "system" | "user" | "assistant", content: string}> = [
+    const messages: Array<{
+      role: "system" | "user" | "assistant"
+      content: string
+    }> = [
       { role: "system", content: STORYBOARD_SYSTEM_PROMPT },
-      { role: "system", content: `### 🍱 DESIGN INSPIRATIONS & REFERENCE ARCHITECTURES:\n${inspirations}` },
+      {
+        role: "system",
+        content: `### 🍱 DESIGN INSPIRATIONS & REFERENCE ARCHITECTURES:\n${inspirations}`,
+      },
       { role: "system", content: `### 🏁 THEME CONTEXT:\n${themeContext}` },
       {
         role: "user",
@@ -80,7 +83,11 @@ export async function POST(req: Request) {
           
           SLIDE_HISTORY:
           - Previous Refinement Prompt: ${existingPrompt || "None"}
-          - Available Assets (URLs you can reuse): ${JSON.stringify(existingAssets.map(a => a.url), null, 2)}
+          - Available Assets (URLs you can reuse): ${JSON.stringify(
+            existingAssets.map((a) => a.url),
+            null,
+            2
+          )}
           
           INSTRUCTIONS:
           1. Create a high-fidelity slide using HTML/Tailwind.
@@ -100,30 +107,41 @@ export async function POST(req: Request) {
       tools: {
         generateImage: {
           ...tools.generateImage,
-          execute: async (args: { prompt: string; width?: number; height?: number }) => {
+          execute: async (args: {
+            prompt: string
+            width?: number
+            height?: number
+          }) => {
             const res = await tools.generateImage.execute(args)
-            
+
             // Save asset to DB instantly
             if (res.url && targetSlide) {
               const currentAssetsRes = await prisma.slide.findUnique({
                 where: { id: targetSlide.id },
-                select: { assets: true }
+                select: { assets: true },
               })
-              const currentAssets = Array.isArray(currentAssetsRes?.assets) ? currentAssetsRes?.assets : []
+              const currentAssets = Array.isArray(currentAssetsRes?.assets)
+                ? currentAssetsRes?.assets
+                : []
               const newAssets = [
-                ...currentAssets, 
-                { publicId: res.publicId, url: res.url, type: "image", prompt: args.prompt }
+                ...currentAssets,
+                {
+                  publicId: res.publicId,
+                  url: res.url,
+                  type: "image",
+                  prompt: args.prompt,
+                },
               ]
-              
+
               await prisma.slide.update({
                 where: { id: targetSlide.id },
                 data: { assets: newAssets },
               })
             }
-            
+
             return res
-          }
-        }
+          },
+        },
       },
       maxSteps: 10,
       abortSignal: req.signal,
@@ -131,21 +149,26 @@ export async function POST(req: Request) {
     })
 
     const rawContent = result.text
-    console.log("[SECTION_GEN] Final output from AI (length):", rawContent?.length)
+    console.log(
+      "[SECTION_GEN] Final output from AI (length):",
+      rawContent?.length
+    )
 
     /**
      * CLEANUP & PERSISTENCE
      */
     const extractHtml = (text: string) => {
       if (!text || typeof text !== "string") return ""
-      
-      const clean = text.trim()
+
+      const clean = text
+        .trim()
         .replace(/```[a-z]*\n?/gi, "")
         .replace(/\n?```/g, "")
         .replace(/```/g, "")
         .trim()
 
-      const htmlDocRegex = /(<!DOCTYPE html[\s\S]*?<\/html>|<html[\s\S]*?<\/html>)/i
+      const htmlDocRegex =
+        /(<!DOCTYPE html[\s\S]*?<\/html>|<html[\s\S]*?<\/html>)/i
       const docMatch = clean.match(htmlDocRegex)
       if (docMatch) return docMatch[1].trim()
 
@@ -164,7 +187,10 @@ export async function POST(req: Request) {
     if (!htmlOutput || !htmlOutput.includes("<")) {
       console.error("[SECTION_GEN] Model failed to output valid HTML.")
       return new Response(
-        JSON.stringify({ error: "INTERNAL_SERVER_ERROR", message: "Failed to generate valid HTML content." }),
+        JSON.stringify({
+          error: "INTERNAL_SERVER_ERROR",
+          message: "Failed to generate valid HTML content.",
+        }),
         { status: 500, headers: { "Content-Type": "application/json" } }
       )
     }
@@ -176,41 +202,51 @@ export async function POST(req: Request) {
     if (targetSlide) {
       const finalAssetsRes = await prisma.slide.findUnique({
         where: { id: targetSlide.id },
-        select: { assets: true }
+        select: { assets: true },
       })
-      const allPossibleAssets = (finalAssetsRes?.assets as {url: string; publicId: string}[]) || []
-      
-      const usedAssets = allPossibleAssets.filter(asset => htmlOutput.includes(asset.url))
-      const unusedAssets = allPossibleAssets.filter(asset => !htmlOutput.includes(asset.url))
+      const allPossibleAssets =
+        (finalAssetsRes?.assets as { url: string; publicId: string }[]) || []
+
+      const usedAssets = allPossibleAssets.filter((asset) =>
+        htmlOutput.includes(asset.url)
+      )
+      const unusedAssets = allPossibleAssets.filter(
+        (asset) => !htmlOutput.includes(asset.url)
+      )
 
       // Purge unused
       if (unusedAssets.length > 0) {
-        const publicIdsToPurge = unusedAssets.map(a => a.publicId)
+        const publicIdsToPurge = unusedAssets.map((a) => a.publicId)
         deleteMultipleFromCloudinary(publicIdsToPurge).catch(() => {})
       }
 
       await prisma.slide.update({
         where: { id: targetSlide.id },
-        data: { 
+        data: {
           html: htmlOutput,
           prompt: initialPrompt,
-          assets: usedAssets 
-        }
+          assets: usedAssets,
+        },
       })
     }
 
     // Sync final project state
     const updatedProject = await prisma.project.findUnique({
       where: { id: projectId },
-      include: { slides: { orderBy: { index: "asc" } } }
+      include: { slides: { orderBy: { index: "asc" } } },
     })
 
     return new Response(JSON.stringify(updatedProject), {
       headers: { "Content-Type": "application/json" },
     })
   } catch (error) {
-    const err = error as Error;
-    if (req.signal.aborted || err.name === 'AbortError' || err.name === 'ResponseAborted' || err.message?.includes('aborted')) {
+    const err = error as Error
+    if (
+      req.signal.aborted ||
+      err.name === "AbortError" ||
+      err.name === "ResponseAborted" ||
+      err.message?.includes("aborted")
+    ) {
       console.log(`[REFINE] AI Refinement was stopped by user.`)
       return new Response("Operation cancelled", { status: 200 })
     }

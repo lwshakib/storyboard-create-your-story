@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // Import zod for schema validation definitions
-import { z } from 'zod';
+import { z } from "zod"
 // Import required environment variables for worker URL and authentication
-import { CLOUDFLARE_API_KEY, GLM_WORKER_URL } from '@/lib/env';
+import { CLOUDFLARE_API_KEY, GLM_WORKER_URL } from "@/lib/env"
 // Import utility to convert zod schemas to standard JSON Schema format for the LLM
-import { zodToJsonSchema } from 'zod-to-json-schema';
+import { zodToJsonSchema } from "zod-to-json-schema"
 
 /**
  * Generates a structured JSON object using GLM-4.7-Flash in strict schema mode.
- * 
+ *
  * @param params - Configuration for the generation.
  * @returns An object containing the generated JSON.
  */
@@ -19,88 +19,90 @@ export const generateObject = async ({
   temperature = 0.7,
   abortSignal,
 }: {
-  messages: any[]; // Array of chat messages (system, user, assistant)
-  schema: z.ZodSchema; // Zod schema enforcing the structure of the JSON output
-  temperature?: number; // Sampling temperature to control randomness (0-1)
-  abortSignal?: AbortSignal; // Optional AbortSignal to cancel the API request mid-flight
+  messages: any[] // Array of chat messages (system, user, assistant)
+  schema: z.ZodSchema // Zod schema enforcing the structure of the JSON output
+  temperature?: number // Sampling temperature to control randomness (0-1)
+  abortSignal?: AbortSignal // Optional AbortSignal to cancel the API request mid-flight
 }) => {
   // Validate that the worker URL is available in the environment
   if (!GLM_WORKER_URL) {
-    throw new Error('GLM_WORKER_URL is not set in environment variables');
+    throw new Error("GLM_WORKER_URL is not set in environment variables")
   }
 
   // Validate that the Cloudflare API key is available in the environment
   if (!CLOUDFLARE_API_KEY) {
-    throw new Error('CLOUDFLARE_API_KEY is not set in environment variables');
+    throw new Error("CLOUDFLARE_API_KEY is not set in environment variables")
   }
 
   // Assign the API endpoint
-  const url = GLM_WORKER_URL;
+  const url = GLM_WORKER_URL
   // Construct headers containing the payload type and auth token
   const headers = {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
     Authorization: `Bearer ${CLOUDFLARE_API_KEY}`,
-  };
+  }
 
-  // Convert the provided Zod schema to a general JSON Schema 
+  // Convert the provided Zod schema to a general JSON Schema
   // This is required because GLM-4.7 worker understands standard JSON Schema
-  const jsonSchema = zodToJsonSchema(schema as any);
+  const jsonSchema = zodToJsonSchema(schema as any)
 
   // Immediate exit check: If the request was aborted before we even start the fetch
   if (abortSignal?.aborted) {
-    throw new Error('AbortError');
+    throw new Error("AbortError")
   }
 
   // Perform the fetch request to the LLM worker
   const response = await fetch(url, {
-    method: 'POST', // Send data via POST method
+    method: "POST", // Send data via POST method
     headers: headers, // Attach prepared headers
     signal: abortSignal, // Pass the abort signal to the fetch call to allow cancellation
-    body: JSON.stringify({ // Stringify the request payload
+    body: JSON.stringify({
+      // Stringify the request payload
       messages, // Inject conversation history
       temperature, // Inject specified creativity level
       // Instruct the model to strictly follow the provided JSON schema format
       response_format: {
-        type: 'json_schema',
+        type: "json_schema",
         json_schema: {
-          name: 'response_schema', // A dummy name for the schema parameter
+          name: "response_schema", // A dummy name for the schema parameter
           strict: true, // Force the model to strictly adhere to the schema
           schema: jsonSchema, // Pass the converted JSON schema
         },
       },
     }),
-  });
+  })
 
   // Check if HTTP response status is an error (e.g. 400, 500)
   if (!response.ok) {
     // Extract the raw text from the error response
-    const errorText = await response.text();
+    const errorText = await response.text()
     // Throw error detailing the status and error body
-    throw new Error(`GLM-4.7-Flash Worker Error (${response.status}): ${errorText}`);
+    throw new Error(
+      `GLM-4.7-Flash Worker Error (${response.status}): ${errorText}`
+    )
   }
 
   // Parse the successful response body from JSON
-  const result = await response.json();
+  const result = await response.json()
 
   // Validate the expected structural integrity of the Open-AI compatible response
   if (!result.choices || !result.choices[0] || !result.choices[0].message) {
-    throw new Error('Unexpected response format from GLM-4.7-Flash Worker');
+    throw new Error("Unexpected response format from GLM-4.7-Flash Worker")
   }
 
   // Extract the specific message object generated by the model
-  const message = result.choices[0].message;
+  const message = result.choices[0].message
   // Extract the stringified JSON content generated by the model
-  const content = message.content;
-  
+  const content = message.content
+
   try {
     // Parse the generated string content back into a JavaScript object
     // Since strict schema was used, this should conceptually match the initial Zod schema
-    return { object: JSON.parse(content) };
+    return { object: JSON.parse(content) }
   } catch (error) {
     // If parsing fails for any reason, log the raw faulty content
-    console.error('Failed to parse JSON from model response:', content);
+    console.error("Failed to parse JSON from model response:", content)
     // Throw an error alerting that the model did not return valid JSON
-    throw new Error('Model returned invalid JSON');
+    throw new Error("Model returned invalid JSON")
   }
-};
-
+}

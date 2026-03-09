@@ -39,7 +39,7 @@ export async function GET(
 
 /**
  * PATCH: Updates project metadata or slides.
- * Includes "Asset Cleanup" logic: if slides are removed, their associated 
+ * Includes "Asset Cleanup" logic: if slides are removed, their associated
  * Cloudinary assets are automatically purged to save storage space.
  */
 export async function PATCH(
@@ -59,22 +59,32 @@ export async function PATCH(
     if (slides) {
       const currentProject = await prisma.project.findUnique({
         where: { id },
-        include: { slides: true }
+        include: { slides: true },
       })
-      
+
       if (currentProject) {
         // Find slide IDs that exist in the DB but NOT in the incoming update
-        const incomingIds = new Set((slides as {id?: string}[]).map(s => s.id).filter(id => typeof id === "string"))
-        const removedSlides = currentProject.slides.filter(s => !incomingIds.has(s.id))
-        
+        const incomingIds = new Set(
+          (slides as { id?: string }[])
+            .map((s) => s.id)
+            .filter((id) => typeof id === "string")
+        )
+        const removedSlides = currentProject.slides.filter(
+          (s) => !incomingIds.has(s.id)
+        )
+
         // Extract assets (images) from these removed slides
-        const assetsToPurge = removedSlides.flatMap(s => (s.assets as {publicId: string}[]) || [])
+        const assetsToPurge = removedSlides.flatMap(
+          (s) => (s.assets as { publicId: string }[]) || []
+        )
         if (assetsToPurge.length > 0) {
-          const publicIds = assetsToPurge.map(a => a.publicId)
+          const publicIds = assetsToPurge.map((a) => a.publicId)
           try {
             // Permanently remove files from Cloudinary
             await deleteMultipleFromCloudinary(publicIds)
-            console.log(`[PROJECT_PATCH] Purged ${publicIds.length} assets for ${removedSlides.length} removed slides.`)
+            console.log(
+              `[PROJECT_PATCH] Purged ${publicIds.length} assets for ${removedSlides.length} removed slides.`
+            )
           } catch (err) {
             console.error("[PROJECT_PATCH] Asset purge failed:", err)
           }
@@ -94,17 +104,28 @@ export async function PATCH(
         isDeleted,
         deletedAt:
           isDeleted === false ? null : isDeleted ? new Date() : undefined,
-        slides: slides ? {
-          deleteMany: {}, // Atomic replacement: wipe existing slides...
-          create: (slides as {title: string; content: string; prompt: string; html: string; assets: {url: string; publicId?: string}[]}[]).map((s, idx) => ({ // ...and create new ones in the new order
-            index: idx,
-            title: s.title,
-            content: s.content,
-            prompt: s.prompt,
-            html: s.html,
-            assets: s.assets || [], 
-          }))
-        } : undefined
+        slides: slides
+          ? {
+              deleteMany: {}, // Atomic replacement: wipe existing slides...
+              create: (
+                slides as {
+                  title: string
+                  content: string
+                  prompt: string
+                  html: string
+                  assets: { url: string; publicId?: string }[]
+                }[]
+              ).map((s, idx) => ({
+                // ...and create new ones in the new order
+                index: idx,
+                title: s.title,
+                content: s.content,
+                prompt: s.prompt,
+                html: s.html,
+                assets: s.assets || [],
+              })),
+            }
+          : undefined,
       },
     })
 
@@ -135,8 +156,8 @@ export async function DELETE(
 
     const project = await prisma.project.findUnique({
       where: { id, userId: session.user.id },
-      include: { 
-        slides: true
+      include: {
+        slides: true,
       },
     })
 
@@ -155,9 +176,11 @@ export async function DELETE(
       })
     } else {
       // PHASE 2: Permanent delete - Actual removal
-      
+
       // 1. ASSET PURGE: Remove all Cloudinary assets associated with this project's slides
-      const allAssets = project.slides.flatMap(slide => (slide.assets as {publicId: string}[]) || [])
+      const allAssets = project.slides.flatMap(
+        (slide) => (slide.assets as { publicId: string }[]) || []
+      )
       if (allAssets.length > 0) {
         const publicIds = allAssets.map((asset) => asset.publicId)
         try {

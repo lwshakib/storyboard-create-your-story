@@ -26,7 +26,7 @@ export async function DELETE(
     // 1. Find the slide and verify ownership via project
     const slide = await prisma.slide.findUnique({
       where: { id: slideId },
-      include: { project: true }
+      include: { project: true },
     })
 
     if (!slide || slide.project.userId !== session.user.id) {
@@ -38,7 +38,7 @@ export async function DELETE(
     // 2. Asset Cleanup
     const assets = (slide.assets as { publicId: string }[]) || []
     if (assets.length > 0) {
-      const publicIds = assets.map(a => a.publicId)
+      const publicIds = assets.map((a) => a.publicId)
       try {
         await deleteMultipleFromCloudinary(publicIds)
       } catch (err) {
@@ -50,20 +50,20 @@ export async function DELETE(
     await prisma.$transaction(async (tx) => {
       // Delete the actual slide
       await tx.slide.delete({
-        where: { id: slideId }
+        where: { id: slideId },
       })
 
       // Fetch remaining slides to re-index
       const remainingSlides = await tx.slide.findMany({
         where: { projectId },
-        orderBy: { index: "asc" }
+        orderBy: { index: "asc" },
       })
 
       // Update all indices to ensure no gaps
       for (let i = 0; i < remainingSlides.length; i++) {
         await tx.slide.update({
           where: { id: remainingSlides[i].id },
-          data: { index: i }
+          data: { index: i },
         })
       }
     })
@@ -71,7 +71,7 @@ export async function DELETE(
     // 4. Return the fresh project state
     const updatedProject = await prisma.project.findUnique({
       where: { id: projectId },
-      include: { slides: { orderBy: { index: "asc" } } }
+      include: { slides: { orderBy: { index: "asc" } } },
     })
 
     return NextResponse.json(updatedProject)

@@ -135,7 +135,7 @@ export const saveImageToCloudinary = async (
     folder,
     resource_type: "image",
   })
-  
+
   // Return just standard frontend-friendly mapped fields
   return {
     url: result.secure_url,
@@ -164,7 +164,7 @@ export const uploadFileToCloudinary = async (
   const uploadApi = `https://api.cloudinary.com/v1_1/${signature.cloudName}/upload`
   // Initialize generic form data payload
   const formData = new FormData()
-  
+
   // 3. Construct form body for Cloudinary
   formData.append("file", file) // Attach the raw local file
   formData.append("api_key", signature.apiKey) // Provide site public key
@@ -188,9 +188,9 @@ export const uploadFileToCloudinary = async (
     throw new Error("Cloudinary upload failed")
   }
 
-  // Parse success dataset from JSON return block 
+  // Parse success dataset from JSON return block
   const data = await uploadRes.json()
-  
+
   // Return standardized dataset shape out to consumer functions
   return {
     secureUrl: data.secure_url as string, // HTTPS public link
@@ -224,7 +224,8 @@ export const deleteFromCloudinary = async (publicId: string) => {
   return new Promise((resolve, reject) => {
     // Delete target artifact using ID string
     cloudinary.uploader.destroy(publicId, (error, result) => {
-      if (error) reject(error) // Handle fail states
+      if (error)
+        reject(error) // Handle fail states
       else resolve(result) // Resolve raw success context
     })
   })
@@ -258,7 +259,8 @@ export const deleteMultipleFromCloudinary = async (publicIds: string[]) => {
   return new Promise((resolve, reject) => {
     // Pass the batch string array and standard callback handling
     cloudinary.api.delete_resources(publicIds, (error, result) => {
-      if (error) reject(error) // Forward failure flag
+      if (error)
+        reject(error) // Forward failure flag
       else resolve(result) // Return success results array map
     })
   })

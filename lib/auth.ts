@@ -19,20 +19,20 @@ export const auth = betterAuth({
     // Explicitly define the database provider type mapped in Prisma
     provider: "postgresql", // or "mysql", "postgresql", ...etc
   }),
-  
+
   // Configure traditional Email & Password authentication
   emailAndPassword: {
     // Enable this authentication method
     enabled: true,
     // Require new users to click an email link before full account access
     requireEmailVerification: true,
-    
+
     // Callback block triggered when a user requests a password reset
     sendResetPassword: async ({ user, url }) => {
       try {
         // Use Resend to send the password reset email
         const { error } = await resend.emails.send({
-          // Set sender address 
+          // Set sender address
           from: "Storyboard <noreply@lwshakib.site>",
           // Set recipient from the configured user object
           to: user.email,
@@ -55,7 +55,7 @@ export const auth = betterAuth({
       }
     },
   },
-  
+
   // Configure third-party OAuth providers
   socialProviders: {
     // Setup for "Sign in with Google"
@@ -68,7 +68,7 @@ export const auth = betterAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     },
   },
-  
+
   // Email Verification pipeline block
   emailVerification: {
     // Attempt sending the verification email right after standard signup
@@ -78,7 +78,7 @@ export const auth = betterAuth({
       try {
         // Construct the full callback URL the user will click in the email
         const verificationUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/verify-email?token=${token}`
-        
+
         // Dispatch the email using Resend
         await resend.emails.send({
           // Authorized sender domain
@@ -99,7 +99,7 @@ export const auth = betterAuth({
       }
     },
   },
-  
+
   // Account state configurations
   account: {
     // Enable system attempting to link different credential types (e.g., Google + Standard) to same email
@@ -107,7 +107,7 @@ export const auth = betterAuth({
       enabled: true,
     },
   },
-  
+
   // No external auth plugins registered yet
   plugins: [],
 })

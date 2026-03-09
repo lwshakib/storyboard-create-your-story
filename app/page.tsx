@@ -21,7 +21,7 @@ export default function LandingPage() {
   const { scrollYProgress } = useScroll()
   const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0])
   const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95])
-  
+
   // State for mobile navigation menu toggle
   const [isMenuOpen, setIsMenuOpen] = React.useState(false)
 
@@ -86,7 +86,6 @@ export default function LandingPage() {
 
   return (
     <div className="bg-background text-foreground selection:bg-primary/20 selection:text-foreground flex min-h-screen flex-col font-sans tracking-tight transition-colors duration-500">
-      
       {/* PERSISTENT HEADER NAVIGATION */}
       <nav className="border-border/40 bg-background/70 fixed top-0 z-50 w-full border-b backdrop-blur-xl">
         <div className="container mx-auto flex h-16 items-center justify-between px-8">
@@ -176,7 +175,6 @@ export default function LandingPage() {
       </nav>
 
       <main className="flex-1">
-        
         {/* HERO SECTION: Uses parallax transformations for a premium feeling */}
         <section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-8">
           <motion.div
@@ -238,7 +236,6 @@ export default function LandingPage() {
           >
             <div className="container mx-auto max-w-7xl">
               <div className="grid grid-cols-1 gap-20 md:grid-cols-12 md:gap-32">
-                
                 {/* Section Sticky Side Label */}
                 <div className="md:col-span-4 lg:col-span-3">
                   <div className="sticky top-40 space-y-6">

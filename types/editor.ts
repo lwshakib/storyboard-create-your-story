@@ -80,13 +80,13 @@ export interface SlideElement {
  * Defines various slide layout presets to govern how elements are positioned.
  */
 export type LayoutType =
-  | "blank"      // Completely empty layout
+  | "blank" // Completely empty layout
   | "title-only" // Layout containing only a title zone
-  | "split-h"    // Horizontal split into two zones
-  | "split-v"    // Vertical split into two zones
-  | "grid-4"     // 2x2 grid layout
-  | "free"       // Free-form layout allowing manual positioning
-  | "title"      // General title slide layout
+  | "split-h" // Horizontal split into two zones
+  | "split-v" // Vertical split into two zones
+  | "grid-4" // 2x2 grid layout
+  | "free" // Free-form layout allowing manual positioning
+  | "title" // General title slide layout
 
 /**
  * Represents a single slide within the storyboard or presentation.

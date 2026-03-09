@@ -5,7 +5,7 @@ import { getOrResetCredits } from "@/lib/credits"
 
 /**
  * GET: Retrieves the current credit balance for the authenticated user.
- * It also triggers the 'Daily Reset' logic if the user's last reset 
+ * It also triggers the 'Daily Reset' logic if the user's last reset
  * was more than 24 hours ago.
  */
 export async function GET() {

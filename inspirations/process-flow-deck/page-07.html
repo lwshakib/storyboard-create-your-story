@@ -1,163 +1,284 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Slide 7 - Zigzag Milestone Path</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        outfit: ['Outfit', 'sans-serif'],
-                    },
-                    colors: {
-                        brand: {
-                            navy: '#2A3A4A',
-                            orange: '#C65C17',
-                            green: '#2D5A27',
-                            red: '#8B1111',
-                        }
-                    }
-                }
-            }
-        }
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+              outfit: ["Outfit", "sans-serif"],
+            },
+            colors: {
+              brand: {
+                navy: "#2A3A4A",
+                orange: "#C65C17",
+                green: "#2D5A27",
+                red: "#8B1111",
+              },
+            },
+          },
+        },
+      }
     </script>
     <style>
-        .diamond { transform: rotate(45deg); border-radius: 12px; }
-        .diamond-content { transform: rotate(-45deg); }
-        .zigzag-path { stroke-dasharray: 10, 5; animation: dash 20s linear infinite; }
-        @keyframes dash { to { stroke-dashoffset: -100; } }
+      .diamond {
+        transform: rotate(45deg);
+        border-radius: 12px;
+      }
+      .diamond-content {
+        transform: rotate(-45deg);
+      }
+      .zigzag-path {
+        stroke-dasharray: 10, 5;
+        animation: dash 20s linear infinite;
+      }
+      @keyframes dash {
+        to {
+          stroke-dashoffset: -100;
+        }
+      }
     </style>
-</head>
-<body class="overflow-hidden font-sans bg-neutral-100 flex items-center justify-center min-h-screen">
-
+  </head>
+  <body
+    class="flex min-h-screen items-center justify-center overflow-hidden bg-neutral-100 font-sans"
+  >
     <!-- Fixed Area Container (960x540) -->
-    <div class="relative h-[540px] w-[960px] overflow-hidden bg-white shadow-2xl flex flex-col">
+    <div
+      class="relative flex h-[540px] w-[960px] flex-col overflow-hidden bg-white shadow-2xl"
+    >
+      <!-- Header -->
+      <div class="z-20 flex items-end justify-between px-12 pt-10">
+        <div>
+          <h1
+            class="font-outfit text-brand-navy text-2xl text-xl leading-none font-black tracking-tighter uppercase"
+          >
+            Project Roadmap
+          </h1>
+          <p
+            class="mt-1 text-[10px] font-bold tracking-[0.2em] text-slate-400 uppercase"
+          >
+            Strategic Milestone Tracking
+          </p>
+        </div>
+        <div class="mx-8 mb-1 flex-1 border-b-[3px] border-slate-100"></div>
+        <div
+          class="font-outfit text-brand-navy/30 mb-1 text-[10px] font-black tracking-widest uppercase"
+        >
+          Phase 07 / 2024
+        </div>
+      </div>
 
-        <!-- Header -->
-        <div class="px-12 pt-10 flex justify-between items-end z-20">
-            <div>
-                <h1 class="text-xl font-outfit font-black text-brand-navy uppercase tracking-tighter leading-none text-2xl">Project Roadmap</h1>
-                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-[0.2em] mt-1">Strategic Milestone Tracking</p>
+      <div class="relative mt-2 flex flex-1 flex-col justify-center px-12">
+        <!-- Dynamic Path Background (Adjusted ViewBox and Path to fit better) -->
+        <svg
+          class="pointer-events-none absolute inset-0 h-full w-full opacity-10"
+          viewBox="0 0 960 400"
+        >
+          <path
+            d="M 120,240 L 280,160 L 440,240 L 600,160 L 760,240"
+            fill="none"
+            stroke="#2A3A4A"
+            stroke-width="2"
+            class="zigzag-path"
+          />
+        </svg>
+
+        <!-- Description Blocks - TOP (Moved higher and z-indexed) -->
+        <div
+          class="absolute top-[10px] right-12 left-12 z-30 flex justify-center gap-[160px]"
+        >
+          <div
+            class="w-44 rounded-xl border border-slate-100 bg-white/80 p-3 text-center shadow-sm backdrop-blur-sm"
+          >
+            <div
+              class="font-outfit text-brand-navy mb-1 text-[10px] font-black tracking-wider uppercase"
+            >
+              Resource Mapping
             </div>
-            <div class="border-b-[3px] border-slate-100 flex-1 mx-8 mb-1"></div>
-            <div class="text-[10px] font-black font-outfit text-brand-navy/30 uppercase tracking-widest mb-1">
-                Phase 07 / 2024
+            <p class="font-sans text-[8px] leading-tight text-slate-500">
+              Strategic allocation of human and technical assets.
+            </p>
+          </div>
+          <div
+            class="w-44 rounded-xl border border-slate-100 bg-white/80 p-3 text-center shadow-sm backdrop-blur-sm"
+          >
+            <div
+              class="font-outfit text-brand-navy mb-1 text-[10px] font-black tracking-wider uppercase"
+            >
+              Final Optimization
             </div>
+            <p class="font-sans text-[8px] leading-tight text-slate-500">
+              System finalization, testing, and stakeholder handoff.
+            </p>
+          </div>
         </div>
 
-        <div class="flex-1 flex flex-col justify-center relative mt-2 px-12">
-            
-            <!-- Dynamic Path Background (Adjusted ViewBox and Path to fit better) -->
-            <svg class="absolute inset-0 w-full h-full opacity-10 pointer-events-none" viewBox="0 0 960 400">
-                <path d="M 120,240 L 280,160 L 440,240 L 600,160 L 760,240" fill="none" stroke="#2A3A4A" stroke-width="2" class="zigzag-path" />
-            </svg>
-
-            <!-- Description Blocks - TOP (Moved higher and z-indexed) -->
-            <div class="absolute top-[10px] left-12 right-12 flex justify-center gap-[160px] z-30">
-                <div class="w-44 text-center bg-white/80 backdrop-blur-sm p-3 rounded-xl shadow-sm border border-slate-100">
-                    <div class="font-outfit font-black text-brand-navy text-[10px] uppercase mb-1 tracking-wider">Resource Mapping</div>
-                    <p class="text-[8px] text-slate-500 font-sans leading-tight">Strategic allocation of human and technical assets.</p>
+        <!-- Diamonds Row (Reduced mt shift to avoid overlap) -->
+        <div
+          class="relative z-10 flex items-center justify-center gap-12 pt-12"
+        >
+          <!-- Milestone 1 -->
+          <div class="group flex flex-col items-center">
+            <div class="relative flex h-24 w-24 items-center justify-center">
+              <div
+                class="bg-brand-green/10 diamond absolute inset-0 blur-lg transition-all group-hover:blur-xl"
+              ></div>
+              <div
+                class="bg-brand-green diamond relative z-10 flex h-full w-full cursor-pointer items-center justify-center border-4 border-white shadow-lg transition-transform group-hover:scale-105"
+              >
+                <div
+                  class="diamond-content flex flex-col items-center text-center"
+                >
+                  <i data-lucide="target" class="mb-1 h-5 w-5 text-white"></i>
+                  <span
+                    class="font-outfit text-[8px] leading-none font-black tracking-widest text-white uppercase"
+                    >Ph 01</span
+                  >
                 </div>
-                <div class="w-44 text-center bg-white/80 backdrop-blur-sm p-3 rounded-xl shadow-sm border border-slate-100">
-                    <div class="font-outfit font-black text-brand-navy text-[10px] uppercase mb-1 tracking-wider">Final Optimization</div>
-                    <p class="text-[8px] text-slate-500 font-sans leading-tight">System finalization, testing, and stakeholder handoff.</p>
-                </div>
+              </div>
             </div>
+          </div>
 
-            <!-- Diamonds Row (Reduced mt shift to avoid overlap) -->
-            <div class="flex items-center justify-center gap-12 relative z-10 pt-12">
-                
-                <!-- Milestone 1 -->
-                <div class="flex flex-col items-center group">
-                    <div class="relative w-24 h-24 flex items-center justify-center">
-                        <div class="absolute inset-0 bg-brand-green/10 diamond blur-lg group-hover:blur-xl transition-all"></div>
-                        <div class="w-full h-full bg-brand-green diamond flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform cursor-pointer relative z-10 border-4 border-white">
-                            <div class="diamond-content flex flex-col items-center text-center">
-                                <i data-lucide="target" class="w-5 h-5 text-white mb-1"></i>
-                                <span class="font-outfit font-black text-white text-[8px] uppercase tracking-widest leading-none">Ph 01</span>
-                            </div>
-                        </div>
-                    </div>
+          <!-- Milestone 2 -->
+          <div class="group mt-[-80px] flex flex-col items-center">
+            <div class="relative flex h-24 w-24 items-center justify-center">
+              <div
+                class="bg-brand-red/10 diamond absolute inset-0 blur-lg transition-all group-hover:blur-xl"
+              ></div>
+              <div
+                class="bg-brand-red diamond relative z-10 flex h-full w-full cursor-pointer items-center justify-center border-4 border-white shadow-lg transition-transform group-hover:scale-105"
+              >
+                <div
+                  class="diamond-content flex flex-col items-center text-center"
+                >
+                  <i data-lucide="users" class="mb-1 h-5 w-5 text-white"></i>
+                  <span
+                    class="font-outfit text-[8px] leading-none font-black tracking-widest text-white uppercase"
+                    >Ph 02</span
+                  >
                 </div>
-
-                <!-- Milestone 2 -->
-                <div class="flex flex-col items-center mt-[-80px] group">
-                    <div class="relative w-24 h-24 flex items-center justify-center">
-                        <div class="absolute inset-0 bg-brand-red/10 diamond blur-lg group-hover:blur-xl transition-all"></div>
-                        <div class="w-full h-full bg-brand-red diamond flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform cursor-pointer relative z-10 border-4 border-white">
-                             <div class="diamond-content flex flex-col items-center text-center">
-                                <i data-lucide="users" class="w-5 h-5 text-white mb-1"></i>
-                                <span class="font-outfit font-black text-white text-[8px] uppercase tracking-widest leading-none">Ph 02</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                 <!-- Milestone 3 -->
-                 <div class="flex flex-col items-center group">
-                    <div class="relative w-24 h-24 flex items-center justify-center">
-                        <div class="absolute inset-0 bg-brand-navy/10 diamond blur-lg group-hover:blur-xl transition-all"></div>
-                        <div class="w-full h-full bg-brand-navy diamond flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform cursor-pointer relative z-10 border-4 border-white">
-                             <div class="diamond-content flex flex-col items-center text-center">
-                                <i data-lucide="cpu" class="w-5 h-5 text-white mb-1"></i>
-                                <span class="font-outfit font-black text-white text-[8px] uppercase tracking-widest leading-none">Ph 03</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                 <!-- Milestone 4 -->
-                 <div class="flex flex-col items-center mt-[-80px] group">
-                    <div class="relative w-24 h-24 flex items-center justify-center">
-                         <div class="absolute inset-0 bg-brand-orange/10 diamond blur-lg group-hover:blur-xl transition-all"></div>
-                        <div class="w-full h-full bg-brand-orange diamond flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform cursor-pointer relative z-10 border-4 border-white">
-                             <div class="diamond-content flex flex-col items-center text-center">
-                                <i data-lucide="check-square" class="w-5 h-5 text-white mb-1"></i>
-                                <span class="font-outfit font-black text-white text-[8px] uppercase tracking-widest leading-none">Ph 04</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
+              </div>
             </div>
+          </div>
 
-             <!-- Description Blocks - BOTTOM (Moved lower and z-indexed) -->
-             <div class="absolute bottom-[20px] left-12 right-12 flex justify-center gap-[160px] z-30">
-                <div class="w-44 text-center bg-white/80 backdrop-blur-sm p-3 rounded-xl shadow-sm border border-slate-100">
-                    <div class="font-outfit font-black text-brand-navy text-[10px] uppercase mb-1 tracking-wider">Opportunity ID</div>
-                    <p class="text-[8px] text-slate-500 font-sans leading-tight">Identifying core market potential and initial project scoping.</p>
+          <!-- Milestone 3 -->
+          <div class="group flex flex-col items-center">
+            <div class="relative flex h-24 w-24 items-center justify-center">
+              <div
+                class="bg-brand-navy/10 diamond absolute inset-0 blur-lg transition-all group-hover:blur-xl"
+              ></div>
+              <div
+                class="bg-brand-navy diamond relative z-10 flex h-full w-full cursor-pointer items-center justify-center border-4 border-white shadow-lg transition-transform group-hover:scale-105"
+              >
+                <div
+                  class="diamond-content flex flex-col items-center text-center"
+                >
+                  <i data-lucide="cpu" class="mb-1 h-5 w-5 text-white"></i>
+                  <span
+                    class="font-outfit text-[8px] leading-none font-black tracking-widest text-white uppercase"
+                    >Ph 03</span
+                  >
                 </div>
-                <div class="w-44 text-center bg-white/80 backdrop-blur-sm p-3 rounded-xl shadow-sm border border-slate-100">
-                    <div class="font-outfit font-black text-brand-navy text-[10px] uppercase mb-1 tracking-wider">Agile Execution</div>
-                    <p class="text-[8px] text-slate-500 font-sans leading-tight">Full-stack development cycles and rapid prototyping sprints.</p>
-                </div>
-             </div>
+              </div>
+            </div>
+          </div>
 
+          <!-- Milestone 4 -->
+          <div class="group mt-[-80px] flex flex-col items-center">
+            <div class="relative flex h-24 w-24 items-center justify-center">
+              <div
+                class="bg-brand-orange/10 diamond absolute inset-0 blur-lg transition-all group-hover:blur-xl"
+              ></div>
+              <div
+                class="bg-brand-orange diamond relative z-10 flex h-full w-full cursor-pointer items-center justify-center border-4 border-white shadow-lg transition-transform group-hover:scale-105"
+              >
+                <div
+                  class="diamond-content flex flex-col items-center text-center"
+                >
+                  <i
+                    data-lucide="check-square"
+                    class="mb-1 h-5 w-5 text-white"
+                  ></i>
+                  <span
+                    class="font-outfit text-[8px] leading-none font-black tracking-widest text-white uppercase"
+                    >Ph 04</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <!-- Footer -->
-        <div class="px-12 pb-10 flex justify-end items-center z-20">
-            <div class="flex items-center gap-3">
-                <div class="text-right">
-                    <div class="text-[10px] font-black font-outfit text-brand-navy uppercase tracking-widest leading-none">Lifecycle Tracking</div>
-                    <div class="text-[8px] font-bold text-slate-400 uppercase tracking-widest mt-1">Confidential Performance Data</div>
-                </div>
-                <div class="h-10 w-[2px] bg-slate-100 mx-2"></div>
-                <div class="bg-brand-navy text-white text-sm font-black font-outfit w-10 h-10 flex items-center justify-center rounded-lg shadow-lg">07</div>
+        <!-- Description Blocks - BOTTOM (Moved lower and z-indexed) -->
+        <div
+          class="absolute right-12 bottom-[20px] left-12 z-30 flex justify-center gap-[160px]"
+        >
+          <div
+            class="w-44 rounded-xl border border-slate-100 bg-white/80 p-3 text-center shadow-sm backdrop-blur-sm"
+          >
+            <div
+              class="font-outfit text-brand-navy mb-1 text-[10px] font-black tracking-wider uppercase"
+            >
+              Opportunity ID
             </div>
+            <p class="font-sans text-[8px] leading-tight text-slate-500">
+              Identifying core market potential and initial project scoping.
+            </p>
+          </div>
+          <div
+            class="w-44 rounded-xl border border-slate-100 bg-white/80 p-3 text-center shadow-sm backdrop-blur-sm"
+          >
+            <div
+              class="font-outfit text-brand-navy mb-1 text-[10px] font-black tracking-wider uppercase"
+            >
+              Agile Execution
+            </div>
+            <p class="font-sans text-[8px] leading-tight text-slate-500">
+              Full-stack development cycles and rapid prototyping sprints.
+            </p>
+          </div>
         </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="z-20 flex items-center justify-end px-12 pb-10">
+        <div class="flex items-center gap-3">
+          <div class="text-right">
+            <div
+              class="font-outfit text-brand-navy text-[10px] leading-none font-black tracking-widest uppercase"
+            >
+              Lifecycle Tracking
+            </div>
+            <div
+              class="mt-1 text-[8px] font-bold tracking-widest text-slate-400 uppercase"
+            >
+              Confidential Performance Data
+            </div>
+          </div>
+          <div class="mx-2 h-10 w-[2px] bg-slate-100"></div>
+          <div
+            class="bg-brand-navy font-outfit flex h-10 w-10 items-center justify-center rounded-lg text-sm font-black text-white shadow-lg"
+          >
+            07
+          </div>
+        </div>
+      </div>
     </div>
 
     <script>
-        window.addEventListener('load', function() {
-            lucide.createIcons();
-        });
+      window.addEventListener("load", function () {
+        lucide.createIcons()
+      })
     </script>
-</body>
+  </body>
 </html>

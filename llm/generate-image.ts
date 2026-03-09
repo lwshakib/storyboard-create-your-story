@@ -1,7 +1,7 @@
 // Import required environment variables for Cloudflare and model API access
-import { CLOUDFLARE_API_KEY, FLUX_KLEIN_WORKER_URL } from '@/lib/env';
+import { CLOUDFLARE_API_KEY, FLUX_KLEIN_WORKER_URL } from "@/lib/env"
 // Import utility function to save generated images to Cloudinary
-import { saveImageToCloudinary } from '@/lib/cloudinary';
+import { saveImageToCloudinary } from "@/lib/cloudinary"
 
 /**
  * Supported generation modes for the Flux Klein model.
@@ -10,7 +10,11 @@ import { saveImageToCloudinary } from '@/lib/cloudinary';
  * - blend: Mix multiple images together.
  * - inpaint: Modify specific parts of an image using a mask.
  */
-export type GenerateImageMode = 'text-to-image' | 'image-to-image' | 'blend' | 'inpaint';
+export type GenerateImageMode =
+  | "text-to-image"
+  | "image-to-image"
+  | "blend"
+  | "inpaint"
 
 /**
  * Options for generating an image.
@@ -101,7 +105,8 @@ export const generateImage = async (
     let response: Response
 
     // Determine if we should use JSON or FormData based on mode and inputs
-    const isFormDataNeeded = mode !== "text-to-image" || images.length > 0 || !!mask
+    const isFormDataNeeded =
+      mode !== "text-to-image" || images.length > 0 || !!mask
 
     if (!isFormDataNeeded) {
       // Simple Text-to-Image (JSON) workflow
@@ -113,17 +118,17 @@ export const generateImage = async (
         },
         body: JSON.stringify({
           prompt, // User's prompt text
-          width,  // Image width
+          width, // Image width
           height, // Image height
-          steps,  // Number of generation steps
-          seed,   // Seed for reproducibility
+          steps, // Number of generation steps
+          seed, // Seed for reproducibility
         }),
       })
     } else {
       // Advanced Workflows requiring multipart/form-data
       const form = new FormData()
       form.append("prompt", prompt) // Append prompt string
-      
+
       // Append numerical parameters if they exist
       if (width) form.append("width", width.toString())
       if (height) form.append("height", height.toString())
@@ -157,41 +162,45 @@ export const generateImage = async (
     // Check if the response was unsuccessful
     if (!response.ok) {
       // Read the backend error text
-      const errorText = await response.text();
-      console.error(`[GENERATE_IMAGE] API Error: ${response.status} - ${errorText}`);
+      const errorText = await response.text()
+      console.error(
+        `[GENERATE_IMAGE] API Error: ${response.status} - ${errorText}`
+      )
       // Throw an error to be handled by the catch block
-      throw new Error(`Image generation failed (${response.status}): ${errorText}`);
+      throw new Error(
+        `Image generation failed (${response.status}): ${errorText}`
+      )
     }
 
     // Extract the raw image binary (image/png) from the response
-    const arrayBuffer = await response.arrayBuffer();
+    const arrayBuffer = await response.arrayBuffer()
     // Convert the array buffer into a Node Buffer object
-    const imageBuffer = Buffer.from(arrayBuffer);
+    const imageBuffer = Buffer.from(arrayBuffer)
 
     // Persist resulting image to Cloudinary to get a stable URL for the frontend
-    const uploadResult = await saveImageToCloudinary(imageBuffer);
+    const uploadResult = await saveImageToCloudinary(imageBuffer)
 
     // Return the successful generation payload
     return {
-      success: true,               // Flag success
-      image: uploadResult.url,     // Accessible Cloudinary URL
+      success: true, // Flag success
+      image: uploadResult.url, // Accessible Cloudinary URL
       publicId: uploadResult.publicId, // Cloudinary identifier used for deletions/management
-      prompt,                      // Echo the prompt used
-      width,                       // Return generation width
-      height,                      // Return generation height
-      model: MODEL_NAME,           // Specify which model did the generation
-    };
+      prompt, // Echo the prompt used
+      width, // Return generation width
+      height, // Return generation height
+      model: MODEL_NAME, // Specify which model did the generation
+    }
   } catch (error) {
     // Handle any exceptions during the fetch or upload process
-    console.error('[GENERATE_IMAGE_EXCEPTION]', error);
+    console.error("[GENERATE_IMAGE_EXCEPTION]", error)
     return {
       success: false, // Flag failure
       error:
         error instanceof Error
           ? error.message // Use standard error message
-          : 'An unexpected error occurred during image generation', // Fallback error string
+          : "An unexpected error occurred during image generation", // Fallback error string
       prompt,
       model: MODEL_NAME,
-    };
+    }
   }
-};
+}

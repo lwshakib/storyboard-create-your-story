@@ -2,11 +2,16 @@
 
 import * as React from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { X, ChevronLeft, ChevronRight, Maximize2, Minimize2 } from "lucide-react"
+import {
+  X,
+  ChevronLeft,
+  ChevronRight,
+  Maximize2,
+  Minimize2,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { HtmlSlide } from "@/lib/storyboard-parser"
 import { SlidePreview } from "./slide-preview"
-
 
 interface PresentationModeProps {
   slides: HtmlSlide[]
@@ -57,10 +62,10 @@ export function PresentationMode({
 
     window.addEventListener("keydown", handleKeyDown)
     document.addEventListener("fullscreenchange", handleFullscreenChange)
-    
+
     // Attempt to enter fullscreen automatically for maximum immersion
     if (containerRef.current && !document.fullscreenElement) {
-      containerRef.current.requestFullscreen().catch(err => {
+      containerRef.current.requestFullscreen().catch((err) => {
         console.warn(`Fullscreen request failed: ${err.message}`)
       })
     }
@@ -88,14 +93,14 @@ export function PresentationMode({
       className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-black font-sans select-none"
     >
       {/* HEADER CONTROLS: Hidden by default, visible on move/hover */}
-      <div className="absolute top-0 left-0 right-0 z-50 flex items-center justify-between p-6 opacity-0 transition-opacity hover:opacity-100 focus-within:opacity-100">
+      <div className="absolute top-0 right-0 left-0 z-50 flex items-center justify-between p-6 opacity-0 transition-opacity focus-within:opacity-100 hover:opacity-100">
         <div className="flex items-center gap-4">
-          <div className="bg-white/10 rounded-full px-4 py-1.5 backdrop-blur-md">
-            <span className="text-white/60 text-xs font-bold tracking-widest uppercase">
+          <div className="rounded-full bg-white/10 px-4 py-1.5 backdrop-blur-md">
+            <span className="text-xs font-bold tracking-widest text-white/60 uppercase">
               {currentIndex + 1} / {slides.length}
             </span>
           </div>
-          <h2 className="text-white/80 text-sm font-semibold tracking-tight">
+          <h2 className="text-sm font-semibold tracking-tight text-white/80">
             {slides[currentIndex]?.title}
           </h2>
         </div>
@@ -105,15 +110,19 @@ export function PresentationMode({
             variant="ghost"
             size="icon"
             onClick={toggleFullscreen}
-            className="text-white/60 hover:bg-white/10 hover:text-white rounded-full transition-all"
+            className="rounded-full text-white/60 transition-all hover:bg-white/10 hover:text-white"
           >
-            {isFullscreen ? <Minimize2 className="size-5" /> : <Maximize2 className="size-5" />}
+            {isFullscreen ? (
+              <Minimize2 className="size-5" />
+            ) : (
+              <Maximize2 className="size-5" />
+            )}
           </Button>
           <Button
             variant="ghost"
             size="icon"
             onClick={onClose}
-            className="text-white/60 hover:bg-white/10 hover:text-white rounded-full transition-all"
+            className="rounded-full text-white/60 transition-all hover:bg-white/10 hover:text-white"
           >
             <X className="size-5" />
           </Button>
@@ -122,15 +131,15 @@ export function PresentationMode({
 
       {/* CLICK INTERFACE: Divides screen into Left/Right touch targets */}
       <div className="relative flex h-full w-full items-center justify-center overflow-hidden">
-        <div 
-          className="absolute inset-y-0 left-0 z-40 w-1/2 cursor-w-resize" 
+        <div
+          className="absolute inset-y-0 left-0 z-40 w-1/2 cursor-w-resize"
           onClick={(e) => {
             e.stopPropagation()
             handlePrev()
           }}
         />
-        <div 
-          className="absolute inset-y-0 right-0 z-40 w-1/2 cursor-e-resize" 
+        <div
+          className="absolute inset-y-0 right-0 z-40 w-1/2 cursor-e-resize"
           onClick={(e) => {
             e.stopPropagation()
             handleNext()
@@ -144,9 +153,9 @@ export function PresentationMode({
             initial={{ opacity: 0, scale: 0.95, filter: "blur(10px)" }}
             animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
             exit={{ opacity: 0, scale: 1.05, filter: "blur(10px)" }}
-            transition={{ 
-              duration: 0.5, 
-              ease: [0.16, 1, 0.3, 1] 
+            transition={{
+              duration: 0.5,
+              ease: [0.16, 1, 0.3, 1],
             }}
             className="h-full w-full"
           >
@@ -160,9 +169,9 @@ export function PresentationMode({
       </div>
 
       {/* BOTTOM PROGRESS: Glowy primary line */}
-      <div className="absolute bottom-0 left-0 right-0 z-50 h-1 bg-white/5">
+      <div className="absolute right-0 bottom-0 left-0 z-50 h-1 bg-white/5">
         <motion.div
-          className="h-full bg-primary shadow-[0_0_15px_rgba(var(--primary),0.5)]"
+          className="bg-primary h-full shadow-[0_0_15px_rgba(var(--primary),0.5)]"
           initial={false}
           animate={{ width: `${((currentIndex + 1) / slides.length) * 100}%` }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
@@ -179,7 +188,7 @@ export function PresentationMode({
             e.stopPropagation()
             handlePrev()
           }}
-          className="pointer-events-auto bg-black/40 text-white/50 hover:bg-black/60 hover:text-white rounded-full border border-white/10 backdrop-blur-xl disabled:opacity-20"
+          className="pointer-events-auto rounded-full border border-white/10 bg-black/40 text-white/50 backdrop-blur-xl hover:bg-black/60 hover:text-white disabled:opacity-20"
         >
           <ChevronLeft className="size-6" />
         </Button>
@@ -191,7 +200,7 @@ export function PresentationMode({
             e.stopPropagation()
             handleNext()
           }}
-          className="pointer-events-auto bg-black/40 text-white/50 hover:bg-black/60 hover:text-white rounded-full border border-white/10 backdrop-blur-xl disabled:opacity-20"
+          className="pointer-events-auto rounded-full border border-white/10 bg-black/40 text-white/50 backdrop-blur-xl hover:bg-black/60 hover:text-white disabled:opacity-20"
         >
           <ChevronRight className="size-6" />
         </Button>

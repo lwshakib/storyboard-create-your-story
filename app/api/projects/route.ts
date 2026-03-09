@@ -25,13 +25,23 @@ export async function POST(req: Request) {
         description: description || null,
         userId: session?.user?.id || null,
         slides: {
-          create: (slides || []).map((slide: { title?: string; content?: string; prompt?: string; html?: string }, idx: number) => ({
-            index: idx,
-            title: slide.title || null,
-            content: slide.content || null,
-            prompt: slide.prompt || null,
-            html: slide.html || null,
-          })),
+          create: (slides || []).map(
+            (
+              slide: {
+                title?: string
+                content?: string
+                prompt?: string
+                html?: string
+              },
+              idx: number
+            ) => ({
+              index: idx,
+              title: slide.title || null,
+              content: slide.content || null,
+              prompt: slide.prompt || null,
+              html: slide.html || null,
+            })
+          ),
         },
       },
       include: {
@@ -117,10 +127,10 @@ export async function DELETE() {
     })
 
     // 2. ASSET DISCOVERY: Extract public IDs for all images/videos in these projects
-    const allPublicIds = trashProjects.flatMap(project => 
-      project.slides.flatMap(slide => {
-        const assets = (slide.assets as {publicId: string}[]) || []
-        return assets.map(a => a.publicId).filter(Boolean)
+    const allPublicIds = trashProjects.flatMap((project) =>
+      project.slides.flatMap((slide) => {
+        const assets = (slide.assets as { publicId: string }[]) || []
+        return assets.map((a) => a.publicId).filter(Boolean)
       })
     )
 
@@ -128,7 +138,9 @@ export async function DELETE() {
     if (allPublicIds.length > 0) {
       try {
         await deleteMultipleFromCloudinary(allPublicIds)
-        console.log(`[PROJECTS_DELETE_ALL] Purged ${allPublicIds.length} assets from Cloudinary during trash empty.`)
+        console.log(
+          `[PROJECTS_DELETE_ALL] Purged ${allPublicIds.length} assets from Cloudinary during trash empty.`
+        )
       } catch (err) {
         console.error("[PROJECTS_DELETE_ALL] Cloudinary purge failed:", err)
       }

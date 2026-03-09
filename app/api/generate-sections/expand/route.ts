@@ -5,17 +5,14 @@ import { z } from "zod"
 import prisma from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
-import {
-  deductCredits,
-  getOrResetCredits,
-} from "@/lib/credits"
+import { deductCredits, getOrResetCredits } from "@/lib/credits"
 
 // Allow up to 60s for the AI to reason about the expansion
 export const maxDuration = 60
 
 /**
  * POST: Generates a NEW section (slide) for an existing project.
- * Unlike initial outline generation, this requires 'Theme Inheritance' logic 
+ * Unlike initial outline generation, this requires 'Theme Inheritance' logic
  * to ensure the new slide looks like it belongs to the same deck.
  */
 export async function POST(req: Request) {
@@ -52,7 +49,7 @@ export async function POST(req: Request) {
     // 2. CONTEXT LOADING: Fetch existing slides to understand current narrative/theme
     const project = await prisma.project.findUnique({
       where: { id: projectId },
-      include: { slides: { orderBy: { index: "asc" } } }
+      include: { slides: { orderBy: { index: "asc" } } },
     })
 
     if (!project) {
@@ -62,30 +59,37 @@ export async function POST(req: Request) {
     const existingSlides = project.slides
 
     // 3. THEME INHERITANCE: Find a slide that already has HTML to use as a style template
-    const themeDriver = existingSlides.find(s => s.html && s.html.length > 50)
-    const themeContext = themeDriver 
-      ? `THEME TEMPLATE FROM SLIDE ${themeDriver.index + 1}:\n${themeDriver.html}` 
+    const themeDriver = existingSlides.find((s) => s.html && s.html.length > 50)
+    const themeContext = themeDriver
+      ? `THEME TEMPLATE FROM SLIDE ${themeDriver.index + 1}:\n${themeDriver.html}`
       : "No theme established yet. Set the design language with this slide."
-    
+
     const inspirations = formatInspirationsForPrompt()
 
     // 4. INSERTION CONTEXT: Determine what slides surround the new one
     // index is the slide the user clicked 'Add' on. Default to end if missing.
-    const targetIdx = typeof index === "number" ? index : existingSlides.length - 1
+    const targetIdx =
+      typeof index === "number" ? index : existingSlides.length - 1
     const prevSlide = existingSlides[targetIdx]
     const nextSlide = existingSlides[targetIdx + 1]
 
-    const insertionContext = prevSlide 
-      ? `INSERT AFTER SLIDE ${targetIdx + 1}: "${prevSlide.title}"` 
+    const insertionContext = prevSlide
+      ? `INSERT AFTER SLIDE ${targetIdx + 1}: "${prevSlide.title}"`
       : "INSERT AT START"
-    
-    const flowContext = nextSlide 
+
+    const flowContext = nextSlide
       ? `This new section MUST bridge the transition BETWEEN:\n1. PREV SLIDE: "${prevSlide?.title}" (Content: ${prevSlide?.content})\nAND\n2. NEXT SLIDE: "${nextSlide.title}" (Content: ${nextSlide.content})`
       : `This new section follows "${prevSlide?.title}" (Content: ${prevSlide?.content}) and should continue the narrative flow to its next logic step.`
 
-    const messages: Array<{role: "system" | "user" | "assistant", content: string}> = [
+    const messages: Array<{
+      role: "system" | "user" | "assistant"
+      content: string
+    }> = [
       { role: "system", content: STORYBOARD_SYSTEM_PROMPT },
-      { role: "system", content: `### 🍱 DESIGN INSPIRATIONS & REFERENCE ARCHITECTURES:\n${inspirations}` },
+      {
+        role: "system",
+        content: `### 🍱 DESIGN INSPIRATIONS & REFERENCE ARCHITECTURES:\n${inspirations}`,
+      },
       { role: "system", content: `### 🏁 THEME CONTEXT:\n${themeContext}` },
       {
         role: "user",
@@ -127,8 +131,11 @@ export async function POST(req: Request) {
       temperature: 0.8, // Slightly higher for more diverse expansions
     })
 
-
-    const aiObject = result.object as { title: string; prompt: string; content: string }
+    const aiObject = result.object as {
+      title: string
+      prompt: string
+      content: string
+    }
 
     // 6. CREDIT DEDUCTION
     await deductCredits(session.user.id, 1)
@@ -141,8 +148,20 @@ export async function POST(req: Request) {
     }
 
     // 7. SPLICE & REINDEX: Insert the new slide into the correct position
-    const updatedSlides = [...existingSlides] as unknown as { title: string; prompt: string; content: string; html?: string; assets?: { url: string; publicId?: string; type?: string; prompt?: string }[] }[]
-    const insertIndex = typeof index === "number" ? index + 1 : updatedSlides.length
+    const updatedSlides = [...existingSlides] as unknown as {
+      title: string
+      prompt: string
+      content: string
+      html?: string
+      assets?: {
+        url: string
+        publicId?: string
+        type?: string
+        prompt?: string
+      }[]
+    }[]
+    const insertIndex =
+      typeof index === "number" ? index + 1 : updatedSlides.length
     updatedSlides.splice(insertIndex, 0, newSlide)
 
     const reindexedSlides = updatedSlides.map((s, i) => ({
@@ -151,7 +170,7 @@ export async function POST(req: Request) {
       content: s.content,
       prompt: s.prompt,
       html: s.html || "",
-      assets: s.assets || []
+      assets: s.assets || [],
     }))
 
     // 8. DB PERSISTENCE
@@ -160,22 +179,27 @@ export async function POST(req: Request) {
       data: {
         slides: {
           deleteMany: {}, // Clean wipe...
-          create: reindexedSlides // ...and re-insert the expanded array
+          create: reindexedSlides, // ...and re-insert the expanded array
         },
       },
       include: {
         slides: {
-          orderBy: { index: "asc" }
-        }
-      }
+          orderBy: { index: "asc" },
+        },
+      },
     })
 
     return Response.json(updatedProject)
   } catch (error) {
-    const err = error as Error;
-    if (req.signal.aborted || err.name === 'AbortError' || err.name === 'ResponseAborted' || err.message?.includes('aborted')) {
+    const err = error as Error
+    if (
+      req.signal.aborted ||
+      err.name === "AbortError" ||
+      err.name === "ResponseAborted" ||
+      err.message?.includes("aborted")
+    ) {
       console.log(`[EXPAND] AI Expansion was stopped by user.`)
-      return new Response("Operation cancelled", { status: 200 }) 
+      return new Response("Operation cancelled", { status: 200 })
     }
     console.error("[EXPAND] Fatal Error:", error)
     return new Response("Failed to expand section", { status: 500 })

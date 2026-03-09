@@ -33,7 +33,7 @@ function EditorContent() {
     outline?: string
     isDeleted?: boolean
   } | null>(null)
-  
+
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
   const [isGeneratingOutline, setIsGeneratingOutline] = useState(false)
@@ -50,41 +50,50 @@ function EditorContent() {
 
   // Ref to ensure we only trigger the auto-outline generation once per session
   const hasStartedOutlineRef = useRef(false)
-  
+
   // Track AbortControllers for each slide refinement
   const abortControllersRef = useRef<Map<number, AbortController>>(new Map())
   // Track AbortControllers for each slide expansion
-  const expandAbortControllersRef = useRef<Map<number, AbortController>>(new Map())
+  const expandAbortControllersRef = useRef<Map<number, AbortController>>(
+    new Map()
+  )
 
   /**
-   * Synchronizes the local streaming slides with data from the server, 
+   * Synchronizes the local streaming slides with data from the server,
    * while ensuring any pending AI skeletons (negative IDs) remain in place.
    */
-  const syncSlidesWithSkeletons = useCallback((serverSlides: HtmlSlide[], finishedSkeletonId?: number) => {
-    setStreamingSlides(prev => {
-      // 1. Extract all existing skeletons that are still pending
-      const pendingSkeletons = prev.filter(s => s.id < 0 && s.id !== finishedSkeletonId)
-      
-      // 2. The serverSlides list is the new ground truth for REAL slides
-      const merged = [...serverSlides]
-      
-      // 3. Re-insert skeletons. 
-      // We sort them by their stored index to ensure stable insertion.
-      const sortedSkeletons = [...pendingSkeletons].sort((a, b) => a.index - b.index)
-      
-      for (const sk of sortedSkeletons) {
-        // Splice into the merged list. If index is out of bounds, push.
-        if (sk.index >= merged.length) {
-          merged.push(sk)
-        } else {
-          merged.splice(sk.index, 0, sk)
+  const syncSlidesWithSkeletons = useCallback(
+    (serverSlides: HtmlSlide[], finishedSkeletonId?: number) => {
+      setStreamingSlides((prev) => {
+        // 1. Extract all existing skeletons that are still pending
+        const pendingSkeletons = prev.filter(
+          (s) => s.id < 0 && s.id !== finishedSkeletonId
+        )
+
+        // 2. The serverSlides list is the new ground truth for REAL slides
+        const merged = [...serverSlides]
+
+        // 3. Re-insert skeletons.
+        // We sort them by their stored index to ensure stable insertion.
+        const sortedSkeletons = [...pendingSkeletons].sort(
+          (a, b) => a.index - b.index
+        )
+
+        for (const sk of sortedSkeletons) {
+          // Splice into the merged list. If index is out of bounds, push.
+          if (sk.index >= merged.length) {
+            merged.push(sk)
+          } else {
+            merged.splice(sk.index, 0, sk)
+          }
         }
-      }
-      
-      // 4. Canonicalize indices across the entire array
-      return merged.map((s, i) => ({ ...s, index: i }))
-    })
-  }, [])
+
+        // 4. Canonicalize indices across the entire array
+        return merged.map((s, i) => ({ ...s, index: i }))
+      })
+    },
+    []
+  )
 
   /**
    * Called by the ProjectView when changes are saved to the server.
@@ -123,7 +132,7 @@ function EditorContent() {
   }, [])
 
   /**
-   * Initial project fetcher. 
+   * Initial project fetcher.
    * Fetches the storyboard structure and existing slides.
    */
   const fetchProject = useCallback(async () => {
@@ -169,7 +178,7 @@ function EditorContent() {
             projectId: id,
           }),
         })
-        
+
         if (!resp.ok) {
           if (resp.status === 403) {
             const data = await resp.json()
@@ -193,7 +202,8 @@ function EditorContent() {
         console.error(err)
         if (err instanceof Error && err.message === "INSUFFICIENT_CREDITS") {
           toast.error("You have run out of daily credits.", {
-            description: "Credits reset every day at midnight (12 AM). Upgrade for higher limits.",
+            description:
+              "Credits reset every day at midnight (12 AM). Upgrade for higher limits.",
           })
         } else {
           toast.error("Internal Server Error")
@@ -247,7 +257,7 @@ function EditorContent() {
       // BLOCK IF ANY OTHER AI OPERATION IS BUSY
       if (generatingSections.size > 0 || expandingSections.size > 0) {
         toast.info("AI is busy with another task.", {
-          description: "Please wait or stop the current operation first."
+          description: "Please wait or stop the current operation first.",
         })
         return
       }
@@ -270,7 +280,7 @@ function EditorContent() {
       const context = `Overall Title: ${project?.title}\nOverall Description: ${project?.description}\nFull Narrative Flow and Planned Content:\n${streamingSlides.map((s, i) => `Section ${i + 1}: ${s.title}\n- Visual Prompt: ${s.prompt}\n- Writing/Narration: ${s.content}`).join("\n\n")}`
 
       setGeneratingSections((prev) => new Set(prev).add(index))
-      
+
       const controller = new AbortController()
       abortControllersRef.current.set(index, controller)
 
@@ -312,11 +322,12 @@ function EditorContent() {
           toast.info("Refinement cancelled")
           return
         }
-        
+
         console.error("Refine error:", err)
         if (err instanceof Error && err.message === "INSUFFICIENT_CREDITS") {
           toast.error("Daily credit limit reached.", {
-            description: "Wait for the midnight reset or contact us to upgrade your plan.",
+            description:
+              "Wait for the midnight reset or contact us to upgrade your plan.",
           })
         } else {
           toast.error("Internal Server Error")
@@ -332,7 +343,16 @@ function EditorContent() {
         })
       }
     },
-    [project, id, streamingSlides, generatingSections, credits, fetchCredits, expandingSections.size, syncSlidesWithSkeletons]
+    [
+      project,
+      id,
+      streamingSlides,
+      generatingSections,
+      credits,
+      fetchCredits,
+      expandingSections.size,
+      syncSlidesWithSkeletons,
+    ]
   )
 
   /**
@@ -341,7 +361,7 @@ function EditorContent() {
   const handleExpandSection = useCallback(
     async (index?: number) => {
       const targetIndex = index ?? streamingSlides.length - 1
-      
+
       // IF ALREADY EXPANDING, this shouldn't normally be called from the main button now
       // but we keep the check for safety.
       if (expandingSections.has(targetIndex)) {
@@ -351,7 +371,7 @@ function EditorContent() {
       // BLOCK IF ANY OTHER AI OPERATION IS BUSY
       if (generatingSections.size > 0 || expandingSections.size > 0) {
         toast.info("AI is busy with another task.", {
-          description: "Please wait or stop the current operation first."
+          description: "Please wait or stop the current operation first.",
         })
         return
       }
@@ -375,7 +395,7 @@ function EditorContent() {
         html: "SKELETON",
       }
 
-      setStreamingSlides(prev => {
+      setStreamingSlides((prev) => {
         const next = [...prev]
         next.splice(targetIndex + 1, 0, skeletonSlide)
         // Correct indices for all slides
@@ -383,7 +403,7 @@ function EditorContent() {
       })
 
       setExpandingSections((prev) => new Set(prev).add(targetIndex))
-      
+
       const controller = new AbortController()
       expandAbortControllersRef.current.set(targetIndex, controller)
 
@@ -405,7 +425,7 @@ function EditorContent() {
         }
 
         const updatedProject = await res.json()
-        
+
         // 2. REPLACE SKELETON WITH REAL CONTENT
         setProject(updatedProject)
         syncSlidesWithSkeletons(updatedProject.slides, skeletonId)
@@ -413,10 +433,12 @@ function EditorContent() {
         toast.success("AI added a new section")
       } catch (err: unknown) {
         if (err instanceof Error && err.name === "AbortError") {
-          console.log(`[EXPAND] Expansion for section ${targetIndex} was cancelled.`)
+          console.log(
+            `[EXPAND] Expansion for section ${targetIndex} was cancelled.`
+          )
           // REMOVE SKELETON ON CANCEL
-          setStreamingSlides(prev => {
-            const next = prev.filter(s => s.id !== skeletonId)
+          setStreamingSlides((prev) => {
+            const next = prev.filter((s) => s.id !== skeletonId)
             return next.map((s, i) => ({ ...s, index: i }))
           })
           toast.info("Expansion cancelled")
@@ -425,8 +447,8 @@ function EditorContent() {
 
         console.error(err)
         // REMOVE SKELETON ON ERROR
-        setStreamingSlides(prev => {
-          const next = prev.filter(s => s.id !== skeletonId)
+        setStreamingSlides((prev) => {
+          const next = prev.filter((s) => s.id !== skeletonId)
           return next.map((s, i) => ({ ...s, index: i }))
         })
 
@@ -446,7 +468,15 @@ function EditorContent() {
         })
       }
     },
-    [id, streamingSlides.length, expandingSections, credits, fetchCredits, generatingSections.size, syncSlidesWithSkeletons]
+    [
+      id,
+      streamingSlides.length,
+      expandingSections,
+      credits,
+      fetchCredits,
+      generatingSections.size,
+      syncSlidesWithSkeletons,
+    ]
   )
 
   /**
@@ -463,7 +493,12 @@ function EditorContent() {
         />
         <motion.div
           animate={{ scale: [1, 1.3, 1], opacity: [0.1, 0.15, 0.1] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 1,
+          }}
           className="absolute -right-[10%] -bottom-[20%] h-[60%] w-[60%] rounded-full bg-blue-500/5 blur-[120px]"
         />
       </div>
@@ -486,15 +521,21 @@ function EditorContent() {
         </div>
 
         <h2 className="from-foreground to-foreground/70 mb-3 bg-gradient-to-r bg-clip-text text-2xl font-bold tracking-tight text-transparent">
-          {isGeneratingOutline ? "Architecting Your Narrative" : "Opening Your Storyboard"}
+          {isGeneratingOutline
+            ? "Architecting Your Narrative"
+            : "Opening Your Storyboard"}
         </h2>
         <p className="text-muted-foreground mb-8 leading-relaxed">
-          {isGeneratingOutline ? "Analyzing vision and creating a structural flow..." : "Preparing your workspace with high-fidelity components."}
+          {isGeneratingOutline
+            ? "Analyzing vision and creating a structural flow..."
+            : "Preparing your workspace with high-fidelity components."}
         </p>
 
         <div className="bg-background/50 border-border/50 text-primary ring-primary/20 flex items-center gap-3 rounded-full border px-5 py-2.5 text-sm font-medium shadow-lg ring-1 backdrop-blur-md">
           <Loader2 className="h-4 w-4 animate-spin" />
-          <span>{isGeneratingOutline ? "Generating Outline..." : "Loading data..."}</span>
+          <span>
+            {isGeneratingOutline ? "Generating Outline..." : "Loading data..."}
+          </span>
         </div>
       </motion.div>
     </div>
