@@ -32,7 +32,7 @@ Here's a quick look at the application in both dark and light themes:
 - **Database**: [PostgreSQL](https://www.postgresql.org/) with [Prisma](https://www.prisma.io/)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/) & [Shadcn UI](https://ui.shadcn.com/)
 - **Animation**: [Framer Motion](https://www.framer.com/motion/)
-- **AI Text/JSON**: [GLM-4.7-Flash](https://github.com/THUDM/GLM-4) via [Cloudflare Workers](https://workers.cloudflare.com/) 
+- **AI Text/JSON**: [GLM-4.7-Flash](https://github.com/THUDM/GLM-4) via [Cloudflare Workers](https://workers.cloudflare.com/)
 - **AI Image Generation**: [FLUX.2 [klein] 9B](https://blackforestlabs.ai/) via [Cloudflare Workers](https://workers.cloudflare.com/)
 - **Asset Management**: [Cloudinary](https://cloudinary.com/)
 - **Authentication**: [Better Auth](https://www.better-auth.com/) (Google OAuth)
@@ -113,7 +113,7 @@ Follow these steps to set up the project locally.
     CLOUDINARY_CLOUD_NAME="your_cloudinary_cloud_name"
     CLOUDINARY_API_KEY="your_cloudinary_api_key"
     CLOUDINARY_API_SECRET="your_cloudinary_api_secret"
-    
+
     # Notifications/Emails
     RESEND_API_KEY="your_resend_api_key"
     ```
