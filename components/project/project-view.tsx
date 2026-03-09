@@ -699,7 +699,7 @@ export function ProjectView({
                         </div>
                       </div>
 
-                      <div className="flex-1 space-y-6">
+                      <motion.div layout className="flex-1 space-y-6">
                         {s.html === "SKELETON" ? (
                           <div className="space-y-6">
                             <div className="space-y-4 animate-pulse">
@@ -710,8 +710,6 @@ export function ProjectView({
                                 <div className="h-4 w-[95%] rounded bg-muted/20" />
                               </div>
                             </div>
-                            
-                            {/* Expansion: We only show Title/Content skeletons as the slide content itself isn't generated until refinement */}
                           </div>
                         ) : (
                           <>
@@ -739,48 +737,61 @@ export function ProjectView({
                               />
                             </div>
 
-                            {/* Live Slide Preview / Refinement Skeleton */}
-                            <div className="mt-8">
+                            {/* Live Slide Preview / Refinement Skeleton with Smooth Transitions */}
+                            <AnimatePresence mode="sync">
                               {(() => {
                                 const matchingSlide = slides[i]
                                 
                                 // REFINEMENT STATE: Show skeleton even if NO HTML exists yet
                                 if (generatingSections?.has(i)) {
                                   return (
-                                    <div className="border-border ring-primary/20 slide-preview-container aspect-video w-full overflow-hidden rounded-2xl border bg-muted/10 shadow-lg ring-1 transition-all relative">
-                                      <div className="relative h-full w-full overflow-hidden bg-muted/20">
-                                        {/* Simple Subtle Shimmer */}
-                                        <div className="animate-shimmer absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                                    <motion.div
+                                      key="skeleton"
+                                      initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                                      animate={{ opacity: 1, height: "auto", marginTop: 32 }}
+                                      exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                                      transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+                                      className="overflow-hidden"
+                                    >
+                                      <div className="border-border ring-primary/20 slide-preview-container aspect-video w-full overflow-hidden rounded-2xl border bg-muted/10 shadow-lg ring-1 transition-all relative">
+                                        <div className="relative h-full w-full overflow-hidden bg-muted/20">
+                                          <div className="animate-shimmer absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                                        </div>
                                       </div>
-                                    </div>
+                                    </motion.div>
                                   )
                                 }
 
                                 // NORMAL STATE: Show the actual slide content if it exists
-                                if (!matchingSlide?.html) return null
-
-                                return (
-                                  <motion.div
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    className="group/preview relative"
-                                  >
-                                    <div
-                                      className="border-border/50 ring-primary/5 group-hover:ring-primary/20 slide-preview-container aspect-video w-full overflow-hidden rounded-2xl border bg-black/5 shadow-2xl ring-1 transition-all relative"
-                                      id={`slide-preview-${matchingSlide.id}`}
+                                if (matchingSlide?.html) {
+                                  return (
+                                    <motion.div
+                                      key="content"
+                                      initial={{ opacity: 0, height: 0, marginTop: 0 }}
+                                      animate={{ opacity: 1, height: "auto", marginTop: 32 }}
+                                      exit={{ opacity: 0, height: 0, marginTop: 0 }}
+                                      transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+                                      className="group/preview relative overflow-hidden"
                                     >
-                                      <SlidePreview
-                                        html={matchingSlide.html}
-                                        autoScale={true}
-                                      />
-                                    </div>
-                                  </motion.div>
-                                )
+                                      <div
+                                        className="border-border/50 ring-primary/5 group-hover:ring-primary/20 slide-preview-container aspect-video w-full overflow-hidden rounded-2xl border bg-black/5 shadow-2xl ring-1 transition-all relative"
+                                        id={`slide-preview-${matchingSlide.id}`}
+                                      >
+                                        <SlidePreview
+                                          html={matchingSlide.html}
+                                          autoScale={true}
+                                        />
+                                      </div>
+                                    </motion.div>
+                                  )
+                                }
+
+                                return null
                               })()}
-                            </div>
+                            </AnimatePresence>
                           </>
                         )}
-                      </div>
+                      </motion.div>
 
                       {/* Right Side Cancel Button - Only for NEW expansions (skeletons) */}
                       <AnimatePresence>
