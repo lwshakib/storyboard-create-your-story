@@ -62,7 +62,7 @@ export async function POST(req: Request) {
       slides: z.array(
         z.object({
           title: z.string(),
-          description: z
+          prompt: z
             .string()
             .describe(
               "DETAILED visual and stylistic guide. Must specify if an image is needed, the EXACT image prompt if so, the layout structure (sidebar, bento, etc.), and maintain theme/font/color consistency with all other slides."
@@ -95,18 +95,17 @@ export async function POST(req: Request) {
           REQUIRED STRUTURE (JSON):
           - title: string
           - description: string
-          - slides: Array<{ title: string, description: string, content: string }>
+          - slides: Array<{ title: string, prompt: string, content: string }>
 
           CONSTRAINTS:
           1. Provide 5-7 slides.
-          2. Each slide 'description' must be a professional design blueprint (e.g., "A clean sidebar layout with a dark theme, using Roboto for headings. Key visual: a 3D icon of a globe.")
+          2. Each slide 'prompt' must be a professional design blueprint (e.g., "A clean sidebar layout with a dark theme, using Roboto for headings. Key visual: a 3D icon of a globe.")
           3. Each slide 'content' must be the full narrative text.
           4. Ensure all slides follow a unified visual theme.
           5. NO markdown headers, NO conversational filler, ONLY the JSON object.
           `,
         },
       ],
-      maxSteps: 8,
       temperature: 0.7,
     })) as { object: z.infer<typeof outlineSchema> }
 
@@ -133,10 +132,9 @@ export async function POST(req: Request) {
     const reindexedSlides = object.slides.map((s, idx: number) => ({
       index: idx,
       title: s.title,
-      description: s.description,
+      prompt: s.prompt,
       content: s.content,
       html: "",
-      prompt: "",
       assets: []
     }))
 

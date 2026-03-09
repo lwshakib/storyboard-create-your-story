@@ -99,7 +99,6 @@ model Slide {
   id          String   @id @default(cuid())
   index       Int
   title       String?
-  description String?
   content     String?
   prompt      String?
   html        String?

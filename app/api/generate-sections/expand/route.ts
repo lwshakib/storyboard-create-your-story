@@ -1,5 +1,5 @@
 import { generateObject } from "@/llm/generate-object"
-import { generateHtmlStoryboardPrompt } from "@/llm/prompts"
+import { STORYBOARD_SYSTEM_PROMPT } from "@/llm/prompts"
 import { formatInspirationsForPrompt } from "@/inspirations/registry"
 import { z } from "zod"
 import prisma from "@/lib/prisma"
@@ -66,59 +66,82 @@ export async function POST(req: Request) {
     const themeDriver = existingSlides.find(s => s.html && s.html.length > 50)
     const themeContext = themeDriver 
       ? `THEME TEMPLATE FROM SLIDE ${themeDriver.index + 1}:\n${themeDriver.html}` 
-      : ""
+      : "No theme established yet. Set the design language with this slide."
     
     const inspirations = formatInspirationsForPrompt()
-    const systemPrompt = generateHtmlStoryboardPrompt(inspirations, themeContext)
 
-    // 4. AI GENERATION: Create the new slide metadata
+    // 4. INSERTION CONTEXT: Determine what slides surround the new one
+    // index is the slide the user clicked 'Add' on. Default to end if missing.
+    const targetIdx = typeof index === "number" ? index : existingSlides.length - 1
+    const prevSlide = existingSlides[targetIdx]
+    const nextSlide = existingSlides[targetIdx + 1]
+
+    const insertionContext = prevSlide 
+      ? `INSERT AFTER SLIDE ${targetIdx + 1}: "${prevSlide.title}"` 
+      : "INSERT AT START"
+    
+    const flowContext = nextSlide 
+      ? `This new section MUST bridge the transition BETWEEN:\n1. PREV SLIDE: "${prevSlide?.title}" (Content: ${prevSlide?.content})\nAND\n2. NEXT SLIDE: "${nextSlide.title}" (Content: ${nextSlide.content})`
+      : `This new section follows "${prevSlide?.title}" (Content: ${prevSlide?.content}) and should continue the narrative flow to its next logic step.`
+
+    const messages: any[] = [
+      { role: "system", content: STORYBOARD_SYSTEM_PROMPT },
+      { role: "system", content: `### 🍱 DESIGN INSPIRATIONS & REFERENCE ARCHITECTURES:\n${inspirations}` },
+      { role: "system", content: `### 🏁 THEME CONTEXT:\n${themeContext}` },
+      {
+        role: "user",
+        content: `
+          You are an elite Content Strategist. 
+          The user wants to add a NEW logical section (slide) to their storyboard.
+          
+          STORYBOARD CONTEXT:
+          Title: ${project.title}
+          Description: ${project.description}
+          
+          SPECIFIC POSITIONING:
+          ${insertionContext}
+          ${flowContext}
+          
+          EXISTING SLIDE TITLES FOR FLOW REFERENCE:
+          ${existingSlides.map((s, i) => `${i + 1}. ${s.title}`).join("\n")}
+          
+          TASK:
+          Create ONE new section that perfectly fits at position ${targetIdx + 2} in the flow.
+          OUTPUT_FORMAT:
+          You MUST return a JSON object containing:
+          1. "title": A short, punchy title for the slide.
+          2. "prompt": A COMPREHENSIVE visual prompt. Must specify layout and visual style consistent with the rest.
+          3. "content": The full, detailed narrative text for the slide.
+        `,
+      },
+    ]
+
+    // 5. AI GENERATION: Create the new slide metadata
     const result = await generateObject({
       schema: z.object({
         title: z.string(),
-        description: z.string(),
+        prompt: z.string(),
         content: z.string(),
       }),
-      messages: [
-        { role: "system", content: systemPrompt },
-        {
-          role: "user",
-          content: `
-            You are an elite Content Strategist. 
-            The user wants to add a NEW logical section (slide) to their storyboard.
-            
-            STORYBOARD CONTEXT:
-            Title: ${project.title}
-            Description: ${project.description}
-            
-            EXISTING SECTIONS:
-            ${existingSlides.map((s, i) => `${i + 1}. ${s.title}: ${s.description}`).join("\n")}
-            
-            TASK:
-            Create ONE new section that logically follows or fits into this flow.
-            Provide:
-            1. A short, punchy title.
-            2. A COMPREHENSIVE design guide (description). Must specify layout and visual style consistent with the rest.
-            3. The full, detailed narrative text for the slide.
-          `,
-        },
-      ],
+      abortSignal: req.signal,
+      messages,
       temperature: 0.8, // Slightly higher for more diverse expansions
     })
 
-    const aiObject = result.object as { title: string; description: string; content: string }
 
-    // 5. CREDIT DEDUCTION
+    const aiObject = result.object as { title: string; prompt: string; content: string }
+
+    // 6. CREDIT DEDUCTION
     await deductCredits(session.user.id, 1)
 
     const newSlide = {
       title: aiObject.title,
-      description: aiObject.description,
       content: aiObject.content,
+      prompt: aiObject.prompt,
       html: "",
-      prompt: ""
     }
 
-    // 6. SPLICE & REINDEX: Insert the new slide into the correct position
+    // 7. SPLICE & REINDEX: Insert the new slide into the correct position
     const updatedSlides = [...existingSlides] as any[]
     const insertIndex = typeof index === "number" ? index + 1 : updatedSlides.length
     updatedSlides.splice(insertIndex, 0, newSlide)
@@ -126,14 +149,13 @@ export async function POST(req: Request) {
     const reindexedSlides = updatedSlides.map((s, i) => ({
       index: i,
       title: s.title,
-      description: s.description,
       content: s.content,
+      prompt: s.prompt,
       html: s.html || "",
-      prompt: s.prompt || "",
       assets: s.assets || []
     }))
 
-    // 7. DB PERSISTENCE
+    // 8. DB PERSISTENCE
     const updatedProject = await prisma.project.update({
       where: { id: projectId },
       data: {
@@ -150,8 +172,12 @@ export async function POST(req: Request) {
     })
 
     return Response.json(updatedProject)
-  } catch (error) {
-    console.error("Expand Section Error:", error)
+  } catch (error: any) {
+    if (req.signal.aborted || error.name === 'AbortError' || error.name === 'ResponseAborted' || error.message?.includes('aborted')) {
+      console.log(`[EXPAND] AI Expansion was stopped by user.`)
+      return new Response("Operation cancelled", { status: 200 }) 
+    }
+    console.error("[EXPAND] Fatal Error:", error)
     return new Response("Failed to expand section", { status: 500 })
   }
 }

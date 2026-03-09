@@ -30,12 +30,12 @@ const INSPIRATIONS_DIR = path.join(process.cwd(), "inspirations")
  */
 const REGISTERED_INSPIRATIONS = [
   "corporate-business-deck",
-  // "growth-business-deck",
-  // "innovate-business-presentation",
-  // "modern-dark-deck",
-  // "nexus-business-deck",
-  // "process-flow-deck",
-  // "storyset-presentation",
+  "growth-business-deck",
+  "innovate-business-presentation",
+  "modern-dark-deck",
+  "nexus-business-deck",
+  "process-flow-deck",
+  "storyset-presentation",
 ]
 
 /**

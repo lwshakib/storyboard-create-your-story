@@ -62,12 +62,14 @@ export type LayoutType =
 
 export interface Slide {
   id: string | number
-  index: number
+  index?: number
   elements?: SlideElement[]
   html?: string
   title?: string
-  description?: string
   content?: string
   prompt?: string
   assets?: { publicId: string; url: string; type: string }[]
+  bgColor?: string
+  bgImage?: string
+  layout?: string
 }

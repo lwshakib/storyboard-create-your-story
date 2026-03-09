@@ -62,17 +62,15 @@ import Link from "next/link"
 import { ModeToggle } from "@/components/mode-toggle"
 
 /**
- * EditorViewProps defines the input for the main canvas component.
+ * ProjectViewProps defines the input for the main canvas component.
  * @property initialData - The project state (title, description, slides) received from the API or creation flow.
- * @property isGenerating - Global generating status.
- * @property onGenerate - General generation trigger.
  * @property onGenerateSection - Specific trigger to refine a single slide's HTML.
  * @property onExpandSection - Trigger to let AI add a new section seamlessly.
  * @property generatingSections - A set of slide indices currently being processed by the AI.
  * @property isExpanding - Specifically tracks if the project is being lengthened by AI.
  * @property onSaveSuccess - Callback to update parent state after a successful DB save.
  */
-interface EditorViewProps {
+interface ProjectViewProps {
   initialData?: {
     id?: string
     title: string
@@ -82,7 +80,8 @@ interface EditorViewProps {
   onGenerateSection?: (index: number) => void
   onExpandSection?: (index?: number) => void
   generatingSections?: Set<number>
-  isExpanding?: boolean
+  expandingSections?: Set<number>
+  onCancelExpand?: (index: number) => void
   onSaveSuccess?: (data: {
     id: string
     title: string
@@ -96,15 +95,19 @@ interface EditorViewProps {
 const AutoResizeTextarea = ({
   value,
   onChange,
+  onBlur,
   className,
   placeholder,
   rows = 1,
+  disabled = false,
 }: {
   value: string
   onChange: (val: string) => void
+  onBlur?: () => void
   className?: string
   placeholder?: string
   rows?: number
+  disabled?: boolean
 }) => {
   const textareaRef = React.useRef<HTMLTextAreaElement>(null)
 
@@ -128,41 +131,44 @@ const AutoResizeTextarea = ({
         onChange(e.target.value)
         adjustHeight()
       }}
+      onBlur={onBlur}
       className={cn(
         "w-full resize-none overflow-hidden border-none bg-transparent outline-none focus:ring-0",
         className
       )}
       placeholder={placeholder}
       rows={rows}
+      disabled={disabled}
     />
   )
 }
 
 /**
- * EditorView component: The high-fidelity narrative canvas.
+ * ProjectView component: The high-fidelity narrative canvas.
  * This is the core workspace where users refine their stories.
  * It features a split-view of narrative content and live slide previews.
  */
-export function EditorView({
+export function ProjectView({
   initialData,
   onGenerateSection,
   onExpandSection,
+  onCancelExpand,
   generatingSections,
-  isExpanding,
+  expandingSections,
   onSaveSuccess,
-}: EditorViewProps) {
+}: ProjectViewProps) {
   const router = useRouter()
 
   // --- LOCAL STATE ---
   const [slides, setSlides] = React.useState<HtmlSlide[]>(
     initialData?.slides || []
   )
-  const [storyTitle, setStoryTitle] = React.useState(
-    initialData?.title || "Advanced AI Storyboard"
-  )
-  const [overallDescription, setOverallDescription] = React.useState(
+  const [title, setTitle] = React.useState(initialData?.title || "Advanced AI Storyboard")
+  const [description, setDescription] = React.useState(
     initialData?.description || ""
   )
+
+  const isBusy = (generatingSections?.size ?? 0) > 0 || (expandingSections?.size ?? 0) > 0
   const [isEditingTitle, setIsEditingTitle] = React.useState(false)
   const [isSaving, setIsSaving] = React.useState(false)
   const [activeSlideIndex, setActiveSlideIndex] = React.useState(0)
@@ -200,27 +206,42 @@ export function EditorView({
     number | null
   >(null)
 
-  const hasChanges = React.useMemo(() => {
-    const initialTitle = initialData?.title || "Advanced AI Storyboard"
-    const initialDesc = initialData?.description || ""
-    const initialSlides = initialData?.slides || []
+  const saveProjectData = async (payload: { title?: string, description?: string, slides?: HtmlSlide[] }) => {
+    if (!initialData?.id) return
+    setIsSaving(true)
+    try {
+      const res = await fetch(`/api/projects/${initialData.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: payload.title ?? title,
+          description: payload.description ?? description,
+          slides: payload.slides ?? slides,
+        }),
+      })
 
-    return (
-      storyTitle !== initialTitle ||
-      overallDescription !== initialDesc ||
-      JSON.stringify(slides) !== JSON.stringify(initialSlides)
-    )
-  }, [storyTitle, overallDescription, slides, initialData])
+      if (res.ok) {
+        const data = await res.json()
+        if (onSaveSuccess) onSaveSuccess(data)
+      }
+    } catch (err) {
+      console.error("Failed to save project change", err)
+      toast.error("Cloud sync failed")
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
 
   React.useEffect(() => {
     if (initialData?.slides) {
       setSlides(initialData.slides)
     }
     if (initialData?.title) {
-      setStoryTitle(initialData.title)
+      setTitle(initialData.title)
     }
     if (initialData?.description) {
-      setOverallDescription(initialData.description)
+      setDescription(initialData.description)
     }
     if (initialData?.slides && initialData.slides.length > 0) {
       scrollToSlide(initialData.slides[0].id)
@@ -264,7 +285,7 @@ export function EditorView({
   const handleExport = async (format: "json" | "pdf" | "pptx") => {
     try {
       if (format === "json") {
-        exportHtmlToJson(storyTitle, overallDescription, slides)
+        exportHtmlToJson(title, description, slides)
         toast.success("JSON exported successfully")
       } else {
         toast.info(
@@ -305,10 +326,10 @@ export function EditorView({
         }
 
         if (format === "pdf") {
-          await exportImagesToPdf(storyTitle, images)
+          await exportImagesToPdf(title, images)
           toast.success("PDF exported successfully")
         } else if (format === "pptx") {
-          await exportImagesToPpptx(storyTitle, images)
+          await exportImagesToPpptx(title, images)
           toast.success("PowerPoint exported successfully")
         }
       }
@@ -380,45 +401,7 @@ export function EditorView({
     reader.readAsText(file)
   }
 
-  const handleSave = async () => {
-    setIsSaving(true)
-    try {
-      const url = initialData?.id
-        ? `/api/projects/${initialData.id}`
-        : "/api/projects"
-      const method = initialData?.id ? "PATCH" : "POST"
 
-      const res = await fetch(url, {
-        method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          title: storyTitle,
-          description: overallDescription,
-          slides: slides,
-        }),
-      })
-
-      if (res.ok) {
-        const data = await res.json()
-        toast.success(
-          initialData?.id ? "Project updated" : "Project saved successfully"
-        )
-        if (!initialData?.id) {
-          router.push(`/project/${data.id}`)
-        } else {
-          if (onSaveSuccess) onSaveSuccess(data)
-          router.refresh()
-        }
-      } else {
-        toast.error("Failed to save project")
-      }
-    } catch (error) {
-      console.error("Failed to save project", error)
-      toast.error("An error occurred while saving")
-    } finally {
-      setIsSaving(false)
-    }
-  }
 
   const handleScroll = () => {
     if (!mainScrollRef.current) return
@@ -449,35 +432,66 @@ export function EditorView({
 
   const handleReorder = (newSlides: HtmlSlide[]) => {
     setSlides(newSlides)
+    saveProjectData({ slides: newSlides })
   }
 
-  const addOutlineSection = (index: number) => {
-    setSlides((prev) => {
-      const newSlides = [...prev]
-      newSlides.splice(index + 1, 0, {
-        id: Date.now(), // Real IDs will be assigned on next generate/save
-        title: "New Section",
-        description: "",
-        content: "",
-        html: "",
+  const addOutlineSection = async (index: number) => {
+    setIsSaving(true)
+    try {
+      const res = await fetch(`/api/projects/${initialData?.id}/slides`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ index: index + 1 })
       })
-      // Re-index to ensure logical flow
-      return newSlides.map((s, idx) => ({ ...s, id: idx + 1 }))
-    })
-    toast.success("New section added")
+
+      if (res.ok) {
+        const updatedProject = await res.json()
+        setSlides(updatedProject.slides)
+        if (onSaveSuccess) onSaveSuccess(updatedProject)
+        toast.success("Section added and synced")
+      } else {
+        throw new Error("Failed to add slide")
+      }
+    } catch (err) {
+      console.error("Slide addition failed", err)
+      toast.error("Cloud sync failed")
+    } finally {
+      setIsSaving(false)
+    }
   }
 
-  const removeOutlineSection = (index: number) => {
-    setSlides((prev) => {
-      if (prev.length <= 1) {
-        toast.error("Storyboard must have at least one section")
-        return prev
+  const removeOutlineSection = async (index: number) => {
+    if (slides.length <= 1) {
+      toast.error("Storyboard must have at least one section")
+      return
+    }
+
+    const slideId = slides[index]?.id
+    if (!slideId) {
+      toast.error("Slide reference not found")
+      return
+    }
+    
+    setIsSaving(true)
+    try {
+      const res = await fetch(`/api/slides/${slideId}`, {
+        method: "DELETE"
+      })
+
+      if (res.ok) {
+        const updatedProject = await res.json()
+        setSlides(updatedProject.slides)
+        if (onSaveSuccess) onSaveSuccess(updatedProject)
+        toast.success("Section removed and synced")
+      } else {
+        throw new Error("Failed to delete slide")
       }
-      const newSlides = [...prev]
-      newSlides.splice(index, 1)
-      return newSlides.map((s, idx) => ({ ...s, id: idx + 1 }))
-    })
-    toast.success("Section removed")
+    } catch (err) {
+      console.error("Slide deletion failed", err)
+      toast.error("Cloud sync failed")
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   return (
@@ -498,9 +512,9 @@ export function EditorView({
               <input
                 autoFocus
                 className="m-0 w-48 border-none bg-transparent p-0 text-sm font-bold tracking-tight outline-none focus:ring-0"
-                value={storyTitle}
+                value={title}
                 onChange={(e) => {
-                  setStoryTitle(e.target.value)
+                  setTitle(e.target.value)
                 }}
                 onBlur={() => setIsEditingTitle(false)}
                 onKeyDown={(e) => e.key === "Enter" && setIsEditingTitle(false)}
@@ -510,7 +524,7 @@ export function EditorView({
                 onDoubleClick={() => setIsEditingTitle(true)}
                 className="max-w-[300px] cursor-text truncate text-sm font-bold tracking-tight opacity-80"
               >
-                {storyTitle}
+                {title}
               </span>
             )}
           </div>
@@ -595,36 +609,7 @@ export function EditorView({
             </TooltipContent>
           </Tooltip>
 
-          <AnimatePresence>
-            {hasChanges && (
-              <motion.div
-                initial={{ opacity: 0, x: 20, filter: "blur(10px)" }}
-                animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                exit={{ opacity: 0, x: 20, filter: "blur(10px)" }}
-                transition={{ type: "spring", stiffness: 400, damping: 30 }}
-              >
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      onClick={handleSave}
-                      disabled={isSaving}
-                      className="bg-primary hover:bg-primary/90 text-primary-foreground flex h-10 items-center gap-2 rounded-full px-6 font-medium shadow-sm"
-                    >
-                      {isSaving ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <Save className="h-4 w-4" />
-                      )}
-                      <span>Save</span>
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom" sideOffset={10}>
-                    <p className="font-bold">Save Project</p>
-                  </TooltipContent>
-                </Tooltip>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {/* No Save Button or Indicators per Request */}
 
           <Button
             asChild
@@ -678,15 +663,17 @@ export function EditorView({
                 <div className="space-y-2">
                   <input
                     className="text-foreground placeholder:text-muted/20 w-full border-none bg-transparent p-0 text-4xl font-black tracking-tighter outline-none focus:ring-0 md:text-5xl"
-                    value={storyTitle}
+                    value={title}
                     placeholder="Storyboard Title"
-                    onChange={(e) => setStoryTitle(e.target.value)}
+                    onChange={(e) => setTitle(e.target.value)}
+                    onBlur={() => saveProjectData({ title })}
                   />
                   <AutoResizeTextarea
                     className="text-muted-foreground placeholder:text-muted/20 w-full p-0 text-lg leading-relaxed"
                     placeholder="Overall story arc and narrative goals..."
-                    value={overallDescription}
-                    onChange={(val) => setOverallDescription(val)}
+                    value={description}
+                    onChange={(val) => setDescription(val)}
+                    onBlur={() => saveProjectData({ description })}
                   />
                 </div>
               </div>
@@ -713,224 +700,250 @@ export function EditorView({
                       </div>
 
                       <div className="flex-1 space-y-6">
-                        <div className="space-y-4">
-                          <input
-                            className="group-hover:text-primary text-foreground w-full border-none bg-transparent p-0 text-3xl font-black tracking-tight transition-colors outline-none focus:ring-0 dark:text-white"
-                            value={s.title}
-                            onChange={(e) =>
-                              updateOutlineSlide(i, "title", e.target.value)
-                            }
-                            placeholder="Section Title"
-                          />
+                        {s.html === "SKELETON" ? (
+                          <div className="space-y-6">
+                            <div className="space-y-4 animate-pulse">
+                              <div className="h-10 w-2/3 rounded-lg bg-muted/40" />
+                              <div className="space-y-2">
+                                <div className="h-4 w-full rounded bg-muted/20" />
+                                <div className="h-4 w-[90%] rounded bg-muted/20" />
+                                <div className="h-4 w-[95%] rounded bg-muted/20" />
+                              </div>
+                            </div>
+                            
+                            {/* Expansion: We only show Title/Content skeletons as the slide content itself isn't generated until refinement */}
+                          </div>
+                        ) : (
+                          <>
+                            <div className="space-y-4">
+                              <input
+                                className="group-hover:text-primary text-foreground w-full border-none bg-transparent p-0 text-3xl font-black tracking-tight transition-colors outline-none focus:ring-0 dark:text-white"
+                                value={s.title}
+                                onChange={(e) =>
+                                  updateOutlineSlide(i, "title", e.target.value)
+                                }
+                                onBlur={() => saveProjectData({})}
+                                placeholder="Section Title"
+                                disabled={generatingSections?.has(i)}
+                              />
 
-                          <AutoResizeTextarea
-                            className="text-foreground/70 w-full max-w-3xl text-base leading-relaxed font-medium dark:text-white/70"
-                            value={s.content || ""}
-                            onChange={(val) =>
-                              updateOutlineSlide(i, "content", val)
-                            }
-                            placeholder="Write the detailed narrative content here..."
-                          />
-                        </div>
+                              <AutoResizeTextarea
+                                className="text-foreground/70 w-full max-w-3xl text-base leading-relaxed font-medium dark:text-white/70"
+                                value={s.content || ""}
+                                onChange={(val) =>
+                                  updateOutlineSlide(i, "content", val)
+                                }
+                                onBlur={() => saveProjectData({})}
+                                placeholder="Write the detailed narrative content here..."
+                                disabled={generatingSections?.has(i)}
+                              />
+                            </div>
 
-                        {/* Live Slide Preview or Generating State */}
-                        <div className="mt-8">
-                          {(() => {
-                            const matchingSlide = slides[i]
-                            const isGenerating = generatingSections?.has(i)
-
-                            // 1. GENERATING STATE: Show a premium shimmer loader while AI is building the HTML
-                            if (isGenerating) {
-                              return (
-                                <motion.div
-                                  initial={{ opacity: 0, scale: 0.98 }}
-                                  animate={{ opacity: 1, scale: 1 }}
-                                  className="bg-primary/[0.02] border-primary/10 relative flex aspect-video w-full items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed"
-                                >
-                                  {/* Animated Glow / Shimmer */}
-                                  <div className="via-primary/[0.08] animate-shimmer absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent to-transparent" />
-
-                                  <div className="relative flex flex-col items-center gap-3">
-                                    <div className="relative">
-                                      <div className="bg-primary/20 absolute inset-0 animate-pulse rounded-full blur-xl" />
-                                      <Sparkles className="text-primary relative z-10 size-8 animate-pulse" />
+                            {/* Live Slide Preview / Refinement Skeleton */}
+                            <div className="mt-8">
+                              {(() => {
+                                const matchingSlide = slides[i]
+                                
+                                // REFINEMENT STATE: Show skeleton even if NO HTML exists yet
+                                if (generatingSections?.has(i)) {
+                                  return (
+                                    <div className="border-border ring-primary/20 slide-preview-container aspect-video w-full overflow-hidden rounded-2xl border bg-muted/10 shadow-lg ring-1 transition-all relative">
+                                      <div className="relative h-full w-full overflow-hidden bg-muted/20">
+                                        {/* Simple Subtle Shimmer */}
+                                        <div className="animate-shimmer absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                                      </div>
                                     </div>
-                                  </div>
+                                  )
+                                }
 
-                                  {/* Progress line at the bottom */}
-                                  <div className="bg-primary/5 absolute inset-x-0 bottom-0 h-1 overflow-hidden">
-                                    <motion.div
-                                      className="bg-primary/40 h-full shadow-[0_0_10px_rgba(var(--primary),0.5)]"
-                                      initial={{ width: "0%" }}
-                                      animate={{ width: "100%" }}
-                                      transition={{
-                                        duration: 2,
-                                        repeat: Infinity,
-                                        ease: "easeInOut",
-                                      }}
-                                    />
-                                  </div>
-                                </motion.div>
-                              )
-                            }
+                                // NORMAL STATE: Show the actual slide content if it exists
+                                if (!matchingSlide?.html) return null
 
-                            // 2. RENDERED STATE: Show the actual slide HTML using the SlidePreview component
-                            if (matchingSlide && matchingSlide.html) {
-                              return (
-                                <motion.div
-                                  initial={{ opacity: 0, y: 10 }}
-                                  animate={{ opacity: 1, y: 0 }}
-                                  className="group/preview relative"
-                                >
-                                  <div
-                                    className="border-border/50 ring-primary/5 group-hover:ring-primary/20 slide-preview-container aspect-video w-full overflow-hidden rounded-2xl border bg-black/5 shadow-2xl ring-1 transition-all"
-                                    id={`slide-preview-${matchingSlide.id}`}
+                                return (
+                                  <motion.div
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="group/preview relative"
                                   >
-                                    <SlidePreview
-                                      html={matchingSlide.html}
-                                      autoScale={true}
-                                    />
-                                  </div>
-                                </motion.div>
-                              )
-                            }
-
-                            return null
-                          })()}
-                        </div>
+                                    <div
+                                      className="border-border/50 ring-primary/5 group-hover:ring-primary/20 slide-preview-container aspect-video w-full overflow-hidden rounded-2xl border bg-black/5 shadow-2xl ring-1 transition-all relative"
+                                      id={`slide-preview-${matchingSlide.id}`}
+                                    >
+                                      <SlidePreview
+                                        html={matchingSlide.html}
+                                        autoScale={true}
+                                      />
+                                    </div>
+                                  </motion.div>
+                                )
+                              })()}
+                            </div>
+                          </>
+                        )}
                       </div>
+
+                      {/* Right Side Cancel Button - Only for NEW expansions (skeletons) */}
+                      <AnimatePresence>
+                        {s.html === "SKELETON" && (
+                          <motion.div
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: 20 }}
+                            className="absolute top-1/2 -right-12 -translate-y-1/2 z-[60]"
+                          >
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="destructive"
+                                  size="icon"
+                                  className="size-10 rounded-full border-4 border-background shadow-xl hover:scale-110 active:scale-95 transition-all"
+                                  onClick={() => onCancelExpand?.(i - 1)}
+                                >
+                                  <X className="size-5" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent side="right">
+                                <p className="font-bold uppercase tracking-widest text-[10px]">Abort Expand</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
 
-                    {/* Section Toolbar */}
-                    <div className={cn(
-                      "bg-background ring-background absolute -bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1 rounded-full border p-1 shadow-2xl ring-4 transition-opacity",
-                      generatingSections?.has(i) ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-                    )}>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="hover:bg-muted size-8 rounded-full"
-                            onClick={() => setSelectedVisualsIndex(i)}
-                          >
-                            <Compass className="size-3.5" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent side="bottom" sideOffset={10}>
-                          <p className="font-bold">Visual Direction</p>
-                        </TooltipContent>
-                      </Tooltip>
+                    {/* Section Toolbar - Hidden only for skeletons */}
+                    {s.html !== "SKELETON" && (
+                      <div className={cn(
+                        "bg-background ring-background absolute -bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1 rounded-full border p-1 shadow-2xl ring-4 transition-all duration-300",
+                        generatingSections?.has(i) ? "opacity-100 scale-105" : "opacity-0 group-hover:opacity-100"
+                      )}>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="hover:bg-muted size-8 rounded-full disabled:opacity-30"
+                              onClick={() => setSelectedVisualsIndex(i)}
+                              disabled={isBusy}
+                            >
+                              <Compass className="size-3.5" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent side="bottom" sideOffset={10}>
+                            <p className="font-bold">Visual Direction</p>
+                          </TooltipContent>
+                        </Tooltip>
 
-                      <div className="bg-border h-3 w-[1px]" />
+                        <div className="bg-border h-3 w-[1px]" />
 
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className={cn(
-                              "group/btn size-8 rounded-full",
-                              generatingSections?.has(i) 
-                                ? "bg-destructive/10 hover:bg-destructive/20" 
-                                : "bg-primary/5 hover:bg-primary/10"
-                            )}
-                            onClick={() => handleGenerateSection(i)}
-                          >
-                            {generatingSections?.has(i) ? (
-                              <X className="text-destructive size-3.5 animate-pulse" />
-                            ) : (
-                              <Wand2 className="text-primary size-3.5 transition-transform group-hover/btn:scale-110" />
-                            )}
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent side="bottom" sideOffset={10}>
-                          <p className="font-bold">
-                            {generatingSections?.has(i) ? "Abort Refining" : "Refine Slide"}
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className={cn(
+                                "group/btn size-8 rounded-full transition-all duration-300",
+                                generatingSections?.has(i) 
+                                  ? "bg-red-500/10 text-red-500 hover:bg-red-500/20 shadow-lg ring-1 ring-red-500/30" 
+                                  : "bg-primary/5 hover:bg-primary/10 text-primary"
+                              )}
+                              onClick={() => handleGenerateSection(i)}
+                              disabled={isBusy && !generatingSections?.has(i)}
+                            >
+                              {generatingSections?.has(i) ? (
+                                <X className="size-3.5" />
+                              ) : (
+                                <Wand2 className="size-3.5 transition-transform group-hover/btn:scale-110" />
+                              )}
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent side="bottom" sideOffset={10}>
+                            <p className="font-bold">
+                              {generatingSections?.has(i) ? "Abort Refinement" : "Refine Slide"}
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
 
-                      <div className="bg-border h-3 w-[1px]" />
+                        <div className="bg-border h-3 w-[1px]" />
 
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="hover:bg-muted size-8 rounded-full"
-                            onClick={() => addOutlineSection(i)}
-                          >
-                            <Plus className="text-primary size-3.5" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent side="bottom" sideOffset={10}>
-                          <p className="font-bold">Add Section</p>
-                        </TooltipContent>
-                      </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="hover:bg-muted size-8 rounded-full disabled:opacity-30"
+                              onClick={() => addOutlineSection(i)}
+                              disabled={isBusy}
+                            >
+                              <Plus className="text-primary size-3.5" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent side="bottom" sideOffset={10}>
+                            <p className="font-bold">Add Section</p>
+                          </TooltipContent>
+                        </Tooltip>
 
-                      <div className="bg-border h-3 w-[1px]" />
+                        <div className="bg-border h-3 w-[1px]" />
 
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="bg-primary/5 hover:bg-primary/10 group/btn size-8 rounded-full"
-                            onClick={() => onExpandSection?.(i)}
-                            disabled={isExpanding}
-                          >
-                            {isExpanding ? (
-                              <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
-                            ) : (
-                              <Sparkles className="text-primary size-3.5 transition-transform group-hover/btn:scale-110" />
-                            )}
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent side="bottom" sideOffset={10}>
-                          <p className="font-bold">AI Expand</p>
-                        </TooltipContent>
-                      </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="bg-primary/5 hover:bg-primary/10 group/btn size-8 rounded-full text-primary disabled:opacity-30"
+                              onClick={() => onExpandSection?.(i)}
+                              disabled={isBusy}
+                            >
+                              <Sparkles className="size-3.5 transition-transform group-hover/btn:scale-110" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent side="bottom" sideOffset={10}>
+                            <p className="font-bold">AI Expand</p>
+                          </TooltipContent>
+                        </Tooltip>
 
-                      <div className="bg-border h-3 w-[1px]" />
+                        <div className="bg-border h-3 w-[1px]" />
 
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="hover:bg-muted size-8 rounded-full"
-                            onClick={() => {
-                              setActiveSlideIndex(i)
-                              setIsPresenting(true)
-                            }}
-                          >
-                            <PresentationIcon className="size-3.5 text-primary" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent side="bottom" sideOffset={10}>
-                          <p className="font-bold">Present from here</p>
-                        </TooltipContent>
-                      </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="hover:bg-muted size-8 rounded-full disabled:opacity-30"
+                              onClick={() => {
+                                setActiveSlideIndex(i)
+                                setIsPresenting(true)
+                              }}
+                              disabled={isBusy}
+                            >
+                              <PresentationIcon className="size-3.5 text-primary" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent side="bottom" sideOffset={10}>
+                            <p className="font-bold">Present from here</p>
+                          </TooltipContent>
+                        </Tooltip>
 
-                      <div className="bg-border h-3 w-[1px]" />
+                        <div className="bg-border h-3 w-[1px]" />
 
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="hover:bg-destructive/10 hover:text-destructive size-8 rounded-full"
-                            onClick={() => removeOutlineSection(i)}
-                          >
-                            <Trash className="size-3.5" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent side="bottom" sideOffset={10}>
-                          <p className="font-bold">Remove Section</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </div>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="hover:bg-destructive/10 hover:text-destructive size-8 rounded-full disabled:opacity-30"
+                              onClick={() => removeOutlineSection(i)}
+                              disabled={isBusy}
+                            >
+                              <Trash className="size-3.5" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent side="bottom" sideOffset={10}>
+                            <p className="font-bold">Remove Section</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
+                    )}
                   </Reorder.Item>
                 ))}
               </Reorder.Group>
@@ -996,9 +1009,9 @@ export function EditorView({
               <div className="space-y-4">
                 <AutoResizeTextarea
                   className="text-foreground bg-muted/30 focus:border-primary/30 min-h-[120px] w-full rounded-xl border p-4 text-sm leading-relaxed transition-all"
-                  value={slides[selectedVisualsIndex]?.description || ""}
+                  value={slides[selectedVisualsIndex]?.prompt || ""}
                   onChange={(val) =>
-                    updateOutlineSlide(selectedVisualsIndex, "description", val)
+                    updateOutlineSlide(selectedVisualsIndex, "prompt", val)
                   }
                   placeholder="Describe the background, icons, layout style, and overall visual mood..."
                 />

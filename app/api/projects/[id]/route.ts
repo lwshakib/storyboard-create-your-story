@@ -96,14 +96,13 @@ export async function PATCH(
           isDeleted === false ? null : isDeleted ? new Date() : undefined,
         slides: slides ? {
           deleteMany: {}, // Atomic replacement: wipe existing slides...
-          create: (slides as any[]).map((s, idx) => ({ // ...and create new ones
+          create: (slides as any[]).map((s, idx) => ({ // ...and create new ones in the new order
             index: idx,
             title: s.title,
-            description: s.description,
             content: s.content,
             prompt: s.prompt,
             html: s.html,
-            assets: s.assets || [], // Maintain assets if they exist in the incoming data
+            assets: s.assets || [], 
           }))
         } : undefined
       },

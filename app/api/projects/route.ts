@@ -28,7 +28,6 @@ export async function POST(req: Request) {
           create: (slides || []).map((slide: any, idx: number) => ({
             index: idx,
             title: slide.title || null,
-            description: slide.description || null,
             content: slide.content || null,
             prompt: slide.prompt || null,
             html: slide.html || null,

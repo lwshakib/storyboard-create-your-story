@@ -3,9 +3,10 @@ import { colorToHex } from "./utils"
 
 export interface HtmlSlide {
   id: number
+  index: number
   title: string
   html: string
-  description?: string
+  prompt?: string
   content?: string
   structuredSlide?: Slide // Optional structured version
 }
@@ -225,9 +226,9 @@ export function parseStoryboard(text: string): StoryboardData {
 
     const existingIndex = result.slides.findIndex((s) => s.id === id)
     if (existingIndex !== -1) {
-      result.slides[existingIndex] = { id, title, html, structuredSlide }
+      result.slides[existingIndex] = { id, index: id, title, html, structuredSlide }
     } else {
-      result.slides.push({ id, title, html, structuredSlide })
+      result.slides.push({ id, index: id, title, html, structuredSlide })
     }
   }
 

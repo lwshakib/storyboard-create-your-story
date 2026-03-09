@@ -1,8 +1,8 @@
-import { generateObject } from "@/llm/generate-object"
-import { generateHtmlStoryboardPrompt } from "@/llm/prompts"
+import { generateText } from "@/llm/generate-text"
+import { STORYBOARD_SYSTEM_PROMPT } from "@/llm/prompts"
 import { formatInspirationsForPrompt } from "@/inspirations/registry"
 import { tools } from "@/llm/tools"
-import { z } from "zod"
+
 import prisma from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
@@ -61,42 +61,42 @@ export async function POST(req: Request) {
     const themeDriver = allSlides.find(s => s.html && s.html.length > 50)
     const themeContext = themeDriver 
       ? `THEME TEMPLATE FROM SLIDE ${themeDriver.index + 1}:\n${themeDriver.html}` 
-      : ""
+      : "No theme established yet. Set the design language with this slide."
 
     const inspirations = formatInspirationsForPrompt()
-    const systemPrompt = generateHtmlStoryboardPrompt(inspirations, themeContext)
 
     const targetSlide = allSlides[index]
     const existingAssets = (targetSlide?.assets as any[]) || []
     const existingPrompt = targetSlide?.prompt || ""
 
+    const messages: any[] = [
+      { role: "system", content: STORYBOARD_SYSTEM_PROMPT },
+      { role: "system", content: `### 🍱 DESIGN INSPIRATIONS & REFERENCE ARCHITECTURES:\n${inspirations}` },
+      { role: "system", content: `### 🏁 THEME CONTEXT:\n${themeContext}` },
+      {
+        role: "user",
+        content: `
+          USER_PROMPT: ${initialPrompt}
+          PROJECT_CONTEXT: ${context}
+          SLIDE_INDEX: ${index + 1}
+          
+          SLIDE_HISTORY:
+          - Previous Refinement Prompt: ${existingPrompt || "None"}
+          - Available Assets (URLs you can reuse): ${JSON.stringify(existingAssets.map(a => a.url), null, 2)}
+          
+          INSTRUCTIONS:
+          1. Create a high-fidelity slide using HTML/Tailwind.
+          2. REUSE existing assets if appropriate.
+          3. Use 'generateImage' if you need NEW cinematic visuals. ALWAYS provide a detailed 'prompt', 'width', and 'height' based on the requested layout (e.g., 1024x1024 for square, 1280x720 for landscape).
+          4. Synthesize the narrative into professional design.
+          5. IMPORTANT: Output ONLY the full HTML document for the slide. No preamble.
+        `,
+      },
+    ]
+
     // 3. EXECUTE AGENTIC GENERATION
-    const result = await generateObject({
-      schema: z.object({
-        html: z.string().describe("The final full high-fidelity HTML code for the slide."),
-      }),
-      messages: [
-        { role: "system", content: systemPrompt },
-        {
-          role: "user",
-          content: `
-            USER_PROMPT: ${initialPrompt}
-            PROJECT_CONTEXT: ${context}
-            SLIDE_INDEX: ${index + 1}
-            
-            SLIDE_HISTORY:
-            - Previous Refinement Prompt: ${existingPrompt || "None"}
-            - Available Assets (URLs you can reuse): ${JSON.stringify(existingAssets.map(a => a.url), null, 2)}
-            
-            INSTRUCTIONS:
-            1. Create a high-fidelity slide using HTML/Tailwind.
-            2. REUSE existing assets if appropriate.
-            3. Use 'generateImage' if you need NEW cinematic visuals.
-            4. Synthesize the narrative into professional design.
-            5. Provide the full HTML document within the 'html' field.
-          `,
-        },
-      ],
+    const result = await generateText({
+      messages,
       tools: {
         generateImage: {
           ...tools.generateImage,
@@ -126,11 +126,12 @@ export async function POST(req: Request) {
         }
       },
       maxSteps: 10,
+      abortSignal: req.signal,
       temperature: 0.4, // Slightly more deterministic for HTML structure
     })
 
-    const finalObject = result.object as { html: string }
-    console.log("[SECTION_GEN] Final Object from AI:", JSON.stringify(finalObject, null, 2))
+    const rawContent = result.text
+    console.log("[SECTION_GEN] Final output from AI (length):", rawContent?.length)
 
     /**
      * CLEANUP & PERSISTENCE
@@ -156,7 +157,7 @@ export async function POST(req: Request) {
       return clean
     }
 
-    const htmlOutput = extractHtml(finalObject?.html)
+    const htmlOutput = extractHtml(rawContent)
     console.log("[SECTION_GEN] Extracted HTML (length):", htmlOutput?.length)
 
     // Validation: Ensure we actually got HTML
@@ -171,7 +172,7 @@ export async function POST(req: Request) {
     // Deduct 1 credit for slide generation
     await deductCredits(userId, 1).catch(() => {})
 
-    // Sync final state
+    // 4. PERSIST FINAL OUTPUT
     if (targetSlide) {
       const finalAssetsRes = await prisma.slide.findUnique({
         where: { id: targetSlide.id },
@@ -198,11 +199,21 @@ export async function POST(req: Request) {
       })
     }
 
-    return new Response(JSON.stringify({ html: htmlOutput }), {
+    // Sync final project state
+    const updatedProject = await prisma.project.findUnique({
+      where: { id: projectId },
+      include: { slides: { orderBy: { index: "asc" } } }
+    })
+
+    return new Response(JSON.stringify(updatedProject), {
       headers: { "Content-Type": "application/json" },
     })
-  } catch (error) {
-    console.error("[SECTION_GEN] Fatal Error:", error)
-    return new Response("Failed to generate section", { status: 500 })
+  } catch (error: any) {
+    if (req.signal.aborted || error.name === 'AbortError' || error.name === 'ResponseAborted' || error.message?.includes('aborted')) {
+      console.log(`[REFINE] AI Refinement was stopped by user.`)
+      return new Response("Operation cancelled", { status: 200 })
+    }
+    console.error("[REFINE] Fatal Error:", error)
+    return new Response("Failed to refine section", { status: 500 })
   }
 }

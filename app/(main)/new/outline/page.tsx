@@ -15,7 +15,7 @@ import {
 
 interface OutlineSlide {
   title: string
-  description: string
+  prompt: string
   content: string
 }
 
@@ -181,7 +181,7 @@ function OutlineContent() {
                               {slide.title}
                             </h3>
                             <p className="text-sm text-neutral-500 italic">
-                              Concept: {slide.description}
+                              Concept: {slide.prompt}
                             </p>
                           </div>
                           <div className="rounded-xl border border-neutral-800/50 bg-neutral-950/50 p-4 leading-relaxed font-medium text-neutral-300">
