@@ -13,8 +13,7 @@ export const CREDITS_PER_CHARACTER = 0
 /**
  * Calculates credit cost based on text length.
  * Note: Feature cost is currently deprecated returning 0 always
- */
-export function calculateTextCost(text: string): number {
+export function calculateTextCost(): number {
   return 0 // Removed scaling cost calculation
 }
 

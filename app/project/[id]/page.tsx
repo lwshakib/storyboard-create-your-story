@@ -8,13 +8,7 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { toast } from "sonner"
 import { motion } from "framer-motion"
-import { parseStoryboard, HtmlSlide } from "@/lib/storyboard-parser"
-
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
+import { HtmlSlide } from "@/lib/storyboard-parser"
 
 /**
  * EditorContent: The core logic for the project editor page.
@@ -72,7 +66,7 @@ function EditorContent() {
       const pendingSkeletons = prev.filter(s => s.id < 0 && s.id !== finishedSkeletonId)
       
       // 2. The serverSlides list is the new ground truth for REAL slides
-      let merged = [...serverSlides]
+      const merged = [...serverSlides]
       
       // 3. Re-insert skeletons. 
       // We sort them by their stored index to ensure stable insertion.
@@ -208,7 +202,7 @@ function EditorContent() {
         setIsGeneratingOutline(false)
       }
     },
-    [id, router]
+    [id, router, credits, fetchCredits, syncSlidesWithSkeletons]
   )
 
   // --- EFFECTS ---
@@ -338,7 +332,7 @@ function EditorContent() {
         })
       }
     },
-    [project, id, streamingSlides, generatingSections]
+    [project, id, streamingSlides, generatingSections, credits, fetchCredits, expandingSections.size, syncSlidesWithSkeletons]
   )
 
   /**
@@ -452,7 +446,7 @@ function EditorContent() {
         })
       }
     },
-    [id, streamingSlides.length, expandingSections, credits, fetchCredits]
+    [id, streamingSlides.length, expandingSections, credits, fetchCredits, generatingSections.size, syncSlidesWithSkeletons]
   )
 
   /**

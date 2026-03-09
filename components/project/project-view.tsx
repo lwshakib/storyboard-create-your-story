@@ -6,8 +6,6 @@ import { motion, AnimatePresence, Reorder } from "framer-motion"
 import {
   ChevronLeft,
   Sparkles,
-  Loader2,
-  Save,
   Download,
   X,
   FileDown,
@@ -16,7 +14,6 @@ import {
   GripVertical,
   Plus,
   Trash,
-  Image as ImageIcon,
   Upload,
   Wand2,
   Compass,
@@ -173,7 +170,7 @@ export function ProjectView({
 
   const isBusy = (generatingSections?.size ?? 0) > 0 || (expandingSections?.size ?? 0) > 0
   const [isEditingTitle, setIsEditingTitle] = React.useState(false)
-  const [isSaving, setIsSaving] = React.useState(false)
+  const [, setIsSaving] = React.useState(false)
   const [activeSlideIndex, setActiveSlideIndex] = React.useState(0)
   const mainScrollRef = React.useRef<HTMLDivElement>(null)
 

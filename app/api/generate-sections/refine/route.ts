@@ -9,8 +9,6 @@ import { headers } from "next/headers"
 import { deleteMultipleFromCloudinary } from "@/lib/cloudinary"
 import {
   deductCredits,
-  COST_PER_IMAGE,
-  calculateTextCost,
   getOrResetCredits,
 } from "@/lib/credits"
 
@@ -66,10 +64,10 @@ export async function POST(req: Request) {
     const inspirations = formatInspirationsForPrompt()
 
     const targetSlide = allSlides[index]
-    const existingAssets = (targetSlide?.assets as any[]) || []
+    const existingAssets = (targetSlide?.assets as {url: string}[]) || []
     const existingPrompt = targetSlide?.prompt || ""
 
-    const messages: any[] = [
+    const messages: Array<{role: "system" | "user" | "assistant", content: string}> = [
       { role: "system", content: STORYBOARD_SYSTEM_PROMPT },
       { role: "system", content: `### 🍱 DESIGN INSPIRATIONS & REFERENCE ARCHITECTURES:\n${inspirations}` },
       { role: "system", content: `### 🏁 THEME CONTEXT:\n${themeContext}` },
@@ -102,7 +100,7 @@ export async function POST(req: Request) {
       tools: {
         generateImage: {
           ...tools.generateImage,
-          execute: async (args: any) => {
+          execute: async (args: { prompt: string; width?: number; height?: number }) => {
             const res = await tools.generateImage.execute(args)
             
             // Save asset to DB instantly
@@ -111,7 +109,7 @@ export async function POST(req: Request) {
                 where: { id: targetSlide.id },
                 select: { assets: true }
               })
-              const currentAssets = (currentAssetsRes?.assets as any[]) || []
+              const currentAssets = Array.isArray(currentAssetsRes?.assets) ? currentAssetsRes?.assets : []
               const newAssets = [
                 ...currentAssets, 
                 { publicId: res.publicId, url: res.url, type: "image", prompt: args.prompt }
@@ -141,7 +139,7 @@ export async function POST(req: Request) {
     const extractHtml = (text: string) => {
       if (!text || typeof text !== "string") return ""
       
-      let clean = text.trim()
+      const clean = text.trim()
         .replace(/```[a-z]*\n?/gi, "")
         .replace(/\n?```/g, "")
         .replace(/```/g, "")
@@ -180,7 +178,7 @@ export async function POST(req: Request) {
         where: { id: targetSlide.id },
         select: { assets: true }
       })
-      const allPossibleAssets = (finalAssetsRes?.assets as any[]) || []
+      const allPossibleAssets = (finalAssetsRes?.assets as {url: string; publicId: string}[]) || []
       
       const usedAssets = allPossibleAssets.filter(asset => htmlOutput.includes(asset.url))
       const unusedAssets = allPossibleAssets.filter(asset => !htmlOutput.includes(asset.url))
@@ -210,8 +208,9 @@ export async function POST(req: Request) {
     return new Response(JSON.stringify(updatedProject), {
       headers: { "Content-Type": "application/json" },
     })
-  } catch (error: any) {
-    if (req.signal.aborted || error.name === 'AbortError' || error.name === 'ResponseAborted' || error.message?.includes('aborted')) {
+  } catch (error) {
+    const err = error as Error;
+    if (req.signal.aborted || err.name === 'AbortError' || err.name === 'ResponseAborted' || err.message?.includes('aborted')) {
       console.log(`[REFINE] AI Refinement was stopped by user.`)
       return new Response("Operation cancelled", { status: 200 })
     }

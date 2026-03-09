@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Import environment configuration containing necessary URLs and API keys
 import { CLOUDFLARE_API_KEY, GLM_WORKER_URL } from '@/lib/env';
 // Import utility function for transforming Zod schemas to JSON Schemas for the tools
@@ -60,7 +61,7 @@ export const generateText = async (options: {
     : undefined; // Pass undefined if no tools are registered
 
   // Clone messages to safely mutate locally when appending tool results
-  let currentMessages = [...messages];
+  const currentMessages = [...messages];
   // Track how many generation iterations the agent has gone through
   let stepCount = 0;
 

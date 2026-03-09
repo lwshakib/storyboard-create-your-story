@@ -40,7 +40,7 @@ export async function POST(
       })
 
       // Insert the new slide
-      const newSlide = await tx.slide.create({
+      await tx.slide.create({
         data: {
           index: index ?? currentSlides.length,
           title: "New Section",

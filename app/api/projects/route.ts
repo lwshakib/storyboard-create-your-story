@@ -25,7 +25,7 @@ export async function POST(req: Request) {
         description: description || null,
         userId: session?.user?.id || null,
         slides: {
-          create: (slides || []).map((slide: any, idx: number) => ({
+          create: (slides || []).map((slide: { title?: string; content?: string; prompt?: string; html?: string }, idx: number) => ({
             index: idx,
             title: slide.title || null,
             content: slide.content || null,
@@ -119,7 +119,7 @@ export async function DELETE() {
     // 2. ASSET DISCOVERY: Extract public IDs for all images/videos in these projects
     const allPublicIds = trashProjects.flatMap(project => 
       project.slides.flatMap(slide => {
-        const assets = (slide.assets as any[]) || []
+        const assets = (slide.assets as {publicId: string}[]) || []
         return assets.map(a => a.publicId).filter(Boolean)
       })
     )

@@ -64,11 +64,11 @@ export async function PATCH(
       
       if (currentProject) {
         // Find slide IDs that exist in the DB but NOT in the incoming update
-        const incomingIds = new Set((slides as any[]).map(s => s.id).filter(id => typeof id === "string"))
+        const incomingIds = new Set((slides as {id?: string}[]).map(s => s.id).filter(id => typeof id === "string"))
         const removedSlides = currentProject.slides.filter(s => !incomingIds.has(s.id))
         
         // Extract assets (images) from these removed slides
-        const assetsToPurge = removedSlides.flatMap(s => (s.assets as any[]) || [])
+        const assetsToPurge = removedSlides.flatMap(s => (s.assets as {publicId: string}[]) || [])
         if (assetsToPurge.length > 0) {
           const publicIds = assetsToPurge.map(a => a.publicId)
           try {
@@ -96,7 +96,7 @@ export async function PATCH(
           isDeleted === false ? null : isDeleted ? new Date() : undefined,
         slides: slides ? {
           deleteMany: {}, // Atomic replacement: wipe existing slides...
-          create: (slides as any[]).map((s, idx) => ({ // ...and create new ones in the new order
+          create: (slides as {title: string; content: string; prompt: string; html: string; assets: {url: string; publicId?: string}[]}[]).map((s, idx) => ({ // ...and create new ones in the new order
             index: idx,
             title: s.title,
             content: s.content,
@@ -157,7 +157,7 @@ export async function DELETE(
       // PHASE 2: Permanent delete - Actual removal
       
       // 1. ASSET PURGE: Remove all Cloudinary assets associated with this project's slides
-      const allAssets = project.slides.flatMap(slide => (slide.assets as any[]) || [])
+      const allAssets = project.slides.flatMap(slide => (slide.assets as {publicId: string}[]) || [])
       if (allAssets.length > 0) {
         const publicIds = allAssets.map((asset) => asset.publicId)
         try {

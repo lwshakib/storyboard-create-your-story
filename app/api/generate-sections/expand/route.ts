@@ -7,7 +7,6 @@ import { auth } from "@/lib/auth"
 import { headers } from "next/headers"
 import {
   deductCredits,
-  calculateTextCost,
   getOrResetCredits,
 } from "@/lib/credits"
 
@@ -84,7 +83,7 @@ export async function POST(req: Request) {
       ? `This new section MUST bridge the transition BETWEEN:\n1. PREV SLIDE: "${prevSlide?.title}" (Content: ${prevSlide?.content})\nAND\n2. NEXT SLIDE: "${nextSlide.title}" (Content: ${nextSlide.content})`
       : `This new section follows "${prevSlide?.title}" (Content: ${prevSlide?.content}) and should continue the narrative flow to its next logic step.`
 
-    const messages: any[] = [
+    const messages: Array<{role: "system" | "user" | "assistant", content: string}> = [
       { role: "system", content: STORYBOARD_SYSTEM_PROMPT },
       { role: "system", content: `### 🍱 DESIGN INSPIRATIONS & REFERENCE ARCHITECTURES:\n${inspirations}` },
       { role: "system", content: `### 🏁 THEME CONTEXT:\n${themeContext}` },
@@ -142,7 +141,7 @@ export async function POST(req: Request) {
     }
 
     // 7. SPLICE & REINDEX: Insert the new slide into the correct position
-    const updatedSlides = [...existingSlides] as any[]
+    const updatedSlides = [...existingSlides] as unknown as { title: string; prompt: string; content: string; html?: string; assets?: { url: string; publicId?: string; type?: string; prompt?: string }[] }[]
     const insertIndex = typeof index === "number" ? index + 1 : updatedSlides.length
     updatedSlides.splice(insertIndex, 0, newSlide)
 
@@ -172,8 +171,9 @@ export async function POST(req: Request) {
     })
 
     return Response.json(updatedProject)
-  } catch (error: any) {
-    if (req.signal.aborted || error.name === 'AbortError' || error.name === 'ResponseAborted' || error.message?.includes('aborted')) {
+  } catch (error) {
+    const err = error as Error;
+    if (req.signal.aborted || err.name === 'AbortError' || err.name === 'ResponseAborted' || err.message?.includes('aborted')) {
       console.log(`[EXPAND] AI Expansion was stopped by user.`)
       return new Response("Operation cancelled", { status: 200 }) 
     }

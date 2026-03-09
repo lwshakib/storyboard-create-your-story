@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 // Import zod for schema validation definitions
 import { z } from 'zod';
 // Import required environment variables for worker URL and authentication

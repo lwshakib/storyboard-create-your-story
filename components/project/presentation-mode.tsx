@@ -6,7 +6,7 @@ import { X, ChevronLeft, ChevronRight, Maximize2, Minimize2 } from "lucide-react
 import { Button } from "@/components/ui/button"
 import { HtmlSlide } from "@/lib/storyboard-parser"
 import { SlidePreview } from "./slide-preview"
-import { cn } from "@/lib/utils"
+
 
 interface PresentationModeProps {
   slides: HtmlSlide[]

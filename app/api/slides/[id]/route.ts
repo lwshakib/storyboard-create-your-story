@@ -36,7 +36,7 @@ export async function DELETE(
     const projectId = slide.projectId
 
     // 2. Asset Cleanup
-    const assets = (slide.assets as any[]) || []
+    const assets = (slide.assets as { publicId: string }[]) || []
     if (assets.length > 0) {
       const publicIds = assets.map(a => a.publicId)
       try {
