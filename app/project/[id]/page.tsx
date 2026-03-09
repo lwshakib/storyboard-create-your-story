@@ -161,7 +161,7 @@ function EditorContent() {
       // Pre-check credits if available
       if (credits !== null && credits < 1) {
         toast.error("Credits exhausted.", {
-          description: "You should use until daily limit resets at midnight.",
+          description: "Please wait until the daily limit resets at midnight.",
         })
         return
       }
@@ -267,7 +267,7 @@ function EditorContent() {
       // Pre-check credits
       if (credits !== null && credits < 1) {
         toast.error("Credits exhausted.", {
-          description: "You should use until daily limit resets at midnight.",
+          description: "Please wait until the daily limit resets at midnight.",
         })
         return
       }
@@ -365,7 +365,7 @@ function EditorContent() {
       // Pre-check credits
       if (credits !== null && credits < 1) {
         toast.error("Credits exhausted.", {
-          description: "You should use until daily limit resets at midnight.",
+          description: "Please wait until the daily limit resets at midnight.",
         })
         return
       }
@@ -591,6 +591,7 @@ function EditorContent() {
         }
       }}
       onSaveSuccess={handleSaveSuccess}
+      credits={credits}
     />
   )
 }

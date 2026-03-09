@@ -87,9 +87,11 @@ export async function POST(req: Request) {
           INSTRUCTIONS:
           1. Create a high-fidelity slide using HTML/Tailwind.
           2. REUSE existing assets if appropriate.
-          3. Use 'generateImage' if you need NEW cinematic visuals. ALWAYS provide a detailed 'prompt', 'width', and 'height' based on the requested layout (e.g., 1024x1024 for square, 1280x720 for landscape).
-          4. Synthesize the narrative into professional design.
-          5. IMPORTANT: Output ONLY the full HTML document for the slide. No preamble.
+          3. Use 'generateImage' if you need NEW cinematic visuals. ALWAYS provide a detailed 'prompt', 'width', and 'height' based on the requested layout.
+          4. SYNTHESIZE & CONSTRAIN: Do NOT copy long source text verbatim. Strictly limit body text to 2-3 short, impactful sentences. If the narrative is long, convert it into 2-3 bullet points or key metrics with icons.
+          5. OVERFLOW PREVENTION: Ensure every element fits comfortably within the 960x540 container. Avoid pushing text to the edges (use padding). Ensure headlines do not exceed 2 lines.
+          6. VERTICAL BALANCE: If using 'justify-center', ensure the total content height does not exceed 400px to accommodate padding and prevent 'pushing' elements out of view.
+          7. IMPORTANT: Output ONLY the full HTML document for the slide. No preamble.
         `,
       },
     ]

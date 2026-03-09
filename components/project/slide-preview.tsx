@@ -278,9 +278,6 @@ export function SlidePreview({
               width: 960px; 
               height: 540px;
               position: relative;
-              display: flex;
-              align-items: center;
-              justify-content: center;
               -ms-overflow-style: none;
               scrollbar-width: none;
               user-select: none;

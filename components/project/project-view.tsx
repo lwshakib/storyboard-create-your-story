@@ -90,6 +90,7 @@ interface ProjectViewProps {
     outline?: string
     isDeleted?: boolean
   }) => void
+  credits?: number | null
 }
 
 const AutoResizeTextarea = ({
@@ -156,6 +157,7 @@ export function ProjectView({
   generatingSections,
   expandingSections,
   onSaveSuccess,
+  credits,
 }: ProjectViewProps) {
   const router = useRouter()
 
@@ -172,24 +174,7 @@ export function ProjectView({
   const [isEditingTitle, setIsEditingTitle] = React.useState(false)
   const [isSaving, setIsSaving] = React.useState(false)
   const [activeSlideIndex, setActiveSlideIndex] = React.useState(0)
-  const [credits, setCredits] = React.useState<number | null>(null)
   const mainScrollRef = React.useRef<HTMLDivElement>(null)
-
-  // Fetch credits on mount
-  React.useEffect(() => {
-    const fetchCredits = async () => {
-      try {
-        const res = await fetch("/api/user/credits")
-        if (res.ok) {
-          const data = await res.json()
-          setCredits(data.credits)
-        }
-      } catch (err) {
-        console.error("Failed to fetch credits", err)
-      }
-    }
-    fetchCredits()
-  }, [])
 
   // Settings Panel States
   const [selectedElData, setSelectedElData] =
