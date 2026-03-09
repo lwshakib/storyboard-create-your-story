@@ -532,11 +532,11 @@ export function ProjectView({
             <TooltipTrigger asChild>
               <Button
                 variant="outline"
-                className="border-border/50 hover:bg-muted/50 hidden h-10 items-center gap-2 rounded-full px-6 font-medium shadow-sm sm:flex"
+                className="border-border/50 hover:bg-muted/50 flex size-9 items-center justify-center p-0 md:h-10 md:w-auto md:px-6 md:gap-2 rounded-full font-medium shadow-sm"
                 onClick={() => fileInputRef.current?.click()}
               >
                 <Upload className="size-4 opacity-70" />
-                <span>Import</span>
+                <span className="hidden md:inline">Import</span>
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom" sideOffset={10}>
@@ -558,10 +558,10 @@ export function ProjectView({
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="outline"
-                    className="border-border/50 hover:bg-muted/50 flex h-10 items-center gap-2 rounded-full px-6 font-medium shadow-sm"
+                    className="border-border/50 hover:bg-muted/50 flex size-9 items-center justify-center p-0 md:h-10 md:w-auto md:px-6 md:gap-2 rounded-full font-medium shadow-sm"
                   >
                     <Download className="size-4 opacity-70" />
-                    <span className="hidden sm:inline">Export</span>
+                    <span className="hidden md:inline">Export</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="border-border/50 bg-background/95 mt-1 w-48 rounded-xl p-1 shadow-xl backdrop-blur-xl">
@@ -598,11 +598,11 @@ export function ProjectView({
 
           <Button
             asChild
-            className="bg-primary hover:bg-primary/90 text-primary-foreground hidden h-10 items-center gap-2 rounded-full px-6 font-medium shadow-sm md:flex"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground flex size-9 items-center justify-center p-0 md:h-10 md:w-auto md:px-6 md:gap-2 rounded-full font-medium shadow-sm"
           >
             <Link href="/new">
               <Plus className="size-4" />
-              <span>New Project</span>
+              <span className="hidden md:inline">New Project</span>
             </Link>
           </Button>
 
@@ -612,11 +612,11 @@ export function ProjectView({
             <TooltipTrigger asChild>
               <Button
                 variant="outline"
-                className="border-primary/20 hover:bg-primary/5 hidden h-10 items-center gap-2 rounded-full px-6 font-bold shadow-sm md:flex"
+                className="border-primary/20 hover:bg-primary/5 flex size-9 items-center justify-center p-0 md:h-10 md:w-auto md:px-6 md:gap-2 rounded-full font-bold shadow-sm"
                 onClick={() => setIsPresenting(true)}
               >
                 <PresentationIcon className="text-primary size-4" />
-                <span>Present</span>
+                <span className="hidden md:inline">Present</span>
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom" sideOffset={10}>

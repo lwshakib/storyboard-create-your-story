@@ -308,7 +308,7 @@ export default function MainLayout({
                   <Button
                     variant="outline"
                     disabled={isImporting}
-                    className="border-border/50 hover:bg-muted/50 flex items-center gap-2 rounded-full px-4 font-medium shadow-sm md:px-6"
+                    className="border-border/50 hover:bg-muted/50 flex size-9 items-center justify-center p-0 md:h-10 md:w-auto md:px-6 md:gap-2 rounded-full font-medium shadow-sm"
                     onClick={() =>
                       document.getElementById("main-import-json")?.click()
                     }
@@ -318,18 +318,17 @@ export default function MainLayout({
                     ) : (
                       <Upload className="size-4 opacity-70" />
                     )}
-                    <span className="hidden sm:inline">Import</span>
+                    <span className="hidden md:inline">Import</span>
                   </Button>
 
                   {/* New Project Button */}
                   <Button
                     asChild
-                    className="bg-primary hover:bg-primary/90 text-primary-foreground flex items-center gap-2 rounded-full px-4 font-medium shadow-sm md:px-6"
+                    className="bg-primary hover:bg-primary/90 text-primary-foreground flex size-9 items-center justify-center p-0 md:h-10 md:w-auto md:px-6 md:gap-2 rounded-full font-medium shadow-sm"
                   >
                     <Link href="/new">
                       <Plus className="size-4" />
-                      <span className="hidden sm:inline">New Project</span>
-                      <span className="sm:hidden">New</span>
+                      <span className="hidden md:inline">New Project</span>
                     </Link>
                   </Button>
                   
