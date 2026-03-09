@@ -1,4 +1,4 @@
-# Storyboard: Create Your Story
+# <img src="public/logo.svg" height="40" alt="Storyboard Logo" style="vertical-align: middle; margin-right: 10px;" /> Storyboard: Create Your Story
 
 ![Project Banner](public/screenshots/banner.png)
 

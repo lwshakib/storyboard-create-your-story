@@ -49,9 +49,34 @@ This section guides you through submitting an enhancement suggestion, including 
 ## 🛠 Development Setup
 
 1.  Clone the repository.
-2.  Install dependencies: `bun install` (recommended) or `npm install`.
+2.  Install dependencies:
+    ```bash
+    bun install # recommended
+    # or
+    npm install
+    ```
 3.  Set up your `.env` file (see [README.md](README.md)).
-4.  Run the development server: `npm run dev`.
+4.  Set up the database and run migrations:
+    ```bash
+    bun run db:migrate
+    # or
+    npm run db:migrate
+    ```
+5.  Run the development server:
+    ```bash
+    bun dev
+    # or
+    npm run dev
+    ```
+
+## 🧪 Testing
+
+We use Jest for unit tests and Playwright for end-to-end testing:
+
+- **Run unit tests**: `bun test` or `npm run test`
+- **Run E2E tests**: `bun run test:e2e` or `npm run test:e2e`
+- **Linting**: `bun run lint` or `npm run lint`
+- **Formatting**: `bun run format` or `npm run format`
 
 ## 💬 Community
 
