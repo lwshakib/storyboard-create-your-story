@@ -10,7 +10,7 @@ import {
   Circle,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { SlidePreview } from "@/components/editor/slide-preview"
+import { SlidePreview } from "@/components/project/slide-preview"
 import { formatDistanceToNow } from "date-fns"
 import { toast } from "sonner"
 import {

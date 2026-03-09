@@ -6,7 +6,7 @@ import { LayoutTemplate, ArrowRight, Files, Plus, Loader2 } from "lucide-react"
 import { motion } from "framer-motion"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
-import { SlidePreview } from "@/components/editor/slide-preview"
+import { SlidePreview } from "@/components/project/slide-preview"
 import { cn } from "@/lib/utils"
 import { Template } from "@/lib/templates"
 

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef, Suspense } from "react"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
-import { EditorView } from "@/components/editor/editor-view"
+import { EditorView } from "@/components/project/editor-view"
 import { Loader2, Trash2, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
@@ -490,7 +490,6 @@ function EditorContent() {
         ...project,
         slides: streamingSlides,
       }}
-      isGenerating={false}
       generatingSections={generatingSections}
       onGenerateSection={handleGenerateSection}
       onExpandSection={handleExpandSection}

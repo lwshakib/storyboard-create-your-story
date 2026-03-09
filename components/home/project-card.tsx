@@ -3,7 +3,7 @@
 import * as React from "react"
 import Link from "next/link"
 import { Trash2, Clock, Layout } from "lucide-react"
-import { SlidePreview } from "@/components/editor/slide-preview"
+import { SlidePreview } from "@/components/project/slide-preview"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { formatDistanceToNow } from "date-fns"
