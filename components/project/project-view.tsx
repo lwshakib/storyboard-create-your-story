@@ -162,6 +162,7 @@ export function ProjectView({
   const router = useRouter()
 
   // --- LOCAL STATE ---
+  const hasUserChangesRef = React.useRef(false)
   const [slides, setSlides] = React.useState<HtmlSlide[]>(
     initialData?.slides || []
   )
@@ -216,6 +217,18 @@ export function ProjectView({
       setIsSaving(false)
     }
   }
+
+  React.useEffect(() => {
+    if (!hasUserChangesRef.current) return
+
+    const timeoutId = setTimeout(() => {
+      saveProjectData({ title, description, slides })
+      hasUserChangesRef.current = false
+    }, 2000)
+
+    return () => clearTimeout(timeoutId)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [title, description, slides])
 
 
   React.useEffect(() => {
@@ -408,6 +421,7 @@ export function ProjectView({
   }
 
   const updateOutlineSlide = (index: number, field: string, value: string) => {
+    hasUserChangesRef.current = true
     setSlides((prev) => {
       const newSlides = [...prev]
       newSlides[index] = { ...newSlides[index], [field]: value }
@@ -500,6 +514,7 @@ export function ProjectView({
                 value={title}
                 onChange={(e) => {
                   setTitle(e.target.value)
+                  hasUserChangesRef.current = true
                 }}
                 onBlur={() => setIsEditingTitle(false)}
                 onKeyDown={(e) => e.key === "Enter" && setIsEditingTitle(false)}
@@ -650,15 +665,19 @@ export function ProjectView({
                     className="text-foreground placeholder:text-muted/20 w-full border-none bg-transparent p-0 text-4xl font-black tracking-tighter outline-none focus:ring-0 md:text-5xl"
                     value={title}
                     placeholder="Storyboard Title"
-                    onChange={(e) => setTitle(e.target.value)}
-                    onBlur={() => saveProjectData({ title })}
+                    onChange={(e) => {
+                      setTitle(e.target.value)
+                      hasUserChangesRef.current = true
+                    }}
                   />
                   <AutoResizeTextarea
                     className="text-muted-foreground placeholder:text-muted/20 w-full p-0 text-lg leading-relaxed"
                     placeholder="Overall story arc and narrative goals..."
                     value={description}
-                    onChange={(val) => setDescription(val)}
-                    onBlur={() => saveProjectData({ description })}
+                    onChange={(val) => {
+                      setDescription(val)
+                      hasUserChangesRef.current = true
+                    }}
                   />
                 </div>
               </div>
@@ -705,7 +724,6 @@ export function ProjectView({
                                 onChange={(e) =>
                                   updateOutlineSlide(i, "title", e.target.value)
                                 }
-                                onBlur={() => saveProjectData({})}
                                 placeholder="Section Title"
                                 disabled={generatingSections?.has(i)}
                               />
@@ -716,7 +734,6 @@ export function ProjectView({
                                 onChange={(val) =>
                                   updateOutlineSlide(i, "content", val)
                                 }
-                                onBlur={() => saveProjectData({})}
                                 placeholder="Write the detailed narrative content here..."
                                 disabled={generatingSections?.has(i)}
                               />
