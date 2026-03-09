@@ -1,16 +1,24 @@
+/**
+ * Defines the structure for illustrations imported from the Storyset library.
+ * These illustrations are used as placeholders or visual assets in the storyboard.
+ */
 export interface StorysetIllustration {
   /** The full filename in the public/storyset directory */
   filename: string
-  /** The conceptual title of the illustration */
+  /** The conceptual title of the illustration (e.g., "At the office") */
   title: string
-  /** The style of the storyset illustration (e.g. amico, bro, etc.) */
+  /** The style of the storyset illustration (e.g. amico, bro, cuate, pana, rafiki) */
   style: "amico" | "bro" | "cuate" | "pana" | "rafiki" | string
-  /** A description of what is shown in the image to help the AI understand without seeing it */
+  /** A detailed description of what is shown in the image to help the AI understand without seeing it */
   description: string
-  /** The most prominent hex colors found in the SVG file */
+  /** The most prominent hex colors found in the SVG file, used for color matching/theming */
   colors: string[]
 }
 
+/**
+ * A hardcoded registry of available Storyset illustrations.
+ * This acts as a database allowing the AI to search and select appropriate SVGs based on text prompts.
+ */
 export const STORYSET_REGISTRY: StorysetIllustration[] = [
   {
     filename: "At the office-amico.svg",

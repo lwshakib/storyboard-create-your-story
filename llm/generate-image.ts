@@ -1,8 +1,14 @@
+// Import required environment variables for Cloudflare and model API access
 import { CLOUDFLARE_API_KEY, FLUX_KLEIN_WORKER_URL } from '@/lib/env';
+// Import utility function to save generated images to Cloudinary
 import { saveImageToCloudinary } from '@/lib/cloudinary';
 
 /**
  * Supported generation modes for the Flux Klein model.
+ * - text-to-image: Standard image generation from text prompt.
+ * - image-to-image: Modify an existing image based on a prompt.
+ * - blend: Mix multiple images together.
+ * - inpaint: Modify specific parts of an image using a mask.
  */
 export type GenerateImageMode = 'text-to-image' | 'image-to-image' | 'blend' | 'inpaint';
 
@@ -34,6 +40,7 @@ export interface GenerateImageOptions {
  * The result of an image generation operation.
  */
 export interface GenerateImageResult {
+  // Boolean flag indicating if generation was successful
   success: boolean
   /** The URL of the generated image (persisted in Cloudinary). */
   image?: string
@@ -51,6 +58,7 @@ export interface GenerateImageResult {
   error?: string
 }
 
+// Define the constant model name used in the generation
 const MODEL_NAME = "FLUX.2 [klein] 9B"
 
 /**
@@ -63,6 +71,7 @@ const MODEL_NAME = "FLUX.2 [klein] 9B"
 export const generateImage = async (
   options: GenerateImageOptions
 ): Promise<GenerateImageResult> => {
+  // Destructure options with default fallbacks
   const {
     mode = "text-to-image",
     prompt,
@@ -75,8 +84,10 @@ export const generateImage = async (
     seed,
   } = options
 
+  // Validate presence of the Cloudflare API key
   if (!CLOUDFLARE_API_KEY) {
     console.error("[GENERATE_IMAGE] Missing CLOUDFLARE_API_KEY")
+    // Return early with an error state if API key is missing
     return {
       success: false,
       error: "Missing CLOUDFLARE_API_KEY",
@@ -86,38 +97,41 @@ export const generateImage = async (
   }
 
   try {
+    // Variable to hold the fetch response
     let response: Response
 
-    // Determine if we should use JSON or FormData
+    // Determine if we should use JSON or FormData based on mode and inputs
     const isFormDataNeeded = mode !== "text-to-image" || images.length > 0 || !!mask
 
     if (!isFormDataNeeded) {
-      // Simple Text-to-Image (JSON)
+      // Simple Text-to-Image (JSON) workflow
       response = await fetch(FLUX_KLEIN_WORKER_URL!, {
-        method: "POST",
+        method: "POST", // POST request to the worker
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${CLOUDFLARE_API_KEY}`,
+          "Content-Type": "application/json", // Send payload as JSON
+          Authorization: `Bearer ${CLOUDFLARE_API_KEY}`, // Authenticate using API Key
         },
         body: JSON.stringify({
-          prompt,
-          width,
-          height,
-          steps,
-          seed,
+          prompt, // User's prompt text
+          width,  // Image width
+          height, // Image height
+          steps,  // Number of generation steps
+          seed,   // Seed for reproducibility
         }),
       })
     } else {
-      // Advanced Workflows (FormData)
+      // Advanced Workflows requiring multipart/form-data
       const form = new FormData()
-      form.append("prompt", prompt)
+      form.append("prompt", prompt) // Append prompt string
+      
+      // Append numerical parameters if they exist
       if (width) form.append("width", width.toString())
       if (height) form.append("height", height.toString())
       if (steps) form.append("steps", steps.toString())
       if (seed !== undefined) form.append("seed", seed.toString())
       if (strength !== undefined) form.append("strength", strength.toString())
 
-      // Loop through the images array and append to form
+      // Loop through the input images array and append them to the form
       images.forEach((img, idx) => {
         // For common modes like blend, use image0, image1, etc.
         // For image-to-image, the first image is often just 'image'
@@ -125,49 +139,57 @@ export const generateImage = async (
         form.append(key, img as Blob)
       })
 
+      // If inpainting mode is selected and a mask is provided, append it
       if (mode === "inpaint" && mask) {
         form.append("mask", mask as Blob)
       }
 
+      // Execute the POST request using FormData
       response = await fetch(FLUX_KLEIN_WORKER_URL!, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${CLOUDFLARE_API_KEY}`,
+          Authorization: `Bearer ${CLOUDFLARE_API_KEY}`, // Note: Content-Type is auto-set for FormData
         },
         body: form,
       })
     }
 
+    // Check if the response was unsuccessful
     if (!response.ok) {
+      // Read the backend error text
       const errorText = await response.text();
       console.error(`[GENERATE_IMAGE] API Error: ${response.status} - ${errorText}`);
+      // Throw an error to be handled by the catch block
       throw new Error(`Image generation failed (${response.status}): ${errorText}`);
     }
 
-    // The worker returns the raw image binary (image/png)
+    // Extract the raw image binary (image/png) from the response
     const arrayBuffer = await response.arrayBuffer();
+    // Convert the array buffer into a Node Buffer object
     const imageBuffer = Buffer.from(arrayBuffer);
 
-    // Persist resulting image to Cloudinary for stable hosting
+    // Persist resulting image to Cloudinary to get a stable URL for the frontend
     const uploadResult = await saveImageToCloudinary(imageBuffer);
 
+    // Return the successful generation payload
     return {
-      success: true,
-      image: uploadResult.url,
-      publicId: uploadResult.publicId,
-      prompt,
-      width,
-      height,
-      model: MODEL_NAME,
+      success: true,               // Flag success
+      image: uploadResult.url,     // Accessible Cloudinary URL
+      publicId: uploadResult.publicId, // Cloudinary identifier used for deletions/management
+      prompt,                      // Echo the prompt used
+      width,                       // Return generation width
+      height,                      // Return generation height
+      model: MODEL_NAME,           // Specify which model did the generation
     };
   } catch (error) {
+    // Handle any exceptions during the fetch or upload process
     console.error('[GENERATE_IMAGE_EXCEPTION]', error);
     return {
-      success: false,
+      success: false, // Flag failure
       error:
         error instanceof Error
-          ? error.message
-          : 'An unexpected error occurred during image generation',
+          ? error.message // Use standard error message
+          : 'An unexpected error occurred during image generation', // Fallback error string
       prompt,
       model: MODEL_NAME,
     };

@@ -26,9 +26,7 @@ export function NavProjects({
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel className="text-[10px] font-black tracking-widest uppercase opacity-40">
-        Recently Opened
-      </SidebarGroupLabel>
+      <SidebarGroupLabel>Recently opened</SidebarGroupLabel>
       <SidebarMenu>
         {projects.map((item) => (
           <SidebarMenuItem key={item.url}>
