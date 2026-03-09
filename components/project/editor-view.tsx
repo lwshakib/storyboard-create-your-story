@@ -51,13 +51,11 @@ import {
 import { toPng } from "html-to-image"
 
 import { HtmlSlide } from "@/lib/storyboard-parser"
-import { SlidePreview } from "@/components/editor/slide-preview"
+import { SlidePreview } from "@/components/project/slide-preview"
 import {
   ElementSettings,
   type ElementData,
-} from "@/components/editor/element-settings"
-import { ThemeSettings } from "@/components/editor/theme-settings"
-import { type Theme } from "@/lib/themes"
+} from "@/components/project/element-settings"
 import { PresentationMode } from "./presentation-mode"
 
 import Link from "next/link"
@@ -81,8 +79,6 @@ interface EditorViewProps {
     description?: string
     slides: HtmlSlide[]
   }
-  isGenerating?: boolean
-  onGenerate?: () => void
   onGenerateSection?: (index: number) => void
   onExpandSection?: (index?: number) => void
   generatingSections?: Set<number>
@@ -170,17 +166,28 @@ export function EditorView({
   const [isEditingTitle, setIsEditingTitle] = React.useState(false)
   const [isSaving, setIsSaving] = React.useState(false)
   const [activeSlideIndex, setActiveSlideIndex] = React.useState(0)
+  const [credits, setCredits] = React.useState<number | null>(null)
   const mainScrollRef = React.useRef<HTMLDivElement>(null)
 
+  // Fetch credits on mount
+  React.useEffect(() => {
+    const fetchCredits = async () => {
+      try {
+        const res = await fetch("/api/user/credits")
+        if (res.ok) {
+          const data = await res.json()
+          setCredits(data.credits)
+        }
+      } catch (err) {
+        console.error("Failed to fetch credits", err)
+      }
+    }
+    fetchCredits()
+  }, [])
+
   // Settings Panel States
-  const [isThemeMode, setIsThemeMode] = React.useState(false)
   const [selectedElData, setSelectedElData] =
     React.useState<ElementData | null>(null)
-  const [activeThemeId, setActiveThemeId] = React.useState<string | null>(null)
-  const [appliedTheme, setAppliedTheme] = React.useState<Record<
-    string,
-    string
-  > | null>(null)
   const [isPresenting, setIsPresenting] = React.useState(false)
 
   const handleGenerateSection = (index: number) => {
@@ -510,13 +517,17 @@ export function EditorView({
         </div>
 
         <div className="flex items-center gap-3">
-          <input
-            type="file"
-            ref={fileInputRef}
-            className="hidden"
-            accept=".json"
-            onChange={handleImportJson}
-          />
+          <div className="bg-border h-4 w-[1px] mx-1" />
+          
+          {/* Credit Display */}
+          <div className="hidden lg:block">
+            <span className="text-[10px] font-bold tabular-nums opacity-60">
+              {credits !== null
+                ? credits
+                : "---"}{" "}
+              credits remaining
+            </span>
+          </div>
 
           <Tooltip>
             <TooltipTrigger asChild>
@@ -533,6 +544,14 @@ export function EditorView({
               <p className="font-bold">Import JSON</p>
             </TooltipContent>
           </Tooltip>
+
+          <input
+            type="file"
+            ref={fileInputRef}
+            className="hidden"
+            accept=".json"
+            onChange={handleImportJson}
+          />
 
           <Tooltip>
             <TooltipTrigger asChild>
@@ -783,7 +802,10 @@ export function EditorView({
                     </div>
 
                     {/* Section Toolbar */}
-                    <div className="bg-background ring-background absolute -bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1 rounded-full border p-1 opacity-0 shadow-2xl ring-4 transition-opacity group-hover:opacity-100">
+                    <div className={cn(
+                      "bg-background ring-background absolute -bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1 rounded-full border p-1 shadow-2xl ring-4 transition-opacity",
+                      generatingSections?.has(i) ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                    )}>
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <Button
@@ -807,14 +829,25 @@ export function EditorView({
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="bg-primary/5 hover:bg-primary/10 group/btn size-8 rounded-full"
+                            className={cn(
+                              "group/btn size-8 rounded-full",
+                              generatingSections?.has(i) 
+                                ? "bg-destructive/10 hover:bg-destructive/20" 
+                                : "bg-primary/5 hover:bg-primary/10"
+                            )}
                             onClick={() => handleGenerateSection(i)}
                           >
-                            <Wand2 className="text-primary size-3.5 transition-transform group-hover/btn:scale-110" />
+                            {generatingSections?.has(i) ? (
+                              <X className="text-destructive size-3.5 animate-pulse" />
+                            ) : (
+                              <Wand2 className="text-primary size-3.5 transition-transform group-hover/btn:scale-110" />
+                            )}
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent side="bottom" sideOffset={10}>
-                          <p className="font-bold">Refine Slide</p>
+                          <p className="font-bold">
+                            {generatingSections?.has(i) ? "Abort Refining" : "Refine Slide"}
+                          </p>
                         </TooltipContent>
                       </Tooltip>
 
@@ -941,87 +974,7 @@ export function EditorView({
         )}
       </AnimatePresence>
 
-      <AnimatePresence>
-        {isThemeMode && (
-          <motion.aside
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ type: "spring", damping: 30, stiffness: 250 }}
-            className="bg-card fixed top-12 right-0 bottom-0 z-[150] w-[360px] border-l shadow-2xl"
-          >
-            <div className="flex h-full flex-col">
-              <div className="flex items-center justify-between border-b p-4">
-                <span className="text-muted-foreground/60 text-[10px] font-black tracking-widest uppercase">
-                  Design Tokens
-                </span>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setIsThemeMode(false)}
-                  className="size-8"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-              <ScrollArea className="flex-1">
-                <ThemeSettings
-                  activeThemeId={activeThemeId}
-                  onApplyTheme={(
-                    theme: Theme & { id: string; cssVars: Theme }
-                  ) => {
-                    const t = theme as unknown as Record<string, string>
-                    setActiveThemeId(t.id)
-                    setAppliedTheme(t)
 
-                    const updatedSlides = slides.map((slide) => {
-                      let html = slide.html
-                      const themeVars = `:root {
-                    --background: ${t.background};
-                    --foreground: ${t.foreground};
-                    --primary: ${t.primary};
-                    --primary-foreground: ${t.primaryForeground};
-                    --card: ${t.card};
-                    --card-foreground: ${t.cardForeground};
-                    --secondary: ${t.secondary};
-                    --secondary-foreground: ${t.secondaryForeground};
-                    --muted: ${t.muted};
-                    --muted-foreground: ${t.mutedForeground};
-                    --accent: ${t.accent};
-                    --accent-foreground: ${t.accentForeground};
-                    --popover: ${t.popover || t.card};
-                    --popover-foreground: ${t.popoverForeground || t.cardForeground};
-                    --destructive: ${t.destructive};
-                    --border: ${t.border};
-                    --input: ${t.input};
-                    --ring: ${t.ring};
-                    --radius: ${t.radius};
-                    }`
-
-                      if (html.includes(":root")) {
-                        html = html.replace(/:root\s*\{[\s\S]*?\}/, themeVars)
-                      } else if (html.includes("<style>")) {
-                        html = html.replace("<style>", `<style>\n${themeVars}`)
-                      } else if (html.includes("</head>")) {
-                        html = html.replace(
-                          "</head>",
-                          `<style>\n${themeVars}\n</style></head>`
-                        )
-                      }
-
-                      return { ...slide, html }
-                    })
-
-                    setSlides(updatedSlides)
-                    toast.success("Design system synchronized across workspace")
-                  }}
-                  appliedTheme={appliedTheme}
-                />
-              </ScrollArea>
-            </div>
-          </motion.aside>
-        )}
-      </AnimatePresence>
       <Dialog
         open={selectedVisualsIndex !== null}
         onOpenChange={(open) => !open && setSelectedVisualsIndex(null)}

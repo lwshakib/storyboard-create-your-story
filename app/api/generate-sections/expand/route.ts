@@ -35,13 +35,13 @@ export async function POST(req: Request) {
       return new Response("Unauthorized", { status: 401 })
     }
 
-    // 1. CREDIT CHECK: Expansion is a lightweight operation (2,000 credit reserve)
+    // 1. CREDIT CHECK: Expansion costs 1 credit
     const userCredits = await getOrResetCredits(session.user.id)
-    if (userCredits < 2000) {
+    if (userCredits < 1) {
       return new Response(
         JSON.stringify({
           error: "INSUFFICIENT_CREDITS",
-          message: "Minimum 2,000 credits required for section expansion.",
+          message: "Minimum 1 credit required for section expansion.",
         }),
         {
           status: 403,
@@ -72,46 +72,48 @@ export async function POST(req: Request) {
     const systemPrompt = generateHtmlStoryboardPrompt(inspirations, themeContext)
 
     // 4. AI GENERATION: Create the new slide metadata
-    const { object } = await generateObject<{
-      title: string
-      description: string
-      content: string
-    }>({
-      system: systemPrompt,
+    const result = await generateObject({
       schema: z.object({
         title: z.string(),
         description: z.string(),
         content: z.string(),
       }),
-      prompt: `
-      You are an elite Content Strategist. 
-      The user wants to add a NEW logical section (slide) to their storyboard.
-      
-      STORYBOARD CONTEXT:
-      Title: ${project.title}
-      Description: ${project.description}
-      
-      EXISTING SECTIONS:
-      ${existingSlides.map((s, i) => `${i + 1}. ${s.title}: ${s.description}`).join("\n")}
-      
-      TASK:
-      Create ONE new section that logically follows or fits into this flow.
-      Provide:
-      1. A short, punchy title.
-      2. A COMPREHENSIVE design guide (description). Must specify layout and visual style consistent with the rest.
-      3. The full, detailed narrative text for the slide.
-      `,
+      messages: [
+        { role: "system", content: systemPrompt },
+        {
+          role: "user",
+          content: `
+            You are an elite Content Strategist. 
+            The user wants to add a NEW logical section (slide) to their storyboard.
+            
+            STORYBOARD CONTEXT:
+            Title: ${project.title}
+            Description: ${project.description}
+            
+            EXISTING SECTIONS:
+            ${existingSlides.map((s, i) => `${i + 1}. ${s.title}: ${s.description}`).join("\n")}
+            
+            TASK:
+            Create ONE new section that logically follows or fits into this flow.
+            Provide:
+            1. A short, punchy title.
+            2. A COMPREHENSIVE design guide (description). Must specify layout and visual style consistent with the rest.
+            3. The full, detailed narrative text for the slide.
+          `,
+        },
+      ],
+      temperature: 0.8, // Slightly higher for more diverse expansions
     })
 
+    const aiObject = result.object as { title: string; description: string; content: string }
+
     // 5. CREDIT DEDUCTION
-    const totalText = object.title + object.description + object.content
-    const textCost = calculateTextCost(totalText)
-    await deductCredits(session.user.id, textCost)
+    await deductCredits(session.user.id, 1)
 
     const newSlide = {
-      title: object.title,
-      description: object.description,
-      content: object.content,
+      title: aiObject.title,
+      description: aiObject.description,
+      content: aiObject.content,
       html: "",
       prompt: ""
     }

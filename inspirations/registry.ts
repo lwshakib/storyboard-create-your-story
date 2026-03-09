@@ -25,6 +25,20 @@ export interface InspirationPresentation {
 const INSPIRATIONS_DIR = path.join(process.cwd(), "inspirations")
 
 /**
+ * Registry of active inspiration templates.
+ * Add or remove folder names here to control which templates are loaded.
+ */
+const REGISTERED_INSPIRATIONS = [
+  "corporate-business-deck",
+  // "growth-business-deck",
+  // "innovate-business-presentation",
+  // "modern-dark-deck",
+  // "nexus-business-deck",
+  // "process-flow-deck",
+  // "storyset-presentation",
+]
+
+/**
  * Retrieves and processes all slides for a specific presentation directory.
  * @param presentationName The folder name within 'inspirations/'
  */
@@ -82,21 +96,22 @@ function getPresentationSlides(presentationName: string): InspirationSlide[] {
 }
 
 /**
- * Scans the 'inspirations/' directory and returns a registry of all templates.
+ * Returns a registry of all templates explicitly defined in REGISTERED_INSPIRATIONS.
  */
 export const getInspirations = (): InspirationPresentation[] => {
   // Gracefully exit if the directory doesn't exist
   if (!fs.existsSync(INSPIRATIONS_DIR)) return []
 
-  // List all subdirectories inside the inspirations folder
-  const presentations = fs.readdirSync(INSPIRATIONS_DIR).filter((item) => {
-    const p = path.join(INSPIRATIONS_DIR, item)
-    return fs.statSync(p).isDirectory()
-  })
-
-  // Map each directory to a full InspirationPresentation object
-  return presentations.map((presName) => {
+  // Map each registered directory to a full InspirationPresentation object
+  return REGISTERED_INSPIRATIONS.map((presName) => {
     const presPath = path.join(INSPIRATIONS_DIR, presName)
+    
+    // Check if the directory actually exists
+    if (!fs.existsSync(presPath) || !fs.statSync(presPath).isDirectory()) {
+      console.warn(`Registry warning: Inspiration folder '${presName}' not found.`)
+      return null
+    }
+
     const outlinePath = path.join(presPath, "outline.json")
     
     // Default metadata derived from the folder name
@@ -120,7 +135,7 @@ export const getInspirations = (): InspirationPresentation[] => {
       description,
       slides: getPresentationSlides(presName),
     }
-  })
+  }).filter((pres): pres is InspirationPresentation => pres !== null)
 }
 
 /**
@@ -162,3 +177,4 @@ export const formatInspirationsForPrompt = (): string => {
 
   return output
 }
+

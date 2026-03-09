@@ -1,15 +1,15 @@
 import prisma from "./prisma"
 import { startOfDay } from "date-fns"
 
-export const DEFAULT_DAILY_CREDITS = 50000
-export const COST_PER_IMAGE = 3000
-export const CREDITS_PER_CHARACTER = 0.2 // 1 credit per 5 characters
+export const DEFAULT_DAILY_CREDITS = 20
+export const COST_PER_IMAGE = 0
+export const CREDITS_PER_CHARACTER = 0
 
 /**
  * Calculates credit cost based on text length.
  */
 export function calculateTextCost(text: string): number {
-  return Math.ceil(text.length * CREDITS_PER_CHARACTER)
+  return 0
 }
 /**
  * Checks if credits need to be reset (it's a new day)
@@ -27,7 +27,7 @@ export async function getOrResetCredits(userId: string) {
   const now = startOfDay(new Date())
 
   if (now > lastReset) {
-    // It's a new day! Reset credits to 50,000
+    // It's a new day! Reset credits to 20
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: {

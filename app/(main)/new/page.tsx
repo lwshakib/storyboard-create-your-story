@@ -16,6 +16,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { toast } from "sonner"
 import { RECOMMENDED_PROMPTS } from "@/llm/prompts"
 
 export default function NewProjectPage() {
@@ -24,7 +25,24 @@ export default function NewProjectPage() {
   const [prompt, setPrompt] = React.useState("")
   const [isGenerating, setIsGenerating] = React.useState(false)
   const [randomPrompts, setRandomPrompts] = React.useState<string[]>([])
+  const [credits, setCredits] = React.useState<number | null>(null)
   const router = useRouter()
+
+  // Fetch credits on mount
+  React.useEffect(() => {
+    const fetchCredits = async () => {
+      try {
+        const res = await fetch("/api/user/credits")
+        if (res.ok) {
+          const data = await res.json()
+          setCredits(data.credits)
+        }
+      } catch (err) {
+        console.error("Failed to fetch credits", err)
+      }
+    }
+    fetchCredits()
+  }, [])
 
   const refreshPrompts = React.useCallback(() => {
     const shuffled = [...RECOMMENDED_PROMPTS].sort(() => 0.5 - Math.random())
@@ -37,6 +55,16 @@ export default function NewProjectPage() {
 
   const handleStartGeneration = async () => {
     if (!prompt.trim()) return
+    
+    // Check credits
+    if (credits !== null && credits < 1) {
+      toast.error("Credits exhausted.", {
+        description: "You should use until daily limit resets at midnight.",
+      })
+      setShowGenerateDialog(false)
+      return
+    }
+
     setIsGenerating(true)
 
     try {

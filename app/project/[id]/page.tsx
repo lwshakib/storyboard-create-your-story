@@ -50,9 +50,13 @@ function EditorContent() {
     new Set()
   )
   const [isExpanding, setIsExpanding] = useState(false)
+  const [credits, setCredits] = useState<number | null>(null)
 
   // Ref to ensure we only trigger the auto-outline generation once per session
   const hasStartedOutlineRef = useRef(false)
+  
+  // Track AbortControllers for each slide refinement
+  const abortControllersRef = useRef<Map<number, AbortController>>(new Map())
 
   /**
    * Called by the EditorView when changes are saved to the server.
@@ -74,6 +78,21 @@ function EditorContent() {
     },
     []
   )
+
+  /**
+   * Fetch current user credits.
+   */
+  const fetchCredits = useCallback(async () => {
+    try {
+      const res = await fetch("/api/user/credits")
+      if (res.ok) {
+        const data = await res.json()
+        setCredits(data.credits)
+      }
+    } catch (err) {
+      console.error("Failed to fetch credits", err)
+    }
+  }, [])
 
   /**
    * Initial project fetcher. 
@@ -105,6 +124,13 @@ function EditorContent() {
    */
   const generateOutline = useCallback(
     async (p: string) => {
+      // Pre-check credits if available
+      if (credits !== null && credits < 1) {
+        toast.error("Credits exhausted.", {
+          description: "You should use until daily limit resets at midnight.",
+        })
+        return
+      }
       setIsGeneratingOutline(true)
       try {
         const resp = await fetch("/api/generate-outline", {
@@ -129,6 +155,9 @@ function EditorContent() {
         const updatedProject = await resp.json()
         setProject(updatedProject)
         setStreamingSlides(updatedProject.slides)
+        
+        // Refresh credits after successful generation
+        fetchCredits()
 
         // Clear prompt from URL to prevent accidental re-generations on refresh
         router.replace(`/project/${id}`, { scroll: false })
@@ -140,7 +169,7 @@ function EditorContent() {
             description: "Credits reset every day at midnight (12 AM). Upgrade for higher limits.",
           })
         } else {
-          toast.error("Failed to generate outline")
+          toast.error("Internal Server Error")
         }
       } finally {
         setIsGeneratingOutline(false)
@@ -153,8 +182,11 @@ function EditorContent() {
 
   // Trigger project fetch on ID change
   useEffect(() => {
-    if (id) fetchProject()
-  }, [id, fetchProject])
+    if (id) {
+      fetchProject()
+      fetchCredits()
+    }
+  }, [id, fetchProject, fetchCredits])
 
   // Monitor for initial prompt to start the AI generation flow
   useEffect(() => {
@@ -176,9 +208,26 @@ function EditorContent() {
    */
   const handleGenerateSection = useCallback(
     async (index: number) => {
+      // IF ALREADY GENERATING, THIS CALL ACTS AS A CANCEL
+      if (generatingSections.has(index)) {
+        const controller = abortControllersRef.current.get(index)
+        if (controller) {
+          controller.abort()
+        }
+        return
+      }
+
       const section = streamingSlides[index]
       if (!section) {
         toast.error("Slide data not found")
+        return
+      }
+
+      // Pre-check credits
+      if (credits !== null && credits < 1) {
+        toast.error("Credits exhausted.", {
+          description: "You should use until daily limit resets at midnight.",
+        })
         return
       }
 
@@ -186,17 +235,21 @@ function EditorContent() {
       const context = `Overall Title: ${project?.title}\nOverall Description: ${project?.description}\nFull Narrative Flow and Planned Content:\n${streamingSlides.map((s, i) => `Section ${i + 1}: ${s.title}\n- Visual Prompt: ${s.description}\n- Writing/Narration: ${s.content}`).join("\n\n")}`
 
       setGeneratingSections((prev) => new Set(prev).add(index))
+      
+      const controller = new AbortController()
+      abortControllersRef.current.set(index, controller)
+
       try {
         const response = await fetch("/api/generate-sections/refine", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          signal: controller.signal,
           body: JSON.stringify({
             prompt: `GENERATE_SINGLE_SLIDE: Slide Index: ${index + 1}. Title: ${section.title}. Description: ${section.description}. Content: ${section.content}. 
-          IMPORTANT RULES:
-          1. Provide the RAW HTML for the slide content. DO NOT wrap it in <slide> or similar tags.
-          2. Start directly with the <!DOCTYPE html> or <html> content. 
-          3. Use the 'generateImage' tool to create a high-fidelity cinematic visual for this slide. DO NOT use placeholders.
-          4. Focus on professional agency-level design.`,
+          MISSION:
+          Create a professional, high-fidelity slide for this section. 
+          The slide should use modern design principles (Tailwind CSS, clean typography, cinematic visuals).
+          Use the 'generateImage' tool to create unique assets if needed.`,
             context: context,
             projectId: id,
             index: index,
@@ -232,18 +285,27 @@ function EditorContent() {
           }
 
           setStreamingSlides(next)
+          fetchCredits()
           toast.success("Section refined and saved")
         }
       } catch (err: unknown) {
+        if (err instanceof Error && err.name === "AbortError") {
+          console.log(`[REFINE] Generation for section ${index} was cancelled.`)
+          toast.info("Refinement cancelled")
+          return
+        }
+        
         console.error("Refine error:", err)
         if (err instanceof Error && err.message === "INSUFFICIENT_CREDITS") {
           toast.error("Daily credit limit reached.", {
             description: "Wait for the midnight reset or contact us to upgrade your plan.",
           })
         } else {
-          toast.error("Failed to refine section")
+          toast.error("Internal Server Error")
         }
       } finally {
+        // Cleanup controller
+        abortControllersRef.current.delete(index)
         // Remove from generating state
         setGeneratingSections((prev) => {
           const next = new Set(prev)
@@ -260,6 +322,13 @@ function EditorContent() {
    */
   const handleExpandSection = useCallback(
     async (index?: number) => {
+      // Pre-check credits
+      if (credits !== null && credits < 1) {
+        toast.error("Credits exhausted.", {
+          description: "You should use until daily limit resets at midnight.",
+        })
+        return
+      }
       setIsExpanding(true)
       try {
         const res = await fetch("/api/generate-sections/expand", {
@@ -280,13 +349,14 @@ function EditorContent() {
         const updatedProject = await res.json()
         setProject(updatedProject)
         setStreamingSlides(updatedProject.slides)
+        fetchCredits()
         toast.success("AI added a new section")
       } catch (err: unknown) {
         console.error(err)
         if (err instanceof Error && err.message === "INSUFFICIENT_CREDITS") {
           toast.error("Low credits for AI expansion.")
         } else {
-          toast.error("Failed to add AI section")
+          toast.error("Internal Server Error")
         }
       } finally {
         setIsExpanding(false)

@@ -222,7 +222,7 @@ export default function MainLayout({
                   <div className="hidden lg:block">
                     <span className="text-[10px] font-bold tabular-nums opacity-60">
                       {credits !== null
-                        ? (credits / 1000).toFixed(1) + "K"
+                        ? credits
                         : "---"}{" "}
                       credits remaining
                     </span>
