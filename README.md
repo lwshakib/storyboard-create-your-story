@@ -6,7 +6,7 @@
 
 **Storyboard** is a modern, full-stack presentation builder that empowers creators to visualize their stories. Whether you're a filmmaker, marketer, or educator, our tool helps you generate, edit, and export stunning presentations with ease. Leveraging the power of AI, you can turn simple text prompts into complete visual narratives and slide decks.
 
-## � App Preview
+## 📱 App Preview
 
 Here's a quick look at the application in both dark and light themes:
 
@@ -15,7 +15,7 @@ Here's a quick look at the application in both dark and light themes:
   <img src="public/screenshots/light_demo.png" alt="Light Theme Preview" width="48%" />
 </div>
 
-## �🚀 Features
+## 🚀 Features
 
 - **✨ AI-Powered Presentations**: Describe your topic, and let our AI agents generate detailed slides, scripts, and visuals automatically.
 - **🎨 Interactive Slide Editor**: A powerful, drag-and-drop canvas to customize every aspect of your presentation. Add text, images, shapes, and notes.
@@ -102,7 +102,7 @@ Follow these steps to set up the project locally.
     NEXT_PUBLIC_BASE_URL="http://localhost:3000"
 
     # Gemini AI
-    GEMINI_API_KEY="your_gemini_api_key"
+    GEMINI_API_KEY="your_gemini_api_key" # GOOGLE_API_KEY is also accepted as fallback
 
     # AWS S3 Storage
     AWS_REGION="auto"
@@ -113,6 +113,9 @@ Follow these steps to set up the project locally.
 
     # Notifications/Emails
     RESEND_API_KEY="your_resend_api_key"
+
+    # Optional Build / CI Flags
+    # SKIP_ENV_VALIDATION="true" # Set to bypass missing secret checks during builds/CI
     ```
 
 4.  **S3 Bucket Setup:**
