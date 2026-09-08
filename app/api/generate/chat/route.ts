@@ -8,6 +8,7 @@ import { headers } from "next/headers"
 import { getOrResetCredits } from "@/lib/credits"
 import { Content } from "@/llm/client"
 
+export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
 export const maxDuration = 120
 
@@ -17,6 +18,7 @@ interface ProjectSlide {
   description: string
   prompt: string
   index: number
+  html?: string
 }
 
 interface ProjectData {
@@ -46,23 +48,25 @@ export async function POST(req: Request) {
 
     // 1. Credit Check
     const userCredits = await getOrResetCredits(session.user.id)
-    if (userCredits < 10) {
+    if (userCredits < 1) {
       return NextResponse.json(
         { error: "INSUFFICIENT_CREDITS" },
         { status: 403 }
       )
     }
 
+    const slidesList = Array.isArray(projectData?.slides) ? projectData.slides : []
     const userContent = `PROJECT CONTEXT:
-Title: ${projectData.title}
-Description: ${projectData.description}
+Title: ${projectData?.title || "Storyboard Project"}
+Description: ${projectData?.description || ""}
 Slides: ${JSON.stringify(
-      projectData.slides.map((s, i: number) => ({
+      slidesList.map((s, i: number) => ({
         index: i,
+        id: s.id,
         title: s.title,
         description: s.description,
         prompt: s.prompt,
-        id: s.id,
+        html: s.html || "",
       })),
       null,
       2
@@ -70,9 +74,13 @@ Slides: ${JSON.stringify(
 
 USER FEEDBACK: "${message}"`
 
+    const validHistory = (chatHistory || []).filter(
+      (m) => m && typeof m.content === "string" && m.content.trim().length > 0
+    )
+
     const contents: Content[] = [
-      ...chatHistory.map((m) => ({
-        role: m.role === "assistant" ? "model" : "user",
+      ...validHistory.map((m) => ({
+        role: (m.role === "assistant" ? "model" : "user") as "model" | "user",
         parts: [{ text: m.content }],
       })),
       { role: "user", parts: [{ text: userContent }] },
@@ -88,10 +96,11 @@ USER FEEDBACK: "${message}"`
 
     return new Response(stream, {
       headers: {
-        "Content-Type": "text/event-stream",
+        "Content-Type": "text/event-stream; charset=utf-8",
         "Cache-Control": "no-cache, no-transform",
         Connection: "keep-alive",
         "X-Accel-Buffering": "no",
+        "X-Content-Type-Options": "nosniff",
       },
     })
   } catch (error) {

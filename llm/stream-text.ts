@@ -24,6 +24,7 @@ interface ProjectSlide {
   description: string
   prompt: string
   index: number
+  html?: string
 }
 
 interface UpdateProjectMetadataArgs {
@@ -45,8 +46,16 @@ interface AddSlideArgs {
   slide: Omit<ProjectSlide, "id" | "index">
 }
 
+const cleanHtml = (html?: string) => {
+  if (!html) return html
+  return html
+    .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold">$1</strong>')
+    .replace(/\*(.*?)\*/g, "<em>$1</em>")
+}
+
 /**
- * Creates a ReadableStream that encodes StreamEvents as simple JSON chunks for the client to parse.
+ * Creates a ReadableStream that encodes StreamEvents as SSE event frames (data: <payload>\n\n)
+ * for real-time live streaming with zero buffering.
  */
 export function createAIStream(
   execute: (send: (event: StreamEvent) => void) => Promise<void>
@@ -56,17 +65,23 @@ export function createAIStream(
   return new ReadableStream({
     start(controller) {
       const send = (event: StreamEvent) => {
-        const chunk = encoder.encode(JSON.stringify(event) + "\n")
-        controller.enqueue(chunk)
+        try {
+          const chunk = encoder.encode(`data: ${JSON.stringify(event)}\n\n`)
+          controller.enqueue(chunk)
+        } catch (err) {
+          console.error("Stream enqueue error:", err)
+        }
       }
 
       execute(send)
         .then(() => {
           send({ type: "done" })
+          controller.enqueue(encoder.encode("data: [DONE]\n\n"))
         })
         .catch((error) => {
           console.error("Stream execution error:", error)
           send({ type: "error", message: String(error) })
+          controller.enqueue(encoder.encode("data: [DONE]\n\n"))
         })
         .finally(() => {
           controller.close()
@@ -118,6 +133,7 @@ export function streamText(options: StreamTextOptions) {
         }
 
         const candidate = chunk.candidates?.[0]
+        let sentText = false
         if (candidate && candidate.content) {
           const parts = candidate.content.parts || []
           for (const part of parts) {
@@ -127,10 +143,15 @@ export function streamText(options: StreamTextOptions) {
                 content: part.text || "",
                 isThought: true,
               })
+              sentText = true
             } else if (part.text) {
               send({ type: "text", content: part.text })
+              sentText = true
             }
           }
+        }
+        if (!sentText && chunk.text) {
+          send({ type: "text", content: chunk.text })
         }
       }
 
@@ -140,6 +161,7 @@ export function streamText(options: StreamTextOptions) {
 
       if (functionCalls.length > 0) {
         const toolResults = []
+        const actionSummaries: string[] = []
 
         for (const call of functionCalls) {
           const { name, args, id } = call
@@ -165,6 +187,7 @@ export function streamText(options: StreamTextOptions) {
                 data: { title, description },
               })
               hasChanges = true
+              actionSummaries.push(title ? `Updated project title to "${title}"` : "Updated project metadata")
             } else if (name === "get_project_details") {
               const proj = await prisma.project.findUnique({
                 where: { id: projectId },
@@ -181,19 +204,25 @@ export function streamText(options: StreamTextOptions) {
                     title: s.title,
                     description: s.description,
                     prompt: s.prompt,
-                    hasHtml: !!(s.html && s.html.trim().length > 0),
+                    html: s.html || "",
                   })),
                 }
+                actionSummaries.push("Inspected project slides and outline")
               } else {
                 toolOutput = { success: false, error: "Project not found" }
               }
             } else if (name === "update_slide") {
               const { slideId, updates } = args as unknown as UpdateSlideArgs
-              await prisma.slide.update({
+              const safeUpdates = { ...updates }
+              if (safeUpdates.html) {
+                safeUpdates.html = cleanHtml(safeUpdates.html)
+              }
+              const updated = await prisma.slide.update({
                 where: { id: slideId },
-                data: updates,
+                data: safeUpdates,
               })
               hasChanges = true
+              actionSummaries.push(`Updated Slide ${updated.index + 1}${updated.title ? ` ("${updated.title}")` : ""}`)
             } else if (name === "delete_slide") {
               const { slideId } = args as unknown as DeleteSlideArgs
               const deletedSlide = await prisma.slide.delete({
@@ -211,8 +240,13 @@ export function streamText(options: StreamTextOptions) {
                 },
               })
               hasChanges = true
+              actionSummaries.push(`Removed Slide ${deletedSlide.index + 1}`)
             } else if (name === "add_slide") {
               const { index, slide } = args as unknown as AddSlideArgs
+              const safeSlide = {
+                ...slide,
+                html: cleanHtml(slide.html) || "",
+              }
 
               // Shift existing slides up
               await prisma.slide.updateMany({
@@ -225,14 +259,15 @@ export function streamText(options: StreamTextOptions) {
                 },
               })
 
-              await prisma.slide.create({
+              const created = await prisma.slide.create({
                 data: {
-                  ...slide,
+                  ...safeSlide,
                   projectId,
                   index,
                 },
               })
               hasChanges = true
+              actionSummaries.push(`Added new slide at position ${created.index + 1}`)
             }
           } catch (err) {
             console.error(`Tool execution error [${name}]:`, err)
@@ -248,12 +283,49 @@ export function streamText(options: StreamTextOptions) {
           })
         }
 
-        // Set the tool results for the next turn
-        currentInput = { message: toolResults }
+        if (hasChanges) {
+          // Send real-time project sync to client as soon as DB updates complete
+          const updatedProject = await prisma.project.findUnique({
+            where: { id: projectId },
+            include: { slides: { orderBy: { index: "asc" } } },
+          })
+          if (updatedProject) {
+            send({
+              type: "project_update",
+              project: updatedProject as unknown as Record<string, unknown>,
+            })
+          }
 
-        callExecutionCount++
+          // Provide a guaranteed text response explaining the changes
+          const modificationSummaries = actionSummaries.filter(
+            (s) => !s.startsWith("Inspected")
+          )
+          const summaryText =
+            modificationSummaries.length > 0
+              ? `I've updated your presentation:\n\n` +
+                modificationSummaries.map((s) => `• ${s}`).join("\n")
+              : "I've processed your architectural feedback."
+
+          send({
+            type: "text",
+            content: summaryText,
+          })
+
+          // Deduct 1 credit for successful interaction
+          await deductCredits(userId, 1).catch(() => {})
+          break
+        } else {
+          // Only read tools were executed (e.g. get_project_details)
+          // Continue loop to give the model the project state so it can execute actual changes!
+          currentInput = {
+            message: toolResults.map((tr) => ({
+              functionResponse: tr.functionResponse,
+            })),
+          }
+          callExecutionCount++
+        }
       } else {
-        // Update project data if changes occurred
+        // Direct text response without tools
         if (hasChanges) {
           const updatedProject = await prisma.project.findUnique({
             where: { id: projectId },
@@ -267,9 +339,8 @@ export function streamText(options: StreamTextOptions) {
           }
         }
 
-        // Deduct credits for the interaction
-        await deductCredits(userId, 5).catch(() => {})
-
+        // Deduct credits for the interaction (1 credit)
+        await deductCredits(userId, 1).catch(() => {})
         break
       }
     }

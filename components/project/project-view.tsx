@@ -271,8 +271,17 @@ export function ProjectView({
     onProjectUpdate: (p) => {
       setTitle(p.title)
       setDescription(p.description || "")
-      setSlides(p.slides)
+      setSlides(p.slides as HtmlSlide[])
       hasUserChangesRef.current = false
+      if (onSaveSuccess) {
+        onSaveSuccess({
+          id: initialData?.id || p.id,
+          title: p.title,
+          description: p.description || "",
+          slides: p.slides as HtmlSlide[],
+        })
+      }
+      toast.success("Presentation updated by Assistant")
     },
   })
 
@@ -1034,6 +1043,7 @@ export function ProjectView({
                                           id={`slide-preview-${matchingSlide.id}`}
                                         >
                                           <SlidePreview
+                                            key={`${matchingSlide.id}-${matchingSlide.html?.length || 0}-${matchingSlide.title || ""}`}
                                             html={matchingSlide.html}
                                             autoScale={true}
                                           />

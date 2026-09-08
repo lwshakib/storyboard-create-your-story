@@ -60,7 +60,7 @@ export function useChat({ projectId, onProjectUpdate }: UseChatOptions) {
           if (data.error === "INSUFFICIENT_CREDITS") {
             toast.error("Insufficient Credits", {
               description:
-                "You need at least 10 credits to chat with the AI Architect.",
+                "You need at least 1 credit to chat with the Project Assistant.",
             })
             return
           }
@@ -73,20 +73,38 @@ export function useChat({ projectId, onProjectUpdate }: UseChatOptions) {
 
         const decoder = new TextDecoder()
         let assistantMsg = ""
+        let buffer = ""
 
-        // Prepare the assistant's message slot
-        setMessages((prev) => [...prev, { role: "assistant", content: "" }])
+        // Do not insert an empty assistant placeholder upfront to prevent empty blank cards
 
         while (true) {
           const { done, value } = await reader.read()
           if (done) break
 
-          const chunk = decoder.decode(value, { stream: true })
-          const lines = chunk.split("\n").filter((l) => l.trim())
+          buffer += decoder.decode(value, { stream: true })
+          const lines = buffer.split("\n")
+          // Keep the incomplete line chunk in the buffer
+          buffer = lines.pop() || ""
 
-          for (const line of lines) {
+          for (const rawLine of lines) {
+            const line = rawLine.trim()
+            if (!line || line.startsWith(":")) continue // Ignore empty lines and SSE comments
+
+            let dataStr = line
+            if (line.startsWith("data: ")) {
+              dataStr = line.slice(6).trim()
+            } else if (line.startsWith("data:")) {
+              dataStr = line.slice(5).trim()
+            }
+
+            // Check for SSE completion sentinel
+            if (dataStr === "[DONE]") {
+              setStatus(null)
+              break
+            }
+
             try {
-              const event = JSON.parse(line)
+              const event = JSON.parse(dataStr)
 
               if (event.type === "text") {
                 setStatus(null)
@@ -99,6 +117,8 @@ export function useChat({ projectId, onProjectUpdate }: UseChatOptions) {
                     const last = next[next.length - 1]
                     if (last && last.role === "assistant") {
                       last.content = assistantMsg
+                    } else {
+                      next.push({ role: "assistant", content: assistantMsg })
                     }
                     return next
                   })
@@ -130,7 +150,7 @@ export function useChat({ projectId, onProjectUpdate }: UseChatOptions) {
         }
       } catch (error) {
         console.error("Chat error:", error)
-        toast.error("Failed to reach AI Architect")
+        toast.error("Failed to reach Project Assistant")
       } finally {
         setIsLoading(false)
         setStatus(null)

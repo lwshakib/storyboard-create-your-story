@@ -99,6 +99,12 @@ export async function POST(req: Request) {
         {
           role: "user",
           content: `Create a complete, executive presentation-grade slide deck for: "${prompt}".
+
+THEME & COLOR DECISION:
+- Analyze the user prompt to determine whether an Executive LIGHT mode (bg-[#F8FAFC] with crisp slate-900 typography, clean white cards with subtle borders) or an Executive DARK mode (bg-[#0B0F17] with white typography, glass cards) is best suited for this topic.
+- If the user explicitly asks for light or dark colors, follow their instruction. Otherwise, choose the mode that best represents the industry (e.g. Healthcare, Clean Tech, ESG, Education, HR, Consumer usually favor crisp Light Mode; Cybersecurity, DevOps, AI, Crypto favor sleek Dark Mode).
+- Apply this theme mode consistently across ALL slides in the deck.
+
 Generate 5–7 presentation slides following standard deck flow:
 1. Executive Cover / Title Slide
 2. Executive Summary & Market Problem / Friction
