@@ -25,6 +25,11 @@ import {
   RefreshCw,
   MessageCircle,
   Send,
+  LayoutGrid,
+  List,
+  Columns,
+  ArrowLeft,
+  ArrowRight,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -222,6 +227,8 @@ export function ProjectView({
   const [isEditingTitle, setIsEditingTitle] = React.useState(false)
   const [, setIsSaving] = React.useState(false)
   const [activeSlideIndex, setActiveSlideIndex] = React.useState(0)
+  const [viewMode, setViewMode] = React.useState<"grid" | "list">("grid")
+  const [gridColumns, setGridColumns] = React.useState<2 | 3>(2)
   const mainScrollRef = React.useRef<HTMLDivElement>(null)
 
   // Settings Panel States
@@ -538,6 +545,15 @@ export function ProjectView({
     saveProjectData({ slides: newSlides })
   }
 
+  const moveSlide = (fromIndex: number, toIndex: number) => {
+    if (toIndex < 0 || toIndex >= slides.length) return
+    const updated = [...slides]
+    const [moved] = updated.splice(fromIndex, 1)
+    updated.splice(toIndex, 0, moved)
+    setSlides(updated)
+    saveProjectData({ slides: updated })
+  }
+
   const addOutlineSection = async (index: number) => {
     setIsSaving(true)
     try {
@@ -758,492 +774,624 @@ export function ProjectView({
             }}
           />
 
-          <div className="relative z-10 mx-auto w-full max-w-[1600px] space-y-24 px-6 py-16 pb-60 md:px-24">
-            <div className="space-y-16">
-              <div className="max-w-3xl space-y-6">
-                <div className="space-y-2">
-                  <AutoResizeTextarea
-                    className="text-foreground placeholder:text-muted/20 w-full text-3xl font-black tracking-tighter md:text-4xl"
-                    value={title}
-                    placeholder="Storyboard Title"
-                    onChange={(val) => {
-                      setTitle(val)
-                      hasUserChangesRef.current = true
-                    }}
-                  />
-                  <AutoResizeTextarea
-                    className="text-muted-foreground placeholder:text-muted/20 w-full text-base leading-relaxed"
-                    placeholder="Overall story arc and narrative goals..."
-                    value={description}
-                    onChange={(val) => {
-                      setDescription(val)
-                      hasUserChangesRef.current = true
-                    }}
-                  />
-                </div>
+          <div className="relative z-10 mx-auto w-full max-w-[1720px] px-4 sm:px-6 md:px-10 py-6 pb-40 space-y-6">
+            {/* Executive Deck Header & Minimal Toolbar */}
+            <div className="flex flex-col gap-4 rounded-2xl border border-border/60 bg-card/40 p-4 sm:p-5 backdrop-blur-md shadow-xs md:flex-row md:items-center md:justify-between">
+              {/* Left: Compact Project Title & Storyline */}
+              <div className="flex-1 min-w-0 space-y-1">
+                <AutoResizeTextarea
+                  className="text-foreground placeholder:text-muted/30 w-full text-xl sm:text-2xl font-black tracking-tight leading-snug bg-transparent border-none p-0 focus:ring-0 resize-none"
+                  value={title}
+                  placeholder="Presentation Title"
+                  onChange={(val) => {
+                    setTitle(val)
+                    hasUserChangesRef.current = true
+                  }}
+                />
+                <AutoResizeTextarea
+                  className="text-muted-foreground placeholder:text-muted/30 w-full text-xs sm:text-sm leading-relaxed bg-transparent border-none p-0 focus:ring-0 resize-none line-clamp-2 focus:line-clamp-none transition-all"
+                  placeholder="Overall presentation narrative and talking points..."
+                  value={description}
+                  onChange={(val) => {
+                    setDescription(val)
+                    hasUserChangesRef.current = true
+                  }}
+                />
               </div>
 
-              {isGeneratingOutline && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="bg-muted/5 flex flex-col items-center justify-center gap-6 rounded-3xl border border-dashed py-24 text-center"
+              {/* Right: Controls & View Switcher */}
+              <div className="flex items-center gap-2 shrink-0 flex-wrap">
+                {/* Slide Count Pill */}
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-muted/50 border text-xs font-semibold text-muted-foreground">
+                  <PresentationIcon className="size-3.5 text-primary" />
+                  <span>{slides.length} {slides.length === 1 ? "Slide" : "Slides"}</span>
+                </div>
+
+                {/* View Mode Switcher */}
+                <div className="flex items-center rounded-lg border bg-muted/30 p-0.5">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        onClick={() => setViewMode("grid")}
+                        className={cn(
+                          "flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium transition-all cursor-pointer",
+                          viewMode === "grid"
+                            ? "bg-background shadow-xs text-foreground font-semibold"
+                            : "text-muted-foreground hover:text-foreground"
+                        )}
+                      >
+                        <LayoutGrid className="size-3.5" />
+                        <span className="hidden sm:inline">Grid</span>
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom"><p className="text-xs font-medium">Multi-Slide Grid View</p></TooltipContent>
+                  </Tooltip>
+
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        onClick={() => setViewMode("list")}
+                        className={cn(
+                          "flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium transition-all cursor-pointer",
+                          viewMode === "list"
+                            ? "bg-background shadow-xs text-foreground font-semibold"
+                            : "text-muted-foreground hover:text-foreground"
+                        )}
+                      >
+                        <List className="size-3.5" />
+                        <span className="hidden sm:inline">List</span>
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom"><p className="text-xs font-medium">Streamlined List View</p></TooltipContent>
+                  </Tooltip>
+                </div>
+
+                {/* Column Toggle if in Grid Mode */}
+                {viewMode === "grid" && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-8 px-2.5 text-xs font-medium rounded-lg text-muted-foreground hover:text-foreground"
+                        onClick={() => setGridColumns((prev) => (prev === 2 ? 3 : 2))}
+                      >
+                        <Columns className="size-3.5 mr-1" />
+                        <span>{gridColumns} Col</span>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom">
+                      <p className="text-xs font-medium">Switch to {gridColumns === 2 ? "3 Columns (More compact)" : "2 Columns"}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                )}
+
+                {/* Quick Add Slide */}
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-8 gap-1.5 rounded-lg px-3 text-xs font-medium"
+                  onClick={() => addOutlineSection(slides.length - 1)}
+                  disabled={isBusy}
                 >
-                  <div className="relative">
-                    <motion.div
-                      animate={{ rotate: 360 }}
-                      transition={{
-                        duration: 4,
-                        repeat: Infinity,
-                        ease: "linear",
-                      }}
-                      className="border-primary/30 h-16 w-16 rounded-full border-t-2 border-r-2"
-                    />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <Sparkles className="text-primary h-6 w-6 animate-pulse" />
-                    </div>
-                  </div>
+                  <Plus className="size-3.5 text-primary" />
+                  <span className="hidden sm:inline">Add Slide</span>
+                </Button>
 
-                  <div className="space-y-1">
-                    <h3 className="text-sm font-bold tracking-tight">
-                      AI Architect is generating your outline
-                    </h3>
-                    <p className="text-muted-foreground text-xs opacity-60">
-                      Analyzing vision and creating a structural flow...
-                    </p>
-                  </div>
+                {/* AI Deck Generate */}
+                <Button
+                  size="sm"
+                  className="h-8 gap-1.5 rounded-lg px-3 text-xs font-medium"
+                  onClick={() => setShowGenerateDialog(true)}
+                >
+                  <Sparkles className="size-3.5" />
+                  <span className="hidden sm:inline">AI Deck</span>
+                </Button>
+              </div>
+            </div>
 
+            {isGeneratingOutline && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-muted/5 flex flex-col items-center justify-center gap-6 rounded-3xl border border-dashed py-16 text-center"
+              >
+                <div className="relative">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{
+                      duration: 4,
+                      repeat: Infinity,
+                      ease: "linear",
+                    }}
+                    className="border-primary/30 h-14 w-14 rounded-full border-t-2 border-r-2"
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Sparkles className="text-primary h-5 w-5 animate-pulse" />
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <h3 className="text-sm font-bold tracking-tight">
+                    AI Architect is generating your outline
+                  </h3>
+                  <p className="text-muted-foreground text-xs opacity-60">
+                    Analyzing vision and creating a structural flow...
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-muted-foreground text-[10px] font-bold tracking-widest opacity-40 hover:opacity-100"
+                    onClick={() => setShowGenerateDialog(true)}
+                  >
+                    Change Prompt
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-muted-foreground text-[10px] font-bold tracking-widest opacity-40 hover:opacity-100"
+                    onClick={onCancelOutline}
+                  >
+                    Abort Generation
+                  </Button>
+                </div>
+              </motion.div>
+            )}
+
+            {error && !isGeneratingOutline && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-destructive/5 border-destructive/20 flex flex-col items-center justify-center gap-6 rounded-3xl border border-dashed py-16 text-center"
+              >
+                <div className="bg-destructive/10 flex size-14 items-center justify-center rounded-full">
+                  <X className="text-destructive size-6" />
+                </div>
+
+                <div className="space-y-1">
+                  <h3 className="text-destructive text-sm font-bold tracking-tight">
+                    Outline Generation Failed
+                  </h3>
+                  <p className="text-muted-foreground text-xs opacity-60">
+                    We encountered an issue while architecting your storyboard.
+                  </p>
+                </div>
+
+                <div className="flex flex-col items-center gap-3">
                   <div className="flex items-center gap-4">
                     <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-muted-foreground text-[10px] font-bold tracking-widest opacity-40 hover:opacity-100"
+                      onClick={onRetryOutline}
+                      className="h-9 rounded-full bg-white px-7 text-xs font-bold text-black shadow-lg hover:bg-neutral-200"
+                    >
+                      Retry Generation
+                    </Button>
+                    <Button
+                      variant="outline"
                       onClick={() => setShowGenerateDialog(true)}
+                      className="h-9 rounded-full px-7 text-xs font-bold"
                     >
                       Change Prompt
                     </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-muted-foreground text-[10px] font-bold tracking-widest opacity-40 hover:opacity-100"
-                      onClick={onCancelOutline}
-                    >
-                      Abort Generation
-                    </Button>
-                  </div>
-                </motion.div>
-              )}
-
-              {error && !isGeneratingOutline && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="bg-destructive/5 border-destructive/20 flex flex-col items-center justify-center gap-6 rounded-3xl border border-dashed py-24 text-center"
-                >
-                  <div className="bg-destructive/10 flex size-16 items-center justify-center rounded-full">
-                    <X className="text-destructive size-6" />
-                  </div>
-
-                  <div className="space-y-1">
-                    <h3 className="text-destructive text-sm font-bold tracking-tight">
-                      Outline Generation Failed
-                    </h3>
-                    <p className="text-muted-foreground text-xs opacity-60">
-                      We encountered an issue while architecting your
-                      storyboard.
-                    </p>
-                  </div>
-
-                  <div className="flex flex-col items-center gap-3">
-                    <div className="flex items-center gap-4">
-                      <Button
-                        onClick={onRetryOutline}
-                        className="h-10 rounded-full bg-white px-8 text-[11px] font-bold tracking-widest text-black shadow-lg transition-all hover:bg-neutral-200"
-                      >
-                        Retry Generation
-                      </Button>
-                      <Button
-                        variant="outline"
-                        onClick={() => setShowGenerateDialog(true)}
-                        className="h-10 rounded-full px-8 text-[11px] font-bold tracking-widest transition-all"
-                      >
-                        Change Prompt
-                      </Button>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      onClick={() => router.push("/home")}
-                      className="text-muted-foreground text-[10px] font-bold tracking-widest opacity-40 hover:opacity-100"
-                    >
-                      Go back home
-                    </Button>
-                  </div>
-                </motion.div>
-              )}
-
-              {!isGeneratingOutline && !error && slides.length === 0 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="border-border/40 bg-muted/5 flex flex-col items-center justify-center gap-8 rounded-3xl border border-dashed py-32 text-center"
-                >
-                  <div className="bg-primary/5 flex size-20 items-center justify-center rounded-full">
-                    <Sparkles className="text-primary size-10" />
-                  </div>
-                  <div className="max-w-sm space-y-2">
-                    <h3 className="text-xl font-bold tracking-tight">
-                      Your Canvas is Empty
-                    </h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed">
-                      Start by describing your topic and letting the AI
-                      Presentation Architect generate an executive-ready deck for
-                      you.
-                    </p>
                   </div>
                   <Button
-                    onClick={() => setShowGenerateDialog(true)}
-                    className="h-12 gap-2 rounded-full px-10 text-xs font-bold tracking-widest transition-all"
+                    variant="ghost"
+                    onClick={() => router.push("/home")}
+                    className="text-muted-foreground text-[10px] font-bold tracking-widest opacity-40 hover:opacity-100"
                   >
-                    <Wand2 className="size-4" />
-                    Generate Presentation with AI
+                    Go back home
                   </Button>
-                </motion.div>
-              )}
+                </div>
+              </motion.div>
+            )}
 
-              {!isGeneratingOutline && !error && slides.length > 0 && (
-                <Reorder.Group
-                  axis="y"
-                  values={slides}
-                  onReorder={handleReorder}
-                  className="space-y-4"
+            {!isGeneratingOutline && !error && slides.length === 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="border-border/40 bg-muted/5 flex flex-col items-center justify-center gap-6 rounded-3xl border border-dashed py-24 text-center"
+              >
+                <div className="bg-primary/5 flex size-16 items-center justify-center rounded-full">
+                  <Sparkles className="text-primary size-8" />
+                </div>
+                <div className="max-w-sm space-y-2">
+                  <h3 className="text-lg font-bold tracking-tight">
+                    Your Canvas is Empty
+                  </h3>
+                  <p className="text-muted-foreground text-xs leading-relaxed">
+                    Start by describing your topic and letting the AI Presentation Architect generate an executive-ready deck for you.
+                  </p>
+                </div>
+                <Button
+                  onClick={() => setShowGenerateDialog(true)}
+                  className="h-10 gap-2 rounded-full px-8 text-xs font-bold"
                 >
-                  {slides.map((s, i) => (
-                    <Reorder.Item
-                      key={s.id}
-                      value={s}
-                      className="group relative"
-                    >
-                      <div className="border-border/40 group-hover:bg-muted/5 -mx-4 flex flex-col gap-8 rounded-2xl border-t bg-transparent px-4 py-8 transition-colors md:flex-row">
-                        <div className="flex shrink-0 items-start gap-4 pt-1 md:w-32">
-                          <div className="text-muted-foreground/20 hover:text-primary/40 cursor-grab pt-1 transition-colors active:cursor-grabbing">
-                            <GripVertical className="size-4" />
-                          </div>
-                          <div className="space-y-2">
-                            <span className="text-muted-foreground/30 text-[10px] font-black tabular-nums">
-                              Slide {String(i + 1).padStart(2, "0")}
-                            </span>
-                            <div className="bg-primary/20 h-[1px] w-4 transition-all group-hover:w-8" />
-                          </div>
-                        </div>
+                  <Wand2 className="size-4" />
+                  Generate Presentation with AI
+                </Button>
+              </motion.div>
+            )}
 
-                        <motion.div layout className="flex-1 space-y-6">
-                          {s.html === "SKELETON" ? (
-                            <div className="space-y-6">
-                              <div className="animate-pulse space-y-4">
-                                <div className="bg-muted/40 h-10 w-2/3 rounded-lg" />
-                                <div className="space-y-2">
-                                  <div className="bg-muted/20 h-4 w-full rounded" />
-                                  <div className="bg-muted/20 h-4 w-[90%] rounded" />
-                                  <div className="bg-muted/20 h-4 w-[95%] rounded" />
-                                </div>
-                              </div>
-                            </div>
-                          ) : (
-                            <>
-                              <div className="space-y-4">
-                                <AutoResizeTextarea
-                                  className="group-hover:text-primary text-foreground w-full text-2xl font-black tracking-tight transition-colors dark:text-white"
-                                  value={s.title}
-                                  onChange={(val) =>
-                                    updateOutlineSlide(i, "title", val)
-                                  }
-                                  placeholder="Slide Title"
-                                  disabled={generatingSections?.has(i)}
-                                />
-
-                                <AutoResizeTextarea
-                                  className="text-foreground/70 w-full max-w-3xl text-sm leading-relaxed font-medium dark:text-white/70"
-                                  value={s.description || ""}
-                                  onChange={(val) =>
-                                    updateOutlineSlide(i, "description", val)
-                                  }
-                                  placeholder="Detailed presentation narrative and talking points..."
-                                  disabled={generatingSections?.has(i)}
-                                />
-                              </div>
-
-                              {/* Live Slide Preview / Refinement Skeleton with Smooth Transitions */}
-                              <AnimatePresence mode="sync">
-                                {(() => {
-                                  const matchingSlide = slides[i]
-
-                                  // REFINEMENT STATE: Show skeleton even if NO HTML exists yet
-                                  if (generatingSections?.has(i)) {
-                                    return (
-                                      <motion.div
-                                        key="skeleton"
-                                        initial={{
-                                          opacity: 0,
-                                          height: 0,
-                                          marginTop: 0,
-                                        }}
-                                        animate={{
-                                          opacity: 1,
-                                          height: "auto",
-                                          marginTop: 32,
-                                        }}
-                                        exit={{
-                                          opacity: 0,
-                                          height: 0,
-                                          marginTop: 0,
-                                        }}
-                                        transition={{
-                                          duration: 0.4,
-                                          ease: [0.23, 1, 0.32, 1],
-                                        }}
-                                        className="overflow-hidden"
-                                      >
-                                        <div className="border-border ring-primary/20 slide-preview-container bg-muted/10 relative aspect-video w-full overflow-hidden rounded-2xl border shadow-lg ring-1 transition-all">
-                                          <div className="bg-muted/20 relative h-full w-full overflow-hidden">
-                                            <div className="animate-shimmer absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-                                          </div>
-                                        </div>
-                                      </motion.div>
-                                    )
-                                  }
-
-                                  // NORMAL STATE: Show the actual slide content if it exists
-                                  if (matchingSlide?.html) {
-                                    return (
-                                      <motion.div
-                                        key="content"
-                                        initial={{
-                                          opacity: 0,
-                                          height: 0,
-                                          marginTop: 0,
-                                        }}
-                                        animate={{
-                                          opacity: 1,
-                                          height: "auto",
-                                          marginTop: 32,
-                                        }}
-                                        exit={{
-                                          opacity: 0,
-                                          height: 0,
-                                          marginTop: 0,
-                                        }}
-                                        transition={{
-                                          duration: 0.4,
-                                          ease: [0.23, 1, 0.32, 1],
-                                        }}
-                                        className="group/preview relative overflow-hidden"
-                                      >
-                                        <div
-                                          className="border-border/50 ring-primary/5 group-hover:ring-primary/20 slide-preview-container relative aspect-video w-full overflow-hidden rounded-2xl border bg-black/5 shadow-2xl ring-1 transition-all"
-                                          id={`slide-preview-${matchingSlide.id}`}
-                                        >
-                                          <SlidePreview
-                                            key={`${matchingSlide.id}-${matchingSlide.html?.length || 0}-${matchingSlide.title || ""}`}
-                                            html={matchingSlide.html}
-                                            autoScale={true}
-                                          />
-                                        </div>
-                                      </motion.div>
-                                    )
-                                  }
-
-                                  return null
-                                })()}
-                              </AnimatePresence>
-                            </>
-                          )}
-                        </motion.div>
-
-                        {/* Right Side Cancel Button - Only for NEW expansions (skeletons) */}
-                        <AnimatePresence>
-                          {s.html === "SKELETON" && (
-                            <motion.div
-                              initial={{ opacity: 0, x: 20 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              exit={{ opacity: 0, x: 20 }}
-                              className="absolute top-1/2 -right-12 z-[60] -translate-y-1/2"
-                            >
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button
-                                    variant="destructive"
-                                    size="icon"
-                                    className="border-background size-10 rounded-full border-4 shadow-xl transition-all hover:scale-110 active:scale-95"
-                                    onClick={() => onCancelExpand?.(i - 1)}
-                                  >
-                                    <X className="size-5" />
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent side="right">
-                                  <p className="text-[10px] font-bold tracking-widest uppercase">
-                                    Abort Expand
-                                  </p>
-                                </TooltipContent>
-                              </Tooltip>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
+            {/* MULTI-SLIDE GRID VIEW */}
+            {!isGeneratingOutline && !error && slides.length > 0 && viewMode === "grid" && (
+              <div
+                className={cn(
+                  "grid gap-6 transition-all",
+                  gridColumns === 2
+                    ? "grid-cols-1 lg:grid-cols-2"
+                    : "grid-cols-1 md:grid-cols-2 xl:grid-cols-3"
+                )}
+              >
+                {slides.map((s, i) => (
+                  <motion.div
+                    layout
+                    key={s.id}
+                    id={`slide-full-${s.id}`}
+                    className="group/card relative flex flex-col rounded-2xl border border-border/60 bg-card/60 hover:bg-card hover:border-primary/40 hover:shadow-xl transition-all duration-200 overflow-hidden p-4 gap-3"
+                  >
+                    {/* Card Header */}
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 min-w-0 flex-1">
+                        <span className="flex items-center justify-center size-6 rounded-md bg-muted text-[11px] font-bold text-muted-foreground shrink-0 tabular-nums">
+                          {String(i + 1).padStart(2, "0")}
+                        </span>
+                        <AutoResizeTextarea
+                          className="text-foreground font-bold text-sm truncate hover:truncate-none focus:truncate-none bg-transparent border-none p-0 focus:ring-0 flex-1 min-w-0 resize-none leading-snug"
+                          value={s.title}
+                          placeholder="Slide Title"
+                          onChange={(val) => updateOutlineSlide(i, "title", val)}
+                          disabled={generatingSections?.has(i)}
+                        />
                       </div>
 
-                      {/* Section Toolbar - Hidden only for skeletons */}
-                      {s.html !== "SKELETON" && (
-                        <div
-                          className={cn(
-                            "bg-background ring-background absolute -bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1 rounded-full border p-1 shadow-2xl ring-4 transition-all duration-300",
-                            generatingSections?.has(i)
-                              ? "scale-105 opacity-100"
-                              : "opacity-0 group-hover:opacity-100"
-                          )}
-                        >
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="hover:bg-muted size-8 rounded-full disabled:opacity-30"
-                                onClick={() => setSelectedVisualsIndex(i)}
-                                disabled={isBusy}
-                              >
-                                <Compass className="size-3.5" />
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent side="bottom" sideOffset={10} className="text-center">
-                              <p className="font-semibold text-xs">Edit Slide Prompt</p>
-                              <p className="text-[10px] text-muted-foreground">Customize layout and visual direction</p>
-                            </TooltipContent>
-                          </Tooltip>
+                      {/* Slide Card Actions */}
+                      <div className="flex items-center gap-0.5 opacity-70 group-hover/card:opacity-100 transition-opacity shrink-0">
+                        {/* Move Left / Right */}
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="size-7 rounded-md"
+                              disabled={i === 0 || isBusy}
+                              onClick={() => moveSlide(i, i - 1)}
+                            >
+                              <ArrowLeft className="size-3.5" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent side="top"><p className="text-xs">Move Earlier</p></TooltipContent>
+                        </Tooltip>
 
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className={cn(
-                                  "group/btn size-8 rounded-full transition-all duration-300",
-                                  generatingSections?.has(i)
-                                    ? "bg-red-500/10 text-red-500 shadow-lg ring-1 ring-red-500/30 hover:bg-red-500/20"
-                                    : "bg-primary/5 hover:bg-primary/10 text-primary"
-                                )}
-                                onClick={() => handleGenerateSection(i)}
-                                disabled={isBusy && !generatingSections?.has(i)}
-                              >
-                                {generatingSections?.has(i) ? (
-                                  <X className="size-3.5" />
-                                ) : (
-                                  <Wand2 className="size-3.5 transition-transform group-hover/btn:scale-110" />
-                                )}
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent side="bottom" sideOffset={10} className="text-center">
-                              <p className="font-semibold text-xs">
-                                {generatingSections?.has(i)
-                                  ? "Stop AI Generation"
-                                  : s.html
-                                  ? "Regenerate Slide Design"
-                                  : "Generate Slide with AI"}
-                              </p>
-                              <p className="text-[10px] text-muted-foreground">
-                                {generatingSections?.has(i)
-                                  ? "Cancel current generation"
-                                  : "Build full visual slide layout"}
-                              </p>
-                            </TooltipContent>
-                          </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="size-7 rounded-md"
+                              disabled={i === slides.length - 1 || isBusy}
+                              onClick={() => moveSlide(i, i + 1)}
+                            >
+                              <ArrowRight className="size-3.5" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent side="top"><p className="text-xs">Move Later</p></TooltipContent>
+                        </Tooltip>
 
-                          <div className="bg-border h-3 w-[1px]" />
+                        {/* Edit Visual Blueprint */}
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="size-7 rounded-md"
+                              onClick={() => setSelectedVisualsIndex(i)}
+                              disabled={isBusy}
+                            >
+                              <Compass className="size-3.5" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent side="top"><p className="text-xs">Edit Slide Blueprint Prompt</p></TooltipContent>
+                        </Tooltip>
 
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="hover:bg-muted size-8 rounded-full disabled:opacity-30"
-                                onClick={() => addOutlineSection(i)}
-                                disabled={isBusy}
-                              >
-                                <Plus className="text-primary size-3.5" />
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent side="bottom" sideOffset={10} className="text-center">
-                              <p className="font-semibold text-xs">Insert Blank Slide Below</p>
-                              <p className="text-[10px] text-muted-foreground">Add a blank slide to the storyboard</p>
-                            </TooltipContent>
-                          </Tooltip>
+                        {/* Regenerate Slide */}
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="size-7 rounded-md text-primary"
+                              onClick={() => handleGenerateSection(i)}
+                              disabled={isBusy && !generatingSections?.has(i)}
+                            >
+                              {generatingSections?.has(i) ? (
+                                <X className="size-3.5 text-red-500" />
+                              ) : (
+                                <Wand2 className="size-3.5" />
+                              )}
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent side="top">
+                            <p className="text-xs">
+                              {generatingSections?.has(i)
+                                ? "Stop Generation"
+                                : "Regenerate Slide Design"}
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
 
-                          <div className="bg-border h-3 w-[1px]" />
+                        {/* Present Slide */}
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="size-7 rounded-md"
+                              onClick={() => {
+                                setActiveSlideIndex(i)
+                                setIsPresenting(true)
+                              }}
+                            >
+                              <PresentationIcon className="size-3.5" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent side="top"><p className="text-xs">Present From Here</p></TooltipContent>
+                        </Tooltip>
 
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="bg-primary/5 hover:bg-primary/10 group/btn text-primary size-8 rounded-full disabled:opacity-30"
-                                onClick={() => onExpandSection?.(i)}
-                                disabled={isBusy}
-                              >
-                                <Sparkles className="size-3.5 transition-transform group-hover/btn:scale-110" />
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent side="bottom" sideOffset={10} className="text-center">
-                              <p className="font-semibold text-xs">AI Generate Next Slide</p>
-                              <p className="text-[10px] text-muted-foreground">Continue story with an AI-composed slide</p>
-                            </TooltipContent>
-                          </Tooltip>
+                        {/* Delete Slide */}
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="size-7 rounded-md text-destructive hover:bg-destructive/10"
+                              onClick={() => removeOutlineSection(i)}
+                              disabled={isBusy}
+                            >
+                              <Trash className="size-3.5" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent side="top"><p className="text-xs text-red-500">Delete Slide</p></TooltipContent>
+                        </Tooltip>
+                      </div>
+                    </div>
 
-                          <div className="bg-border h-3 w-[1px]" />
-
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="hover:bg-muted size-8 rounded-full disabled:opacity-30"
-                                onClick={() => {
-                                  setActiveSlideIndex(i)
-                                  setIsPresenting(true)
-                                }}
-                                disabled={isBusy}
-                              >
-                                <PresentationIcon className="text-primary size-3.5" />
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent side="bottom" sideOffset={10} className="text-center">
-                              <p className="font-semibold text-xs">Present from This Slide</p>
-                              <p className="text-[10px] text-muted-foreground">Launch fullscreen presentation from slide {i + 1}</p>
-                            </TooltipContent>
-                          </Tooltip>
-
-                          <div className="bg-border h-3 w-[1px]" />
-
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="hover:bg-destructive/10 hover:text-destructive size-8 rounded-full disabled:opacity-30"
-                                onClick={() => removeOutlineSection(i)}
-                                disabled={isBusy}
-                              >
-                                <Trash className="size-3.5" />
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent side="bottom" sideOffset={10} className="text-center">
-                              <p className="font-semibold text-xs text-red-500">Delete Slide</p>
-                              <p className="text-[10px] text-muted-foreground">Remove slide {i + 1} from project</p>
-                            </TooltipContent>
-                          </Tooltip>
+                    {/* Slide Canvas Preview */}
+                    <div
+                      className="border-border/50 slide-preview-container relative aspect-video w-full overflow-hidden rounded-xl border bg-black/5 shadow-xs ring-1 ring-border/20 transition-all cursor-pointer group-hover/card:ring-primary/40"
+                      id={`slide-preview-${s.id}`}
+                      onClick={() => setActiveSlideIndex(i)}
+                    >
+                      {s.html === "SKELETON" || generatingSections?.has(i) ? (
+                        <div className="bg-muted/20 relative h-full w-full overflow-hidden flex items-center justify-center">
+                          <div className="animate-shimmer absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                          <div className="flex items-center gap-2 z-10 text-xs font-semibold text-primary animate-pulse">
+                            <Sparkles className="size-4 animate-spin" />
+                            <span>Architecting slide design...</span>
+                          </div>
+                        </div>
+                      ) : s.html ? (
+                        <SlidePreview
+                          key={`${s.id}-${s.html?.length || 0}-${s.title || ""}`}
+                          html={s.html}
+                          autoScale={true}
+                        />
+                      ) : (
+                        <div className="flex h-full w-full flex-col items-center justify-center gap-2 p-6 text-center text-muted-foreground">
+                          <Sparkles className="size-6 opacity-40" />
+                          <span className="text-xs font-medium">Slide blueprint ready</span>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="h-7 text-[11px] gap-1.5"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handleGenerateSection(i)
+                            }}
+                          >
+                            <Wand2 className="size-3" /> Generate HTML
+                          </Button>
                         </div>
                       )}
-                    </Reorder.Item>
-                  ))}
-                </Reorder.Group>
-              )}
-            </div>
+                    </div>
+
+                    {/* Slide Talking Points / Narrative Notes */}
+                    <div className="px-0.5 space-y-1">
+                      <AutoResizeTextarea
+                        className="text-muted-foreground text-xs leading-relaxed w-full bg-transparent border-none p-0 focus:ring-0 line-clamp-2 focus:line-clamp-none resize-none transition-all"
+                        value={s.description || ""}
+                        placeholder="Slide talking points & narrative..."
+                        onChange={(val) => updateOutlineSlide(i, "description", val)}
+                        disabled={generatingSections?.has(i)}
+                      />
+                    </div>
+
+                    {/* Card Footer Quick Actions */}
+                    <div className="flex items-center justify-between pt-2 border-t border-border/40 text-[11px] text-muted-foreground/80">
+                      <button
+                        onClick={() => addOutlineSection(i)}
+                        className="flex items-center gap-1 hover:text-primary transition-colors cursor-pointer"
+                      >
+                        <Plus className="size-3 text-primary" />
+                        <span>Insert slide</span>
+                      </button>
+                      <button
+                        onClick={() => onExpandSection?.(i)}
+                        className="flex items-center gap-1 hover:text-primary transition-colors cursor-pointer"
+                      >
+                        <Sparkles className="size-3 text-primary" />
+                        <span>AI continue</span>
+                      </button>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            )}
+
+            {/* STREAMLINED LIST VIEW */}
+            {!isGeneratingOutline && !error && slides.length > 0 && viewMode === "list" && (
+              <Reorder.Group
+                axis="y"
+                values={slides}
+                onReorder={handleReorder}
+                className="space-y-4"
+              >
+                {slides.map((s, i) => (
+                  <Reorder.Item
+                    key={s.id}
+                    value={s}
+                    id={`slide-full-${s.id}`}
+                    className="group/item relative flex flex-col lg:flex-row gap-5 rounded-2xl border border-border/60 bg-card/60 hover:bg-card hover:border-primary/40 hover:shadow-xl p-4 transition-all"
+                  >
+                    {/* Left: Compact Slide Preview (~500px) */}
+                    <div className="lg:w-[480px] xl:w-[540px] shrink-0">
+                      <div
+                        className="slide-preview-container relative aspect-video w-full overflow-hidden rounded-xl border border-border/50 bg-black/5 shadow-xs ring-1 ring-border/20 cursor-pointer"
+                        id={`slide-preview-${s.id}`}
+                        onClick={() => setActiveSlideIndex(i)}
+                      >
+                        {s.html === "SKELETON" || generatingSections?.has(i) ? (
+                          <div className="h-full w-full bg-muted/20 flex items-center justify-center animate-pulse">
+                            <Sparkles className="size-5 text-primary animate-spin" />
+                          </div>
+                        ) : s.html ? (
+                          <SlidePreview
+                            key={`${s.id}-${s.html?.length || 0}-${s.title || ""}`}
+                            html={s.html}
+                            autoScale={true}
+                          />
+                        ) : (
+                          <div className="flex h-full w-full flex-col items-center justify-center gap-2 p-6 text-center text-muted-foreground">
+                            <Sparkles className="size-6 opacity-40" />
+                            <span className="text-xs font-medium">Slide blueprint ready</span>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="h-7 text-[11px] gap-1.5"
+                              onClick={() => handleGenerateSection(i)}
+                            >
+                              <Wand2 className="size-3" /> Generate HTML
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Right: Slide Info & Controls */}
+                    <div className="flex-1 flex flex-col justify-between gap-3 min-w-0">
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2">
+                            <div className="text-muted-foreground/30 hover:text-primary cursor-grab active:cursor-grabbing p-0.5">
+                              <GripVertical className="size-3.5" />
+                            </div>
+                            <span className="text-[11px] font-bold text-muted-foreground/70 tabular-nums">
+                              SLIDE {String(i + 1).padStart(2, "0")}
+                            </span>
+                            <div className="h-3 w-[1px] bg-border" />
+                            <button
+                              disabled={i === 0 || isBusy}
+                              onClick={() => moveSlide(i, i - 1)}
+                              className="text-muted-foreground hover:text-foreground disabled:opacity-30 p-1 cursor-pointer"
+                              title="Move up"
+                            >
+                              <ArrowLeft className="size-3 rotate-90" />
+                            </button>
+                            <button
+                              disabled={i === slides.length - 1 || isBusy}
+                              onClick={() => moveSlide(i, i + 1)}
+                              className="text-muted-foreground hover:text-foreground disabled:opacity-30 p-1 cursor-pointer"
+                              title="Move down"
+                            >
+                              <ArrowRight className="size-3 rotate-90" />
+                            </button>
+                          </div>
+
+                          {/* Toolbar Buttons */}
+                          <div className="flex items-center gap-0.5">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="size-7 rounded-md"
+                              onClick={() => setSelectedVisualsIndex(i)}
+                              title="Edit Blueprint"
+                            >
+                              <Compass className="size-3.5" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="size-7 rounded-md text-primary"
+                              onClick={() => handleGenerateSection(i)}
+                              title="Regenerate"
+                            >
+                              <Wand2 className="size-3.5" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="size-7 rounded-md"
+                              onClick={() => {
+                                setActiveSlideIndex(i)
+                                setIsPresenting(true)
+                              }}
+                              title="Present"
+                            >
+                              <PresentationIcon className="size-3.5" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="size-7 rounded-md text-destructive hover:bg-destructive/10"
+                              onClick={() => removeOutlineSection(i)}
+                              title="Delete"
+                            >
+                              <Trash className="size-3.5" />
+                            </Button>
+                          </div>
+                        </div>
+
+                        <AutoResizeTextarea
+                          className="text-foreground font-bold text-base sm:text-lg leading-snug w-full bg-transparent border-none p-0 focus:ring-0 resize-none"
+                          value={s.title}
+                          placeholder="Slide Title"
+                          onChange={(val) => updateOutlineSlide(i, "title", val)}
+                          disabled={generatingSections?.has(i)}
+                        />
+
+                        <AutoResizeTextarea
+                          className="text-muted-foreground text-xs sm:text-sm leading-relaxed w-full bg-transparent border-none p-0 focus:ring-0 resize-none"
+                          value={s.description || ""}
+                          placeholder="Slide talking points, narrative notes, and key takeaways..."
+                          onChange={(val) => updateOutlineSlide(i, "description", val)}
+                          disabled={generatingSections?.has(i)}
+                        />
+                      </div>
+
+                      {/* Quick Add Slide Below */}
+                      <div className="flex items-center gap-2 pt-2 border-t border-border/40 text-[11px] text-muted-foreground">
+                        <button
+                          onClick={() => addOutlineSection(i)}
+                          className="flex items-center gap-1 hover:text-primary transition-colors cursor-pointer"
+                        >
+                          <Plus className="size-3 text-primary" />
+                          <span>Insert slide below</span>
+                        </button>
+                        <span>•</span>
+                        <button
+                          onClick={() => onExpandSection?.(i)}
+                          className="flex items-center gap-1 hover:text-primary transition-colors cursor-pointer"
+                        >
+                          <Sparkles className="size-3 text-primary" />
+                          <span>AI continue slide</span>
+                        </button>
+                      </div>
+                    </div>
+                  </Reorder.Item>
+                ))}
+              </Reorder.Group>
+            )}
           </div>
         </main>
       </div>
