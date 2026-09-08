@@ -145,6 +145,8 @@ export function ProjectView({
     await architectSendMessage(msg, { title, description, slides })
   }
 
+  const isInitialMountRef = React.useRef(true)
+
   const saveProjectData = async (payload: {
     title?: string
     description?: string
@@ -166,10 +168,13 @@ export function ProjectView({
       if (res.ok) {
         const data = await res.json()
         if (onSaveSuccess) onSaveSuccess(data)
+      } else {
+        throw new Error("Failed to save project changes")
       }
     } catch (err) {
       console.error("Failed to save project change", err)
       toast.error("Cloud sync failed")
+      throw err
     } finally {
       setIsSaving(false)
     }
@@ -179,7 +184,7 @@ export function ProjectView({
     if (!hasUserChangesRef.current) return
 
     const timeoutId = setTimeout(() => {
-      saveProjectData({ title, description, slides })
+      saveProjectData({ title, description, slides }).catch(() => {})
       hasUserChangesRef.current = false
     }, 2000)
 
@@ -192,19 +197,34 @@ export function ProjectView({
     if (el) el.scrollIntoView({ behavior: "smooth" })
   }
 
-  // Sync initialData changes
+  // Sync initialData changes from parent
   React.useEffect(() => {
-    if (initialData?.slides) {
-      Promise.resolve().then(() => setSlides(initialData.slides!))
+    if (isInitialMountRef.current) {
+      isInitialMountRef.current = false
+      if (initialData?.slides && initialData.slides.length > 0) {
+        setSlides(initialData.slides)
+        scrollToSlide(initialData.slides[0].id)
+      }
+      if (initialData?.title) setTitle(initialData.title)
+      if (initialData?.description) setDescription(initialData.description)
+      return
     }
-    if (initialData?.title) {
-      Promise.resolve().then(() => setTitle(initialData.title!))
+
+    // On subsequent updates (e.g. initial fetch completes or external generation):
+    // Only update slides if external slides length or IDs changed, preserving local order during drag/move
+    if (initialData?.slides && !hasUserChangesRef.current) {
+      setSlides((current) => {
+        const hasStructuralDiff =
+          current.length !== initialData.slides.length ||
+          current.some((s, idx) => s.id !== initialData.slides[idx]?.id)
+        return hasStructuralDiff ? initialData.slides : current
+      })
     }
-    if (initialData?.description) {
-      Promise.resolve().then(() => setDescription(initialData.description!))
+    if (initialData?.title && !hasUserChangesRef.current) {
+      setTitle(initialData.title)
     }
-    if (initialData?.slides && initialData.slides.length > 0) {
-      scrollToSlide(initialData.slides[0].id)
+    if (initialData?.description && !hasUserChangesRef.current) {
+      setDescription(initialData.description)
     }
   }, [initialData])
 
@@ -364,18 +384,30 @@ export function ProjectView({
     })
   }
 
-  const handleReorder = (newSlides: HtmlSlide[]) => {
+  const handleReorder = async (newSlides: HtmlSlide[]) => {
+    const previousSlides = [...slides]
     setSlides(newSlides)
-    saveProjectData({ slides: newSlides })
+    try {
+      await saveProjectData({ slides: newSlides })
+    } catch {
+      setSlides(previousSlides)
+      toast.error("Failed to reorder slides. Reverted to previous order.")
+    }
   }
 
-  const moveSlide = (fromIndex: number, toIndex: number) => {
+  const moveSlide = async (fromIndex: number, toIndex: number) => {
     if (toIndex < 0 || toIndex >= slides.length) return
+    const previousSlides = [...slides]
     const updated = [...slides]
     const [moved] = updated.splice(fromIndex, 1)
     updated.splice(toIndex, 0, moved)
     setSlides(updated)
-    saveProjectData({ slides: updated })
+    try {
+      await saveProjectData({ slides: updated })
+    } catch {
+      setSlides(previousSlides)
+      toast.error("Failed to move slide. Reverted to original position.")
+    }
   }
 
   const addOutlineSection = async (index: number) => {

@@ -96,41 +96,97 @@ export async function PATCH(
       }
     }
 
-    // 2. DATABASE UPDATE: Update project fields and replace slides
-    const project = await prisma.project.update({
-      where: {
-        id,
-        userId: session?.user?.id,
-      },
-      data: {
-        title,
-        description,
-        isDeleted,
-        deletedAt:
-          isDeleted === false ? null : isDeleted ? new Date() : undefined,
-        slides: slides
-          ? {
-              deleteMany: {}, // Atomic replacement: wipe existing slides...
-              create: (
-                slides as {
-                  title: string
-                  description: string
-                  prompt: string
-                  html: string
-                  assets: { url: string; key?: string }[]
-                }[]
-              ).map((s, idx) => ({
-                // ...and create new ones in the new order
-                index: idx,
-                title: s.title,
-                description: s.description,
-                prompt: s.prompt,
-                html: s.html,
-                assets: s.assets || [],
-              })),
+    // 2. DATABASE UPDATE: Update project fields and preserve slide IDs
+    if (slides && Array.isArray(slides)) {
+      const currentProject = await prisma.project.findUnique({
+        where: { id },
+        include: { slides: true },
+      })
+
+      if (currentProject) {
+        const existingSlideIds = new Set(currentProject.slides.map((s) => s.id))
+        const incomingIds = new Set(
+          (slides as { id?: string }[])
+            .map((s) => s.id)
+            .filter((slideId): slideId is string => typeof slideId === "string")
+        )
+
+        // Slides that were genuinely removed
+        const slidesToDelete = currentProject.slides.filter(
+          (s) => !incomingIds.has(s.id)
+        )
+
+        await prisma.$transaction(async (tx) => {
+          if (slidesToDelete.length > 0) {
+            await tx.slide.deleteMany({
+              where: { id: { in: slidesToDelete.map((s) => s.id) } },
+            })
+          }
+
+          for (let idx = 0; idx < slides.length; idx++) {
+            const s = slides[idx] as {
+              id?: string
+              title?: string
+              description?: string
+              prompt?: string
+              html?: string
+              assets?: { url: string; key?: string }[]
             }
-          : undefined,
-      },
+
+            if (s.id && existingSlideIds.has(s.id)) {
+              await tx.slide.update({
+                where: { id: s.id },
+                data: {
+                  index: idx,
+                  title: s.title,
+                  description: s.description,
+                  prompt: s.prompt,
+                  html: s.html,
+                  assets: s.assets || [],
+                },
+              })
+            } else {
+              await tx.slide.create({
+                data: {
+                  projectId: id,
+                  index: idx,
+                  title: s.title || "New Slide",
+                  description: s.description || "",
+                  prompt: s.prompt || "",
+                  html: s.html || "",
+                  assets: s.assets || [],
+                },
+              })
+            }
+          }
+
+          await tx.project.update({
+            where: { id },
+            data: {
+              title,
+              description,
+              isDeleted,
+              deletedAt:
+                isDeleted === false ? null : isDeleted ? new Date() : undefined,
+            },
+          })
+        })
+      }
+    } else {
+      await prisma.project.update({
+        where: { id },
+        data: {
+          title,
+          description,
+          isDeleted,
+          deletedAt:
+            isDeleted === false ? null : isDeleted ? new Date() : undefined,
+        },
+      })
+    }
+
+    const project = await prisma.project.findUnique({
+      where: { id },
       include: {
         slides: {
           orderBy: {
