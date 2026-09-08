@@ -24,6 +24,8 @@ export default function NewProjectPage() {
 
   const [prompt, setPrompt] = React.useState("")
   const [isGenerating, setIsGenerating] = React.useState(false)
+  const [isStartingScratch, setIsStartingScratch] = React.useState(false)
+  const isSubmittingRef = React.useRef(false)
   const [randomPrompts, setRandomPrompts] = React.useState<string[]>([])
   const [credits, setCredits] = React.useState<number | null>(null)
   const router = useRouter()
@@ -55,6 +57,8 @@ export default function NewProjectPage() {
 
   const handleStartGeneration = async () => {
     if (!prompt.trim()) return
+    // Guard against rapid double clicks
+    if (isSubmittingRef.current || isGenerating || isStartingScratch) return
 
     // Check credits
     if (credits !== null && credits < 1) {
@@ -65,6 +69,7 @@ export default function NewProjectPage() {
       return
     }
 
+    isSubmittingRef.current = true
     setIsGenerating(true)
 
     try {
@@ -91,12 +96,18 @@ export default function NewProjectPage() {
       }
     } catch (error) {
       console.error("Failed to start generation", error)
+      isSubmittingRef.current = false
       setIsGenerating(false)
+      toast.error("Failed to start generation. Please try again.")
     }
   }
 
   const handleStartScratch = async () => {
-    setIsGenerating(true)
+    // Synchronous guard against rapid double clicks
+    if (isSubmittingRef.current || isStartingScratch || isGenerating) return
+    isSubmittingRef.current = true
+    setIsStartingScratch(true)
+
     try {
       const res = await fetch("/api/projects", {
         method: "POST",
@@ -112,10 +123,14 @@ export default function NewProjectPage() {
         const project = await res.json()
         window.dispatchEvent(new Event("projects-updated"))
         router.push(`/project/${project.id}`)
+      } else {
+        throw new Error("Failed to create project")
       }
     } catch (error) {
       console.error("Failed to start from scratch", error)
-      setIsGenerating(false)
+      isSubmittingRef.current = false
+      setIsStartingScratch(false)
+      toast.error("Failed to create storyboard. Please try again.")
     }
   }
 
@@ -147,6 +162,7 @@ export default function NewProjectPage() {
           buttonText="Continue"
           delay={0.3}
           href="/templates"
+          disabled={isStartingScratch || isGenerating}
         />
 
         <SelectionCard
@@ -159,6 +175,7 @@ export default function NewProjectPage() {
           onClick={() => {
             setShowGenerateDialog(true)
           }}
+          disabled={isStartingScratch || isGenerating}
         />
 
         <SelectionCard
@@ -168,6 +185,8 @@ export default function NewProjectPage() {
           buttonText="Continue"
           delay={0.6}
           onClick={handleStartScratch}
+          disabled={isStartingScratch || isGenerating}
+          isLoading={isStartingScratch}
         />
       </div>
 
@@ -263,6 +282,8 @@ interface SelectionCardProps {
   delay?: number
   href?: string
   onClick?: () => void
+  disabled?: boolean
+  isLoading?: boolean
 }
 
 function SelectionCard({
@@ -274,21 +295,34 @@ function SelectionCard({
   delay = 0,
   href,
   onClick,
+  disabled = false,
+  isLoading = false,
 }: SelectionCardProps) {
-  const CardWrapper = href ? Link : "div"
+  const CardWrapper = href && !disabled && !isLoading ? Link : "div"
+
+  const handleClick = (e: React.MouseEvent) => {
+    if (disabled || isLoading) {
+      e.preventDefault()
+      e.stopPropagation()
+      return
+    }
+    if (onClick) {
+      onClick()
+    }
+  }
 
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay }}
-      whileHover={{ y: -5 }}
-      className="h-full"
+      whileHover={!disabled && !isLoading ? { y: -5 } : undefined}
+      className={cn("h-full transition-opacity", (disabled || isLoading) && "pointer-events-none opacity-50")}
     >
       <CardWrapper
         href={href as string}
-        className="block h-full cursor-pointer"
-        onClick={onClick}
+        className={cn("block h-full", !disabled && !isLoading ? "cursor-pointer" : "cursor-not-allowed")}
+        onClick={handleClick}
       >
         <div
           className={cn(
@@ -336,13 +370,20 @@ function SelectionCard({
             <div className="mt-8 flex justify-end">
               <span
                 className={cn(
-                  "pointer-events-none inline-block cursor-pointer rounded-full px-8 py-2 text-sm font-semibold transition-all duration-300",
+                  "pointer-events-none inline-flex items-center justify-center rounded-full px-8 py-2 text-sm font-semibold transition-all duration-300",
                   featured
                     ? "bg-white text-black shadow-[0_0_20px_rgba(255,255,255,0.3)] hover:bg-white/90"
                     : "bg-neutral-800 text-white hover:bg-neutral-700"
                 )}
               >
-                {buttonText}
+                {isLoading ? (
+                  <>
+                    <RefreshCw className="mr-2 h-4 w-4 animate-spin inline" />
+                    Creating...
+                  </>
+                ) : (
+                  buttonText
+                )}
               </span>
             </div>
           </div>

@@ -23,6 +23,8 @@ interface GenerateDialogProps {
 export function GenerateDialog({ open, onOpenChange }: GenerateDialogProps) {
   const [prompt, setPrompt] = React.useState("")
 
+  const [isGenerating, setIsGenerating] = React.useState(false)
+  const isSubmittingRef = React.useRef(false)
   const [randomPrompts, setRandomPrompts] = React.useState<string[]>([])
   const router = useRouter()
 
@@ -38,13 +40,42 @@ export function GenerateDialog({ open, onOpenChange }: GenerateDialogProps) {
   }, [open, refreshPrompts])
 
   const handleGenerate = async () => {
-    if (!prompt) {
+    if (!prompt.trim()) {
       toast.error("Please enter a prompt")
       return
     }
 
-    onOpenChange(false)
-    router.push(`/editor?prompt=${encodeURIComponent(prompt)}`)
+    if (isSubmittingRef.current || isGenerating) return
+    isSubmittingRef.current = true
+    setIsGenerating(true)
+
+    try {
+      const res = await fetch("/api/projects", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: prompt.slice(0, 40) + (prompt.length > 40 ? "..." : ""),
+          slides: [],
+          description: null,
+        }),
+      })
+
+      if (res.ok) {
+        const project = await res.json()
+        window.dispatchEvent(new Event("projects-updated"))
+        onOpenChange(false)
+        router.push(
+          `/project/${project.id}?prompt=${encodeURIComponent(prompt)}`
+        )
+      } else {
+        throw new Error("Failed to create project")
+      }
+    } catch (err) {
+      console.error("Failed to start generation", err)
+      isSubmittingRef.current = false
+      setIsGenerating(false)
+      toast.error("Failed to start generation. Please try again.")
+    }
   }
 
   return (
@@ -107,12 +138,21 @@ export function GenerateDialog({ open, onOpenChange }: GenerateDialogProps) {
               Cancel
             </Button>
             <Button
-              disabled={!prompt.trim()}
+              disabled={!prompt.trim() || isGenerating}
               onClick={handleGenerate}
               className="h-11 rounded-lg bg-white px-10 font-bold text-black shadow-xl hover:bg-neutral-200"
             >
-              <Sparkles className="mr-2 size-4" />
-              Generate
+              {isGenerating ? (
+                <>
+                  <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                  Initializing...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="mr-2 size-4" />
+                  Generate
+                </>
+              )}
             </Button>
           </div>
         </div>

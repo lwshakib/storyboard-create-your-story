@@ -47,7 +47,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
+  DialogFooter,
 } from "@/components/ui/dialog"
+import { Textarea } from "@/components/ui/textarea"
 import {
   exportHtmlToJson,
   exportImagesToPdf,
@@ -1465,21 +1467,23 @@ export function ProjectView({
         <DialogContent className="overflow-hidden rounded-xl border-none bg-neutral-900 p-0 text-white shadow-2xl sm:max-w-[500px]">
           <div className="space-y-6 p-8">
             <DialogHeader>
-              <DialogTitle className="flex items-center gap-2 text-2xl font-bold text-white">
-                AI Storyboard Architect
+              <DialogTitle className="flex items-center gap-2 bg-gradient-to-r from-purple-400 to-orange-400 bg-clip-text text-2xl font-bold text-transparent">
+                <Sparkles className="size-6 text-orange-400" />
+                Storyboard Architect
               </DialogTitle>
               <DialogDescription className="font-medium text-neutral-400">
-                Enter your project vision to generate a professional narrative
-                and high-fidelity visual structure.
+                Describe your masterpiece. Our AI will handle the high-end
+                visuals and data density.
               </DialogDescription>
             </DialogHeader>
 
             <div className="space-y-4">
-              <AutoResizeTextarea
-                value={outlinePrompt}
-                onChange={setOutlinePrompt}
+              <Textarea
+                id="prompt"
                 placeholder="Describe your vision (e.g., A futuristic Tokyo with neon-lit vertical farms...)"
-                className="min-h-[120px] rounded-lg border-neutral-700 bg-neutral-800/50 p-4 font-medium text-white ring-offset-neutral-900 transition-all placeholder:text-neutral-500 focus:border-orange-500/50 focus:ring-orange-500/50"
+                className="min-h-[120px] resize-none rounded-lg border-neutral-700 bg-neutral-800/50 p-4 font-medium text-white transition-all placeholder:text-neutral-500 focus-visible:border-orange-500/50 focus-visible:ring-orange-500/50"
+                value={outlinePrompt}
+                onChange={(e) => setOutlinePrompt(e.target.value)}
                 autoFocus
               />
 
@@ -1509,7 +1513,7 @@ export function ProjectView({
               </div>
             </div>
 
-            <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:justify-end">
+            <DialogFooter className="flex flex-col gap-3 pt-2 sm:flex-row">
               <Button
                 variant="ghost"
                 onClick={() => setShowGenerateDialog(false)}
@@ -1524,12 +1528,19 @@ export function ProjectView({
                     setShowGenerateDialog(false)
                   }
                 }}
-                disabled={!outlinePrompt.trim()}
+                disabled={!outlinePrompt.trim() || isGeneratingOutline}
                 className="h-11 rounded-lg bg-white px-10 font-bold text-black shadow-xl hover:bg-neutral-200"
               >
-                {slides.length > 0 ? "Regenerate Storyboard" : "Create Outline"}
+                {isGeneratingOutline ? (
+                  <>
+                    <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
+                    Initializing...
+                  </>
+                ) : (
+                  slides.length > 0 ? "Regenerate Storyboard" : "Create Storyboard"
+                )}
               </Button>
-            </div>
+            </DialogFooter>
           </div>
           <div className="h-1 w-full bg-gradient-to-r from-purple-500 via-orange-500 to-pink-500 opacity-50" />
         </DialogContent>
