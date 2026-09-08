@@ -71,10 +71,10 @@ export function NavUser() {
             >
               <UserAvatar
                 user={user}
-                className="h-8 w-8 rounded-lg border border-black/5"
+                className="h-8 w-8 rounded-lg border border-border/50"
               />
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-bold tracking-tight">
+                <span className="truncate font-medium tracking-tight">
                   {user.name}
                 </span>
                 <span className="truncate text-xs opacity-50">
@@ -85,16 +85,16 @@ export function NavUser() {
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="bg-background/95 w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-xl border-none p-2 shadow-2xl ring-1 ring-black/5 backdrop-blur-2xl"
+            className="bg-popover text-popover-foreground border-border w-64 rounded-xl border p-2 shadow-xl"
             side={isMobile ? "bottom" : "right"}
             align="end"
-            sideOffset={4}
+            sideOffset={8}
           >
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <UserAvatar user={user} className="h-8 w-8 rounded-lg" />
+                <UserAvatar user={user} className="h-8 w-8 rounded-lg border border-border/50" />
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-bold tracking-tight">
+                  <span className="truncate font-medium tracking-tight">
                     {user.name}
                   </span>
                   <span className="truncate text-xs opacity-50">
@@ -104,7 +104,7 @@ export function NavUser() {
               </div>
             </DropdownMenuLabel>
 
-            <DropdownMenuSeparator className="opacity-50" />
+            <DropdownMenuSeparator />
 
             <DropdownMenuGroup>
               <DropdownMenuItem
@@ -116,7 +116,7 @@ export function NavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
 
-            <DropdownMenuSeparator className="opacity-50" />
+            <DropdownMenuSeparator />
 
             <DropdownMenuGroup>
               <DropdownMenuItem
@@ -142,7 +142,7 @@ export function NavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
 
-            <DropdownMenuSeparator className="opacity-50" />
+            <DropdownMenuSeparator />
 
             <DropdownMenuItem
               onClick={handleLogout}

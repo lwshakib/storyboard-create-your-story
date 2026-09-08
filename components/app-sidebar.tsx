@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Home, LayoutTemplate, Trash2, Settings } from "lucide-react"
+import { Home, LayoutTemplate, Sparkles, Trash2, Settings } from "lucide-react"
 
 import { LogoIcon } from "@/components/logo"
 import { NavMain } from "@/components/nav-main"
@@ -32,6 +32,11 @@ const navMain = [
     title: "Templates",
     url: "/templates",
     icon: LayoutTemplate,
+  },
+  {
+    title: "Upgrade",
+    url: "/billing",
+    icon: Sparkles,
   },
   {
     title: "Trash",

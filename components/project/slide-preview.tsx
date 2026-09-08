@@ -104,6 +104,19 @@ export function SlidePreview({
     }
   }, [autoScale, scale, html])
 
+  // Helper to sanitize any markdown formatting (e.g. **bold**, *italic*, stray asterisks) from slide HTML
+  const sanitizedHtml = React.useMemo(() => {
+    if (!html) return ""
+    let clean = html
+    // Convert **bold** markdown to <strong class="font-bold text-current">$1</strong>
+    clean = clean.replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold text-current">$1</strong>')
+    // Convert *italic* markdown to <em class="italic">$1</em>
+    clean = clean.replace(/(?<!\*)\*([^*\n<]+)\*(?!\*)/g, '<em class="italic">$1</em>')
+    // Remove any leftover rogue double asterisks
+    clean = clean.replace(/\*\*/g, "")
+    return clean
+  }, [html])
+
   /**
    * srcDoc Memo: Constructs the complete sandboxed HTML document.
    * Injects:
@@ -112,7 +125,7 @@ export function SlidePreview({
    * 3. Message Bridge: Listens for style updates from the parent app and reports clicks back.
    */
   const srcDoc = React.useMemo(() => {
-    const isFullDoc = /<html/i.test(html)
+    const isFullDoc = /<html/i.test(sanitizedHtml)
 
     const editorStyles = `
       <style>
@@ -255,7 +268,7 @@ export function SlidePreview({
     `
 
     if (isFullDoc) {
-      let fullHtml = html
+      let fullHtml = sanitizedHtml
       const fontHeader = `
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -319,7 +332,7 @@ export function SlidePreview({
         </head>
         <body data-edit-mode="false">
           <div id="preview-root" class="relative overflow-hidden w-full h-full">
-            ${html}
+            ${sanitizedHtml}
           </div>
           <script>
              if (window.lucide) {
@@ -329,7 +342,7 @@ export function SlidePreview({
         </body>
       </html>
     `
-  }, [html])
+  }, [sanitizedHtml])
 
   return (
     <div

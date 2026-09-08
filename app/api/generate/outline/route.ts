@@ -120,7 +120,20 @@ CRITICAL REQUIREMENTS:
     // 3. Deduct Credit
     await deductCredits(session.user.id, 1)
 
-    // 4. Persistence
+    // 4. Persistence with markdown asterisk sanitization
+    const cleanHtml = (str: string) => {
+      if (!str) return ""
+      return str
+        .replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold text-white">$1</strong>')
+        .replace(/(?<!\*)\*([^*\n<]+)\*(?!\*)/g, '<em class="italic">$1</em>')
+        .replace(/\*\*/g, "")
+    }
+
+    const cleanText = (str: string) => {
+      if (!str) return ""
+      return str.replace(/\*\*([^*]+)\*\*/g, "$1").replace(/\*\*/g, "")
+    }
+
     const reindexedSlides = (
       (object.slides as {
         title: string
@@ -129,10 +142,10 @@ CRITICAL REQUIREMENTS:
       }[]) || []
     ).map((s, idx: number) => ({
       index: idx,
-      title: s.title || `Slide ${idx + 1}`,
+      title: cleanText(s.title) || `Slide ${idx + 1}`,
       prompt: s.prompt || "Executive presentation layout",
-      description: s.description || "Presentation narrative and key takeaways",
-      html: (s as { html?: string }).html || "",
+      description: cleanText(s.description) || "Presentation narrative and key takeaways",
+      html: cleanHtml((s as { html?: string }).html || ""),
       assets: [],
     }))
 

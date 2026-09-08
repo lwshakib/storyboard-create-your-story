@@ -110,12 +110,18 @@ export async function POST(req: Request) {
     const extractHtml = (text: string) => {
       if (!text || typeof text !== "string") return ""
 
-      const clean = text
+      let clean = text
         .trim()
         .replace(/```[a-z]*\n?/gi, "")
         .replace(/\n?```/g, "")
         .replace(/```/g, "")
         .trim()
+
+      // Convert **bold** markdown to <strong class="font-bold text-white">$1</strong>
+      clean = clean
+        .replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold text-white">$1</strong>')
+        .replace(/(?<!\*)\*([^*\n<]+)\*(?!\*)/g, '<em class="italic">$1</em>')
+        .replace(/\*\*/g, "")
 
       const htmlDocRegex =
         /(<!DOCTYPE html[\s\S]*?<\/html>|<html[\s\S]*?<\/html>)/i

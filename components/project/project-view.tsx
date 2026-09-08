@@ -701,22 +701,6 @@ export function ProjectView({
             </TooltipContent>
           </Tooltip>
 
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="outline"
-                className="border-primary/20 hover:bg-primary/5 bg-primary/5 flex size-9 items-center justify-center rounded-full p-0 font-medium text-orange-500 shadow-sm md:h-10 md:w-auto md:gap-2 md:px-6"
-                onClick={() => setShowGenerateDialog(true)}
-              >
-                <Sparkles className="size-4" />
-                <span className="hidden md:inline">Regenerate</span>
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom" sideOffset={10}>
-              <p className="font-bold text-orange-400">Regenerate Outline</p>
-            </TooltipContent>
-          </Tooltip>
-
           {/* No Save Button or Indicators per Request */}
 
           <Button

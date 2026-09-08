@@ -113,17 +113,20 @@ export async function POST(req: Request) {
       temperature: 0.8,
     })
 
-    const htmlOutput = result.text.trim()
+    const htmlOutput = result.text
+      .trim()
+      .replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold text-white">$1</strong>')
+      .replace(/(?<!\*)\*([^*\n<]+)\*(?!\*)/g, '<em class="italic">$1</em>')
+      .replace(/\*\*/g, "")
 
     // 6. CREDIT DEDUCTION
     await deductCredits(session.user.id, 1)
 
     // Helper to extract a title from the prompt or generated content if possible
-    // For now, we'll just name it "New Section" or similar
     const newSlide = {
-      title: "New Section",
+      title: "New Slide",
       description: "AI Generated Content",
-      prompt: "AI Generated Expansion",
+      prompt: "Executive presentation slide layout",
       html: htmlOutput,
     }
 

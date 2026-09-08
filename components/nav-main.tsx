@@ -31,7 +31,7 @@ export function NavMain({
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Platform</SidebarGroupLabel>
+      <SidebarGroupLabel>Workspace</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <SidebarMenuItem key={item.title}>
@@ -39,7 +39,7 @@ export function NavMain({
               asChild
               tooltip={item.title}
               isActive={pathname === item.url}
-              className="data-[active=true]:bg-primary/10 data-[active=true]:text-primary font-bold"
+              className="data-[active=true]:bg-primary/10 data-[active=true]:text-primary font-normal data-[active=true]:font-medium transition-colors"
             >
               <Link href={item.url}>
                 {item.icon && <item.icon />}
