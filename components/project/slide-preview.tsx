@@ -256,8 +256,13 @@ export function SlidePreview({
 
     if (isFullDoc) {
       let fullHtml = html
+      const fontHeader = `
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+      `
       if (fullHtml.includes("</head>")) {
-        fullHtml = fullHtml.replace("</head>", `${editorStyles}</head>`)
+        fullHtml = fullHtml.replace("</head>", `${fontHeader}${editorStyles}</head>`)
       }
       if (fullHtml.includes("</body>")) {
         fullHtml = fullHtml.replace("</body>", `${editorScripts}</body>`)
@@ -272,7 +277,22 @@ export function SlidePreview({
         <head>
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width, initial-scale=1">
+          <link rel="preconnect" href="https://fonts.googleapis.com">
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+          <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
           <script src="https://cdn.tailwindcss.com"></script>
+          <script>
+            tailwind.config = {
+              theme: {
+                extend: {
+                  fontFamily: {
+                    sans: ['"Plus Jakarta Sans"', 'Inter', 'system-ui', 'sans-serif'],
+                    heading: ['Outfit', '"Plus Jakarta Sans"', 'sans-serif'],
+                  }
+                }
+              }
+            }
+          </script>
           <script src="https://unpkg.com/lucide@latest"></script>
           <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
           <style>
@@ -287,6 +307,9 @@ export function SlidePreview({
               -ms-overflow-style: none;
               scrollbar-width: none;
               user-select: none;
+              -webkit-font-smoothing: antialiased;
+              -moz-osx-font-smoothing: grayscale;
+              font-family: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
             }
             body::-webkit-scrollbar { display: none; }
             * { box-sizing: border-box; }

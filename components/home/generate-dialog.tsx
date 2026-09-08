@@ -85,18 +85,17 @@ export function GenerateDialog({ open, onOpenChange }: GenerateDialogProps) {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 bg-gradient-to-r from-purple-400 to-orange-400 bg-clip-text text-2xl font-bold text-transparent">
               <Sparkles className="size-6 text-orange-400" />
-              AI Generator
+              AI Presentation Architect
             </DialogTitle>
             <DialogDescription className="font-medium text-neutral-400">
-              What is your story about? Describe it in detail for the most
-              cinematic results.
+              Describe your presentation topic or deck goal. Our AI generates an executive-grade presentation with substantive data, metrics, and polished design.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4">
             <Textarea
               id="prompt"
-              placeholder="A futuristic civilization on a terraformed Mars..."
+              placeholder="e.g., Series A Pitch Deck for an enterprise AI workflow platform with $3.8M ARR, 140% net retention, and global enterprise traction..."
               className="min-h-[120px] resize-none rounded-lg border-neutral-700 bg-neutral-800/50 p-4 font-medium text-white transition-all placeholder:text-neutral-500 focus-visible:border-orange-500/50 focus-visible:ring-orange-500/50"
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
@@ -106,7 +105,7 @@ export function GenerateDialog({ open, onOpenChange }: GenerateDialogProps) {
             <div className="space-y-3">
               <div className="flex items-center justify-between px-1">
                 <span className="text-[10px] font-bold tracking-tight text-neutral-400">
-                  Inspiration samples
+                  Recommended presentations
                 </span>
                 <button
                   onClick={refreshPrompts}
@@ -150,7 +149,7 @@ export function GenerateDialog({ open, onOpenChange }: GenerateDialogProps) {
               ) : (
                 <>
                   <Sparkles className="mr-2 size-4" />
-                  Generate
+                  Generate Presentation
                 </>
               )}
             </Button>

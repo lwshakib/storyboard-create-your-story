@@ -113,8 +113,8 @@ export default function NewProjectPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          title: "New Storyboard",
-          description: "Start crafting your narrative from this single point.",
+          title: "New Presentation",
+          description: "Start crafting your presentation deck from this single slide.",
           slides: [],
         }),
       })
@@ -196,18 +196,17 @@ export default function NewProjectPage() {
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2 bg-gradient-to-r from-purple-400 to-orange-400 bg-clip-text text-2xl font-bold text-transparent">
                 <Sparkles className="size-6 text-orange-400" />
-                Storyboard Architect
+                AI Presentation Architect
               </DialogTitle>
               <DialogDescription className="font-medium text-neutral-400">
-                Describe your masterpiece. Our AI will handle the high-end
-                visuals and data density.
+                Describe your presentation topic or deck goal. Our AI will generate an executive-ready slide deck with substantive content, metrics, and polished layouts.
               </DialogDescription>
             </DialogHeader>
 
             <div className="space-y-4">
               <Textarea
                 id="prompt"
-                placeholder="Describe your vision (e.g., A futuristic Tokyo with neon-lit vertical farms...)"
+                placeholder="e.g., Series A Pitch Deck for an enterprise AI workflow platform with $3.8M ARR, 140% net retention, and global enterprise traction..."
                 className="min-h-[120px] resize-none rounded-lg border-neutral-700 bg-neutral-800/50 p-4 font-medium text-white transition-all placeholder:text-neutral-500 focus-visible:border-orange-500/50 focus-visible:ring-orange-500/50"
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
@@ -217,7 +216,7 @@ export default function NewProjectPage() {
               <div className="space-y-3">
                 <div className="flex items-center justify-between px-1">
                   <span className="text-[10px] font-bold tracking-tight text-neutral-500">
-                    Prompts for inspiration
+                    Recommended presentations
                   </span>
                   <button
                     onClick={refreshPrompts}
@@ -259,7 +258,7 @@ export default function NewProjectPage() {
                     Initializing...
                   </>
                 ) : (
-                  "Create Storyboard"
+                  "Generate Presentation"
                 )}
               </Button>
             </DialogFooter>

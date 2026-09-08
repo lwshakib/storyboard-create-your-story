@@ -902,8 +902,8 @@ export function ProjectView({
                       Your Canvas is Empty
                     </h3>
                     <p className="text-muted-foreground text-sm leading-relaxed">
-                      Start by describing your vision and letting the AI
-                      Architect generate a high-fidelity narrative structure for
+                      Start by describing your topic and letting the AI
+                      Presentation Architect generate an executive-ready deck for
                       you.
                     </p>
                   </div>
@@ -912,7 +912,7 @@ export function ProjectView({
                     className="h-12 gap-2 rounded-full px-10 text-xs font-bold tracking-widest transition-all"
                   >
                     <Wand2 className="size-4" />
-                    Generate Outline with AI
+                    Generate Presentation with AI
                   </Button>
                 </motion.div>
               )}
@@ -937,7 +937,7 @@ export function ProjectView({
                           </div>
                           <div className="space-y-2">
                             <span className="text-muted-foreground/30 text-[10px] font-black tabular-nums">
-                              Section {String(i + 1).padStart(2, "0")}
+                              Slide {String(i + 1).padStart(2, "0")}
                             </span>
                             <div className="bg-primary/20 h-[1px] w-4 transition-all group-hover:w-8" />
                           </div>
@@ -964,7 +964,7 @@ export function ProjectView({
                                   onChange={(val) =>
                                     updateOutlineSlide(i, "title", val)
                                   }
-                                  placeholder="Section Title"
+                                  placeholder="Slide Title"
                                   disabled={generatingSections?.has(i)}
                                 />
 
@@ -974,7 +974,7 @@ export function ProjectView({
                                   onChange={(val) =>
                                     updateOutlineSlide(i, "description", val)
                                   }
-                                  placeholder="Write the detailed narrative content here..."
+                                  placeholder="Detailed presentation narrative and talking points..."
                                   disabled={generatingSections?.has(i)}
                                 />
                               </div>
@@ -1118,10 +1118,9 @@ export function ProjectView({
                                 <Compass className="size-3.5" />
                               </Button>
                             </TooltipTrigger>
-                            <TooltipContent side="bottom" sideOffset={10}>
-                              <p className="font-bold">
-                                Visual Generation Prompt
-                              </p>
+                            <TooltipContent side="bottom" sideOffset={10} className="text-center">
+                              <p className="font-semibold text-xs">Edit Slide Prompt</p>
+                              <p className="text-[10px] text-muted-foreground">Customize layout and visual direction</p>
                             </TooltipContent>
                           </Tooltip>
 
@@ -1146,11 +1145,18 @@ export function ProjectView({
                                 )}
                               </Button>
                             </TooltipTrigger>
-                            <TooltipContent side="bottom" sideOffset={10}>
-                              <p className="font-bold">
+                            <TooltipContent side="bottom" sideOffset={10} className="text-center">
+                              <p className="font-semibold text-xs">
                                 {generatingSections?.has(i)
-                                  ? "Abort Refinement"
-                                  : "Refine Slide"}
+                                  ? "Stop AI Generation"
+                                  : s.html
+                                  ? "Regenerate Slide Design"
+                                  : "Generate Slide with AI"}
+                              </p>
+                              <p className="text-[10px] text-muted-foreground">
+                                {generatingSections?.has(i)
+                                  ? "Cancel current generation"
+                                  : "Build full visual slide layout"}
                               </p>
                             </TooltipContent>
                           </Tooltip>
@@ -1169,8 +1175,9 @@ export function ProjectView({
                                 <Plus className="text-primary size-3.5" />
                               </Button>
                             </TooltipTrigger>
-                            <TooltipContent side="bottom" sideOffset={10}>
-                              <p className="font-bold">Add Section</p>
+                            <TooltipContent side="bottom" sideOffset={10} className="text-center">
+                              <p className="font-semibold text-xs">Insert Blank Slide Below</p>
+                              <p className="text-[10px] text-muted-foreground">Add a blank slide to the storyboard</p>
                             </TooltipContent>
                           </Tooltip>
 
@@ -1188,8 +1195,9 @@ export function ProjectView({
                                 <Sparkles className="size-3.5 transition-transform group-hover/btn:scale-110" />
                               </Button>
                             </TooltipTrigger>
-                            <TooltipContent side="bottom" sideOffset={10}>
-                              <p className="font-bold">AI Expand</p>
+                            <TooltipContent side="bottom" sideOffset={10} className="text-center">
+                              <p className="font-semibold text-xs">AI Generate Next Slide</p>
+                              <p className="text-[10px] text-muted-foreground">Continue story with an AI-composed slide</p>
                             </TooltipContent>
                           </Tooltip>
 
@@ -1210,8 +1218,9 @@ export function ProjectView({
                                 <PresentationIcon className="text-primary size-3.5" />
                               </Button>
                             </TooltipTrigger>
-                            <TooltipContent side="bottom" sideOffset={10}>
-                              <p className="font-bold">Present from here</p>
+                            <TooltipContent side="bottom" sideOffset={10} className="text-center">
+                              <p className="font-semibold text-xs">Present from This Slide</p>
+                              <p className="text-[10px] text-muted-foreground">Launch fullscreen presentation from slide {i + 1}</p>
                             </TooltipContent>
                           </Tooltip>
 
@@ -1229,8 +1238,9 @@ export function ProjectView({
                                 <Trash className="size-3.5" />
                               </Button>
                             </TooltipTrigger>
-                            <TooltipContent side="bottom" sideOffset={10}>
-                              <p className="font-bold">Remove Section</p>
+                            <TooltipContent side="bottom" sideOffset={10} className="text-center">
+                              <p className="font-semibold text-xs text-red-500">Delete Slide</p>
+                              <p className="text-[10px] text-muted-foreground">Remove slide {i + 1} from project</p>
                             </TooltipContent>
                           </Tooltip>
                         </div>
@@ -1469,18 +1479,17 @@ export function ProjectView({
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2 bg-gradient-to-r from-purple-400 to-orange-400 bg-clip-text text-2xl font-bold text-transparent">
                 <Sparkles className="size-6 text-orange-400" />
-                Storyboard Architect
+                AI Presentation Architect
               </DialogTitle>
               <DialogDescription className="font-medium text-neutral-400">
-                Describe your masterpiece. Our AI will handle the high-end
-                visuals and data density.
+                Describe your presentation topic or deck goal. Our AI will generate an executive-ready slide deck with substantive content, metrics, and polished layouts.
               </DialogDescription>
             </DialogHeader>
 
             <div className="space-y-4">
               <Textarea
                 id="prompt"
-                placeholder="Describe your vision (e.g., A futuristic Tokyo with neon-lit vertical farms...)"
+                placeholder="e.g., Series A Pitch Deck for an enterprise AI workflow platform with $3.8M ARR, 140% net retention, and global enterprise traction..."
                 className="min-h-[120px] resize-none rounded-lg border-neutral-700 bg-neutral-800/50 p-4 font-medium text-white transition-all placeholder:text-neutral-500 focus-visible:border-orange-500/50 focus-visible:ring-orange-500/50"
                 value={outlinePrompt}
                 onChange={(e) => setOutlinePrompt(e.target.value)}
@@ -1490,7 +1499,7 @@ export function ProjectView({
               <div className="space-y-3">
                 <div className="flex items-center justify-between px-1">
                   <span className="text-[10px] font-bold tracking-tight text-neutral-500">
-                    Prompts for inspiration
+                    Recommended presentations
                   </span>
                   <button
                     onClick={refreshPrompts}
@@ -1537,7 +1546,7 @@ export function ProjectView({
                     Initializing...
                   </>
                 ) : (
-                  slides.length > 0 ? "Regenerate Storyboard" : "Create Storyboard"
+                  slides.length > 0 ? "Regenerate Presentation" : "Generate Presentation"
                 )}
               </Button>
             </DialogFooter>

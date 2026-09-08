@@ -324,8 +324,10 @@ function EditorContent() {
           body: JSON.stringify({
             prompt: `GENERATE_SINGLE_SLIDE: Slide Index: ${index + 1}. Title: ${section.title}. Visual Direction: ${section.prompt}. Description: ${section.description}. 
           MISSION:
-          Create a professional, high-fidelity slide for this section. 
-          The slide should use modern design principles (Tailwind CSS, clean typography, cinematic visuals).`,
+          Create an executive, presentation-grade slide for this section. 
+          Include authentic presentation content, concrete metrics, and clear typography. 
+          Ensure standard presentation hierarchy: Header zone (eyebrow badge + slide title + subtitle), structured body cards with Lucide icons, and bottom footer metadata bar. 
+          Zero dummy text, zero empty cards, strict 960x540 canvas with no overflow.`,
             context: context,
             projectId: id,
             index: index,
@@ -464,7 +466,7 @@ function EditorContent() {
         Promise.resolve().then(() => setProject(updatedProject))
         syncSlidesWithSkeletons(updatedProject.slides, skeletonId)
         fetchCredits()
-        toast.success("AI added a new section")
+        toast.success("AI added a new slide")
       } catch (err: unknown) {
         if (err instanceof Error && err.name === "AbortError") {
           console.log(

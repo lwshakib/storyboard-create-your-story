@@ -40,25 +40,44 @@ export async function POST(req: Request) {
     const jsonSchema = {
       type: "object",
       properties: {
-        title: { type: "string" },
-        description: { type: "string" },
+        title: {
+          type: "string",
+          description: "Executive title of the presentation deck.",
+        },
+        description: {
+          type: "string",
+          description:
+            "High-level strategic narrative and executive summary of the presentation.",
+        },
         visualTheme: {
           type: "string",
           description:
-            "A technical description of the project's visual DNA (colors, typography, vibe).",
+            "A technical description of the presentation's visual DNA (background hex, card styling, accent colors, typography).",
         },
         slides: {
           type: "array",
           items: {
             type: "object",
             properties: {
-              title: { type: "string" },
-              prompt: { type: "string" },
-              description: { type: "string" },
+              title: {
+                type: "string",
+                description:
+                  "Punchy, executive slide title (e.g., 'Executive Summary: The Compute Bottleneck', 'Q4 Key Performance Indicators').",
+              },
+              prompt: {
+                type: "string",
+                description:
+                  "Structured markdown Visual Blueprint detailing the layout geometry, cards, typography, and Lucide icons.",
+              },
+              description: {
+                type: "string",
+                description:
+                  "Full, detailed presentation narrative and talking points containing real metrics, domain-specific insights, and concrete takeaways. Zero dummy text.",
+              },
               html: {
                 type: "string",
                 description:
-                  "Complete self-contained HTML for the slide, starting with <div id='preview-root' class='w-[960px] h-[540px] ...'>",
+                  "Complete, self-contained presentation HTML starting with <div id='preview-root' class='w-[960px] h-[540px] ...'>. Must have header zone (badge + title + subtitle), structured body cards with Lucide icons and substantive text, and bottom footer bar. Strictly 960x540, no overflow, zero dummy content, zero emojis.",
               },
             },
             required: ["title", "prompt", "description", "html"],
@@ -79,10 +98,23 @@ export async function POST(req: Request) {
         },
         {
           role: "user",
-          content: `Create a comprehensive storyboard outline for: "${prompt}"`,
+          content: `Create a complete, executive presentation-grade slide deck for: "${prompt}".
+Generate 5–7 presentation slides following standard deck flow:
+1. Executive Cover / Title Slide
+2. Executive Summary & Market Problem / Friction
+3. Core Solution & Strategic Pillars
+4. Key Performance Indicators & Traction (Bento Grid)
+5. Deep Dive / Technical Architecture / Comparative Matrix
+6. Phased Execution Roadmap & Milestones
+7. Strategic Conclusion & Next Steps / Ask
+
+CRITICAL REQUIREMENTS:
+- Every slide must contain authentic, substantive, domain-specific presentation copy with concrete metrics (e.g. +142% YoY, $18.5M ARR, 99.99% SLA), clear arguments, and bold-led bullet points.
+- ZERO dummy text, ZERO placeholder copy ("Lorem ipsum", "Section description goes here", "Card title"), and ZERO empty cards.
+- Render complete, production-ready HTML for every slide within the strict 960x540 canvas with clean presentation hierarchy (Header badge + title + subtitle, structured body cards with Lucide icons, and footer metadata bar).`,
         },
       ],
-      temperature: 1.0,
+      temperature: 0.8,
     })
 
     // 3. Deduct Credit
@@ -97,9 +129,9 @@ export async function POST(req: Request) {
       }[]) || []
     ).map((s, idx: number) => ({
       index: idx,
-      title: s.title || `Section ${idx + 1}`,
-      prompt: s.prompt || "Visual direction pending...",
-      description: s.description || "Narrative content pending...",
+      title: s.title || `Slide ${idx + 1}`,
+      prompt: s.prompt || "Executive presentation layout",
+      description: s.description || "Presentation narrative and key takeaways",
       html: (s as { html?: string }).html || "",
       assets: [],
     }))
