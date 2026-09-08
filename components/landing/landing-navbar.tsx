@@ -10,7 +10,6 @@ export function LandingNavbar() {
   const navItems = [
     { label: "Features", target: "#features" },
     { label: "How It Works", target: "#how-it-works" },
-    { label: "Templates", target: "#templates" },
     { label: "Pricing", target: "#pricing" },
     { label: "FAQ", target: "#faq" },
   ]

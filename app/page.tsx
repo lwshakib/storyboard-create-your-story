@@ -5,7 +5,6 @@ import { LandingNavbar } from "@/components/landing/landing-navbar"
 import { Hero } from "@/components/landing/hero"
 import { HowItWorks } from "@/components/landing/how-it-works"
 import { FeaturesMinimal } from "@/components/landing/features-minimal"
-import { TemplatesPreview } from "@/components/landing/templates-preview"
 import { Pricing } from "@/components/landing/pricing"
 import { FAQ } from "@/components/landing/faq"
 import { BottomCTA } from "@/components/landing/bottom-cta"
@@ -48,9 +47,6 @@ export default function LandingPage() {
 
           {/* Core Feature Capabilities */}
           <FeaturesMinimal />
-
-          {/* Pre-built Templates & Inspirations */}
-          <TemplatesPreview />
 
           {/* Transparent Pricing Plans */}
           <Pricing />
