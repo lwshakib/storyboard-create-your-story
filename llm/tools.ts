@@ -51,6 +51,41 @@ export const STORYBOARD_TOOLS: Tool[] = [
         },
       },
       {
+        name: "batch_update_slides",
+        description:
+          "Update multiple slides simultaneously in a single call. Use whenever the user asks to update more than one slide (e.g. 2, 4, or all slides in the deck), or when a change concept affects multiple slides.",
+        parameters: {
+          type: Type.OBJECT,
+          properties: {
+            slides: {
+              type: Type.ARRAY,
+              description: "List of slide updates to apply across the presentation.",
+              items: {
+                type: Type.OBJECT,
+                properties: {
+                  slideId: {
+                    type: Type.STRING,
+                    description: "The database ID of the slide to update.",
+                  },
+                  updates: {
+                    type: Type.OBJECT,
+                    description: "The fields to update for this slide.",
+                    properties: {
+                      title: { type: Type.STRING },
+                      description: { type: Type.STRING },
+                      prompt: { type: Type.STRING },
+                      html: { type: Type.STRING },
+                    },
+                  },
+                },
+                required: ["slideId", "updates"],
+              },
+            },
+          },
+          required: ["slides"],
+        },
+      },
+      {
         name: "add_slide",
         description: "Insert a new slide into the project at a specific index.",
         parameters: {

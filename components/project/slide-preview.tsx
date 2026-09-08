@@ -104,10 +104,14 @@ export function SlidePreview({
     }
   }, [autoScale, scale, html])
 
-  // Helper to sanitize any markdown formatting (e.g. **bold**, *italic*, stray asterisks) from slide HTML
+  // Helper to sanitize any markdown formatting (e.g. **bold**, *italic*, stray asterisks) and unescape rogue quotes from slide HTML
   const sanitizedHtml = React.useMemo(() => {
     if (!html) return ""
     let clean = html
+    // Strip markdown code fences if wrapped in ```html ... ```
+    clean = clean.replace(/^```(?:html)?\s*/i, "").replace(/\s*```$/i, "")
+    // Unescape backslash-escaped quotes from LLM JSON serialization (e.g. \" -> " and \' -> ')
+    clean = clean.replace(/\\"/g, '"').replace(/\\'/g, "'")
     // Convert **bold** markdown to <strong class="font-bold text-current">$1</strong>
     clean = clean.replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold text-current">$1</strong>')
     // Convert *italic* markdown to <em class="italic">$1</em>

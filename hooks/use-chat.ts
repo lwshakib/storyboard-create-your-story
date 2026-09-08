@@ -127,6 +127,8 @@ export function useChat({ projectId, onProjectUpdate }: UseChatOptions) {
                 const name = event.name
                 if (name === "update_slide") {
                   setStatus("Updating slide...")
+                } else if (name === "batch_update_slides") {
+                  setStatus("Updating multiple slides...")
                 } else if (name === "add_slide") {
                   setStatus("Adding slide...")
                 } else if (name === "delete_slide") {

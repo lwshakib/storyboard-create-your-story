@@ -37,6 +37,13 @@ interface UpdateSlideArgs {
   updates: Partial<ProjectSlide>
 }
 
+interface BatchUpdateSlidesArgs {
+  slides: Array<{
+    slideId: string
+    updates: Partial<ProjectSlide>
+  }>
+}
+
 interface DeleteSlideArgs {
   slideId: string
 }
@@ -48,9 +55,16 @@ interface AddSlideArgs {
 
 const cleanHtml = (html?: string) => {
   if (!html) return html
-  return html
+  let clean = html
+  // Strip code fences if wrapped in ```html ... ```
+  clean = clean.replace(/^```(?:html)?\s*/i, "").replace(/\s*```$/i, "")
+  // Unescape backslash-escaped quotes from LLM JSON strings (e.g. \" -> " and \' -> ')
+  clean = clean.replace(/\\"/g, '"').replace(/\\'/g, "'")
+  // Convert markdown bold and italic
+  clean = clean
     .replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold">$1</strong>')
     .replace(/\*(.*?)\*/g, "<em>$1</em>")
+  return clean
 }
 
 /**
@@ -223,6 +237,23 @@ export function streamText(options: StreamTextOptions) {
               })
               hasChanges = true
               actionSummaries.push(`Updated Slide ${updated.index + 1}${updated.title ? ` ("${updated.title}")` : ""}`)
+            } else if (name === "batch_update_slides") {
+              const { slides } = args as unknown as BatchUpdateSlidesArgs
+              if (Array.isArray(slides) && slides.length > 0) {
+                for (const item of slides) {
+                  if (!item.slideId || !item.updates) continue
+                  const safeUpdates = { ...item.updates }
+                  if (safeUpdates.html) {
+                    safeUpdates.html = cleanHtml(safeUpdates.html)
+                  }
+                  const updated = await prisma.slide.update({
+                    where: { id: item.slideId },
+                    data: safeUpdates,
+                  })
+                  hasChanges = true
+                  actionSummaries.push(`Updated Slide ${updated.index + 1}${updated.title ? ` ("${updated.title}")` : ""}`)
+                }
+              }
             } else if (name === "delete_slide") {
               const { slideId } = args as unknown as DeleteSlideArgs
               const deletedSlide = await prisma.slide.delete({
