@@ -26,10 +26,12 @@ export function VisualBlueprintDialog({
   onSavePrompt,
 }: VisualBlueprintDialogProps) {
   const [localPrompt, setLocalPrompt] = React.useState(prompt)
+  const [prevPrompt, setPrevPrompt] = React.useState(prompt)
 
-  React.useEffect(() => {
+  if (prompt !== prevPrompt) {
+    setPrevPrompt(prompt)
     setLocalPrompt(prompt)
-  }, [prompt])
+  }
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>

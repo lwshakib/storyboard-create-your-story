@@ -32,20 +32,22 @@ export function GenerateDialog({
   onGenerate,
 }: GenerateDialogProps) {
   const [prompt, setPrompt] = React.useState(initialPrompt)
-  const [randomPrompts, setRandomPrompts] = React.useState<string[]>([])
+  const [prevInitialPrompt, setPrevInitialPrompt] =
+    React.useState(initialPrompt)
+  const [randomPrompts, setRandomPrompts] = React.useState<string[]>(() => {
+    const shuffled = [...RECOMMENDED_PROMPTS].sort(() => 0.5 - Math.random())
+    return shuffled.slice(0, 4)
+  })
+
+  if (initialPrompt !== prevInitialPrompt) {
+    setPrevInitialPrompt(initialPrompt)
+    if (initialPrompt) setPrompt(initialPrompt)
+  }
 
   const refreshPrompts = React.useCallback(() => {
     const shuffled = [...RECOMMENDED_PROMPTS].sort(() => 0.5 - Math.random())
     setRandomPrompts(shuffled.slice(0, 4))
   }, [])
-
-  React.useEffect(() => {
-    if (initialPrompt) setPrompt(initialPrompt)
-  }, [initialPrompt])
-
-  React.useEffect(() => {
-    refreshPrompts()
-  }, [refreshPrompts])
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>

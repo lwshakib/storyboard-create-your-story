@@ -49,10 +49,6 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    })
-
     const body = await req.json()
     const { title, description, slides, isDeleted } = body
     const { id } = await params

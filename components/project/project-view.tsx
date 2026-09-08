@@ -202,11 +202,8 @@ export function ProjectView({
     if (isInitialMountRef.current) {
       isInitialMountRef.current = false
       if (initialData?.slides && initialData.slides.length > 0) {
-        setSlides(initialData.slides)
         scrollToSlide(initialData.slides[0].id)
       }
-      if (initialData?.title) setTitle(initialData.title)
-      if (initialData?.description) setDescription(initialData.description)
       return
     }
 
