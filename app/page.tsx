@@ -1,51 +1,68 @@
 "use client"
 
 import * as React from "react"
-import { UnicornBackground } from "@/components/landing/unicorn-background"
-import { Hero } from "@/components/landing/hero"
-import { FeaturesMinimal } from "@/components/landing/features-minimal"
-import { Pricing } from "@/components/landing/pricing"
-import { BottomCTA } from "@/components/landing/bottom-cta"
 import { LandingNavbar } from "@/components/landing/landing-navbar"
+import { Hero } from "@/components/landing/hero"
+import { HowItWorks } from "@/components/landing/how-it-works"
+import { FeaturesMinimal } from "@/components/landing/features-minimal"
+import { TemplatesPreview } from "@/components/landing/templates-preview"
+import { Pricing } from "@/components/landing/pricing"
+import { FAQ } from "@/components/landing/faq"
+import { BottomCTA } from "@/components/landing/bottom-cta"
 import { LandingFooter } from "@/components/landing/landing-footer"
 
 /**
- * LandingPage component: The public-facing marketing page.
- * Re-architected with a highly refined, minimal dark aesthetic.
+ * LandingPage: Modern, minimalist, and content-rich presentation builder marketing page.
  */
 export default function LandingPage() {
   return (
-    <div className="bg-background text-foreground min-h-screen font-sans tracking-tight selection:bg-[#10B981] selection:text-white">
-      {/* Dynamic Aura Background */}
-      <UnicornBackground />
+    <div className="bg-background text-foreground min-h-screen font-sans antialiased selection:bg-emerald-500/20 selection:text-emerald-400">
+      {/* Subtle native grid background */}
+      <div
+        className="pointer-events-none fixed inset-0 z-0 opacity-40 dark:opacity-25"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle at 1px 1px, currentColor 0.75px, transparent 0)",
+          backgroundSize: "32px 32px",
+        }}
+      />
 
-      {/* Structural Vertical Guide Lines */}
-      <div className="pointer-events-none fixed inset-0 z-0 mx-auto flex max-w-[1600px] justify-between px-8 opacity-[0.02] lg:px-24">
-        <div className="h-full w-px bg-white"></div>
-        <div className="h-full w-px bg-white"></div>
-        <div className="hidden h-full w-px bg-white md:block"></div>
-        <div className="hidden h-full w-px bg-white lg:block"></div>
+      {/* Structural subtle guideline lines */}
+      <div className="pointer-events-none fixed inset-0 z-0 mx-auto flex max-w-[1400px] justify-between px-6 opacity-[0.03] lg:px-12">
+        <div className="h-full w-px bg-foreground"></div>
+        <div className="h-full w-px bg-foreground"></div>
+        <div className="hidden h-full w-px bg-foreground md:block"></div>
+        <div className="hidden h-full w-px bg-foreground lg:block"></div>
       </div>
 
       <div className="relative z-10 flex min-h-screen flex-col">
-        {/* Persistent Premium Navbar */}
+        {/* Sticky Minimal Navbar */}
         <LandingNavbar />
 
-        <main className="animate-in fade-in flex-grow pt-20 duration-1000">
+        <main className="flex-grow pt-16">
           {/* Hero Section */}
           <Hero />
 
-          {/* Minimal Platform Pipeline Features (Outlines, Chat Tools, Offscreen Vector Exports) */}
+          {/* 3-Step Workflow */}
+          <HowItWorks />
+
+          {/* Core Feature Capabilities */}
           <FeaturesMinimal />
 
-          {/* Pricing Plans */}
+          {/* Pre-built Templates & Inspirations */}
+          <TemplatesPreview />
+
+          {/* Transparent Pricing Plans */}
           <Pricing />
 
-          {/* Bottom Call to Action Banner */}
+          {/* Frequently Asked Questions */}
+          <FAQ />
+
+          {/* High-Conversion Bottom CTA */}
           <BottomCTA />
         </main>
 
-        {/* Global Landing Footer */}
+        {/* Detailed Directory Footer */}
         <LandingFooter />
       </div>
     </div>
