@@ -11,7 +11,7 @@ export function FAQ() {
     {
       question: "How does the AI storyboard generator work?",
       answer:
-        "Storyboard uses Google Gemini Flash models combined with structured prompt pipelines. When you enter a prompt, script, or pitch concept, our engine first synthesizes a cohesive narrative arc (the Outline Beats). Once you approve or customize the beats, it generates structured slide layouts with balanced typography, data points, and visual assets without requiring manual layout wrangling.",
+        "Storyboard uses advanced AI models combined with structured prompt pipelines. When you enter a prompt, script, or pitch concept, our engine first synthesizes a cohesive narrative arc (the Outline Beats). Once you approve or customize the beats, it generates structured slide layouts with balanced typography, data points, and visual assets without requiring manual layout wrangling.",
     },
     {
       question: "Can I manually customize slides after the AI generates them?",

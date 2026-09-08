@@ -20,7 +20,7 @@ export function Hero() {
       >
         <div className="border-border/80 bg-muted/60 inline-flex items-center gap-2 rounded-full border px-3.5 py-1 text-xs font-medium text-foreground backdrop-blur-sm">
           <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span>Powered by Gemini 3.1 Flash</span>
+          <span>AI-Powered Storyboard Creator</span>
           <span className="text-muted-foreground">·</span>
           <span className="text-muted-foreground">20 Free Credits</span>
         </div>

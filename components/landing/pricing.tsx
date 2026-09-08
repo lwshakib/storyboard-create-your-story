@@ -18,7 +18,7 @@ export function Pricing() {
       features: [
         "20 free generation credits included",
         "Up to 3 active storyboard projects",
-        "Google Gemini Flash outline engine",
+        "Intelligent narrative outline engine",
         "Export to PowerPoint (.pptx) & PDF",
         "Standard template library access",
       ],
@@ -55,7 +55,7 @@ export function Pricing() {
         "Unlimited projects & team collaboration",
         "Custom brand color schemes & fonts",
         "Custom template creation & sharing",
-        "Priority Gemini pipeline & fast generation",
+        "Priority generation & dedicated throughput",
         "Priority developer support",
       ],
       actionText: "Start Studio Plan",

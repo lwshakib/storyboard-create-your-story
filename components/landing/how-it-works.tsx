@@ -12,7 +12,7 @@ export function HowItWorks() {
       badge: "Idea to Outline",
       title: "Synthesize your story beats",
       description:
-        "Input your script, pitch topic, or rough concept. Google Gemini Flash analyzes narrative pacing and automatically drafts 5 to 8 structured, coherent slide beats.",
+        "Input your script, pitch topic, or rough concept. Our AI engine analyzes narrative pacing and automatically drafts 5 to 8 structured, coherent slide beats.",
       highlights: [
         "Instant narrative pacing analysis",
         "Customizable slide outline and objectives",

@@ -32,7 +32,7 @@ export function FeaturesMinimal() {
       title: "Conversational AI Co-Pilot",
       description:
         "Refine individual slides on demand. Instruct the assistant to change tone, summarize bullet points, adjust color accents, or replace visual assets via chat.",
-      badge: "Gemini Integration",
+      badge: "AI Co-Pilot",
     },
     {
       icon: "solar:export-linear",

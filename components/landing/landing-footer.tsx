@@ -79,7 +79,7 @@ export function LandingFooter() {
               </span>
             </Link>
             <p className="text-muted-foreground text-xs leading-relaxed sm:text-sm">
-              AI-native presentation and storyboard workspace. Transform raw ideas and scripts into structured, visual slide decks with Google Gemini and lossless exports.
+              AI-native presentation and storyboard workspace. Transform raw ideas and scripts into structured, visual slide decks with intuitive design tools and lossless exports.
             </p>
 
             {/* Operational Status Pill */}
@@ -155,7 +155,7 @@ export function LandingFooter() {
           <div className="flex items-center gap-6 text-[11px]">
             <span>Next.js 16</span>
             <span>·</span>
-            <span>Google Gemini Flash</span>
+            <span>AI Generation Engine</span>
             <span>·</span>
             <span>Tailwind CSS</span>
           </div>
