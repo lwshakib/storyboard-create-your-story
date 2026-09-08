@@ -50,11 +50,11 @@ export function DeckToolbar({
   onUserChange,
 }: DeckToolbarProps) {
   return (
-    <div className="flex flex-col gap-4 rounded-2xl border border-border/60 bg-card/40 p-4 sm:p-5 backdrop-blur-md shadow-xs md:flex-row md:items-center md:justify-between">
+    <div className="border-border/60 bg-card/40 flex flex-col gap-4 rounded-2xl border p-4 shadow-xs backdrop-blur-md sm:p-5 md:flex-row md:items-center md:justify-between">
       {/* Left: Compact Project Title & Storyline */}
-      <div className="flex-1 min-w-0 space-y-1">
+      <div className="min-w-0 flex-1 space-y-1">
         <AutoResizeTextarea
-          className="text-foreground placeholder:text-muted/30 w-full text-xl sm:text-2xl font-black tracking-tight leading-snug bg-transparent border-none p-0 focus:ring-0 resize-none"
+          className="text-foreground placeholder:text-muted/30 w-full resize-none border-none bg-transparent p-0 text-xl leading-snug font-black tracking-tight focus:ring-0 sm:text-2xl"
           value={title}
           placeholder="Presentation Title"
           onChange={(val) => {
@@ -63,7 +63,7 @@ export function DeckToolbar({
           }}
         />
         <AutoResizeTextarea
-          className="text-muted-foreground placeholder:text-muted/30 w-full text-xs sm:text-sm leading-relaxed bg-transparent border-none p-0 focus:ring-0 resize-none line-clamp-2 focus:line-clamp-none transition-all"
+          className="text-muted-foreground placeholder:text-muted/30 line-clamp-2 w-full resize-none border-none bg-transparent p-0 text-xs leading-relaxed transition-all focus:line-clamp-none focus:ring-0 sm:text-sm"
           placeholder="Overall presentation narrative and talking points..."
           value={description}
           onChange={(val) => {
@@ -74,26 +74,26 @@ export function DeckToolbar({
       </div>
 
       {/* Right: Controls & View Switcher */}
-      <div className="flex items-center gap-2 shrink-0 flex-wrap">
+      <div className="flex shrink-0 flex-wrap items-center gap-2">
         {/* Slide Count Pill */}
-        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-muted/50 border text-xs font-semibold text-muted-foreground">
-          <PresentationIcon className="size-3.5 text-primary" />
+        <div className="bg-muted/50 text-muted-foreground flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold">
+          <PresentationIcon className="text-primary size-3.5" />
           <span>
             {slideCount} {slideCount === 1 ? "Slide" : "Slides"}
           </span>
         </div>
 
         {/* View Mode Switcher */}
-        <div className="flex items-center rounded-lg border bg-muted/30 p-0.5">
+        <div className="bg-muted/30 flex items-center rounded-lg border p-0.5">
           <Tooltip>
             <TooltipTrigger asChild>
               <button
                 type="button"
                 onClick={() => setViewMode("grid")}
                 className={cn(
-                  "flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium transition-all cursor-pointer",
+                  "flex cursor-pointer items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-all",
                   viewMode === "grid"
-                    ? "bg-background shadow-xs text-foreground font-semibold"
+                    ? "bg-background text-foreground font-semibold shadow-xs"
                     : "text-muted-foreground hover:text-foreground"
                 )}
               >
@@ -112,9 +112,9 @@ export function DeckToolbar({
                 type="button"
                 onClick={() => setViewMode("list")}
                 className={cn(
-                  "flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium transition-all cursor-pointer",
+                  "flex cursor-pointer items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium transition-all",
                   viewMode === "list"
-                    ? "bg-background shadow-xs text-foreground font-semibold"
+                    ? "bg-background text-foreground font-semibold shadow-xs"
                     : "text-muted-foreground hover:text-foreground"
                 )}
               >
@@ -135,16 +135,17 @@ export function DeckToolbar({
               <Button
                 variant="outline"
                 size="sm"
-                className="h-8 px-2.5 text-xs font-medium rounded-lg text-muted-foreground hover:text-foreground"
+                className="text-muted-foreground hover:text-foreground h-8 rounded-lg px-2.5 text-xs font-medium"
                 onClick={() => setGridColumns((prev) => (prev === 2 ? 3 : 2))}
               >
-                <Columns className="size-3.5 mr-1" />
+                <Columns className="mr-1 size-3.5" />
                 <span>{gridColumns} Col</span>
               </Button>
             </TooltipTrigger>
             <TooltipContent side="bottom">
               <p className="text-xs font-medium">
-                Switch to {gridColumns === 2 ? "3 Columns (More compact)" : "2 Columns"}
+                Switch to{" "}
+                {gridColumns === 2 ? "3 Columns (More compact)" : "2 Columns"}
               </p>
             </TooltipContent>
           </Tooltip>
@@ -158,7 +159,7 @@ export function DeckToolbar({
           onClick={onAddSlide}
           disabled={isBusy}
         >
-          <Plus className="size-3.5 text-primary" />
+          <Plus className="text-primary size-3.5" />
           <span className="hidden sm:inline">Add Slide</span>
         </Button>
 

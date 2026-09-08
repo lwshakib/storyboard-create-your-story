@@ -56,8 +56,10 @@ export function GenerateDialog({
               <Sparkles className="size-6 text-orange-400" />
               AI Presentation Architect
             </DialogTitle>
-            <DialogDescription className="font-medium text-neutral-400 text-xs">
-              Describe your presentation topic or deck goal. Our AI will generate an executive-ready slide deck with substantive content, metrics, and polished layouts.
+            <DialogDescription className="text-xs font-medium text-neutral-400">
+              Describe your presentation topic or deck goal. Our AI will
+              generate an executive-ready slide deck with substantive content,
+              metrics, and polished layouts.
             </DialogDescription>
           </DialogHeader>
 
@@ -79,7 +81,7 @@ export function GenerateDialog({
                 <button
                   type="button"
                   onClick={refreshPrompts}
-                  className="text-neutral-500 transition-colors hover:text-white cursor-pointer"
+                  className="cursor-pointer text-neutral-500 transition-colors hover:text-white"
                 >
                   <RefreshCw className="size-3" />
                 </button>
@@ -90,7 +92,7 @@ export function GenerateDialog({
                     key={i}
                     type="button"
                     onClick={() => setPrompt(p)}
-                    className="group rounded-lg border border-neutral-700/50 bg-neutral-800/30 p-2.5 text-left text-xs text-neutral-400 transition-all hover:border-orange-500/30 hover:bg-neutral-800 hover:text-white cursor-pointer"
+                    className="group cursor-pointer rounded-lg border border-neutral-700/50 bg-neutral-800/30 p-2.5 text-left text-xs text-neutral-400 transition-all hover:border-orange-500/30 hover:bg-neutral-800 hover:text-white"
                   >
                     {p}
                   </button>
@@ -115,15 +117,17 @@ export function GenerateDialog({
                 }
               }}
               disabled={!prompt.trim() || isGeneratingOutline}
-              className="h-10 rounded-lg bg-white px-8 text-xs font-bold text-black shadow-xl hover:bg-neutral-200 cursor-pointer"
+              className="h-10 cursor-pointer rounded-lg bg-white px-8 text-xs font-bold text-black shadow-xl hover:bg-neutral-200"
             >
               {isGeneratingOutline ? (
                 <>
                   <RefreshCw className="mr-2 h-3.5 w-3.5 animate-spin" />
                   Initializing...
                 </>
+              ) : hasExistingSlides ? (
+                "Regenerate Presentation"
               ) : (
-                hasExistingSlides ? "Regenerate Presentation" : "Generate Presentation"
+                "Generate Presentation"
               )}
             </Button>
           </DialogFooter>

@@ -115,7 +115,10 @@ export async function POST(req: Request) {
 
     const htmlOutput = result.text
       .trim()
-      .replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold text-white">$1</strong>')
+      .replace(
+        /\*\*([^*]+)\*\*/g,
+        '<strong class="font-bold text-white">$1</strong>'
+      )
       .replace(/(?<!\*)\*([^*\n<]+)\*(?!\*)/g, '<em class="italic">$1</em>')
       .replace(/\*\*/g, "")
 

@@ -45,24 +45,31 @@ export function FAQ() {
   }
 
   return (
-    <section id="faq" className="border-border bg-background/50 relative border-t antialiased">
+    <section
+      id="faq"
+      className="border-border bg-background/50 relative border-t antialiased"
+    >
       <div className="relative z-10 mx-auto max-w-[1000px] px-6 py-20 lg:px-12 lg:py-28">
         {/* Header */}
-        <div className="mb-14 text-center space-y-4">
+        <div className="mb-14 space-y-4 text-center">
           <div className="border-border bg-muted text-muted-foreground inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold">
-            <Icon icon="solar:question-circle-linear" className="text-emerald-500" />
+            <Icon
+              icon="solar:question-circle-linear"
+              className="text-emerald-500"
+            />
             Frequently Asked Questions
           </div>
           <h2 className="text-foreground text-3xl font-medium tracking-tight sm:text-4xl lg:text-5xl">
             Everything you need to know.
           </h2>
           <p className="text-muted-foreground mx-auto max-w-xl text-sm leading-relaxed sm:text-base">
-            Have questions about how Storyboard handles generation, editing, or export? Here are answers to our most common inquiries.
+            Have questions about how Storyboard handles generation, editing, or
+            export? Here are answers to our most common inquiries.
           </p>
         </div>
 
         {/* Accordion List */}
-        <div className="border-border/60 divide-border/60 divide-y rounded-2xl border bg-card/40 backdrop-blur-sm">
+        <div className="border-border/60 divide-border/60 bg-card/40 divide-y rounded-2xl border backdrop-blur-sm">
           {faqs.map((faq, index) => {
             const isOpen = openIndex === index
             return (
@@ -71,10 +78,12 @@ export function FAQ() {
                   onClick={() => toggle(index)}
                   className="hover:bg-muted/30 flex w-full items-center justify-between p-6 text-left transition-colors sm:p-7"
                 >
-                  <span className="text-foreground text-sm font-medium tracking-tight sm:text-base pr-4">
+                  <span className="text-foreground pr-4 text-sm font-medium tracking-tight sm:text-base">
                     {faq.question}
                   </span>
-                  <div className={`border-border bg-muted text-muted-foreground flex h-7 w-7 shrink-0 items-center justify-center rounded-full border transition-transform duration-200 ${isOpen ? "rotate-180 text-emerald-500" : ""}`}>
+                  <div
+                    className={`border-border bg-muted text-muted-foreground flex h-7 w-7 shrink-0 items-center justify-center rounded-full border transition-transform duration-200 ${isOpen ? "rotate-180 text-emerald-500" : ""}`}
+                  >
                     <Icon icon="solar:alt-arrow-down-linear" width="14" />
                   </div>
                 </button>
@@ -88,7 +97,7 @@ export function FAQ() {
                       transition={{ duration: 0.25, ease: "easeInOut" }}
                       className="overflow-hidden"
                     >
-                      <p className="text-muted-foreground px-6 pb-6 pt-1 text-xs leading-relaxed sm:px-7 sm:pb-7 sm:text-sm">
+                      <p className="text-muted-foreground px-6 pt-1 pb-6 text-xs leading-relaxed sm:px-7 sm:pb-7 sm:text-sm">
                         {faq.answer}
                       </p>
                     </motion.div>

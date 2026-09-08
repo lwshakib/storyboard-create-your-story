@@ -35,7 +35,10 @@ export function LandingFooter() {
     {
       title: "Resources",
       links: [
-        { label: "Documentation", href: "https://github.com/ichshakib/storyboard-create-your-story" },
+        {
+          label: "Documentation",
+          href: "https://github.com/ichshakib/storyboard-create-your-story",
+        },
         { label: "Prompt Guide", href: "#how-it-works" },
         { label: "Storyset Vector Library", href: "/templates" },
         { label: "API Reference", href: "/api/generate/outline" },
@@ -47,9 +50,18 @@ export function LandingFooter() {
       title: "Company",
       links: [
         { label: "About Storyboard", href: "/" },
-        { label: "GitHub Repository", href: "https://github.com/ichshakib/storyboard-create-your-story" },
-        { label: "Contributing Guide", href: "https://github.com/ichshakib/storyboard-create-your-story/blob/main/CONTRIBUTING.md" },
-        { label: "Code of Conduct", href: "https://github.com/ichshakib/storyboard-create-your-story/blob/main/CODE_OF_CONDUCT.md" },
+        {
+          label: "GitHub Repository",
+          href: "https://github.com/ichshakib/storyboard-create-your-story",
+        },
+        {
+          label: "Contributing Guide",
+          href: "https://github.com/ichshakib/storyboard-create-your-story/blob/main/CONTRIBUTING.md",
+        },
+        {
+          label: "Code of Conduct",
+          href: "https://github.com/ichshakib/storyboard-create-your-story/blob/main/CODE_OF_CONDUCT.md",
+        },
         { label: "Security", href: "#" },
         { label: "Contact Support", href: "mailto:support@storyboard.local" },
       ],
@@ -60,13 +72,16 @@ export function LandingFooter() {
         { label: "Privacy Policy", href: "#" },
         { label: "Terms of Service", href: "#" },
         { label: "Cookie Policy", href: "#" },
-        { label: "MIT License", href: "https://github.com/ichshakib/storyboard-create-your-story/blob/main/LICENSE" },
+        {
+          label: "MIT License",
+          href: "https://github.com/ichshakib/storyboard-create-your-story/blob/main/LICENSE",
+        },
       ],
     },
   ]
 
   return (
-    <footer className="border-border bg-background relative border-t px-6 py-16 lg:px-12 lg:py-20 antialiased">
+    <footer className="border-border bg-background relative border-t px-6 py-16 antialiased lg:px-12 lg:py-20">
       <div className="mx-auto max-w-[1400px]">
         {/* Top Section: Brand + Links Grid */}
         <div className="flex flex-col gap-12 lg:flex-row lg:justify-between">
@@ -79,11 +94,13 @@ export function LandingFooter() {
               </span>
             </Link>
             <p className="text-muted-foreground text-xs leading-relaxed sm:text-sm">
-              AI-native presentation and storyboard workspace. Transform raw ideas and scripts into structured, visual slide decks with intuitive design tools and lossless exports.
+              AI-native presentation and storyboard workspace. Transform raw
+              ideas and scripts into structured, visual slide decks with
+              intuitive design tools and lossless exports.
             </p>
 
             {/* Operational Status Pill */}
-            <div className="inline-flex items-center gap-2 rounded-full border border-border/80 bg-muted/40 px-3 py-1 text-xs">
+            <div className="border-border/80 bg-muted/40 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs">
               <span className="relative flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
@@ -94,12 +111,12 @@ export function LandingFooter() {
             </div>
 
             {/* Social Icons */}
-            <div className="flex items-center gap-3 pt-2 text-muted-foreground">
+            <div className="text-muted-foreground flex items-center gap-3 pt-2">
               <a
                 href="https://github.com/ichshakib/storyboard-create-your-story"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-foreground hover:bg-muted border border-border flex h-8 w-8 items-center justify-center rounded-lg transition-colors"
+                className="hover:text-foreground hover:bg-muted border-border flex h-8 w-8 items-center justify-center rounded-lg border transition-colors"
                 aria-label="GitHub"
               >
                 <Icon icon="simple-icons:github" width="14" />
@@ -108,7 +125,7 @@ export function LandingFooter() {
                 href="https://x.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-foreground hover:bg-muted border border-border flex h-8 w-8 items-center justify-center rounded-lg transition-colors"
+                className="hover:text-foreground hover:bg-muted border-border flex h-8 w-8 items-center justify-center rounded-lg border transition-colors"
                 aria-label="X / Twitter"
               >
                 <Icon icon="simple-icons:x" width="13" />
@@ -117,7 +134,7 @@ export function LandingFooter() {
                 href="https://discord.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-foreground hover:bg-muted border border-border flex h-8 w-8 items-center justify-center rounded-lg transition-colors"
+                className="hover:text-foreground hover:bg-muted border-border flex h-8 w-8 items-center justify-center rounded-lg border transition-colors"
                 aria-label="Discord"
               >
                 <Icon icon="simple-icons:discord" width="14" />
@@ -129,7 +146,7 @@ export function LandingFooter() {
           <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 md:grid-cols-5 lg:gap-12">
             {footerSections.map((section, idx) => (
               <div key={idx} className="space-y-3">
-                <h4 className="text-foreground text-xs font-semibold uppercase tracking-wider">
+                <h4 className="text-foreground text-xs font-semibold tracking-wider uppercase">
                   {section.title}
                 </h4>
                 <ul className="space-y-2 text-xs">
@@ -137,7 +154,7 @@ export function LandingFooter() {
                     <li key={lIdx}>
                       <Link
                         href={link.href}
-                        className="text-muted-foreground hover:text-foreground transition-colors leading-relaxed inline-block"
+                        className="text-muted-foreground hover:text-foreground inline-block leading-relaxed transition-colors"
                       >
                         {link.label}
                       </Link>
@@ -150,7 +167,7 @@ export function LandingFooter() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-border/80 mt-16 flex flex-col items-center justify-between gap-4 border-t pt-8 text-xs text-muted-foreground sm:flex-row">
+        <div className="border-border/80 text-muted-foreground mt-16 flex flex-col items-center justify-between gap-4 border-t pt-8 text-xs sm:flex-row">
           <p>© 2026 Storyboard. All rights reserved.</p>
           <div className="flex items-center gap-6 text-[11px]">
             <span>Next.js 16</span>

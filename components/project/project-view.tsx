@@ -501,7 +501,7 @@ export function ProjectView({
             }}
           />
 
-          <div className="relative z-10 mx-auto w-full max-w-[1720px] px-4 sm:px-6 md:px-10 py-6 pb-40 space-y-6">
+          <div className="relative z-10 mx-auto w-full max-w-[1720px] space-y-6 px-4 py-6 pb-40 sm:px-6 md:px-10">
             {/* Executive Deck Header & Toolbar */}
             <DeckToolbar
               title={title}
@@ -532,74 +532,88 @@ export function ProjectView({
             />
 
             {/* MULTI-SLIDE GRID VIEW */}
-            {!isGeneratingOutline && !error && slides.length > 0 && viewMode === "grid" && (
-              <div
-                className={cn(
-                  "grid gap-6 transition-all",
-                  gridColumns === 2
-                    ? "grid-cols-1 lg:grid-cols-2"
-                    : "grid-cols-1 md:grid-cols-2 xl:grid-cols-3"
-                )}
-              >
-                {slides.map((s, i) => (
-                  <SlideGridCard
-                    key={s.id}
-                    slide={s}
-                    index={i}
-                    totalSlides={slides.length}
-                    isGenerating={generatingSections?.has(i)}
-                    isBusy={isBusy}
-                    onUpdateTitle={(idx, val) => updateOutlineSlide(idx, "title", val)}
-                    onUpdateDescription={(idx, val) => updateOutlineSlide(idx, "description", val)}
-                    onMove={moveSlide}
-                    onEditBlueprint={(idx) => setSelectedVisualsIndex(idx)}
-                    onGenerate={(idx) => onGenerateSection?.(idx)}
-                    onPresent={(idx) => {
-                      setActiveSlideIndex(idx)
-                      setIsPresenting(true)
-                    }}
-                    onDelete={removeOutlineSection}
-                    onInsertBelow={addOutlineSection}
-                    onExpandBelow={onExpandSection}
-                    onSelect={(idx) => setActiveSlideIndex(idx)}
-                  />
-                ))}
-              </div>
-            )}
+            {!isGeneratingOutline &&
+              !error &&
+              slides.length > 0 &&
+              viewMode === "grid" && (
+                <div
+                  className={cn(
+                    "grid gap-6 transition-all",
+                    gridColumns === 2
+                      ? "grid-cols-1 lg:grid-cols-2"
+                      : "grid-cols-1 md:grid-cols-2 xl:grid-cols-3"
+                  )}
+                >
+                  {slides.map((s, i) => (
+                    <SlideGridCard
+                      key={s.id}
+                      slide={s}
+                      index={i}
+                      totalSlides={slides.length}
+                      isGenerating={generatingSections?.has(i)}
+                      isBusy={isBusy}
+                      onUpdateTitle={(idx, val) =>
+                        updateOutlineSlide(idx, "title", val)
+                      }
+                      onUpdateDescription={(idx, val) =>
+                        updateOutlineSlide(idx, "description", val)
+                      }
+                      onMove={moveSlide}
+                      onEditBlueprint={(idx) => setSelectedVisualsIndex(idx)}
+                      onGenerate={(idx) => onGenerateSection?.(idx)}
+                      onPresent={(idx) => {
+                        setActiveSlideIndex(idx)
+                        setIsPresenting(true)
+                      }}
+                      onDelete={removeOutlineSection}
+                      onInsertBelow={addOutlineSection}
+                      onExpandBelow={onExpandSection}
+                      onSelect={(idx) => setActiveSlideIndex(idx)}
+                    />
+                  ))}
+                </div>
+              )}
 
             {/* STREAMLINED LIST VIEW */}
-            {!isGeneratingOutline && !error && slides.length > 0 && viewMode === "list" && (
-              <Reorder.Group
-                axis="y"
-                values={slides}
-                onReorder={handleReorder}
-                className="space-y-4"
-              >
-                {slides.map((s, i) => (
-                  <SlideListItem
-                    key={s.id}
-                    slide={s}
-                    index={i}
-                    totalSlides={slides.length}
-                    isGenerating={generatingSections?.has(i)}
-                    isBusy={isBusy}
-                    onUpdateTitle={(idx, val) => updateOutlineSlide(idx, "title", val)}
-                    onUpdateDescription={(idx, val) => updateOutlineSlide(idx, "description", val)}
-                    onMove={moveSlide}
-                    onEditBlueprint={(idx) => setSelectedVisualsIndex(idx)}
-                    onGenerate={(idx) => onGenerateSection?.(idx)}
-                    onPresent={(idx) => {
-                      setActiveSlideIndex(idx)
-                      setIsPresenting(true)
-                    }}
-                    onDelete={removeOutlineSection}
-                    onInsertBelow={addOutlineSection}
-                    onExpandBelow={onExpandSection}
-                    onSelect={(idx) => setActiveSlideIndex(idx)}
-                  />
-                ))}
-              </Reorder.Group>
-            )}
+            {!isGeneratingOutline &&
+              !error &&
+              slides.length > 0 &&
+              viewMode === "list" && (
+                <Reorder.Group
+                  axis="y"
+                  values={slides}
+                  onReorder={handleReorder}
+                  className="space-y-4"
+                >
+                  {slides.map((s, i) => (
+                    <SlideListItem
+                      key={s.id}
+                      slide={s}
+                      index={i}
+                      totalSlides={slides.length}
+                      isGenerating={generatingSections?.has(i)}
+                      isBusy={isBusy}
+                      onUpdateTitle={(idx, val) =>
+                        updateOutlineSlide(idx, "title", val)
+                      }
+                      onUpdateDescription={(idx, val) =>
+                        updateOutlineSlide(idx, "description", val)
+                      }
+                      onMove={moveSlide}
+                      onEditBlueprint={(idx) => setSelectedVisualsIndex(idx)}
+                      onGenerate={(idx) => onGenerateSection?.(idx)}
+                      onPresent={(idx) => {
+                        setActiveSlideIndex(idx)
+                        setIsPresenting(true)
+                      }}
+                      onDelete={removeOutlineSection}
+                      onInsertBelow={addOutlineSection}
+                      onExpandBelow={onExpandSection}
+                      onSelect={(idx) => setActiveSlideIndex(idx)}
+                    />
+                  ))}
+                </Reorder.Group>
+              )}
           </div>
         </main>
       </div>

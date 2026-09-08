@@ -59,7 +59,8 @@ export const STORYBOARD_TOOLS: Tool[] = [
           properties: {
             slides: {
               type: Type.ARRAY,
-              description: "List of slide updates to apply across the presentation.",
+              description:
+                "List of slide updates to apply across the presentation.",
               items: {
                 type: Type.OBJECT,
                 properties: {

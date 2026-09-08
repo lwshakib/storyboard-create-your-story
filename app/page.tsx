@@ -29,10 +29,10 @@ export default function LandingPage() {
 
       {/* Structural subtle guideline lines */}
       <div className="pointer-events-none fixed inset-0 z-0 mx-auto flex max-w-[1400px] justify-between px-6 opacity-[0.03] lg:px-12">
-        <div className="h-full w-px bg-foreground"></div>
-        <div className="h-full w-px bg-foreground"></div>
-        <div className="hidden h-full w-px bg-foreground md:block"></div>
-        <div className="hidden h-full w-px bg-foreground lg:block"></div>
+        <div className="bg-foreground h-full w-px"></div>
+        <div className="bg-foreground h-full w-px"></div>
+        <div className="bg-foreground hidden h-full w-px md:block"></div>
+        <div className="bg-foreground hidden h-full w-px lg:block"></div>
       </div>
 
       <div className="relative z-10 flex min-h-screen flex-col">

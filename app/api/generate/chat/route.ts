@@ -55,7 +55,9 @@ export async function POST(req: Request) {
       )
     }
 
-    const slidesList = Array.isArray(projectData?.slides) ? projectData.slides : []
+    const slidesList = Array.isArray(projectData?.slides)
+      ? projectData.slides
+      : []
     const userContent = `PROJECT CONTEXT:
 Title: ${projectData?.title || "Storyboard Project"}
 Description: ${projectData?.description || ""}

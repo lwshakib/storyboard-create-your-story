@@ -59,18 +59,18 @@ export function SlideListItem({
       key={slide.id}
       value={slide}
       id={`slide-full-${slide.id}`}
-      className="group/item relative flex flex-col lg:flex-row gap-5 rounded-2xl border border-border/60 bg-card/60 hover:bg-card hover:border-primary/40 hover:shadow-xl p-4 transition-all"
+      className="group/item border-border/60 bg-card/60 hover:bg-card hover:border-primary/40 relative flex flex-col gap-5 rounded-2xl border p-4 transition-all hover:shadow-xl lg:flex-row"
     >
       {/* Left: Compact Slide Preview (~500px) */}
-      <div className="lg:w-[480px] xl:w-[540px] shrink-0">
+      <div className="shrink-0 lg:w-[480px] xl:w-[540px]">
         <div
-          className="slide-preview-container relative aspect-video w-full overflow-hidden rounded-xl border border-border/50 bg-black/5 shadow-xs ring-1 ring-border/20 cursor-pointer"
+          className="slide-preview-container border-border/50 ring-border/20 relative aspect-video w-full cursor-pointer overflow-hidden rounded-xl border bg-black/5 shadow-xs ring-1"
           id={`slide-preview-${slide.id}`}
           onClick={() => onSelect(index)}
         >
           {slide.html === "SKELETON" || isGenerating ? (
-            <div className="h-full w-full bg-muted/20 flex items-center justify-center animate-pulse">
-              <Sparkles className="size-5 text-primary animate-spin" />
+            <div className="bg-muted/20 flex h-full w-full animate-pulse items-center justify-center">
+              <Sparkles className="text-primary size-5 animate-spin" />
             </div>
           ) : slide.html ? (
             <SlidePreview
@@ -79,13 +79,13 @@ export function SlideListItem({
               autoScale={true}
             />
           ) : (
-            <div className="flex h-full w-full flex-col items-center justify-center gap-2 p-6 text-center text-muted-foreground">
+            <div className="text-muted-foreground flex h-full w-full flex-col items-center justify-center gap-2 p-6 text-center">
               <Sparkles className="size-6 opacity-40" />
               <span className="text-xs font-medium">Slide blueprint ready</span>
               <Button
                 size="sm"
                 variant="outline"
-                className="h-7 text-[11px] gap-1.5"
+                className="h-7 gap-1.5 text-[11px]"
                 onClick={() => onGenerate(index)}
               >
                 <Wand2 className="size-3" /> Generate HTML
@@ -96,22 +96,22 @@ export function SlideListItem({
       </div>
 
       {/* Right: Slide Info & Controls */}
-      <div className="flex-1 flex flex-col justify-between gap-3 min-w-0">
+      <div className="flex min-w-0 flex-1 flex-col justify-between gap-3">
         <div className="space-y-2">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <div className="text-muted-foreground/30 hover:text-primary cursor-grab active:cursor-grabbing p-0.5">
+              <div className="text-muted-foreground/30 hover:text-primary cursor-grab p-0.5 active:cursor-grabbing">
                 <GripVertical className="size-3.5" />
               </div>
-              <span className="text-[11px] font-bold text-muted-foreground/70 tabular-nums">
+              <span className="text-muted-foreground/70 text-[11px] font-bold tabular-nums">
                 SLIDE {String(index + 1).padStart(2, "0")}
               </span>
-              <div className="h-3 w-[1px] bg-border" />
+              <div className="bg-border h-3 w-[1px]" />
               <button
                 type="button"
                 disabled={index === 0 || isBusy}
                 onClick={() => onMove(index, index - 1)}
-                className="text-muted-foreground hover:text-foreground disabled:opacity-30 p-1 cursor-pointer"
+                className="text-muted-foreground hover:text-foreground cursor-pointer p-1 disabled:opacity-30"
                 title="Move up"
               >
                 <ArrowLeft className="size-3 rotate-90" />
@@ -120,7 +120,7 @@ export function SlideListItem({
                 type="button"
                 disabled={index === totalSlides - 1 || isBusy}
                 onClick={() => onMove(index, index + 1)}
-                className="text-muted-foreground hover:text-foreground disabled:opacity-30 p-1 cursor-pointer"
+                className="text-muted-foreground hover:text-foreground cursor-pointer p-1 disabled:opacity-30"
                 title="Move down"
               >
                 <ArrowRight className="size-3 rotate-90" />
@@ -141,7 +141,7 @@ export function SlideListItem({
               <Button
                 variant="ghost"
                 size="icon"
-                className="size-7 rounded-md text-primary"
+                className="text-primary size-7 rounded-md"
                 onClick={() => onGenerate(index)}
                 title={isGenerating ? "Stop Generation" : "Regenerate"}
               >
@@ -163,7 +163,7 @@ export function SlideListItem({
               <Button
                 variant="ghost"
                 size="icon"
-                className="size-7 rounded-md text-destructive hover:bg-destructive/10"
+                className="text-destructive hover:bg-destructive/10 size-7 rounded-md"
                 onClick={() => onDelete(index)}
                 title="Delete"
                 disabled={isBusy}
@@ -174,7 +174,7 @@ export function SlideListItem({
           </div>
 
           <AutoResizeTextarea
-            className="text-foreground font-bold text-base sm:text-lg leading-snug w-full bg-transparent border-none p-0 focus:ring-0 resize-none"
+            className="text-foreground w-full resize-none border-none bg-transparent p-0 text-base leading-snug font-bold focus:ring-0 sm:text-lg"
             value={slide.title}
             placeholder="Slide Title"
             onChange={(val) => onUpdateTitle(index, val)}
@@ -182,7 +182,7 @@ export function SlideListItem({
           />
 
           <AutoResizeTextarea
-            className="text-muted-foreground text-xs sm:text-sm leading-relaxed w-full bg-transparent border-none p-0 focus:ring-0 resize-none"
+            className="text-muted-foreground w-full resize-none border-none bg-transparent p-0 text-xs leading-relaxed focus:ring-0 sm:text-sm"
             value={slide.description || ""}
             placeholder="Slide talking points, narrative notes, and key takeaways..."
             onChange={(val) => onUpdateDescription(index, val)}
@@ -191,22 +191,22 @@ export function SlideListItem({
         </div>
 
         {/* Quick Add Slide Below */}
-        <div className="flex items-center gap-2 pt-2 border-t border-border/40 text-[11px] text-muted-foreground">
+        <div className="border-border/40 text-muted-foreground flex items-center gap-2 border-t pt-2 text-[11px]">
           <button
             type="button"
             onClick={() => onInsertBelow(index)}
-            className="flex items-center gap-1 hover:text-primary transition-colors cursor-pointer"
+            className="hover:text-primary flex cursor-pointer items-center gap-1 transition-colors"
           >
-            <Plus className="size-3 text-primary" />
+            <Plus className="text-primary size-3" />
             <span>Insert slide below</span>
           </button>
           <span>•</span>
           <button
             type="button"
             onClick={() => onExpandBelow?.(index)}
-            className="flex items-center gap-1 hover:text-primary transition-colors cursor-pointer"
+            className="hover:text-primary flex cursor-pointer items-center gap-1 transition-colors"
           >
-            <Sparkles className="size-3 text-primary" />
+            <Sparkles className="text-primary size-3" />
             <span>AI continue slide</span>
           </button>
         </div>

@@ -113,9 +113,15 @@ export function SlidePreview({
     // Unescape backslash-escaped quotes from LLM JSON serialization (e.g. \" -> " and \' -> ')
     clean = clean.replace(/\\"/g, '"').replace(/\\'/g, "'")
     // Convert **bold** markdown to <strong class="font-bold text-current">$1</strong>
-    clean = clean.replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold text-current">$1</strong>')
+    clean = clean.replace(
+      /\*\*([^*]+)\*\*/g,
+      '<strong class="font-bold text-current">$1</strong>'
+    )
     // Convert *italic* markdown to <em class="italic">$1</em>
-    clean = clean.replace(/(?<!\*)\*([^*\n<]+)\*(?!\*)/g, '<em class="italic">$1</em>')
+    clean = clean.replace(
+      /(?<!\*)\*([^*\n<]+)\*(?!\*)/g,
+      '<em class="italic">$1</em>'
+    )
     // Remove any leftover rogue double asterisks
     clean = clean.replace(/\*\*/g, "")
     return clean
@@ -279,7 +285,10 @@ export function SlidePreview({
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
       `
       if (fullHtml.includes("</head>")) {
-        fullHtml = fullHtml.replace("</head>", `${fontHeader}${editorStyles}</head>`)
+        fullHtml = fullHtml.replace(
+          "</head>",
+          `${fontHeader}${editorStyles}</head>`
+        )
       }
       if (fullHtml.includes("</body>")) {
         fullHtml = fullHtml.replace("</body>", `${editorScripts}</body>`)

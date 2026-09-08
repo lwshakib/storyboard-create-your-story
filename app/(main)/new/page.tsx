@@ -114,7 +114,8 @@ export default function NewProjectPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title: "New Presentation",
-          description: "Start crafting your presentation deck from this single slide.",
+          description:
+            "Start crafting your presentation deck from this single slide.",
           slides: [],
         }),
       })
@@ -199,7 +200,9 @@ export default function NewProjectPage() {
                 AI Presentation Architect
               </DialogTitle>
               <DialogDescription className="font-medium text-neutral-400">
-                Describe your presentation topic or deck goal. Our AI will generate an executive-ready slide deck with substantive content, metrics, and polished layouts.
+                Describe your presentation topic or deck goal. Our AI will
+                generate an executive-ready slide deck with substantive content,
+                metrics, and polished layouts.
               </DialogDescription>
             </DialogHeader>
 
@@ -316,11 +319,17 @@ function SelectionCard({
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay }}
       whileHover={!disabled && !isLoading ? { y: -5 } : undefined}
-      className={cn("h-full transition-opacity", (disabled || isLoading) && "pointer-events-none opacity-50")}
+      className={cn(
+        "h-full transition-opacity",
+        (disabled || isLoading) && "pointer-events-none opacity-50"
+      )}
     >
       <CardWrapper
         href={href as string}
-        className={cn("block h-full", !disabled && !isLoading ? "cursor-pointer" : "cursor-not-allowed")}
+        className={cn(
+          "block h-full",
+          !disabled && !isLoading ? "cursor-pointer" : "cursor-not-allowed"
+        )}
         onClick={handleClick}
       >
         <div
@@ -377,7 +386,7 @@ function SelectionCard({
               >
                 {isLoading ? (
                   <>
-                    <RefreshCw className="mr-2 h-4 w-4 animate-spin inline" />
+                    <RefreshCw className="mr-2 inline h-4 w-4 animate-spin" />
                     Creating...
                   </>
                 ) : (

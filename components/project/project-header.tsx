@@ -82,7 +82,7 @@ export function ProjectHeader({
           ) : (
             <span
               onDoubleClick={() => setIsEditingTitle(true)}
-              className="max-w-[320px] cursor-text truncate text-sm font-bold tracking-tight opacity-90 hover:opacity-100 transition-opacity"
+              className="max-w-[320px] cursor-text truncate text-sm font-bold tracking-tight opacity-90 transition-opacity hover:opacity-100"
               title="Double click to rename"
             >
               {title}
@@ -105,7 +105,7 @@ export function ProjectHeader({
           <TooltipTrigger asChild>
             <Button
               variant="outline"
-              className="border-border/50 hover:bg-muted/50 flex size-9 items-center justify-center rounded-full p-0 font-medium shadow-xs md:h-9 md:w-auto md:gap-2 md:px-4 text-xs"
+              className="border-border/50 hover:bg-muted/50 flex size-9 items-center justify-center rounded-full p-0 text-xs font-medium shadow-xs md:h-9 md:w-auto md:gap-2 md:px-4"
               onClick={() => fileInputRef.current?.click()}
             >
               <Upload className="size-3.5 opacity-70" />
@@ -113,7 +113,7 @@ export function ProjectHeader({
             </Button>
           </TooltipTrigger>
           <TooltipContent side="bottom" sideOffset={10}>
-            <p className="font-bold text-xs">Import JSON</p>
+            <p className="text-xs font-bold">Import JSON</p>
           </TooltipContent>
         </Tooltip>
 
@@ -132,7 +132,7 @@ export function ProjectHeader({
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="outline"
-                  className="border-border/50 hover:bg-muted/50 flex size-9 items-center justify-center rounded-full p-0 font-medium shadow-xs md:h-9 md:w-auto md:gap-2 md:px-4 text-xs"
+                  className="border-border/50 hover:bg-muted/50 flex size-9 items-center justify-center rounded-full p-0 text-xs font-medium shadow-xs md:h-9 md:w-auto md:gap-2 md:px-4"
                 >
                   <Download className="size-3.5 opacity-70" />
                   <span className="hidden md:inline">Export</span>
@@ -164,14 +164,14 @@ export function ProjectHeader({
             </DropdownMenu>
           </TooltipTrigger>
           <TooltipContent side="bottom" sideOffset={10}>
-            <p className="font-bold text-xs">Export Options</p>
+            <p className="text-xs font-bold">Export Options</p>
           </TooltipContent>
         </Tooltip>
 
         {/* New Project */}
         <Button
           asChild
-          className="bg-primary hover:bg-primary/90 text-primary-foreground flex size-9 items-center justify-center rounded-full p-0 font-medium shadow-xs md:h-9 md:w-auto md:gap-2 md:px-4 text-xs"
+          className="bg-primary hover:bg-primary/90 text-primary-foreground flex size-9 items-center justify-center rounded-full p-0 text-xs font-medium shadow-xs md:h-9 md:w-auto md:gap-2 md:px-4"
         >
           <Link href="/new">
             <Plus className="size-3.5" />
@@ -184,7 +184,7 @@ export function ProjectHeader({
           <TooltipTrigger asChild>
             <Button
               variant="outline"
-              className="border-primary/20 hover:bg-primary/5 flex size-9 items-center justify-center rounded-full p-0 font-bold shadow-xs md:h-9 md:w-auto md:gap-2 md:px-4 text-xs"
+              className="border-primary/20 hover:bg-primary/5 flex size-9 items-center justify-center rounded-full p-0 text-xs font-bold shadow-xs md:h-9 md:w-auto md:gap-2 md:px-4"
               onClick={onPresent}
             >
               <PresentationIcon className="text-primary size-3.5" />
@@ -192,7 +192,7 @@ export function ProjectHeader({
             </Button>
           </TooltipTrigger>
           <TooltipContent side="bottom" sideOffset={10}>
-            <p className="font-bold text-xs">Enter Presentation Mode</p>
+            <p className="text-xs font-bold">Enter Presentation Mode</p>
           </TooltipContent>
         </Tooltip>
 

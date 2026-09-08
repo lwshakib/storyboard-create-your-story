@@ -18,8 +18,8 @@ export function Hero() {
         transition={{ duration: 0.4 }}
         className="relative z-10 mb-6 flex items-center gap-2"
       >
-        <div className="border-border/80 bg-muted/60 inline-flex items-center gap-2 rounded-full border px-3.5 py-1 text-xs font-medium text-foreground backdrop-blur-sm">
-          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+        <div className="border-border/80 bg-muted/60 text-foreground inline-flex items-center gap-2 rounded-full border px-3.5 py-1 text-xs font-medium backdrop-blur-sm">
+          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-emerald-500"></span>
           <span>AI-Powered Storyboard Creator</span>
           <span className="text-muted-foreground">·</span>
           <span className="text-muted-foreground">20 Free Credits</span>
@@ -33,7 +33,7 @@ export function Hero() {
         transition={{ duration: 0.4, delay: 0.1 }}
         className="relative z-10 max-w-4xl space-y-4"
       >
-        <h1 className="text-foreground text-4xl font-medium tracking-tight sm:text-5xl lg:text-6xl leading-[1.12]">
+        <h1 className="text-foreground text-4xl leading-[1.12] font-medium tracking-tight sm:text-5xl lg:text-6xl">
           Transform rough ideas into <br className="hidden sm:inline" />
           <span className="bg-gradient-to-r from-emerald-600 via-teal-500 to-emerald-500 bg-clip-text text-transparent dark:from-emerald-400 dark:via-teal-400 dark:to-emerald-400">
             presentation-ready storyboards.
@@ -48,7 +48,9 @@ export function Hero() {
         transition={{ duration: 0.4, delay: 0.15 }}
         className="text-muted-foreground relative z-10 mt-6 max-w-2xl text-sm leading-relaxed sm:text-base"
       >
-        Generate structured narrative beats, compose balanced slide layouts, and collaboratively refine with an AI co-pilot. Export directly to PowerPoint (.pptx) or vector PDF in seconds.
+        Generate structured narrative beats, compose balanced slide layouts, and
+        collaboratively refine with an AI co-pilot. Export directly to
+        PowerPoint (.pptx) or vector PDF in seconds.
       </motion.p>
 
       {/* CTA Buttons */}
@@ -77,18 +79,27 @@ export function Hero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.25 }}
-        className="relative z-10 mt-10 flex flex-wrap items-center justify-center gap-6 text-xs text-muted-foreground"
+        className="text-muted-foreground relative z-10 mt-10 flex flex-wrap items-center justify-center gap-6 text-xs"
       >
         <div className="flex items-center gap-1.5">
-          <Icon icon="solar:check-circle-linear" className="text-emerald-500 text-sm" />
+          <Icon
+            icon="solar:check-circle-linear"
+            className="text-sm text-emerald-500"
+          />
           <span>20 free credits included</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <Icon icon="solar:check-circle-linear" className="text-emerald-500 text-sm" />
+          <Icon
+            icon="solar:check-circle-linear"
+            className="text-sm text-emerald-500"
+          />
           <span>Lossless PowerPoint & PDF exports</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <Icon icon="solar:check-circle-linear" className="text-emerald-500 text-sm" />
+          <Icon
+            icon="solar:check-circle-linear"
+            className="text-sm text-emerald-500"
+          />
           <span>No credit card required</span>
         </div>
       </motion.div>

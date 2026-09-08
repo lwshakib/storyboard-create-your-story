@@ -56,7 +56,10 @@ export function HowItWorks() {
         {/* Section Header */}
         <div className="mb-16 max-w-2xl space-y-4">
           <div className="border-border bg-muted text-muted-foreground inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold">
-            <Icon icon="solar:round-transfer-horizontal-linear" className="text-emerald-500" />
+            <Icon
+              icon="solar:round-transfer-horizontal-linear"
+              className="text-emerald-500"
+            />
             Simple 3-Step Workflow
           </div>
           <h2 className="text-foreground text-3xl font-medium tracking-tight sm:text-4xl lg:text-5xl">
@@ -64,7 +67,9 @@ export function HowItWorks() {
             <span className="text-emerald-500">in minutes.</span>
           </h2>
           <p className="text-muted-foreground text-sm leading-relaxed sm:text-base">
-            Skip hours of staring at blank slides. Storyboard blends structural AI outlining with a tactile canvas editor so you stay in creative flow.
+            Skip hours of staring at blank slides. Storyboard blends structural
+            AI outlining with a tactile canvas editor so you stay in creative
+            flow.
           </p>
         </div>
 
@@ -77,7 +82,7 @@ export function HowItWorks() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: idx * 0.15 }}
-              className="border-border bg-card/60 hover:bg-card/90 hover:border-emerald-500/30 group relative flex flex-col justify-between rounded-2xl border p-8 backdrop-blur-sm transition-all duration-300"
+              className="border-border bg-card/60 hover:bg-card/90 group relative flex flex-col justify-between rounded-2xl border p-8 backdrop-blur-sm transition-all duration-300 hover:border-emerald-500/30"
             >
               <div>
                 {/* Header row */}
@@ -85,16 +90,16 @@ export function HowItWorks() {
                   <span className="font-mono text-xs font-bold text-emerald-500">
                     Step {item.step}
                   </span>
-                  <div className="border-border bg-muted group-hover:border-emerald-500/30 group-hover:bg-emerald-500/10 flex h-10 w-10 items-center justify-center rounded-xl border transition-colors">
+                  <div className="border-border bg-muted flex h-10 w-10 items-center justify-center rounded-xl border transition-colors group-hover:border-emerald-500/30 group-hover:bg-emerald-500/10">
                     <Icon
                       icon={item.icon}
                       width="20"
-                      className="text-muted-foreground group-hover:text-emerald-500 transition-colors"
+                      className="text-muted-foreground transition-colors group-hover:text-emerald-500"
                     />
                   </div>
                 </div>
 
-                <span className="text-muted-foreground/80 mb-2 block text-xs font-medium uppercase tracking-wider">
+                <span className="text-muted-foreground/80 mb-2 block text-xs font-medium tracking-wider uppercase">
                   {item.badge}
                 </span>
 
@@ -113,7 +118,7 @@ export function HowItWorks() {
                   <div key={hIdx} className="flex items-start gap-2">
                     <Icon
                       icon="solar:check-circle-linear"
-                      className="mt-0.5 shrink-0 text-emerald-500 text-sm"
+                      className="mt-0.5 shrink-0 text-sm text-emerald-500"
                     />
                     <span className="text-muted-foreground text-xs leading-tight">
                       {highlight}

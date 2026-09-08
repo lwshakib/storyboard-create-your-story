@@ -141,7 +141,8 @@ export function DeckStatus({
             Your Canvas is Empty
           </h3>
           <p className="text-muted-foreground text-xs leading-relaxed">
-            Start by describing your topic and letting the AI Presentation Architect generate an executive-ready deck for you.
+            Start by describing your topic and letting the AI Presentation
+            Architect generate an executive-ready deck for you.
           </p>
         </div>
         <Button

@@ -13,7 +13,8 @@ export function Pricing() {
       name: "Starter",
       priceMonthly: 0,
       priceAnnually: 0,
-      description: "Perfect for students and individuals creating their first presentations.",
+      description:
+        "Perfect for students and individuals creating their first presentations.",
       badge: "Free Forever",
       features: [
         "20 free generation credits included",
@@ -30,7 +31,8 @@ export function Pricing() {
       name: "Pro Storyteller",
       priceMonthly: 19,
       priceAnnually: 15,
-      description: "For founders, creators, and professionals needing rapid, high-quality decks.",
+      description:
+        "For founders, creators, and professionals needing rapid, high-quality decks.",
       badge: "Most Popular",
       features: [
         "250 generation credits / month",
@@ -48,7 +50,8 @@ export function Pricing() {
       name: "Studio & Team",
       priceMonthly: 49,
       priceAnnually: 39,
-      description: "Advanced capabilities and higher capacity for agencies and startup teams.",
+      description:
+        "Advanced capabilities and higher capacity for agencies and startup teams.",
       badge: "Scale",
       features: [
         "800 generation credits / month",
@@ -80,7 +83,8 @@ export function Pricing() {
             Start free, scale as you create.
           </h2>
           <p className="text-muted-foreground max-w-lg text-sm leading-relaxed sm:text-base">
-            Every account gets 20 free credits immediately. Upgrade anytime to unlock higher monthly allowances and unlimited decks.
+            Every account gets 20 free credits immediately. Upgrade anytime to
+            unlock higher monthly allowances and unlimited decks.
           </p>
 
           {/* Billing Toggle */}
@@ -124,7 +128,7 @@ export function Pricing() {
               transition={{ duration: 0.5, delay: idx * 0.1 }}
               className={`border-border bg-card/60 relative flex flex-col justify-between rounded-2xl border p-8 transition-all duration-300 ${
                 tier.recommended
-                  ? "border-emerald-500/40 shadow-lg shadow-emerald-500/5 bg-card/90"
+                  ? "bg-card/90 border-emerald-500/40 shadow-lg shadow-emerald-500/5"
                   : "hover:border-border/80"
               }`}
             >
@@ -134,7 +138,7 @@ export function Pricing() {
                     {tier.name}
                   </h3>
                   {tier.recommended ? (
-                    <span className="bg-emerald-500/10 text-emerald-500 border-emerald-500/30 rounded-full border px-2.5 py-0.5 text-[10px] font-semibold">
+                    <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-500">
                       {tier.badge}
                     </span>
                   ) : (
@@ -170,7 +174,9 @@ export function Pricing() {
                             : "text-muted-foreground"
                         }`}
                       />
-                      <span className="text-muted-foreground leading-snug">{feature}</span>
+                      <span className="text-muted-foreground leading-snug">
+                        {feature}
+                      </span>
                     </li>
                   ))}
                 </ul>
@@ -182,7 +188,7 @@ export function Pricing() {
                     className={`w-full rounded-xl py-2.5 text-xs font-semibold tracking-wide transition-all ${
                       tier.recommended
                         ? "bg-emerald-500 text-black shadow-sm hover:bg-emerald-400"
-                        : "border-border bg-foreground text-background hover:opacity-90 border"
+                        : "border-border bg-foreground text-background border hover:opacity-90"
                     }`}
                   >
                     {tier.actionText}

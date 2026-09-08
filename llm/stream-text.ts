@@ -201,7 +201,11 @@ export function streamText(options: StreamTextOptions) {
                 data: { title, description },
               })
               hasChanges = true
-              actionSummaries.push(title ? `Updated project title to "${title}"` : "Updated project metadata")
+              actionSummaries.push(
+                title
+                  ? `Updated project title to "${title}"`
+                  : "Updated project metadata"
+              )
             } else if (name === "get_project_details") {
               const proj = await prisma.project.findUnique({
                 where: { id: projectId },
@@ -236,7 +240,9 @@ export function streamText(options: StreamTextOptions) {
                 data: safeUpdates,
               })
               hasChanges = true
-              actionSummaries.push(`Updated Slide ${updated.index + 1}${updated.title ? ` ("${updated.title}")` : ""}`)
+              actionSummaries.push(
+                `Updated Slide ${updated.index + 1}${updated.title ? ` ("${updated.title}")` : ""}`
+              )
             } else if (name === "batch_update_slides") {
               const { slides } = args as unknown as BatchUpdateSlidesArgs
               if (Array.isArray(slides) && slides.length > 0) {
@@ -251,7 +257,9 @@ export function streamText(options: StreamTextOptions) {
                     data: safeUpdates,
                   })
                   hasChanges = true
-                  actionSummaries.push(`Updated Slide ${updated.index + 1}${updated.title ? ` ("${updated.title}")` : ""}`)
+                  actionSummaries.push(
+                    `Updated Slide ${updated.index + 1}${updated.title ? ` ("${updated.title}")` : ""}`
+                  )
                 }
               }
             } else if (name === "delete_slide") {
@@ -298,7 +306,9 @@ export function streamText(options: StreamTextOptions) {
                 },
               })
               hasChanges = true
-              actionSummaries.push(`Added new slide at position ${created.index + 1}`)
+              actionSummaries.push(
+                `Added new slide at position ${created.index + 1}`
+              )
             }
           } catch (err) {
             console.error(`Tool execution error [${name}]:`, err)

@@ -130,7 +130,10 @@ CRITICAL REQUIREMENTS:
     const cleanHtml = (str: string) => {
       if (!str) return ""
       return str
-        .replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold text-white">$1</strong>')
+        .replace(
+          /\*\*([^*]+)\*\*/g,
+          '<strong class="font-bold text-white">$1</strong>'
+        )
         .replace(/(?<!\*)\*([^*\n<]+)\*(?!\*)/g, '<em class="italic">$1</em>')
         .replace(/\*\*/g, "")
     }
@@ -150,7 +153,8 @@ CRITICAL REQUIREMENTS:
       index: idx,
       title: cleanText(s.title) || `Slide ${idx + 1}`,
       prompt: s.prompt || "Executive presentation layout",
-      description: cleanText(s.description) || "Presentation narrative and key takeaways",
+      description:
+        cleanText(s.description) || "Presentation narrative and key takeaways",
       html: cleanHtml((s as { html?: string }).html || ""),
       assets: [],
     }))

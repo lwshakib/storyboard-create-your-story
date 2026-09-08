@@ -88,7 +88,9 @@ export function GenerateDialog({ open, onOpenChange }: GenerateDialogProps) {
               AI Presentation Architect
             </DialogTitle>
             <DialogDescription className="font-medium text-neutral-400">
-              Describe your presentation topic or deck goal. Our AI generates an executive-grade presentation with substantive data, metrics, and polished design.
+              Describe your presentation topic or deck goal. Our AI generates an
+              executive-grade presentation with substantive data, metrics, and
+              polished design.
             </DialogDescription>
           </DialogHeader>
 
