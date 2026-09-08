@@ -131,6 +131,13 @@ export async function PATCH(
             }
           : undefined,
       },
+      include: {
+        slides: {
+          orderBy: {
+            index: "asc",
+          },
+        },
+      },
     })
 
     return NextResponse.json(project)
